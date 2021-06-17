@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自定义表单页面</title>
+</head>
+<body>
+    <div id="app">
+        <ivz-slot-form-view :metas="groupMetas" :action-metas="actionMetas"
+             ref="dtv" :search-metas="searchMetas" :config="config" :data="data">
+            <template #name="{meta}">
+                <a-input :type="meta.field" v-decorator="[meta.field, meta['decorate']]"></a-input>
+            </template>
+        </ivz-slot-form-view>
+    </div>
+</body>
+</html>

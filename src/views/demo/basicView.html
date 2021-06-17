@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BasicView测试页面</title>
+</head>
+<body>
+    <div id="app">
+        <ivz-basic-view :metas="groupMetas" :action-metas="actionMetas"
+                :search-metas="searchMetas" :config="groupConfig" ref="ibv">
+        </ivz-basic-view>
+        <ivz-modal-form ref="mf" :metas="ModalMetas" :save-meta="saveMeta"
+                        title="测试模态框"></ivz-modal-form>
+    </div>
+</body>
+</html>
