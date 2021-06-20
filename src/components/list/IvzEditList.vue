@@ -5,7 +5,14 @@
         <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
              :action-metas="actionMetas" :search-metas="searchMetas"></ivz-page-search>
         <ivz-edit-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
-            :action-metas="actionMetas" :search-model="searchModel" :data="data"></ivz-edit-table>
+            :action-metas="actionMetas" :search-model="searchModel" :data="data">
+            <template #action="{row, index}">
+                <slot name="action" :row="row" :index="index"></slot>
+            </template>
+            <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
+                <slot :name="meta.tableAlias" :value="value" :row="row" :index="index"></slot>
+            </template>
+        </ivz-edit-table>
     </div>
     </a-locale-provider>
 </template>

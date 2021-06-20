@@ -2,7 +2,15 @@
     <a-locale-provider :locale="zhCN">
     <div class="ivz-view ivz-edit-view ivz-container">
         <ivz-edit-list ref="listRef" :data="data" :action-metas="actionMetas" :table-config="tableConfig"
-            :table-metas="tableMetas" :search-metas="searchMetas" :search-config="searchConfig"></ivz-edit-list>
+            :table-metas="tableMetas" :search-metas="searchMetas" :search-config="searchConfig"
+            :table-alias-metas="tableAliasMetas">
+            <template #action="{row, index}">
+                <slot name="action" :row="row" :index="index"></slot>
+            </template>
+            <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
+                <slot :name="meta.tableAlias" :value="value" :row="row" :index="index"></slot>
+            </template>
+        </ivz-edit-list>
     </div>
     </a-locale-provider>
 </template>

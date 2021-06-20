@@ -16,10 +16,13 @@ export const MixPageView = {
             listView: true, // 默认为true, 显示列表页
             operaMeta: null,
             formGroup: null,
+            tableMetas: null,
             formConfig: null, // 可编辑表单配置
             tableConfig: null, // 表格配置
             searchConfig: null, // 搜索表单配置
-            tableMetas: null,
+            formAliasMetas: [],
+            tempAliasMetas: [],
+            tableAliasMetas: [],
         }
     },
     created () {
@@ -33,22 +36,45 @@ export const MixPageView = {
         }
         // 初始化页面组件的默认配置
         this.$page.initPageDefaultConfig(this.config, this)
-        this.formConfig = this.config.form
 
         this.$page.resolverCommonMetas(this.metas, this)
         this.$page.resolverCommonMetas(this.searchMetas, this)
 
         // 解析搜索表单元数据
-        this.searchConfig = this.config.search
-        this.$page.resolverFormMetas(this.searchMetas, this.searchConfig, this)
+        this.searchConfig = this.config.search;
+        this.$page.resolverFormMetas(this.searchMetas, this.searchConfig, this);
+
+        // 初始化表单实体对象
+        this.formConfig = this.config.form;
+        this.formGroup = this.$page.resolverFormMetas(this.metas, this.formConfig, this, (meta) => {
+            if(meta.alias) {
+                this.tempAliasMetas.push(meta);
+            }
+            this.$utils.assignProperty(this.$page.oriModel, this.$page.resolverMetaDefaultValue(meta));
+        });
 
         // 解析表格元数据
-        this.tableConfig = this.config.table
-        this.tableMetas = this.$page.resolverTableMetas(this.metas, this.tableConfig, this)
+        this.tableConfig = this.config.table;
+        this.tableMetas = this.$page.resolverTableMetas(this.metas, this.tableConfig, this, (meta) => {
+            if(meta.tableAlias) {
+                this.tableAliasMetas.push(meta)
+            }
+        })
     },
     mounted () {
+        this.tempAliasMetas.forEach((item, index) => {
+            if(!this.$scopedSlots[item.alias]) {
+                this.$log.warningLog(`字段${item.field}设置了插槽别名${item.alias}
+                    , 但是没有使用, 将自动移除`, '请删除alias或者传入指定插槽', item);
+                delete item.alias;
+            } else {
+                this.formAliasMetas.push(item);
+            }
+        });
+        this.tempAliasMetas = [];
         this.registerActionEvent();
-        this.listRef = this.$refs['listRef'] // 页级列表组件的引用
+        this.listRef = this.$refs['listRef']; // 页级列表组件的引用
+        this.$page.registerPageRef(this, this.listRef)
     },
     methods: {
         registerActionEvent() {
@@ -63,12 +89,10 @@ export const MixPageView = {
                         vue.cancel();
                         return next('/IvzSys/void');
                     case '/IvzSys/add':
-                        vue.listView = false;
-                        vue.operaMeta = vue.actionMetas.Add
+                        vue.add(0);
                         return next();
                     case '/IvzSys/edit':
-                        vue.listView = false;
-                        vue.operaMeta = vue.actionMetas.Edit
+                        this.listView = false;
                         return next();
                     case '/IvzSys/void': return next();
                     default: return next('/IvzSys/void');
@@ -80,15 +104,20 @@ export const MixPageView = {
          * @param meta
          */
         add(index) {
+            this.listView = false;
             this.operaMeta = this.actionMetas.Add;
-            this.listRef.actionHandleWrapper(this.operaMeta, null, index)
+            let editModel = this.$page.getStore("editModel");
+            this.listRef.actionHandleWrapper(this.operaMeta, editModel, index)
         },
         /**
          * 编辑数据
          */
         edit(row) {
+            this.listView = false;
             this.operaMeta = this.actionMetas.Edit;
-            this.listRef.actionHandleWrapper(this.operaMeta, row)
+            if(row) {
+                this.listRef.actionHandleWrapper(this.operaMeta, row)
+            }
         },
         /**
          * 返回列表

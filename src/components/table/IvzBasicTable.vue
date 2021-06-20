@@ -6,8 +6,8 @@
              :defaultExpandAllRows="tableConfig.defaultExpandAllRows" :expandedRowKeys="tableConfig.expandedRowKeys"
              class="ivz-view-table ivz-block-outer ivz-border-radius" :expandRowByClick="tableConfig.expandRowByClick"
              :defaultExpandedRowKeys="tableConfig.defaultExpandedRowKeys" :rowSelection="tableConfig.selection">
-        <template v-for="col in slotMetas" :slot="col.field" slot-scope="text, record, index">
-            <slot :name="col.field" :row="record" :index="index">
+        <template v-for="col in slotMetas" :slot="col.tableAlias" slot-scope="text, record, index">
+            <slot :name="col.tableAlias" :value="text" :row="record" :index="index">
                 <div v-html="col.formatter(text, record, col)" :key="col.field" style="display: inline-block"></div>
             </slot>
         </template>
@@ -65,13 +65,13 @@ export default {
             this.$page.registerPosition('table', actionMate, this.mainMetas, this.moreMetas)
             return this
         },
-        addActionHandle (meta) {
-            this.$router.push({path: '/IvzSys/add'});
-        },
+        addActionHandle (meta, row, index) { },
         editActionHandle (meta, row) {
+            if(!meta || !row)
+                return this.$log.warningLog("错误的编辑参数", '请指定正确的参数', row);
             meta.callBack(row, this).then(() => {
-                PageOptions.putStore('editModel', row)
-                let query = {}
+                PageOptions.putStore('editModel', row);
+                let query = {};
                 query[PageOptions.izField] = row[PageOptions.izField]
                 this.$router.push({path: '/IvzSys/edit', query: query})
             }).catch(reason => {});

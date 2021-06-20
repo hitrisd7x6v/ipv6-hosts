@@ -6,11 +6,17 @@
             <template #action="{row, index}">
                 <slot name="action" :row="row" :index="index"></slot>
             </template>
+            <template v-for="meta in tableAliasMetas" #[meta.tableAlias]>
+                <slot :name="meta.tableAlias" :meta="meta" :value="value" :row="row" :index="index"></slot>
+            </template>
         </ivz-default-list>
         <ivz-drawer-form ref="formRef" :form-group="formGroup" :placement="placement" :visible="!listView"
              :height="height" :width="width" :action-metas="actionMetas" :form-config="formConfig">
             <template #default>
                 <slot name="submit"></slot>
+            </template>
+            <template v-for="meta in formAliasMetas" #[meta.alias]>
+                <slot :name="meta.alias" :meta="meta"></slot>
             </template>
         </ivz-drawer-form>
     </div>
@@ -39,9 +45,7 @@
             }
         },
         created () {
-            // 初始化表单实体对象
-            this.formConfig = this.config.form
-            this.formGroup = this.$page.resolverFormMetas(this.metas, this.formConfig, this)
+
         },
         mounted () {},
         methods: {

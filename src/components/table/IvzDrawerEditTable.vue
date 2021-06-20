@@ -6,11 +6,20 @@
                   wrapClassName="ivz-drawer-edit-wrap" :height="height">
             <slot name="header"></slot>
             <ivz-edit-table :data="data" :table-metas="tableMetas" :action-metas="actionMetas"
-                :table-config="config.table" ref="tableRef" @mountFinished="mountFinished"></ivz-edit-table>
+                :table-config="config.table" ref="tableRef" @mountFinished="mountFinished">
+                <template #action="{row, index}">
+                    <slot name="action" :row="row" :index="index"></slot>
+                </template>
+                <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
+                    <slot :name="meta.tableAlias" :value="value" :row="row" :index="index"></slot>
+                </template>
+            </ivz-edit-table>
             <div class="ivz-opera-row" style="text-align: center">
-                <a-button class="ivz-button-action" @click="cancel">关闭</a-button>
-                <a-button class="ivz-button-action" @click="add" type="primary">新增</a-button>
-                <a-button class="ivz-button-action" @click="freshen" type="dashed">刷新</a-button>
+                <slot name="submit">
+                    <a-button class="ivz-button-action" @click="cancel">关闭</a-button>
+                    <a-button class="ivz-button-action" @click="add" type="primary">新增</a-button>
+                    <a-button class="ivz-button-action" @click="freshen" type="dashed">刷新</a-button>
+                </slot>
             </div>
         </a-drawer>
     </a-locale-provider>
@@ -33,15 +42,22 @@ export default {
     data () {
         return {
             zhCN,
+            oriModel: {},
             addMeta: null,
             visible: false,
-            tableMetas: null
+            tableMetas: null,
+            tableAliasMetas: [],
         }
     },
     created () {
-        this.$page.resolverCommonMetas(this.metas, this)
-        this.$page.initDefaultTableConfig(this.config.table, this)
-        this.tableMetas = this.$page.resolverTableMetas(this.metas, this.config.table, this)
+        this.$page.resolverCommonMetas(this.metas, this);
+        this.$page.initDefaultTableConfig(this.config.table, this);
+        this.tableMetas = this.$page.resolverTableMetas(this.metas, this.config.table, this, meta=>{
+            if(meta.tableAlias) {
+                this.tableAliasMetas.push(meta);
+            }
+            this.oriModel[meta.field] = this.$page.resolverMetaDefaultValue(meta);
+        })
     },
     mounted () {
         this.addMeta = this.actionMetas['Add']
@@ -51,15 +67,16 @@ export default {
             this.visible = true
         },
         add () {
-            let length = this.tableRef.data ? this.tableRef.data.length : 0
-            this.tableRef.actionHandle(this.addMeta, null, length)
+            let length = this.tableRef.data ? this.tableRef.data.length : 0;
+            let editModel = this.$utils.assignVueProperty({}, this.oriModel, this);
+            this.tableRef.actionHandle(this.addMeta, editModel, length)
         },
         cancel () {
-            this.visible = false
+            this.visible = false;
             this.tableRef.resetBackModel()
         },
         freshen () {
-            this.tableRef.query()
+            this.tableRef.query();
             this.tableRef.resetBackModel()
         },
         mountFinished (tableRef) {

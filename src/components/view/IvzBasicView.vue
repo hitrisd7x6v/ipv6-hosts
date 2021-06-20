@@ -2,18 +2,24 @@
     <div class="ivz-view ivz-basic-view ivz-container">
         <ivz-default-list ref="listRef" :table-metas="tableMetas" :table-config="tableConfig"
               :action-metas="actionMetas" :search-metas="searchMetas" :search-config="searchConfig"
-              :data="data" v-show="listView">
+              :data="data" v-show="listView" :table-alias-metas="tableAliasMetas">
             <template #search>
                 <slot name="search"></slot>
             </template>
             <template #action="{row, index}">
                 <slot name="action" :row="row" :index="index"></slot>
             </template>
+            <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
+                <slot :name="meta.tableAlias" :meta="meta" :value="value" :row="row" :index="index"></slot>
+            </template>
         </ivz-default-list>
         <ivz-default-form v-if="!listView" ref="formRef" :form-config="formConfig"
-              :form-group="formGroup" :action-metas="actionMetas">
-            <template #default>
+              :form-group="formGroup" :action-metas="actionMetas" :form-alias-metas="formAliasMetas">
+            <template #submit>
                 <slot name="submit"></slot>
+            </template>
+            <template v-for="meta in formAliasMetas" #[meta.alias]>
+                <slot :name="meta.alias" :meta="meta"></slot>
             </template>
         </ivz-default-form>
     </div>
@@ -31,17 +37,9 @@
         data () {
             return {}
         },
-        created () {
-            // 初始化表单实体对象
-            this.formConfig = this.config.form;
-            this.formGroup = this.$page.resolverFormMetas(this.metas, this.formConfig, this)
-        },
-        mounted () {
-
-        },
-        methods: {
-
-        }
+        created () { },
+        mounted () { },
+        methods: { }
     }
 </script>
 

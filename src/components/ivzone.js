@@ -18,8 +18,6 @@ import IvzTabForm from './form/IvzTabForm'
 import IvzTabsForm from './form/IvzTabsForm'
 import IvzModalForm from './form/IvzModalForm'
 import IvzDrawerEditTable from './table/IvzDrawerEditTable'
-import IvzSlotFormView from "@/components/view/IvzSlotFormView";
-import IvzSlotTableView from "@/components/view/IvzSlotTableView";
 import IvzDiyView from "@/components/view/IvzDiyView";
 
 // ivzGlobalConfig已经挂载到首页(index.js)的window对象上面
@@ -35,8 +33,6 @@ if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.component(IvzBasicView.name, IvzBasicView)
     window.Vue.component(IvzModalView.name, IvzModalView)
     window.Vue.component(IvzDrawerView.name, IvzDrawerView)
-    window.Vue.component(IvzSlotFormView.name, IvzSlotFormView)
-    window.Vue.component(IvzSlotTableView.name, IvzSlotTableView)
 
     window.Vue.component(IvzSearchForm.name, IvzSearchForm)
     window.Vue.component(IvzTabForm.name, IvzTabForm)
@@ -60,8 +56,6 @@ export default {
         Vue.component(IvzEditView.name, IvzEditView)
         Vue.component(IvzModalView.name, IvzModalView)
         Vue.component(IvzDrawerView.name, IvzDrawerView)
-        Vue.component(IvzSlotFormView.name, IvzSlotFormView)
-        Vue.component(IvzSlotTableView.name, IvzSlotTableView)
 
         // 表单组件
         Vue.component(IvzTabForm.name, IvzTabForm)

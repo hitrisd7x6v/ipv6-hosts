@@ -63,15 +63,18 @@
                             </li>
                             <li class="ivz-opera-col ivz-global-search">
                                 <a-auto-complete dropdownClassName="ivz-search-dropdown" :dropdownStyle="{width: '300px'}"
-                                         :dropdownMatchSelectWidth="true" style="width: 100%"
-                                         placeholder="输入要搜索的内容" :optionLabelProp="searchValue">
+                                         :dropdownMatchSelectWidth="true" style="width: 100%" optionLabelProp="value"
+                                         placeholder="输入要搜索的内容" :filterOption="completeFilter">
                                     <template slot="dataSource">
-                                        <a-select-opt-group>
+                                        <a-select-opt-group v-for="group in searchSource" :key="group.label">
                                             <span slot="label">
-                                                标题<a style="float: right">类型</a>
+                                                {{group.label}}<a style="float: right">类型</a>
                                             </span>
-                                            <a-select-option v-for="opt in searchSource" :key="opt.title" :value="opt.title">
-                                                {{opt.title}}<span style="float: right">{{opt.type}}</span>
+                                            <a-select-option v-for="item in group.children" :key="item.label" :value="item.label">
+                                                <span @click="completeSelect(group, item)" style="display: inline-block; width: 100%">
+                                                    {{item.label}}
+                                                    <span style="float: right">{{group.type}}</span>
+                                                </span>
                                             </a-select-option>
                                         </a-select-opt-group>
                                     </template>
@@ -97,9 +100,9 @@
                     </a-tabs>
                     <div class="ivz-task-opera right">
                         <a-dropdown placement="bottomLeft">
-                    <span>
-                      <ivz-icon type="iz-icon-more" size="18px"></ivz-icon>
-                    </span>
+                            <span>
+                              <ivz-icon type="iz-icon-more" size="18px"></ivz-icon>
+                            </span>
                             <a-menu slot="overlay" @click="taskBarCloseMoreOpera">
                                 <a-menu-item key="other">
                                     <ivz-icon type="iz-icon-close-other"></ivz-icon>
@@ -141,7 +144,11 @@ export default {
             avatarUrl: null,
             expandMode: 'single', // 菜单展开模式 (single || multi)
             searchValue: null,
-            searchSource: [], // 搜索框使用的数据源
+            searchSource: [
+                {label: '最近搜索', type: '菜单', call: () => {}, children: [
+                        {label: '组件', value: null}
+                    ]}
+            ], // 搜索框使用的数据源
             fixedSider: false, // 固定侧边栏
             isCollapsed: false,
             activityMenu: {url: ''}, // 激活的菜单
@@ -234,10 +241,6 @@ export default {
                         position = index
                         return false
                     }
-                    // this.taskBarData.splice(1, this.taskBarData.length - 1);
-                    // if(this.activityMenu != this.workMenu) {
-                    //     this.taskBarData.push(this.activityMenu);
-                    // }
                 })
                 this.taskBarData.splice(position + 1, this.taskBarData.length - position - 1)
                 this.taskBarData.splice(1, position - 1)
@@ -257,9 +260,20 @@ export default {
             } else if (this.expandMode === 'multi') {
                 this.openKeys = openKeys
             } else {
-                this.openKeys = openKeys
+                this.openKeys = openKeys;
                 this.$log.errorLog('菜单展开模式错误可选[single || multi]', '请检查系统配置参数')
             }
+        },
+        completeSelect(group, option) {
+            if(option && group.call) {
+                group.call(option);
+            } else {
+                this.$log.warningLog("注册的搜索事件中, 未指定回调函数：call"
+                    , "注册的时候设置e.g：call: ()=>{}", group)
+            }
+        },
+        completeFilter(value, option) {
+            return true;
         }
     }
 }

@@ -8,6 +8,9 @@
     <div id="app">
         <ivz-basic-view :metas="groupMetas" :action-metas="actionMetas"
                 :search-metas="searchMetas" :config="groupConfig" ref="ibv">
+            <template #name="{value, meta, row}">
+                <a-tag color="green">{{value}}</a-tag>
+            </template>
         </ivz-basic-view>
         <ivz-modal-form ref="mf" :metas="ModalMetas" :save-meta="saveMeta"
                         title="测试模态框"></ivz-modal-form>

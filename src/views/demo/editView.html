@@ -6,8 +6,12 @@
 </head>
 <body>
     <div id="app">
-        <ivz-edit-view :metas="mates" :action-metas="actionMetas"
-                :search-metas="searchMetas" :config="config"></ivz-edit-view>
+        <ivz-edit-view :metas="groupMetas" :action-metas="actionMetas"
+                :search-metas="searchMetas" :config="config">
+            <template #name="{value}">
+                {{value}}
+            </template>
+        </ivz-edit-view>
         <ivz-drawer-edit-table :action-metas="editActionMetas" :metas="mates" ref="det"
                :config="editConfig" :data="data" :height="330"></ivz-drawer-edit-table>
     </div>

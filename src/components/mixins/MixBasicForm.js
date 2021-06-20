@@ -22,20 +22,21 @@ export const MixBasicForm = {
             this.model = this.searchModel;
             this.$page.resolverMetas(this.searchMetas, this, meta => {
                 this.fieldMetaMap[meta.field] = meta;
-                this.$utils.assignProperty(this.oriModel, this.getMetaDefaultValue(meta))
-            })
+                this.$utils.assignProperty(this.oriModel, this.$page.resolverMetaDefaultValue(meta))
+            });
             this.$page.registerPageMetas(null, this.fieldMetaMap);
         } else if(this.$page.isEditForm(this.formConfig)) {
             this.$page.resolverGroup(this.formGroup, this, meta => {
-                this.fieldMetaMap[meta.field] = meta
-                this.$utils.assignProperty(this.oriModel, this.getMetaDefaultValue(meta))
-            })
+                this.fieldMetaMap[meta.field] = meta;
+                this.$utils.assignProperty(this.oriModel, this.$page.resolverMetaDefaultValue(meta))
+            });
+            this.$page.registerFormRef(this);
             this.$page.registerPageMetas(this.fieldMetaMap, null);
         } else {
             this.$log.errorLog("错误的表单类型, 可选值(search | edit)")
         }
         this.form = this.$form.createForm(this, {
-            name: 'ivzForm',
+            name: 'IvzForm',
             mapPropsToFields: () => { // 将model对象同步到表单
                 return this.syncModelToForm(this.model)
             },
@@ -43,6 +44,9 @@ export const MixBasicForm = {
         })
     },
     mounted () { },
+    beforeDestroy() {
+        this.$page.registerFormRef(null);
+    },
     methods: {
         viewForm (col) {
             if (typeof col['isForm'] === 'function') {
@@ -53,30 +57,12 @@ export const MixBasicForm = {
                 return col['isForm']
             }
         },
-        resetForm (callBack) {
-            if (callBack) callBack(this.form, this);
-            else {
-                this.form.resetFields();
-                this.$utils.assignProperty(this.model, this.oriModel)
-            }
-        },
-        getMetaDefaultValue (meta) {
-            let field = meta['field']
-            let split = field.split('.')
-            let oriVal = {}
-            let temp = oriVal
-            split.forEach((item, index, ori) => {
-                if (index === (ori.length - 1)) {
-                    temp[item] = meta['default']
-                } else {
-                    temp[item] = {}
-                    temp = temp[item]
-                }
-            });
-            return oriVal
+        resetForm (model) {
+            this.model = model;
+            this.form.resetFields();
         },
         mergeEditModel () {
-            let fieldsValue = this.form.getFieldsValue()
+            let fieldsValue = this.form.getFieldsValue();
             this.$utils.assignVueProperty(this.model, fieldsValue)
         },
         pressEnter (col) {
@@ -101,11 +87,15 @@ export const MixBasicForm = {
         validate () {
             return new Promise((resolve, reject) => {
                 this.form.validateFieldsAndScroll(((errors, values) => {
-                    if(errors) reject(errors)
+                    if(errors) reject(errors);
                     else resolve(values)
                 }))
             })
         },
+        /**
+         * 此方法将会触发change事件
+         * @param param
+         */
         setFieldsValue(param) {
             // 如果是双向绑定, 则此方法无效
             if(param && this.bindType == 'void') {

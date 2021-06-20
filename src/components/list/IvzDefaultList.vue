@@ -9,6 +9,9 @@
             <template #action="{row, index}">
                 <slot name="action" :row="row" :index="index"></slot>
             </template>
+            <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
+                <slot :name="meta.tableAlias" :value="value" :row="row" :index="index"></slot>
+            </template>
         </ivz-basic-table>
     </div>
     </a-locale-provider>

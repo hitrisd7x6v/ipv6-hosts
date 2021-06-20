@@ -192,8 +192,8 @@ export default {
     groupConfig: groupConfig,
     groupMetas: [
         {title: '基础信息', metas: [
-                {field: 'name', title: '产品名称', type: 'text', required: true, align: 'left'},
-                {field: 'area', title: '产地', type: 'stree', url: '/test/stree', min: 2,
+                {field: 'name', title: '产品名称', tableAlias: 'name', alias: 'formname', type: 'text', required: true, align: 'left'},
+                {field: 'area', title: '产地', type: 'stree', url: '/test/stree', min: 2, editable: true,
                     config: {
                         showSearch: true,
                         treeCheckable: true

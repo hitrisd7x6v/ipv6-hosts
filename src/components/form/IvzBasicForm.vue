@@ -10,7 +10,8 @@
                         <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
                             <a-form-item :label="col.title" :label-col="col.config.labelCol" :wrapper-col="col.config.wrapperCol"
                                  :colon="izColon" :has-feedback="col.config.hasFeedback" :extra="col.config.extra">
-                                <slot :name="col.field">
+                                <slot v-if="col.alias" :name="col.alias"></slot>
+                                <template v-else>
                                     <a-select v-if="col.type=='select'" v-decorator="[col.field, col['decorate']]" :size="formSize"
                                           :allowClear="col.clear" :maxTagCount="col.config.maxTagCount" :placeholder="col.placeholder"
                                           dropdownClassName="iz-select-class" :mode="col.config.mode" :tokenSeparators="col.config.tokenSeparators"
@@ -95,7 +96,7 @@
                                          @press-enter="(e)=>col.event.pressEnter(e, model)" :disabled="disabledHandle(col)"
                                          :blur="col.event.blur" :focus="col.event.focus">
                                     </a-input>
-                                </slot>
+                                </template>
                             </a-form-item>
                         </a-col>
                     </template>
@@ -190,7 +191,7 @@
                     this.$utils.deepSetValue(key, value, model);
                     meta.event.change(value, param)
                 } else if (value instanceof Object) { // 如果是对象说明field是a.b格式
-                    model[key] = model[key] || {}
+                    model[key] = model[key] || {};
                     this.syncFormChangeEvent(value, field + '.', model[key]) // 2. 值存在, 继续迭代设置值
                 } else {
                     this.$utils.deepSetValue(key, value, model);
@@ -201,7 +202,7 @@
         },
         // 重置表单值对象
         setEditModel (newModel) {
-            this.model = this.$utils.assignProperty({}, newModel)
+            this.model = this.$utils.assignProperty({}, newModel);
             this.form.updateFields()
         }
     }

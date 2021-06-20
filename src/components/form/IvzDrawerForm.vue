@@ -1,8 +1,9 @@
 <template>
     <a-drawer ref="drawerRef" :width="drawerWidth" @close="drawerClose"
-          :wrapStyle="{overflow: 'auto'}" :placement="placement" :visible="visible"
-          :closable="false" :mask-closable="maskClosable" :mask="mask" :mask-style="{}"
-          wrap-class-name="ivz-drawer-form-wrap" :height="height" :handle="handle">
+          :wrapStyle="{overflow: 'auto'}" :placement="placement"
+          :closable="false" :mask-closable="maskClosable" :mask="mask"
+          wrap-class-name="ivz-drawer-form-wrap" :height="height" :handle="handle"
+              :destroyOnClose="true" :mask-style="{}" :visible="visible">
         <a-row slot="title" type="flex" align="middle" justify="space-between" style="color: #000000">
             <a-col span="12" style="padding-left: 12px; font-size: 17px">
                 <ivz-icon :type="operaMeta.icon" style="font-size: 17px"></ivz-icon>
@@ -37,13 +38,6 @@
             placement: {type: String, default: 'right'},
             drawerClose: {type: Function, default: () => {}}
         },
-        watch: {
-            visible (newVal) {
-                if (newVal && this.basicFormRef) {
-                    this.initEditModel()
-                }
-            }
-        },
         data () {
             return {
                 mask: false,
@@ -63,14 +57,8 @@
                 }
             }
         },
-        mounted () {
-            this.$refs['drawerRef'].$nextTick(() => {
-                this.basicFormRef = this.$refs['basicFormRef']
-            })
-        },
-        methods: {
-
-        }
+        mounted () { },
+        methods: { }
     }
 </script>
 

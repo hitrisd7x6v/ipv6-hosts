@@ -182,7 +182,7 @@ export default {
                 menu['url'] = uri;
                 this.urlMenuMap[menu.url] = menu;
             } else if (menu['children']) {
-                this.rootKeys.push(menu['id'])
+                this.rootKeys.push(menu['id']);
                 this.resolverMenuMap(menu['children'])
             }
         })

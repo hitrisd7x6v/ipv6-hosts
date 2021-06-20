@@ -44,8 +44,8 @@ body,.ivz-index-layout::before {
     float: right;
 }
 .ivz-global-search {
-    min-width: 180px;
-    max-width: 240px;
+    min-width: 236px;
+    max-width: 280px;
     margin-right: 18px;
 }
 .ivz-opera-col.ivz-global-search:hover{
@@ -166,7 +166,7 @@ body,.ivz-index-layout::before {
     width: 100%;
     flex-grow: 1;
     z-index: 0;
-    background-color: #eaedf1;
+    background-color: rgba(243, 243, 243, 0.93);
 }
 .ivz-avatar {
     height: 148px;
@@ -257,7 +257,7 @@ body,.ivz-index-layout::before {
     background: rgba(255, 255, 255, 0.4);
 }
 .ant-menu-submenu .ant-menu-sub {
-    background: rgba(29, 29, 29, 0.1)!important;
+    background: rgba(181, 181, 181, 0.12)!important;
 }
 .ant-menu-inline .ant-menu-submenu-title {
     font-size: 16px!important;

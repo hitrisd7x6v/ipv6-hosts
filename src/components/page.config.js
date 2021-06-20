@@ -24,7 +24,6 @@ VueRouter.prototype.push = function push (location) {
         return routerPush.call(this, location).catch(error => {
             if(!window.location.href.includes('/IvzSys/void'))
                 routerPush.call(this, '/IvzSys/void')
-            console.log(error)
         })
     } else { // 其他路径将会重新打开一个页面
         cacheApi.openMenu(location)
@@ -40,14 +39,11 @@ const router = new VueRouter(
     }
 )
 
-let Metas = {}, SearchMetas = {};
 Vue.prototype.$nav = router.push;
 Vue.prototype.$cache = cacheApi; // 父页面缓存
 Vue.prototype.formSize = 'default'; // 表单尺寸
 Vue.prototype.izCtx = cacheApi.izCtx;
 Vue.prototype.izColon = cacheApi.izColon; // 是否显示冒号
-Vue.prototype.$getMeta = (key) => { return Metas[key]};
-Vue.prototype.$getSearchMeta = (key) => { return SearchMetas[key]};
 Vue.prototype.$getQueryParams = () => { return cacheApi.currentMenu['IvzQueryParams'] };
 Vue.prototype.$getModalContainer = () => { return cacheApi.modalContainer() }; // 模态框插入的位置
 Vue.prototype.$getActionMates = (url) => { return cacheApi.getActionMates(url) }; // 当前页面的元数据
@@ -56,18 +52,21 @@ Vue.prototype.$getActionMate = (action, options) => { return cacheApi.getActionM
 export default {
     izField: 'id', // 唯一字段, 默认值
     router: router, // 每個頁面路由
+    metas: {}, // 编辑元数据
+    searchMetas: {}, // 搜索元数据
+    vueRef: {}, // 页级视图vue引用
+    oriModel: {}, // 编辑表单初始值
     queryField: 'rows', // 数据列表字段
     pageNumField: 'current', // 页码字段
     pageSizeField: 'size', // 页数字段
     viewFormat: 'YYYY-MM-DD', // 表格显示日期格式
     menu: cacheApi.currentMenu, // 每个页面对应的菜单
     dateFormat: 'YYYY-MM-DD hh:mm:ss', // 表单默认时间格式
-    viewType: '', // 显示的组件可选值：table || form
     gutter: {xs: 0, sm: 10, md: 20, lg: 40, xl: 60, xxl: 80},
     labelCol: {span: 8}, // offset: 0, pull: 0, push: 0, order: 0
     wrapperCol: {span: 14}, // offset: 0, pull: 0, push: 0, order: 0
     dateFormatter (val, row, col) {
-        let metaConfig = col['config']
+        let metaConfig = col['config'];
         return !val ? '' : moment(val).format(metaConfig['viewFormat'])
     },
     // 模态框默认可选项
@@ -112,9 +111,43 @@ export default {
 
         whitespace: false // 必选时，空格是否会被视为错误
     },
+    getMeta(key) {
+        return this.metas[key];
+    },
+    getSearchMeta(key) {
+        return this.searchMetas[key];
+    },
+    getOriModel(vue) {
+        return vue.$utils.assignVueProperty({}, this.oriModel, vue);
+    },
+    bind(params) {
+        if(!params) return;
+
+        if(this.getFormRef()) {
+            this.getFormRef().setFieldsValue(params);
+        } else {
+            console.warn("bind只能在编辑页面使用")
+        }
+    },
+    getViewRef() {
+        return this.vueRef['viewRef'];
+    },
+    getFormRef() {
+        return this.vueRef['formRef'];
+    },
+    getListRef() {
+        return this.vueRef['listRef'];
+    },
+    registerPageRef(viewRef, listRef) {
+        if(viewRef) this.vueRef['viewRef'] = viewRef;
+        if(listRef) this.vueRef['listRef'] = listRef;
+    },
+    registerFormRef(formRef) {
+        this.vueRef['formRef'] = formRef;
+    },
     registerPageMetas (metas, searchMetas) {
-        if(metas) Metas = metas;
-        if(searchMetas) SearchMetas = searchMetas;
+        if(metas) this.metas = metas;
+        if(searchMetas) this.searchMetas = searchMetas;
     },
     registerPosition (type, mate, mates, moreMates) {
         if (type === 'table') { // 表格元数据
@@ -205,9 +238,7 @@ export default {
      */
     resolverCommonMetas (metas, vue) {
         this.resolverMetas(metas, vue, (meta) => {
-            if (meta.type !== 'action') {
-                this.initCommonMate(meta, vue)
-            }
+            this.initCommonMate(meta, vue)
         })
     },
     /**
@@ -296,6 +327,21 @@ export default {
             }
         }
     },
+    resolverMetaDefaultValue (meta) {
+        let field = meta['field']
+        let split = field.split('.')
+        let oriVal = {}
+        let temp = oriVal
+        split.forEach((item, index, ori) => {
+            if (index === (ori.length - 1)) {
+                temp[item] = meta['default']
+            } else {
+                temp[item] = {}
+                temp = temp[item]
+            }
+        });
+        return oriVal
+    },
     /**
      * 解析表单 元数据
      * @param metas
@@ -328,7 +374,7 @@ export default {
                         }
                         doResolverFormMetas([meta], vue, callBack, 'mate', group)
                     } else {
-                        if (meta.type !== 'action' && meta.type !== 'empty') {
+                        if (meta.type !== 'action') {
                             group['metas'].push(meta)
                             this.initFormMate(meta, formConfig, vue)
                             if (callBack) callBack(meta, metas)
@@ -635,7 +681,9 @@ export default {
     },
     initCommonMate (mate, _this) {
         // 已经解析过, 无需再次解析
-        if (Utils.isResolveCommon(mate)) return
+        if (Utils.isResolveCommon(mate)) return;
+
+        if (mate.type == 'action') return;
 
         // 合并默认配置
         if (!mate.config) _this.$set(mate, 'config', {})
@@ -758,7 +806,7 @@ export default {
         // 初始化默认日期配置
         // usable 是可以选择的时间范围[min, max] | [min, null] | [null, max]
         // quick是快捷时间选项 可以是boolean类型和对象, 如果是Boolean类型则使用默认快捷选项
-        if (mate.type === 'date' || mate.type === 'month' || mate.type === 'time' || mate.type === 'week' || mate.type === 'dateRange') {
+        if (_this.$utils.isDate(mate.type)) {
             if (mate['quick']) { // 如果指定选择的时间范围, 则不添加快捷选择项
                 _this.$set(mate, 'ranges', this.quickDate())
             }
@@ -780,8 +828,6 @@ export default {
             if (!mate['format']) _this.$set(metaConfig, 'format', this.dateFormat) // 日期表单显示格式
             if (!mate.formatter) _this.$set(mate, 'formatter', this.dateFormatter)
             if (!mate['viewFormat']) _this.$set(metaConfig, 'viewFormat', this.viewFormat) // 日期文本显示格式
-        } else if (mate['afterMeta']) {
-            this.initCommonMate(mate['afterMeta'], _this)
         }
         mate['resolveType'] = mate['resolveType'] ? mate['resolveType'] + '1' : '1' // 说明此字段已经完成common解析
     },
@@ -805,8 +851,17 @@ export default {
             if (!item.width) _this.$set(item, 'width', 136) // 默认宽度为136px
         }
         if (item['formatter']) { // 只要是存在需要重新格式化数据的字段, 在表里面全部使用slot
-            _this.$set(item, 'scopedSlots', {customRender: item.field})
+            item['tableAlias'] = item.tableAlias || item.field;
+            _this.$set(item, 'scopedSlots', {customRender: item.tableAlias})
+        } else if(item['editable']) { // 如果是可编辑的也需要重新格式化
+            _this.$set(item, 'formatter', (val) => val)
+            item['tableAlias'] = item.tableAlias || item.field;
+            _this.$set(item, 'scopedSlots', {customRender: item.tableAlias})
+        } else if(item['tableAlias']) { // 如果包含类型别名也需要重新格式化
+            _this.$set(item, 'formatter', (val) => val)
+            _this.$set(item, 'scopedSlots', {customRender: item.tableAlias})
         }
+
         // 默认的字段值
         if (item.width) config.scroll.x += parseInt(item.width)
         if (!item.align) _this.$set(item, 'align', 'center') // 默认居中对齐

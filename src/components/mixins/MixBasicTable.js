@@ -34,9 +34,7 @@ export const MixBasicTable = {
             if (!this.$utils.isResolveTable(meta)) {
                 this.$log.errorLog('表格元数据未解析', '调用解析方法解析：this.$utils.resolverTableMetas(tableMetas, config, vue)', meta)
             }
-            // 如果是需要重新格式化数据的组件
-            // initCommonMate方法必须在initTableMate之前调用
-            if (meta['formatter']) {
+            if (meta['tableAlias']) {
                 this.slotMetas.push(meta)
             }
         })
@@ -83,6 +81,9 @@ export const MixBasicTable = {
             let disabled = meta['disabled']
             if (disabled && disabled(row)) return 'ivz-tag-disabled'
         },
+        getSlotMetas() {
+            return this.slotMetas;
+        },
         getOperaMates () {
             return this.mainMetas
         },
@@ -121,16 +122,20 @@ export const MixBasicTable = {
             let selectionRows = row || this.getSelectionRows();
             switch(mate['id']) {
                 case 'view': this.viewActionHandle(); break;
-                case 'add': this.addActionHandle(mate); break;
+                case 'add': this.addActionHandle(mate, row, index); break;
                 case 'del': this.delActionHandle(mate, selectionRows, submit); break;
                 case 'edit': this.editActionHandle(mate, row); break;
+                case 'save': this.saveActionHandle(mate, row); break;
+                case 'cancel': this.cancelActionHandle(mate, row); break;
                 default: this.otherActionHandle(mate, selectionRows, submit);
             }
         },
         viewActionHandle () {this.query();},
-        addActionHandle (meta) { },
+        addActionHandle (meta, row, index) { },
         editActionHandle (meta, row) { },
-        delActionHandle (mate, row, submit) { },
-        otherActionHandle (mate, row, submit) { },
+        saveActionHandle (meta, row) { },
+        delActionHandle (meta, row, submit) { },
+        cancelActionHandle(meta, row) { },
+        otherActionHandle (meta, row, submit) { },
     }
 }

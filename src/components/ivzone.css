@@ -1,5 +1,5 @@
 html, body {
-    background-color: #fbfbfb !important;
+    background-color: rgba(255, 255, 255, 0) !important;
 }
 /*容器样式*/
 .ivz-container {
