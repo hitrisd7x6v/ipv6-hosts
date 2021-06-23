@@ -151,8 +151,60 @@ export default {
         },
         table: { // 表格配置
             isInit: true, // 是否已经初始化
-            mountedFinished: (tableVue) => {} // 表格组件更新完成
+            size: 'small', // 表的默认尺寸 default | middle | small
+            bordered: true, // 显示边框
+            indentSize: 16, // 树形表格子行缩进的长度
+            pagination: false, // 默认不显示
+            position: 'bottom', // 分页器显示的位置 'top' | 'bottom' | 'both'
+            queryField: 'rows', // 查询字段
+            scroll: {x: 0, y: 0}, // 表格的宽高
+            rowKey: "id", // 默认唯一标识
+            expandedRowKeys: null, // 可控制的展开行的key
+            expandRowByClick: false, // 是否点击展开行
+            defaultExpandAllRows: true, // 默认展开所有行,
+            defaultExpandedRowKeys: null, // 要展开行的数组
+            childrenColumnName: 'children', // 树形表格的列名
+            rowClassName: () => 'iz-table-row', // 表格行列名
+            mountedFinished: (tableVue) => {}, // 表格组件更新完成
+            locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'} //
         }
+    },
+    defaultConfig: {
+        table: {
+            isInit: true, // 是否已经初始化
+            size: 'small', // 表的默认尺寸 default | middle | small
+            bordered: true, // 显示边框
+            indentSize: 16, // 树形表格子行缩进的长度
+            pagination: false, // 默认不显示
+            position: 'bottom', // 分页器显示的位置 'top' | 'bottom' | 'both'
+            queryField: 'rows', // 查询字段
+            scroll: {x: 0, y: 0}, // 表格的宽高
+            rowKey: "id", // 默认唯一标识
+            expandedRowKeys: null, // 可控制的展开行的key
+            expandRowByClick: false, // 是否点击展开行
+            defaultExpandAllRows: true, // 默认展开所有行,
+            defaultExpandedRowKeys: null, // 要展开行的数组
+            childrenColumnName: 'children', // 树形表格的列名
+            rowClassName: () => 'iz-table-row', // 表格行列名
+            mountedFinished: (tableVue) => {}, // 表格组件更新完成
+            locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'} //
+        },
+        form: {
+            gutter: 2,
+            isInit: true, // 是否已经初始化
+            column: null, // 编辑表单列, 如果type是default则为1 group则为3
+            type: 'default', // 表单布局类型 default || group
+            align: 'middle', // 垂直对齐方式
+            justify: 'start', // 水平对齐方式
+            formType: 'edit', // 编辑类型
+            bindType: null, // 数据绑定类型, both(双向绑定), void(不绑定)
+            editSource: 'local', // 编辑时的数据来源, local(本地) || remote(远程)
+            layout: 'horizontal',
+            hasFeedback: true, // 校验图标, 只有再需要有校验规则的时候才有
+            hideRequiredMark: false, // 是否隐藏必填标志
+            submitTip: '数据提交中...',
+            mountedFinished: (formVue) => {} // 表组件更新完成
+        }, // 编辑表单配置
     },
     /* 获取菜单 */
     getResources () {
@@ -195,7 +247,7 @@ export default {
         }
         return Object.assign({}, actionMate, option)
     },
-    getActionMates (url) {
+    getActionMates () {
         let points = this.currentMenu['children'] // 返回当前菜单的功能点
         if (Utils.isBlank(points)) {
             Logger.warningLog('当前视图功能点不存在', '新增要操作的功能点', this.currentMenu)

@@ -1,19 +1,19 @@
 <!-- 默认列表页, 有搜索组件和表组件组成 -->
 <template>
     <a-locale-provider :locale="zhCN">
-    <div class="ivz-list ivz-default-list">
-        <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
-            :action-metas="actionMetas" :search-metas="searchMetas"></ivz-page-search>
-        <ivz-basic-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
-                :data="data" :search-model="searchModel" :action-metas="actionMetas">
-            <template #action="{row, index}">
-                <slot name="action" :row="row" :index="index"></slot>
-            </template>
-            <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
-                <slot :name="meta.tableAlias" :value="value" :row="row" :index="index"></slot>
-            </template>
-        </ivz-basic-table>
-    </div>
+        <div class="ivz-list ivz-default-list">
+            <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
+                :action-metas="actionMetas" :search-metas="searchMetas"></ivz-page-search>
+            <ivz-basic-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
+                    :data="data" :search-model="searchModel" :action-metas="actionMetas">
+                <template #action="{row, index}">
+                    <slot name="action" :row="row" :index="index"></slot>
+                </template>
+                <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
+                    <slot :name="meta.tableSlot" :value="value" :row="row" :index="index"></slot>
+                </template>
+            </ivz-basic-table>
+        </div>
     </a-locale-provider>
 </template>
 

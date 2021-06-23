@@ -1,10 +1,11 @@
 import Qs from 'qs'
 import axios from 'axios'
 import Logger from './logger.utils'
+import Global from '../components/global.config' // 全局配置
 
 const $http = axios.create({
     timeout: 20000,
-    baseURL: window.izCtx,
+    baseURL: Global.izCtx,
     headers: {
         Authorization: 'session', // 授权类型为 session
         'x-requested-with': 'XMLHttpRequest' // 是否是ajax请求
@@ -28,15 +29,16 @@ $http.interceptors.response.use(
         // 这里根据后端提供的数据进行对应的处理
         let data = response.data
         if (data.code === 500) {
-            Logger.errorLog(data);
-            throw new Error(data.message)
+            Logger.errorNELog('响应失败', '请检查服务端接口', data);
+            return Promise.reject(data.message)
         } else if (data.code === 200) {
             let datum = data['data'];
             datum['IzMsg'] = data['message'];
             datum['IzCode'] = data['code'];
             return datum
         } else {
-            throw new Error(`未知的错误状态：${data}`)
+            Logger.errorNELog('响应失败', '未知情况', response);
+            return Promise.reject(`糟糕, 未知错误！`)
         }
     },
     error => { // 响应错误处理

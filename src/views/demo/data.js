@@ -192,7 +192,7 @@ export default {
     groupConfig: groupConfig,
     groupMetas: [
         {title: '基础信息', metas: [
-                {field: 'name', title: '产品名称', tableAlias: 'name', alias: 'formname', type: 'text', required: true, align: 'left'},
+                {field: 'name', title: '产品名称', tableSlot: 'name', formSlot: 'fname', required: true, align: 'left'},
                 {field: 'area', title: '产地', type: 'stree', url: '/test/stree', min: 2, editable: true,
                     config: {
                         showSearch: true,
@@ -210,7 +210,7 @@ export default {
             ]
         },
         {title: '产品属性', metas: [
-                {field: 'spec', title: '规格', type: 'checkbox', dictType: 'spec', isTable: false},
+                {field: 'spec', title: '规格', type: 'checkbox', dictType: 'spec'},
                 {field: 'cat', title: '产品类别', type: 'select', data: productCat, required: true, min: 2,
                      config: {mode: 'multiple'}},
                 {field: 'type', title: '产品类型', type: 'cascade', data: productType, formatter: (val, row, col, text) => {

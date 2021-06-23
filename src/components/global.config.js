@@ -4,11 +4,13 @@ import Utils from '../utils/basic.utils'
 let defaultGlobalConfig = {
     izCtx: '',
     izStx: '',
+    envUrl: '/env', // 获取环境配置Url
+    loginUrl: '/login', // 登录地址
+    captchaUrl: '/captcha', // 验证码地址
+    dictUrl: '/core/dictData/listByType', // 获取字典数据url
+    resourcesUrl: '/resources', // 获取菜单资源Url
     dictLabelField: 'label', // 字典名称字段
     dictValueField: 'value', // 字典值字段
-    envUrl: '/framework/env', // 获取环境配置Url
-    dictUrl: '/core/dictData/listByType', // 获取字典数据url
-    resourcesUrl: '/framework/resources', // 获取菜单资源Url
     iconUrl: '//at.alicdn.com/t/font_1174643_k7u490ljfw9.js' // 图标链接
 }
 

@@ -49,6 +49,7 @@
   </div>
 </template>
 <script>
+    import Global from "@/components/global.config"
 export default {
   name: 'Login',
   data () {
@@ -64,7 +65,8 @@ export default {
         errMsg: '',
         class: 'iz-login-tip-error',
         izCaptcha: false,
-        captchaImg: this.izCtx + '/framework/captcha'}
+        captchaImg: Global.captchaUrl
+      }
     }
   },
   created: function () {
@@ -86,10 +88,10 @@ export default {
       this.form.validateFieldsAndScroll((err, user) => {
         if (!err) {
           this.loginModel.loading = true
-          this.$http.post(this.izCtx + '/framework/login', user)
+          this.$http.post(Global.loginUrl, user)
             .then((resp) => {
               this.$nextTick(() => {
-                location.href = this.izCtx + resp.successUrl
+                location.href = this.izCtx + resp['successUrl']
               })
             }).catch(reason => {
               this.clickImg()

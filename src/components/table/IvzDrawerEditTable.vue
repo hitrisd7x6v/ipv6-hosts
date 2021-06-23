@@ -50,13 +50,13 @@ export default {
         }
     },
     created () {
-        this.$page.resolverCommonMetas(this.metas, this);
-        this.$page.initDefaultTableConfig(this.config.table, this);
-        this.tableMetas = this.$page.resolverTableMetas(this.metas, this.config.table, this, meta=>{
+        this.$resolver.resolverCommonMetas(this.metas, this);
+        this.$resolver.initDefaultTableConfig(this.config.table, this);
+        this.tableMetas = this.$resolver.resolverTableMetas(this.metas, this.config.table, this, meta=>{
             if(meta.tableAlias) {
                 this.tableAliasMetas.push(meta);
             }
-            this.oriModel[meta.field] = this.$page.resolverMetaDefaultValue(meta);
+            this.$resolver.resolverMetaDefaultValue(meta, this.oriModel);
         })
     },
     mounted () {

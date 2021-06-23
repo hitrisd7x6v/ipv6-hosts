@@ -15,10 +15,12 @@ const Logger = {
     },
 
     errorLog (title, desc, arg) {
-        console.error(this.getLogContent('error', title, desc, arg))
+        console.error(this.getLogContent('error', title, desc, arg));
         throw new Error(title)
     },
-
+    errorNELog(title, desc, arg) {
+        console.error(this.getLogContent('error', title, desc, arg));
+    },
     warningLog (title, desc, arg) {
         console.warn(this.getLogContent('warning', title, desc, arg))
     }

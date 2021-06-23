@@ -1,5 +1,3 @@
-import PageOptions from "@/components/page.config";
-
 export const MixBasicTable = {
     props: {
         data: {type: Array, default: null},
@@ -34,7 +32,7 @@ export const MixBasicTable = {
             if (!this.$utils.isResolveTable(meta)) {
                 this.$log.errorLog('表格元数据未解析', '调用解析方法解析：this.$utils.resolverTableMetas(tableMetas, config, vue)', meta)
             }
-            if (meta['tableAlias']) {
+            if (meta['tableSlot']) {
                 this.slotMetas.push(meta)
             }
         })

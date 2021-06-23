@@ -22,6 +22,12 @@ export const MixPageForm = {
     },
     created () {
         this.saveMeta = this.actionMetas['Save'];
+        let actionMeta = this.$page.getStore("actionMeta");
+        if(actionMeta.id == 'add') {
+            this.operaMeta = this.actionMetas['Add']
+        } else if(actionMeta.id == 'edit') {
+            this.operaMeta = this.actionMetas['Edit'];
+        }
     },
     mounted () {
         this.formConfig.mountedFinished(this)
@@ -32,9 +38,8 @@ export const MixPageForm = {
             this.initEditModel();
         },
         initEditModel () {
-            if (this.$route.path == '/IvzSys/edit') {
+            if (this.actionMetas.Edit == this.operaMeta) {
                 this.queryParams = this.$route.query;
-                this.operaMeta = this.actionMetas.Edit
 
                 this.title = this.formConfig.editTitle
                     ? this.formConfig.editTitle : this.operaMeta['label'];
@@ -45,9 +50,7 @@ export const MixPageForm = {
                 } else { // 新增的数据从表单对象获取
                     this.getDetail(this.queryParams)
                 }
-            } else if(this.$route.path == '/IvzSys/add') {
-                this.operaMeta = this.actionMetas.Add
-
+            } else if(this.actionMetas.Add == this.operaMeta) {
                 this.title = this.formConfig.addTitle
                     ? this.formConfig.addTitle : this.operaMeta['label'];
 
@@ -58,7 +61,8 @@ export const MixPageForm = {
             }
         },
         getDetail (params) {
-            if (!this.operaMeta) return this.$log.errorLog('缺失编辑元数据', '新增编辑功能点：Edit', this.actionMetas)
+            if (!this.operaMeta) return this.$log.errorLog('缺失编辑元数据'
+                , '新增编辑功能点：Edit', this.actionMetas)
 
             this.operaMeta.callBack(params).then(resp => {
                 this.spinning = true
@@ -66,7 +70,6 @@ export const MixPageForm = {
                 let resolve = this.$utils.getPromiseResolve(resp)
                 this.$http.get(this.operaMeta.url, {params: params}).then(data => {
                     this.basicFormRef.setEditModel(data.detail)
-                    this.$msg.defaultSuccessNotify(resolve, data, this, params)
                 }).catch(reason => {
                     this.$msg.defaultFailNotify(resolve, reason, this, params)
                 }).finally(() => { this.spinning = false })

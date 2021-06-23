@@ -11,8 +11,8 @@
             <a-spin :tip="loadingText" :spinning="spinning">
                 <ivz-basic-form ref="basicFormRef" @mountedFinished="mountedFinished"
                     :form-group="formGroup" :bind-type="formConfig.bindType" :form-config="formConfig">
-                    <template v-for="meta in formAliasMetas" #[meta.alias]>
-                        <slot :name="meta.alias"></slot>
+                    <template v-for="meta in formAliasMetas" #[meta.formSlot]>
+                        <slot :name="meta.formSlot"></slot>
                     </template>
                 </ivz-basic-form>
             </a-spin>

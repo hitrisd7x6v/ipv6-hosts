@@ -11,30 +11,24 @@ export const MixBasicForm = {
 
     },
     data () {
+        let oriModel = this.$page.oriModel;
         return {
             model: {}, // 当前编辑的表单对象
-            oriModel: {}, // 原始表单字段对象,
+            oriModel: oriModel, // 原始表单字段对象,
             fieldMetaMap: {}
         }
     },
     created () {
         if(this.$page.isSearchForm(this.formConfig)) {
             this.model = this.searchModel;
-            this.$page.resolverMetas(this.searchMetas, this, meta => {
-                this.fieldMetaMap[meta.field] = meta;
-                this.$utils.assignProperty(this.oriModel, this.$page.resolverMetaDefaultValue(meta))
-            });
-            this.$page.registerPageMetas(null, this.fieldMetaMap);
+            this.fieldMetaMap = this.$page.searchFieldMetaMap;
         } else if(this.$page.isEditForm(this.formConfig)) {
-            this.$page.resolverGroup(this.formGroup, this, meta => {
-                this.fieldMetaMap[meta.field] = meta;
-                this.$utils.assignProperty(this.oriModel, this.$page.resolverMetaDefaultValue(meta))
-            });
             this.$page.registerFormRef(this);
-            this.$page.registerPageMetas(this.fieldMetaMap, null);
+            this.fieldMetaMap = this.$page.editFieldMetaMap;
         } else {
             this.$log.errorLog("错误的表单类型, 可选值(search | edit)")
         }
+
         this.form = this.$form.createForm(this, {
             name: 'IvzForm',
             mapPropsToFields: () => { // 将model对象同步到表单
@@ -152,11 +146,14 @@ export const MixBasicForm = {
                 else field += key
 
                 let value = values[key]
-                let meta = this.fieldMetaMap[field]
-                let params = {model: this.model, meta, bind: this.setFieldsValue}
+                let meta = this.fieldMetaMap[field];
+                let onChange = (e, v) => {};
+                if(meta && meta.event && meta.event.change)
+                    onChange = meta.event.change;
+                let params = {model: this.model, meta, bind: this.setFieldsValue};
                 if (!value) {
                     this.$utils.deepSetValue(key, value, model);
-                    meta.event.change(value, params)
+                    onChange(value, params)
                 } else if (this.isArray(value)) { // 如果是数组说明field不是a.b格式
                     if (this.$utils.isDate(meta['type'])) { // 属于日期格式, 需要格式化
                         let temp = [], format = meta['config'].format;
@@ -168,17 +165,17 @@ export const MixBasicForm = {
                         value = temp
                     }
                     this.$utils.deepSetValue(key, value, model);
-                    meta.event.change(value, params)
+                    onChange(value, params)
                 } else if (moment.isMoment(value)) { // 属于日期格式, 格式化
                     let format = meta['config'].format
                     this.$utils.deepSetValue(key, value.format(format), model);
-                    meta.event.change(model[key], params)
+                    onChange(model[key], params)
                 } else if (this.isObject(value)) { // 如果是对象说明field是a.b格式
                     if (!model[key]) this.$set(model, key, {}) // 1. 值不存在, 直接赋值为{}, 然后继续迭代
                     this.syncFormToModel(model[key], value, field + '.') // 2. 值存在, 继续迭代设置值
                 } else {
                     this.$utils.deepSetValue(key, value, model);
-                    meta.event.change(value, params)
+                    onChange(value, params)
                 }
                 field = ''
             })

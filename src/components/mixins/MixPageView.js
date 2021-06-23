@@ -21,7 +21,6 @@ export const MixPageView = {
             tableConfig: null, // 表格配置
             searchConfig: null, // 搜索表单配置
             formAliasMetas: [],
-            tempAliasMetas: [],
             tableAliasMetas: [],
         }
     },
@@ -35,10 +34,10 @@ export const MixPageView = {
             this.listView = false
         }
         // 初始化页面组件的默认配置
-        this.$page.initPageDefaultConfig(this.config, this)
+        this.$page.initPageDefaultConfig(this.config, this);
 
-        this.$page.resolverCommonMetas(this.metas, this)
-        this.$page.resolverCommonMetas(this.searchMetas, this)
+        this.$page.resolverCommonMetas(this.metas, this);
+        this.$page.resolverCommonMetas(this.searchMetas, this);
 
         // 解析搜索表单元数据
         this.searchConfig = this.config.search;
@@ -46,32 +45,22 @@ export const MixPageView = {
 
         // 初始化表单实体对象
         this.formConfig = this.config.form;
-        this.formGroup = this.$page.resolverFormMetas(this.metas, this.formConfig, this, (meta) => {
-            if(meta.alias) {
-                this.tempAliasMetas.push(meta);
-            }
-            this.$utils.assignProperty(this.$page.oriModel, this.$page.resolverMetaDefaultValue(meta));
-        });
+        this.formAliasMetas = this.$page.formSlotMetas;
+        this.formGroup = this.$page.resolverFormMetas(this.metas, this.formConfig, this);
 
         // 解析表格元数据
         this.tableConfig = this.config.table;
-        this.tableMetas = this.$page.resolverTableMetas(this.metas, this.tableConfig, this, (meta) => {
-            if(meta.tableAlias) {
-                this.tableAliasMetas.push(meta)
-            }
-        })
+        this.tableAliasMetas = this.$page.tableSlotMetas;
+        this.tableMetas = this.$page.resolverTableMetas(this.metas, this.tableConfig, this)
     },
     mounted () {
-        this.tempAliasMetas.forEach((item, index) => {
-            if(!this.$scopedSlots[item.alias]) {
-                this.$log.warningLog(`字段${item.field}设置了插槽别名${item.alias}
+        this.formAliasMetas.forEach((item, index) => {
+            if(!this.$scopedSlots[item.formSlot]) {
+                this.$log.warningLog(`字段${item.field}设置了表单插槽别名${item.formSlot}
                     , 但是没有使用, 将自动移除`, '请删除alias或者传入指定插槽', item);
-                delete item.alias;
-            } else {
-                this.formAliasMetas.push(item);
+                this.$utils.delArrayEle(this.formAliasMetas, item)
             }
         });
-        this.tempAliasMetas = [];
         this.registerActionEvent();
         this.listRef = this.$refs['listRef']; // 页级列表组件的引用
         this.$page.registerPageRef(this, this.listRef)
@@ -94,6 +83,9 @@ export const MixPageView = {
                     case '/IvzSys/edit':
                         this.listView = false;
                         return next();
+                    case '/IvzSys/action':
+                        let actionMeta = this.$page.getStore('actionMeta');
+                        vue.action(actionMeta, null);
                     case '/IvzSys/void': return next();
                     default: return next('/IvzSys/void');
                 }
@@ -105,8 +97,8 @@ export const MixPageView = {
          */
         add(index) {
             this.listView = false;
-            this.operaMeta = this.actionMetas.Add;
             let editModel = this.$page.getStore("editModel");
+            this.operaMeta = this.$page.getStore("actionMeta");
             this.listRef.actionHandleWrapper(this.operaMeta, editModel, index)
         },
         /**
@@ -140,7 +132,7 @@ export const MixPageView = {
          * @param meta
          * @param row
          */
-        metaAction(meta, row) {
+        action(meta, row) {
             this.listRef.actionHandleWrapper(meta, row)
         },
         /**

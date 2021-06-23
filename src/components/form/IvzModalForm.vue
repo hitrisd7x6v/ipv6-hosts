@@ -46,11 +46,11 @@
 
             this.formConfig = this.config.form || {}
             this.$utils.assignVueProperty(this.config, this.$page.modalOptions, this)
-            this.$page.initDefaultFormConfig(this.formConfig, this)
+            this.$resolver.initDefaultFormConfig(this.formConfig, this)
 
             this.submitTip = this.formConfig.submitTip
             this.$page.resolverCommonMetas(this.metas, this)
-            this.formGroup = this.$page.resolverFormMetas(this.metas, this.formConfig, this)
+            this.formGroup = this.$resolver.resolverFormMetas(this.metas, this.formConfig, this)
         },
         updated () {
             this.$basicForm = this.$refs['basicForm']

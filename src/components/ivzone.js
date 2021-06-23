@@ -14,8 +14,6 @@ import IvzDrawerView from './view/IvzDrawerView'
 import IvzEditTable from './table/IvzEditTable'
 import IvzBasicTable from './table/IvzBasicTable'
 
-import IvzTabForm from './form/IvzTabForm'
-import IvzTabsForm from './form/IvzTabsForm'
 import IvzModalForm from './form/IvzModalForm'
 import IvzDrawerEditTable from './table/IvzDrawerEditTable'
 import IvzDiyView from "@/components/view/IvzDiyView";
@@ -35,8 +33,6 @@ if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.component(IvzDrawerView.name, IvzDrawerView)
 
     window.Vue.component(IvzSearchForm.name, IvzSearchForm)
-    window.Vue.component(IvzTabForm.name, IvzTabForm)
-    window.Vue.component(IvzTabsForm.name, IvzTabsForm)
     window.Vue.component(IvzBasicForm.name, IvzBasicForm)
     window.Vue.component(IvzModalForm.name, IvzModalForm)
 
@@ -58,8 +54,6 @@ export default {
         Vue.component(IvzDrawerView.name, IvzDrawerView)
 
         // 表单组件
-        Vue.component(IvzTabForm.name, IvzTabForm)
-        Vue.component(IvzTabsForm.name, IvzTabsForm)
         Vue.component(IvzModalForm.name, IvzModalForm)
         Vue.component(IvzBasicForm.name, IvzBasicForm)
         Vue.component(IvzSearchForm.name, IvzSearchForm)

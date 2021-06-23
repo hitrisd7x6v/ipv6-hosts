@@ -10,7 +10,7 @@
                         <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
                             <a-form-item :label="col.title" :label-col="col.config.labelCol" :wrapper-col="col.config.wrapperCol"
                                  :colon="izColon" :has-feedback="col.config.hasFeedback" :extra="col.config.extra">
-                                <slot v-if="col.alias" :name="col.alias"></slot>
+                                <slot v-if="col.formSlot" :name="col.formSlot"></slot>
                                 <template v-else>
                                     <a-select v-if="col.type=='select'" v-decorator="[col.field, col['decorate']]" :size="formSize"
                                           :allowClear="col.clear" :maxTagCount="col.config.maxTagCount" :placeholder="col.placeholder"

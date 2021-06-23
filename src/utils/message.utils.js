@@ -103,7 +103,7 @@ export default {
     },
     delFailNotify (resolve, resp, vue, model, callBack) {
         this.responseFailNotify(resolve, resp, vue, model
-            , '删除操作提示', '删除失败', callBack || VoidFun)
+            , '删除操作提示', callBack || VoidFun)
     },
     delSuccessNotify (resolve, resp, vue, model, callBack) {
         this.responseSuccessNotify(resolve, resp, vue, model
@@ -111,7 +111,7 @@ export default {
     },
     submitFailNotify (resolve, resp, vue, model, callBack) {
         this.responseFailNotify(resolve, resp, vue, model
-            , '提交操作提示', '提交失败', callBack || VoidFun)
+            , '提交操作提示', callBack || VoidFun)
     },
     submitSuccessNotify (resolve, resp, vue, model, callBack) {
         this.responseSuccessNotify(resolve, resp, vue, model
@@ -119,7 +119,7 @@ export default {
     },
     defaultFailNotify (resolve, resp, vue, model, callBack) {
         this.responseFailNotify(resolve, resp, vue, model
-            , '操作失败提示', resp, callBack || VoidFun)
+            , '操作失败提示', callBack || VoidFun)
     },
     defaultSuccessNotify (resolve, resp, vue, model, callBack) {
         this.responseSuccessNotify(resolve, resp, vue, model

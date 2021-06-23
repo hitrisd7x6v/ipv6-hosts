@@ -13,7 +13,6 @@
                         <template v-if="searchMainMetas">
                             <a-button v-for="item in searchMainMetas" :key="item.id"
                                       :type="item.color" @click="actionEvent(item)">
-                                <!--<ivz-icon :type="item.icon"></ivz-icon>-->
                                 <span>&nbsp;{{item.label}}</span>
                             </a-button>
                         </template>
@@ -40,7 +39,6 @@
 </template>
 
 <script>
-    import PageOptions from "@/components/page.config";
 
     export default {
         name: "IvzPageSearch",
@@ -67,12 +65,17 @@
                 switch (meta['id']) {
                     case 'add':
                         let oriModel = this.$page.getOriModel(this);
+                        this.$page.putStore("actionMeta", meta);
                         meta.callBack(oriModel).then(()=>{
                             this.$page.putStore('editModel', oriModel);
                             this.$router.push("/IvzSys/add");
                         });
                         break;
-                    case 'view': this.$router.push("/IvzSys/list"); break;
+                    case 'view':
+                        this.$router.push("/IvzSys/list"); break;
+                    default:
+                        this.$page.putStore('actionMeta', meta);
+                        this.$router.push("/IvzSys/action"); break;
                 }
             },
             pressEnter (model, col) {

@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'development') {
         })
     })
     /* 获取菜单 */
-    Mock.mock(RegExp('/framework/resources'), 'get', (options) => {
+    Mock.mock(RegExp('/resources'), 'get', (options) => {
         // let query = Utils.getUrlParam(options.url)
         return Mock.mock({
             code: 200,
@@ -57,7 +57,7 @@ if (process.env.NODE_ENV === 'development') {
         })
     })
     /* 获取系统配置 */
-    Mock.mock(RegExp('/framework/env'), 'get', (options) => {
+    Mock.mock(RegExp('/env'), 'get', (options) => {
         return Mock.mock({
             code: 200,
             message: '获取成功',

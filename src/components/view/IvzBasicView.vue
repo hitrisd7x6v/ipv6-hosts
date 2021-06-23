@@ -9,8 +9,8 @@
             <template #action="{row, index}">
                 <slot name="action" :row="row" :index="index"></slot>
             </template>
-            <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
-                <slot :name="meta.tableAlias" :meta="meta" :value="value" :row="row" :index="index"></slot>
+            <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
+                <slot :name="meta.tableSlot" :meta="meta" :value="value" :row="row" :index="index"></slot>
             </template>
         </ivz-default-list>
         <ivz-default-form v-if="!listView" ref="formRef" :form-config="formConfig"
@@ -18,8 +18,8 @@
             <template #submit>
                 <slot name="submit"></slot>
             </template>
-            <template v-for="meta in formAliasMetas" #[meta.alias]>
-                <slot :name="meta.alias" :meta="meta"></slot>
+            <template v-for="meta in formAliasMetas" #[meta.formSlot]>
+                <slot :name="meta.formSlot" :meta="meta"></slot>
             </template>
         </ivz-default-form>
     </div>
