@@ -26,7 +26,6 @@ new Vue({
         this.actionMetas['Other'] = {id: 'other', label: '数据', position: 'T', color: 'green', callBack: (row) => {
                 return new Promise((resolve, reject) => {
                     this.$refs['det'].open()
-                    this.$refs['det'].freshen()
                 })
             }}
         this.editActionMetas['Add'] = this.$getActionMate('Add')

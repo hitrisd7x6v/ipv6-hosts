@@ -36,8 +36,8 @@ export const MixPageView = {
         // 初始化页面组件的默认配置
         this.$page.initPageDefaultConfig(this.config, this);
 
-        this.$page.resolverCommonMetas(this.metas, this);
-        this.$page.resolverCommonMetas(this.searchMetas, this);
+        // this.$page.resolverCommonMetas(this.metas, this);
+        // this.$page.resolverCommonMetas(this.searchMetas, this);
 
         // 解析搜索表单元数据
         this.searchConfig = this.config.search;
@@ -56,8 +56,8 @@ export const MixPageView = {
     mounted () {
         this.formAliasMetas.forEach((item, index) => {
             if(!this.$scopedSlots[item.formSlot]) {
-                this.$log.warningLog(`字段${item.field}设置了表单插槽别名${item.formSlot}
-                    , 但是没有使用, 将自动移除`, '请删除alias或者传入指定插槽', item);
+                this.$log.warningLog(`字段${item.field}设置了表单插槽别名${item.formSlot}, 但是没有使用, 将自动移除`
+                    , '请删除formSlot或者传入指定插槽', item['formSlot']);
                 this.$utils.delArrayEle(this.formAliasMetas, item)
             }
         });

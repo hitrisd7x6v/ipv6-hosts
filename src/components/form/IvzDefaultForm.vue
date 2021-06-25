@@ -9,8 +9,8 @@
         </div>
         <div class="form-body">
             <a-spin :tip="loadingText" :spinning="spinning">
-                <ivz-basic-form ref="basicFormRef" @mountedFinished="mountedFinished"
-                    :form-group="formGroup" :bind-type="formConfig.bindType" :form-config="formConfig">
+                <ivz-basic-form ref="basicFormRef" :ori-model="oriModel" @mountedFinished="mountedFinished"
+                    :form-group="formGroup" :field-meta-map="fieldMetaMap" :form-config="formConfig">
                     <template v-for="meta in formAliasMetas" #[meta.formSlot]>
                         <slot :name="meta.formSlot"></slot>
                     </template>

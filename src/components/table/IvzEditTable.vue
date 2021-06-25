@@ -7,8 +7,8 @@
              :rowSelection="tableConfig.selection" :expandRowByClick="tableConfig.expandRowByClick"
              :defaultExpandedRowKeys="tableConfig.defaultExpandedRowKeys" :rowClassName="()=>{return 'ivz-edit-row'}"
              :defaultExpandAllRows="tableConfig.defaultExpandAllRows" :expandedRowKeys="tableConfig.expandedRowKeys">
-            <template v-for="col in slotMetas" :slot="col.tableAlias" slot-scope="text, row, index">
-                <slot :name="col.tableAlias" :row="row" :index="index" :value="text">
+            <template v-for="col in slotMetas" :slot="col.tableSlot" slot-scope="text, row, index">
+                <slot :name="col.tableSlot" :row="row" :index="index" :value="text">
                     <div v-if="row['EditableFlag'] && col['editable']" :key="col.field">
                         <a-select v-if="col.type=='select'" :allow-clear="col.clear"
                           dropdown-class-name="ivz-select-class" :token-separators="col.config.separators"
@@ -67,9 +67,7 @@
             }
         },
         created () { },
-        mounted () {
-            this.$emit('mountFinished', this) // 挂载完成
-        },
+        mounted () { },
         methods: {
             formatter (val, row, col) {
                 return val

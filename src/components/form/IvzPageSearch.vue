@@ -34,7 +34,8 @@
             </ul>
         </slot>
         <ivz-search-form class="ivz-search-bottom" :search-model="searchModel" ref="searchRef"
-             :search-metas="searchMetas" :form-config="searchConfig" @pressEnter="pressEnter"></ivz-search-form>
+             :search-metas="searchMetas" :ori-model="oriModel" :form-config="searchConfig"
+                         :field-meta-map="fieldMetaMap"@pressEnter="pressEnter"></ivz-search-form>
     </div>
 </template>
 
@@ -51,6 +52,8 @@
         data() {
             return {
                 resource: {},
+                oriModel: {},
+                fieldMetaMap: {},
                 actionMetaKeys: [],
                 searchMainMetas: [],
                 searchMoreMetas: [],
@@ -59,6 +62,8 @@
         created() {
             this.resource = this.$page.menu;
             this.initActionMates(this.actionMetas);
+            this.oriModel = this.$page.oriSearchModel;
+            this.fieldMetaMap = this.$page.searchFieldMetaMap;
         },
         methods: {
             actionEvent(meta) {

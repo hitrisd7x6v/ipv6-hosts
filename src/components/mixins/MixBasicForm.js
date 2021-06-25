@@ -6,29 +6,17 @@ import moment from 'moment'
 
 export const MixBasicForm = {
     props: {
+        oriModel: {type: Object, required: true},
         bindType: {type: String, default: 'both'}, // 默认双向绑定
-        formConfig: {type: Object, required: true} // 配置
-
+        formConfig: {type: Object, required: true}, // 配置
+        fieldMetaMap: {type: Object, required: true},
     },
     data () {
-        let oriModel = this.$page.oriModel;
         return {
             model: {}, // 当前编辑的表单对象
-            oriModel: oriModel, // 原始表单字段对象,
-            fieldMetaMap: {}
         }
     },
     created () {
-        if(this.$page.isSearchForm(this.formConfig)) {
-            this.model = this.searchModel;
-            this.fieldMetaMap = this.$page.searchFieldMetaMap;
-        } else if(this.$page.isEditForm(this.formConfig)) {
-            this.$page.registerFormRef(this);
-            this.fieldMetaMap = this.$page.editFieldMetaMap;
-        } else {
-            this.$log.errorLog("错误的表单类型, 可选值(search | edit)")
-        }
-
         this.form = this.$form.createForm(this, {
             name: 'IvzForm',
             mapPropsToFields: () => { // 将model对象同步到表单
@@ -38,9 +26,6 @@ export const MixBasicForm = {
         })
     },
     mounted () { },
-    beforeDestroy() {
-        this.$page.registerFormRef(null);
-    },
     methods: {
         viewForm (col) {
             if (typeof col['isForm'] === 'function') {

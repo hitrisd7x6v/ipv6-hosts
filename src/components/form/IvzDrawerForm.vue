@@ -12,8 +12,9 @@
             <a-col span="12" style="padding-right: 20px; text-align: right"></a-col>
         </a-row>
         <a-spin :tip="loadingText" :spinning="spinning">
-            <ivz-basic-form :form-group="formGroup" @mountedFinished="mountedFinished"
-                :form-config="formConfig" :bind-type="formConfig.bindType"></ivz-basic-form>
+            <ivz-basic-form :form-group="formGroup" :ori-model="oriModel"
+                @mountedFinished="mountedFinished" :bind-type="formConfig.bindType"
+                :form-config="formConfig" :field-meta-map="fieldMetaMap"></ivz-basic-form>
         </a-spin>
         <div class="ivz-opera-row" style="text-align: center">
             <slot>

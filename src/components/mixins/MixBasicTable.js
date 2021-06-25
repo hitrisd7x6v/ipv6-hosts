@@ -46,7 +46,8 @@ export const MixBasicTable = {
         this.initActionMates(this.actionMetas)
     },
     mounted () {
-        this.tableConfig.mountedFinished(this)
+        this.$emit('finished', this); // 挂载完成
+        this.tableConfig.mountedFinished(this);
         if (this.isBlank(this.data)) this.query()
     },
     methods: {

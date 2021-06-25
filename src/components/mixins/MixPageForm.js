@@ -12,29 +12,41 @@ export const MixPageForm = {
     data () {
         return {
             title: '',
+            oriModel: {},
             queryParams: {}, // 编辑动作参数
             saveMeta: null,
             operaMeta: {},
             loadingText: '',
             spinning: false,
-            basicFormRef: null
+            basicFormRef: null,
+            fieldMetaMap: {},
         }
     },
     created () {
         this.saveMeta = this.actionMetas['Save'];
         let actionMeta = this.$page.getStore("actionMeta");
-        if(actionMeta.id == 'add') {
+        if(null == actionMeta) { // 默认情况使用新增操作的数据信息
+            this.operaMeta = this.actionMetas['Add'];
+            this.$page.putStore("editModel", this.$page.getOriModel(this))
+        } else if(actionMeta.id == 'add') {
             this.operaMeta = this.actionMetas['Add']
         } else if(actionMeta.id == 'edit') {
             this.operaMeta = this.actionMetas['Edit'];
         }
+
+        this.oriModel = this.$page.oriModel;
+        this.fieldMetaMap = this.$page.editFieldMetaMap;
     },
     mounted () {
         this.formConfig.mountedFinished(this)
     },
+    beforeDestroy() {
+        this.$page.registerFormRef(null);
+    },
     methods: {
         mountedFinished (formRef) {
             this.basicFormRef = formRef;
+            this.$page.registerFormRef(formRef);
             this.initEditModel();
         },
         initEditModel () {

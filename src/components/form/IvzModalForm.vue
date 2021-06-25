@@ -7,7 +7,8 @@
             <i class="izc iz-icon-edit"></i> {{title}}
         </div>
         <a-spin :tip="submitTip" :spinning="spinning">
-            <ivz-basic-form ref="basicForm" :form-config="formConfig" :form-group="formGroup"></ivz-basic-form>
+            <ivz-basic-form ref="basicForm" :form-config="formConfig" :ori-model="oriModel"
+                        :field-meta-map="fieldMetaMap" :form-group="formGroup"></ivz-basic-form>
         </a-spin>
         <div slot="footer" style="text-align: center">
             <div>
@@ -31,12 +32,14 @@
         },
         data () {
             return {
+                oriModel: {},
+                submitTip: '',
                 visible: false,
                 spinning: false,
                 formGroup: null,
                 $basicForm: null,
                 formConfig: null,
-                submitTip: ''
+                fieldMetaMap: {}
             }
         },
         created () {
@@ -45,12 +48,14 @@
             if (!this.saveMeta) return this.$log.errorLog('没有指定操作元数据', '传入(props)saveMeta')
 
             this.formConfig = this.config.form || {}
-            this.$utils.assignVueProperty(this.config, this.$page.modalOptions, this)
-            this.$resolver.initDefaultFormConfig(this.formConfig, this)
+            this.$utils.assignVueProperty(this.config, this.$resolver.modalOptions, this)
 
             this.submitTip = this.formConfig.submitTip
-            this.$page.resolverCommonMetas(this.metas, this)
-            this.formGroup = this.$resolver.resolverFormMetas(this.metas, this.formConfig, this)
+            this.$resolver.initDefaultFormConfig(this.formConfig, this)
+            this.formGroup = this.$resolver.resolverFormMetas(this.metas, this.formConfig, this, meta=>{
+                this.fieldMetaMap[meta.field] = meta;
+                this.$resolver.resolverMetaDefaultValue(meta, this.oriModel);
+            })
         },
         updated () {
             this.$basicForm = this.$refs['basicForm']

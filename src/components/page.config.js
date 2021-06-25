@@ -1,9 +1,8 @@
 /* 每个子页面都需要用到的对象 */
 import '@/utils' // 导入基础类库
 import Vue from 'vue'
-import moment from 'moment'
 import VueRouter from 'vue-router'
-import Http from '@/utils/http.utils'
+import Logger from '@/utils/logger.utils'
 import Utils from '@/utils/basic.utils'
 import Resolver from '@/utils/resolver.utils'
 
@@ -59,6 +58,7 @@ export default {
     router: router, // 每個頁面路由
     queryField: 'rows', // 数据列表字段
     formSlotMetas: [], // form slot
+    oriSearchModel: {}, // 搜索默认数据
     tableSlotMetas: [], // table slot
     editFieldMetaMap: {}, // 编辑表单：field -> meta
     searchFieldMetaMap: {}, // 搜索表单：field -> meta
@@ -205,6 +205,12 @@ export default {
      * @returns {Array}
      */
     resolverFormMetas (oriMetas, formConfig, vue, callBack) {
+        if(Utils.isBlank(oriMetas)) return;
+        if(!formConfig) {
+            Logger.warningLog("没有指定表单解析配置, 将跳过初始化配置"
+                , "请检查配置项：config", formConfig);
+            return []
+        }
         // 设置编辑表单配置项
         this.beforeResolverMetasHandle(oriMetas, formConfig, vue);
         return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
@@ -221,6 +227,7 @@ export default {
                 Resolver.resolverMetaDefaultValue(meta, this.oriModel);
             } else if(this.isSearchForm(formConfig)) {
                 this.searchFieldMetaMap[meta.field] = meta;
+                Resolver.resolverMetaDefaultValue(meta, this.oriSearchModel)
             }
         });
     },

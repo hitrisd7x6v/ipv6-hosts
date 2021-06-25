@@ -115,10 +115,11 @@
         data () {
             return {}
         },
-        created () { },
-        mounted () {
-            this.$utils.assignVueProperty(this.model, this.oriModel, this)
+        created () {
+            this.model = this.searchModel || {};
+            this.$utils.assignProperty(this.model, this.oriModel)
         },
+        mounted () { },
         methods: {
             eventHandle (type, val, col) {
                 let eventFunction = col.event[type]

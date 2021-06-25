@@ -6,12 +6,12 @@
                   wrapClassName="ivz-drawer-edit-wrap" :height="height">
             <slot name="header"></slot>
             <ivz-edit-table :data="data" :table-metas="tableMetas" :action-metas="actionMetas"
-                :table-config="config.table" ref="tableRef" @mountFinished="mountFinished">
+                :table-config="config.table" ref="tableRef" @finished="mountFinished">
                 <template #action="{row, index}">
                     <slot name="action" :row="row" :index="index"></slot>
                 </template>
-                <template v-for="meta in tableAliasMetas" #[meta.tableAlias]="{value, row, index}">
-                    <slot :name="meta.tableAlias" :value="value" :row="row" :index="index"></slot>
+                <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
+                    <slot :name="meta.tableSlot" :value="value" :row="row" :index="index"></slot>
                 </template>
             </ivz-edit-table>
             <div class="ivz-opera-row" style="text-align: center">
@@ -50,21 +50,22 @@ export default {
         }
     },
     created () {
-        this.$resolver.resolverCommonMetas(this.metas, this);
         this.$resolver.initDefaultTableConfig(this.config.table, this);
-        this.tableMetas = this.$resolver.resolverTableMetas(this.metas, this.config.table, this, meta=>{
-            if(meta.tableAlias) {
-                this.tableAliasMetas.push(meta);
-            }
-            this.$resolver.resolverMetaDefaultValue(meta, this.oriModel);
+        this.tableMetas = this.$resolver.resolverTableMetas(this.metas
+            , this.config.table, this, meta=>{
+                if(meta.tableSlot) {
+                    this.tableAliasMetas.push(meta);
+                }
+                this.$resolver.resolverMetaDefaultValue(meta, this.oriModel);
         })
     },
     mounted () {
-        this.addMeta = this.actionMetas['Add']
+        this.addMeta = this.actionMetas['Add'];
     },
     methods: {
         open () {
             this.visible = true
+            this.freshen();
         },
         add () {
             let length = this.tableRef.data ? this.tableRef.data.length : 0;
@@ -76,8 +77,10 @@ export default {
             this.tableRef.resetBackModel()
         },
         freshen () {
-            this.tableRef.query();
-            this.tableRef.resetBackModel()
+            if(this.tableRef) {
+                this.tableRef.query();
+                this.tableRef.resetBackModel()
+            }
         },
         mountFinished (tableRef) {
             this.tableRef = tableRef
