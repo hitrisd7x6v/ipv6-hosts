@@ -3,15 +3,19 @@ const Logger = {
     getLogContent (prefix, title, desc, arg) {
         arg = arg || {};
         switch (prefix) {
-            case 'info': return `${title} - 描述：${desc} - 参数：${JSON.stringify(arg)}`;
-            case 'warning' : return `警告：${title} - 修改方案：${desc} - 参数：${JSON.stringify(arg)}`;
-            case 'error': return `错误：${title} - 解决方案：${desc} - 参数：${JSON.stringify(arg)}`;
+            case 'debug': return `--debug ${title} - 描述：${desc} - 参数：${JSON.stringify(arg)}`;
+            case 'info': return `--info ${title} - 描述：${desc} - 参数：${JSON.stringify(arg)}`;
+            case 'warning' : return `--warning ${title} - 修改方案：${desc} - 参数：${JSON.stringify(arg)}`;
+            case 'error': return `--error ${title} - 解决方案：${desc} - 参数：${JSON.stringify(arg)}`;
         }
     },
-
+    debugLog (title, desc, arg) {
+        if(this.isDebug())
+            console.debug(this.getLogContent('debug', title, desc, arg));
+    },
     /* 日志 */
     infoLog (title, desc, arg) {
-        console.log(this.getLogContent('info', title, desc, arg))
+        console.log(this.getLogContent('info', title, desc, arg));
     },
 
     errorLog (title, desc, arg) {
@@ -23,6 +27,15 @@ const Logger = {
     },
     warningLog (title, desc, arg) {
         console.warn(this.getLogContent('warning', title, desc, arg))
+    },
+    isDebug() {
+        let env = window.CacheApi.env;
+        if(env) {
+            let profiles = env['profiles'];
+            return profiles ? profiles.includes['dev'] : false;
+        } else {
+            return false;
+        }
     }
 }
 

@@ -19,6 +19,12 @@
                 <slot :name="meta.formSlot" :meta="meta"></slot>
             </template>
         </ivz-drawer-form>
+        <ivz-drawer-detail ref="detailRef" :form-group="formGroup"
+               v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
+            <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="{row}">
+                <slot :name="meta.detailSlot" :meta="meta" :row="row"></slot>
+            </template>
+        </ivz-drawer-detail>
     </div>
     </a-locale-provider>
 </template>
@@ -28,10 +34,11 @@
     import IvzDrawerForm from '../form/IvzDrawerForm'
     import IvzDefaultList from '../list/IvzDefaultList'
     import zhCN from 'ant-design-vue/es/locale-provider/zh_CN'
+    import IvzDrawerDetail from "@/components/detail/IvzDrawerDetail";
     export default {
         name: 'IvzDrawerView',
         mixins: [MixPageView],
-        components: {IvzDefaultList, IvzDrawerForm},
+        components: {IvzDefaultList, IvzDrawerForm, IvzDrawerDetail},
         props: {
             width: {},
             height: {},

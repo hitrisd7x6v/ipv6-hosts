@@ -6,21 +6,7 @@ import Cache from '@/utils/cache.utils'
 import Utils from '@/utils/basic.utils'
 import Logger from '@/utils/logger.utils' // 缓存
 
-Vue.use(Ivzone)
-
-const add = Cache.getActionMeta('Add', {url: '/test/add', callBack: (row) => {
-        return new Promise((resolve, reject) => {
-            console.log(row)
-            return resolve()
-        })
-    }});
-const del = Cache.getActionMeta('Del', {url: '/test/del'})
-const edit = Cache.getActionMeta('Edit', {url: '/test/edit'})
-const cancel = Cache.getActionMeta('Cancel', {})
-const query = Cache.getActionMeta('View', {url: '/test/view'})
-const save = Cache.getActionMeta('Save', {})
-const actionMetas = {Add: add, Edit: edit, View: query, Del: del, Save: save, Cancel: cancel}
-Cache.pageActionMates = actionMetas
+Vue.use(Ivzone);
 
 const productCat = [
     {label: '果汁', value: 1}, {label: '茶', value: 3},
@@ -72,7 +58,7 @@ let dataSource = Mock.mock({
         {
             'rate|1-5': 3,
             'id|+1': 1,
-            'spec': [],
+            'spec': [0],
             'range|1-100': 3,
             'cat|1-6': 3, // 随机生成日期时间
             'markSale|1-800': 800, // 随机生成1-800的数字
@@ -85,6 +71,79 @@ let dataSource = Mock.mock({
 let dataSourceMap = {}
 dataSource.forEach(item => {
     dataSourceMap[item['id']] = item
+});
+function getChildrenMenus() {
+    return [
+        {id: 1000, name:'删除', permType: 'Del', url: '/test/del', position: 'T'},
+        {id: 1001, name:'编辑', permType: 'Edit', url: '/test/edit', position: 'T'},
+        {id: 1002, name:'取消', permType: 'Cancel', url: '/test/cancel', position: 'T'},
+        {id: 1003, name:'浏览', permType: 'View', url: '/test/view', position: 'M'},
+        {id: 1004, name:'保存', permType: 'Save', url: ''},
+        {id: 1005, name:'新增', permType: 'Add', url: '/test/add', position: 'M'},
+        {id: 1006, name:'详情', permType: 'Detail', url: '', position: 'T'},
+    ];
+}
+
+Mock.setup({ timeout: '100-300' });
+/* 获取字典数据 */
+Mock.mock(RegExp('/core/dictData/listByType.*'), 'get', (options) => {
+    // let query = Utils.getUrlParam(options.url)
+    return Mock.mock({
+        code: 200,
+        message: '获取成功',
+        data: {
+            rows: spec
+        }
+    })
+})
+
+/* 获取系统配置 */
+Mock.mock(RegExp('/env'), 'get', (options) => {
+    return Mock.mock({
+        code: 200,
+        message: '获取成功',
+        data: {
+            env: {
+                user: {avatar: '#'},
+                config: {
+                    work_name: {name: '首页名称', value: '工作台'},
+                    sys_name: {name: '系统名称', value: '厦门由创源科技'}
+                },
+                profiles: ['dev']}
+        }
+    })
+})
+/* 获取菜单 */
+Mock.mock(RegExp('/resources'), 'get', (options) => {
+    // let query = Utils.getUrlParam(options.url)
+    return Mock.mock({
+        code: 200,
+        message: '获取成功',
+        data: {
+            resources: [
+                {id: 1, name: '组件管理', type: 'M', children: [
+                        {id: 11, name: '页级组件', type: 'M', icon: 'iz-icon-page', children: [
+                                {id: 111, name: '基础视图页', icon: 'iz-icon-default', type: 'V'
+                                    , url: '/demo/basicView.html?id=3', children: getChildrenMenus()},
+                                {id: 112, name: '抽屉视图页', icon: 'iz-icon-drawer', type: 'V'
+                                    , url: '/demo/drawerView.html?type=aa', children: getChildrenMenus()},
+                                // {id: 113, name: 'ModalView', icon: '', type: 'V', url: '/demo/modalView.html'},
+                                {id: 114, name: '可编辑表页', icon: 'iz-icon-page-edit', type: 'V'
+                                    , url: '/demo/editView.html', children: getChildrenMenus()},
+                                // {id: 116, name: 'diy视图页', type: 'V', url: '/demo/diyView.html'},
+                                {id: 117, name: 'slot表单视图页', type: 'V', url: '/demo/diyFormView.html'},
+                                {id: 118, name: 'slot表格视图页', type: 'V', url: '/demo/diyTableView.html'},
+                            ]
+                        },
+                        {id: 22, name: '功能组件', type: 'M', icon: '', children: [
+                                {id: 221, name: 'ModalView组件', icon: '', type: 'V', url: '/demo/modalView.html'},
+                                // {id: 222, name: 'SlotFormView组件', type: 'V', url: '/demo/slotFormView.html'}
+                            ]},
+                    ]
+                }
+            ]
+        }
+    })
 })
 /* 新增数据方法模拟 */
 Mock.mock(RegExp('/test/add.*'), 'post', (options) => {
@@ -179,8 +238,8 @@ export default {
         {field: 'name', title: '产品名称', type: 'text', required: true, align: 'left'},
         {field: 'price', title: '产品价格', type: 'text', editable: true},
         {field: 'spec', title: '规格', type: 'checkbox', data: spec},
-        {field: 'cat', title: '产品类别', type: 'select', data: productCat},
-        {field: 'type', title: '产品类型', type: 'radio', data: productType, config: {extra: 'lksdf'}},
+        {field: 'cat', title: '类别', type: 'select', data: productCat},
+        {field: 'type', title: '类型', type: 'radio', data: productType, config: {extra: 'lksdf'}},
         {field: 'range', title: '下单数量', type: 'slider'},
         {field: 'markSale', title: '市场价', type: 'number', editable: true},
         {field: 'ext.desc', title: '说明'},
@@ -192,7 +251,7 @@ export default {
     groupConfig: groupConfig,
     groupMetas: [
         {title: '基础信息', metas: [
-                {field: 'name', title: '产品名称', tableSlot: 'name', formSlot: 'fname', required: true, align: 'left'},
+                {field: 'name', title: '产品名称', required: true, align: 'left'},
                 {field: 'area', title: '产地', type: 'stree', url: '/test/stree', min: 2, editable: true,
                     config: {
                         showSearch: true,
@@ -240,6 +299,5 @@ export default {
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],
     searchMates: searchMetas,
-    actionMetas: actionMetas,
-    topSearchMetas: topSearchMetas
+    topSearchMetas: topSearchMetas,
 }

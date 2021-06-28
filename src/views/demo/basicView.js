@@ -28,10 +28,9 @@ new Vue({
         groupMetas: Data.groupMetas,
         groupConfig: Data.groupConfig,
         searchMetas: Data.searchMates,
-        actionMetas: Data.actionMetas
     },
     created () {
-        Data.actionMetas['Modal'] = {
+        this.$page.addActionMeta("Modal", {
             id: 'modal',
             position: 'T',
             label: '模态框',
@@ -40,7 +39,7 @@ new Vue({
                     this.$refs['mf'].open()
                 })
             }
-        }
+        })
     },
     methods: {
         add() {

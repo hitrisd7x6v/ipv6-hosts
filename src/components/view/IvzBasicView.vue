@@ -22,6 +22,12 @@
                 <slot :name="meta.formSlot" :meta="meta"></slot>
             </template>
         </ivz-default-form>
+        <ivz-drawer-detail ref="detailRef" :form-group="formGroup"
+            v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
+            <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="{row}">
+                <slot :name="meta.detailSlot" :meta="meta" :row="row"></slot>
+            </template>
+        </ivz-drawer-detail>
     </div>
 </template>
 
@@ -29,11 +35,12 @@
     import {MixPageView} from '../mixins/MixPageView'
     import IvzDefaultList from '../list/IvzDefaultList'
     import IvzDefaultForm from '../form/IvzDefaultForm'
+    import IvzDrawerDetail from "@/components/detail/IvzDrawerDetail";
 
     export default {
         name: 'IvzBasicView',
         mixins: [MixPageView],
-        components: {IvzDefaultList, IvzDefaultForm},
+        components: {IvzDrawerDetail, IvzDefaultList, IvzDefaultForm},
         data () {
             return {}
         },

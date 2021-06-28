@@ -45,10 +45,7 @@ Vue.prototype.formSize = 'default'; // 表单尺寸
 Vue.prototype.$resolver = Resolver;
 Vue.prototype.izCtx = cacheApi.izCtx;
 Vue.prototype.izColon = cacheApi.izColon; // 是否显示冒号
-Vue.prototype.$getQueryParams = () => { return cacheApi.currentMenu['IvzQueryParams'] };
 Vue.prototype.$getModalContainer = () => { return cacheApi.modalContainer() }; // 模态框插入的位置
-Vue.prototype.$getActionMates = () => { return cacheApi.getActionMates() }; // 当前页面的元数据
-Vue.prototype.$getActionMate = (action, options) => { return cacheApi.getActionMeta(action, options) };
 
 export default {
     metas: {}, // 编辑元数据
@@ -60,6 +57,7 @@ export default {
     formSlotMetas: [], // form slot
     oriSearchModel: {}, // 搜索默认数据
     tableSlotMetas: [], // table slot
+    detailSlotMetas: [], // detail slot
     editFieldMetaMap: {}, // 编辑表单：field -> meta
     searchFieldMetaMap: {}, // 搜索表单：field -> meta
     menu: cacheApi.currentMenu, // 每个页面对应的菜单
@@ -68,6 +66,21 @@ export default {
     },
     getSearchMeta(key) {
         return this.searchFieldMetaMap[key];
+    },
+    getActionMeta(action, options) {
+        return cacheApi.getActionMeta(action, options);
+    },
+    getActionMetas() {
+        return cacheApi.getActionMates();
+    },
+    addActionMeta(action, options) {
+        return cacheApi.addActionMeta(action, options);
+    },
+    setActionMeta(action, options) {
+        return cacheApi.setActionMeta(action, options);
+    },
+    getQueryParams() {
+        return cacheApi.currentMenu['IvzQueryParams'];
     },
     getOriModel(vue) {
         return vue.$utils.assignVueProperty({}, this.oriModel, vue);
@@ -216,12 +229,7 @@ export default {
         return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
             // 如果是编辑表单
             if(this.isEditForm(formConfig)) {
-                if(meta['tableSlot']) {
-                    this.tableSlotMetas.push(meta);
-                }
-                if(meta['formSlot']) {
-                    this.formSlotMetas.push(meta);
-                }
+
                 this.editFieldMetaMap[meta.field] = meta;
                 // 解析此表单字段的默认值
                 Resolver.resolverMetaDefaultValue(meta, this.oriModel);
@@ -230,6 +238,40 @@ export default {
                 Resolver.resolverMetaDefaultValue(meta, this.oriSearchModel)
             }
         });
+    },
+    resolverSlots(scopedSlots) {
+        let noMatcher = false;
+        Object.keys(scopedSlots).forEach(name => {
+            if(name.startsWith("$")) return;
+            let field = Utils.toHump(name.substring(0, name.length-2));
+            let meta = this.editFieldMetaMap[field];
+            if(!meta) {
+                Logger.warningLog(`slot ${name} 找不到匹配的字段 ${field}`
+                    , "slot名称必须遵循驼峰式字段用'_'隔开");
+                return;
+            }
+            if(name.endsWith('_t')) {
+                meta['tableSlot'] = name;
+                this.tableSlotMetas.push(meta);
+                if(!meta['formatter']) {
+                    meta['formatter'] = (val, row, meta) => val;
+                }
+                meta['scopedSlots'] = {customRender: name};
+            } else if(name.endsWith('_f')) {
+                meta['formSlot'] = name;
+                this.formSlotMetas.push(meta);
+            } else if(name.endsWith('_d')) {
+                meta['detailSlot'] = name;
+                this.detailSlotMetas.push(meta);
+            } else {
+                Logger.warningLog(`slot ${name}名称不规范, 将舍弃`, 'slot名称必须以：_f、_t、_d结尾');
+            }
+        });
+        if(noMatcher) {
+            Logger.warningLog(`解析slot时名称不规范：`
+                , "slot名称遵循以下规范：\r\n 1. 字段名称+表单(_f)、表格(_t)、详情(_d)结尾\r\n 2.驼峰式的字段名要转成a_b形式" +
+                "\r\n 3.如：字段userName分别写成user_name_f、user_name_t、user_name_d")
+        }
     },
     resolverGroup (group, vue, callBack) {
         Resolver.resolverGroup(group, vue, callBack);
@@ -244,39 +286,34 @@ export default {
      * @param vue
      */
     initPageDefaultConfig (config, vue) {
-        if (!config.form) vue.$set(config, 'form', {})
-        if (!config.table) vue.$set(config, 'table', {})
-        if (!config.search) vue.$set(config, 'search', {})
+        if (!config.form) vue.$set(config, 'form', {});
+        if (!config.table) vue.$set(config, 'table', {});
+        if (!config.search) vue.$set(config, 'search', {});
+        if (!config.detail) vue.$set(config, 'detail', {});
+
+        // 合并详情页默认配置项
+        if (!config.detail.isInit) {
+            Resolver.mergeDefaultObject(config.detail, cacheApi.pageDefaultConfig.detail, vue);
+        }
 
         // 合并编辑表单默认配置项
-        this.initPageDefaultFormConfig(config.form, vue)
-        // 合并搜索表单默认配置项
-        this.initPageDefaultSearchConfig(config.search, vue)
-        // 合并表格默认配置项
-        this.initPageDefaultTableConfig(config.table, vue)
-    },
-    initPageDefaultFormConfig(formConfig, vue) {
-        if (!formConfig || formConfig.isInit) return
-        Resolver.mergeDefaultObject(formConfig, cacheApi.pageDefaultConfig.form, vue)
-    },
-    initPageDefaultTableConfig (tableConfig, vue) {
-        if (!tableConfig || tableConfig.isInit) return // 已经初始化直接返回
-        if (Utils.isObject(tableConfig)) {
-            Resolver.mergeDefaultObject(tableConfig, cacheApi.pageDefaultConfig.table, vue)
-            Resolver.mergeDefaultPage(tableConfig['pagination'], vue)
-            Resolver.izDefaultTableSelection(tableConfig, vue)
-        } else {
-            vue.$log.errorLog('合并表格配置项失败', '传入的配置必须是对象类型', tableConfig)
+        if (!config.form.isInit) {
+            Resolver.mergeDefaultObject(config.form, cacheApi.pageDefaultConfig.form, vue)
         }
-    },
-    /**
-     * 初始化搜索表单默认配置
-     * @param searchConfig
-     * @param vue
-     */
-    initPageDefaultSearchConfig (searchConfig, vue) {
-        if (!searchConfig || searchConfig.isInit) return
-        Resolver.mergeDefaultObject(searchConfig, cacheApi.pageDefaultConfig.search, vue)
+        // 合并搜索表单默认配置项
+        if (!config.search.isInit) {
+            Resolver.mergeDefaultObject(config.search, cacheApi.pageDefaultConfig.search, vue)
+        }
+        // 合并表格默认配置项
+        if (!config.table.isInit) {
+            if (Utils.isObject(config.table)) {
+                Resolver.mergeDefaultObject(config.table, cacheApi.pageDefaultConfig.table, vue)
+                Resolver.mergeDefaultPage(config.table['pagination'], vue)
+                Resolver.izDefaultTableSelection(config.table, vue)
+            } else {
+                vue.$log.errorLog('合并表格配置项失败', '传入的配置必须是对象类型', tableConfig)
+            }
+        }
     },
     getStore (key) { // 获取存储值
         let storeCache = cacheApi.StoreCache
@@ -303,5 +340,5 @@ export default {
     },
     isEditForm(formConfig) {
         return formConfig.formType == 'edit';
-    }
+    },
 }

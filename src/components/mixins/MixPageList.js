@@ -22,7 +22,7 @@ export const MixPageList = {
     },
     created () {
         // 获取当前页面的查询参数
-        this.searchModel = this.$getQueryParams();
+        this.searchModel = this.$page.getQueryParams();
     },
     mounted () {
         this.setTableHeight()

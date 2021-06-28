@@ -646,16 +646,16 @@ export default {
     },
     initTableMate (item, config, _this) {
         // 已经解析过, 无需再次解析
-        if (Utils.isResolveTable(item)) return
+        if (Utils.isResolveTable(item)) return;
 
-        if (item['isTable'] === false) return
-        else _this.$set(item, 'isTable', true)
+        if (item['isTable'] === false) return;
+        else _this.$set(item, 'isTable', true);
 
         // 先解析通用信息, 如果之前没有解析的话
-        this.initCommonMate(item, _this)
+        this.initCommonMate(item, _this);
 
-        _this.$set(item, 'key', item.field)
-        _this.$set(item, 'dataIndex', item.field)
+        _this.$set(item, 'key', item.field);
+        _this.$set(item, 'dataIndex', item.field);
 
         // 表格操作元数据
         if (item['type'] === 'action') { // action列的宽度必须手动指定, 否则不指定
@@ -667,17 +667,14 @@ export default {
             item['tableSlot'] = item.tableSlot || item.field;
             _this.$set(item, 'scopedSlots', {customRender: item.tableSlot})
         } else if(item['editable']) { // 如果是可编辑的也需要重新格式化
-            _this.$set(item, 'formatter', (val) => val)
+            _this.$set(item, 'formatter', (val) => val);
             item['tableSlot'] = item.tableSlot || item.field;
-            _this.$set(item, 'scopedSlots', {customRender: item.tableSlot})
-        } else if(item['tableSlot']) { // 如果包含类型别名也需要重新格式化
-            _this.$set(item, 'formatter', (val) => val)
             _this.$set(item, 'scopedSlots', {customRender: item.tableSlot})
         }
 
         // 默认的字段值
-        if (item.width) config.scroll.x += parseInt(item.width)
-        if (!item.align) _this.$set(item, 'align', 'center') // 默认居中对齐
+        if (item.width) config.scroll.x += parseInt(item.width);
+        if (!item.align) _this.$set(item, 'align', 'center'); // 默认居中对齐
         item['resolveType'] = item['resolveType'] ? item['resolveType'] + '3' : '3' // 说明此字段已经完成table解析
     },
 }

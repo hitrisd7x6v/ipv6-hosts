@@ -38,6 +38,10 @@ const Utils = {
         if (!meta['resolveType']) return false
         return meta['resolveType'].indexOf('3') !== -1
     },
+    //转成驼峰写法
+    toHump(name) {
+        return name.replace(/_(\w)/g, (all, letter)=>letter.toUpperCase());
+    },
     /**
      * 深度设置字段的值：e.g key=a.b model={a: null} value=3 => model={a: {b: 3}}
      * @param key a || a.b.c

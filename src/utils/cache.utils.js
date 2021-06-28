@@ -28,17 +28,17 @@ const operaMates = {
         url: null, disabled: DisabledHandle, access: false, label: '取消', callBack: (model) => getActionPromise(model)},
     Save: {id: 'save', icon: 'iz-icon-tijiao', color: '#87d068', position: '', sort: 20,
         url: null, disabled: DisabledHandle, access: false, label: '提交', callBack: (model) => getActionPromise(model)},
-    Status: {id: 'status', icon: 'iz-icon-status', color: 'ivz-action-status', position: '', sort: 25,
+    Status: {id: 'status', icon: 'iz-icon-status', color: '#9dd7ff', position: '', sort: 25,
         url: null, disabled: DisabledHandle, access: false, label: '状态', callBack: (model) => getActionPromise(model)},
-    Detail: {id: 'detail', icon: 'iz-icon-detail', color: 'ivz-action-detail', position: 'T', sort: 30,
+    Detail: {id: 'detail', icon: 'iz-icon-detail', color: 'blue', position: 'T', sort: 30,
         url: null, disabled: DisabledHandle, access: false, label: '详情', callBack: (model) => getActionPromise(model)},
-    Import: {id: 'import', icon: 'iz-icon-import', color: 'ivz-action-import', position: 'M', sort: 50,
+    Import: {id: 'import', icon: 'iz-icon-import', color: 'blue', position: 'M', sort: 50,
         url: null, disabled: DisabledHandle, access: false, label: '导入', callBack: (model) => getActionPromise(model)},
-    Export: {id: 'export', icon: 'iz-icon-export', color: 'ivz-action-export', position: 'M', sort: 55,
+    Export: {id: 'export', icon: 'iz-icon-export', color: 'blue', position: 'M', sort: 55,
         url: null, disabled: DisabledHandle, access: false, label: '导出', callBack: (model) => getActionPromise(model)},
-    Default: {id: 'default', icon: 'iz-icon-default', color: 'ivz-action-default', position: 'T', sort: 60,
+    Default: {id: 'default', icon: 'iz-icon-default', color: 'blue', position: 'T', sort: 60,
         url: null, disabled: DisabledHandle, access: false, label: '默认', callBack: (model) => getActionPromise(model)},
-    Reset: {id: 'reset', icon: 'iz-icon-reset', color: 'ivz-action-reset', position: 'M', sort: 85,
+    Reset: {id: 'reset', icon: 'iz-icon-reset', color: '#ffc609', position: 'M', sort: 85,
         url: null, disabled: DisabledHandle, access: false, label: '重置', callBack: (model) => getActionPromise(model)},
     Del: {id: 'del', icon: 'iz-icon-delete', url: null, color: '#f50', position: 'T', sort: 90,
         disabled: DisabledHandle, access: false, label: '删除', callBack: (model) => getActionPromise(model)}
@@ -167,6 +167,18 @@ export default {
             rowClassName: () => 'iz-table-row', // 表格行列名
             mountedFinished: (tableVue) => {}, // 表格组件更新完成
             locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'} //
+        },
+        detail: {
+            mask: false,
+            isInit: true, // 是否已经初始化
+            height: '256px',
+            title: '详情',
+            zIndex: 1000,
+            width: null,
+            closable: true,
+            placement: 'right', //'top' | 'right' | 'bottom' | 'left'
+            maskClosable: false,
+            destroyOnClose: false,
         }
     },
     defaultConfig: {
@@ -240,46 +252,66 @@ export default {
         })
     },
     getActionMeta (action, option) {
-        let upperCase = Utils.firstUpperCase(action)
-        let actionMate = operaMates[upperCase]
+        let upperCase = Utils.firstUpperCase(action);
+        let actionMate = operaMates[upperCase];
         if (!actionMate) {
-            return Object.assign({id: action, callBack: (model) => getActionPromise(model)}, option)
+            return Object.assign({id: action, color: 'blue'
+                , icon: '', callBack: (model) => getActionPromise(model)}, option)
         }
         return Object.assign({}, actionMate, option)
     },
-    getActionMates () {
-        let points = this.currentMenu['children'] // 返回当前菜单的功能点
-        if (Utils.isBlank(points)) {
-            Logger.warningLog('当前视图功能点不存在', '新增要操作的功能点', this.currentMenu)
-            return {}
+    addActionMeta(action, options) {
+        let actionMate = this.getActionMates()[action];
+        if(!actionMate) {
+            this.getActionMates()[action] =
+                actionMate = this.getActionMeta(action, options);
         }
-        let pageActionMate = this.pageActionMates[this.currentMenu.id] || {}
+        return actionMate;
+    },
+    setActionMeta(action, options) {
+        let actionMate = this.getActionMates()[action];
+        if(actionMate) {
+            Object.assign(actionMate, options);
+        } else {
+            Logger.debugLog("设置actionMeta options", `${action} 不存在`, options);
+        }
+    },
+    getActionMates () {
+        let pageActionMate = this.pageActionMates[this.currentMenu.id] || {};
         if (Utils.isNotBlank(pageActionMate)) {
             return pageActionMate
         } else {
+            let points = this.currentMenu['children']; // 返回当前菜单的功能点
+            if (Utils.isBlank(points)) {
+                Logger.warningLog('当前视图功能点不存在', '新增要操作的功能点', this.currentMenu);
+                return {}
+            }
+
             points.forEach(item => {
-                let action = item['permType']
+                let action = item['permType'];
                 if (!action) {
                     return Logger.warningLog('此功能不存在权限类型', '请设置permType的值到Add、Edit...', item)
                 }
 
-                if (pageActionMate[action]) return
+                if (pageActionMate[action]) return;
 
                 // 如果有新增和编辑的权限 则添加保存和取消的动作
                 if (action === 'Add' || action === 'Edit') {
-                    pageActionMate['Save'] = this.getActionMeta('Save', {})
+                    pageActionMate['Save'] = this.getActionMeta('Save', {});
                     pageActionMate['Cancel'] = this.getActionMeta('Cancel', {})
                 }
+
                 let operaMate = this.getActionMeta(action, {
                     url: item['url'], label: item['name'], position: item['position']
-                })
+                });
 
                 if (Utils.isNotBlank(operaMate)) {
                     pageActionMate[action] = operaMate
                 }
-            })
+            });
             this.pageActionMates[this.currentMenu.id] = pageActionMate
         }
+
         return pageActionMate
     },
     activityMenuRegister(activityMenu) {},

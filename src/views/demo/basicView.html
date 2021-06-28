@@ -6,14 +6,15 @@
 </head>
 <body>
     <div id="app">
-        <ivz-basic-view :metas="groupMetas" :action-metas="actionMetas"
-                :search-metas="searchMetas" :config="groupConfig" ref="ibv">
-            <template #name="{value, meta, row}">
+        <ivz-basic-view :metas="groupMetas" :search-metas="searchMetas" :config="groupConfig" ref="ibv">
+            <template #name_t="{value, meta, row}">
                 <a-tag color="green">{{value}}</a-tag>
             </template>
-            <template #fname>
-                <span>kkj</span>
+            <template #area_t="{meta, row, value}"><span>lkj</span></template>
+            <template #mark_sale_f="{meta}">
+                <span>{{meta['field']}}</span>
             </template>
+            <template #name_d>detailName</template>
         </ivz-basic-view>
         <ivz-modal-form ref="mf" :metas="ModalMetas" :save-meta="saveMeta"
                         title="测试模态框"></ivz-modal-form>
