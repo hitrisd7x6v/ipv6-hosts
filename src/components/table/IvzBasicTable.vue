@@ -11,8 +11,8 @@
                 <div v-html="col.formatter(text, record, col)" :key="col.field" style="display: inline-block"></div>
             </slot>
         </template>
-        <template slot="action" slot-scope="text, record, index">
-            <slot name="action" :row="record" :index="index">
+        <template slot="action_t" slot-scope="text, record, index">
+            <slot name="action_t" :row="record" :index="index">
                 <a-row type="flex" justify="center" :gutter="0" align="middle">
                     <template v-if="isNotBlank(mainMetas)">
                         <a-col v-for="item in mainMetas" :key="item['id']" class="ivz-opera">

@@ -36,8 +36,8 @@
                     <div v-else v-html="col.formatter(text, row, col)" :key="col.field"></div>
                 </slot>
             </template>
-            <template slot="action" slot-scope="text, row, index">
-                <slot name="action" :row="row" :index="index">
+            <template slot="action_t" slot-scope="text, row, index">
+                <slot name="action_t" :row="row" :index="index">
                     <a-row align="middle" justify="center" type="flex">
                         <a-col v-for="mate in mainMetas" :key="mate.id" class="ivz-opera">
                             <a-popconfirm v-if="mate.id=='del'" title="确认删除？" trigger="click"

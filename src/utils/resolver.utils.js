@@ -210,7 +210,7 @@ export default {
                             returnVal.push(group)
                         }
                         doResolverFormMetas(meta['children'], vue, callBack, 'child', group)
-                    } else if (!type) {
+                    } else if (!type && meta.type !== 'action') {
                         if (!group) {
                             group = {name: '', metas: []};
                             returnVal.push(group)
@@ -317,7 +317,7 @@ export default {
                 columnWidth: 38, // 全选列的宽度
                 columnTitle: '', // 全选框的标题
                 selectedRowKeys: [] // 选中行的key集合
-            }, _this)
+            }, _this);
             // 如果表格可以多选, 必须加上多选列的宽度
             config.scroll.x += selection.columnWidth
         }
@@ -659,16 +659,16 @@ export default {
 
         // 表格操作元数据
         if (item['type'] === 'action') { // action列的宽度必须手动指定, 否则不指定
-            _this.$set(item, 'scopedSlots', {customRender: item.field})
+            _this.$set(item, 'scopedSlots', {customRender: item.field + '_t'})
         } else {
             if (!item.width) _this.$set(item, 'width', 136) // 默认宽度为136px
         }
         if (item['formatter']) { // 只要是存在需要重新格式化数据的字段, 在表里面全部使用slot
-            item['tableSlot'] = item.tableSlot || item.field;
+            item['tableSlot'] = item.field + '_t';
             _this.$set(item, 'scopedSlots', {customRender: item.tableSlot})
         } else if(item['editable']) { // 如果是可编辑的也需要重新格式化
             _this.$set(item, 'formatter', (val) => val);
-            item['tableSlot'] = item.tableSlot || item.field;
+            item['tableSlot'] = item.field+'_t';
             _this.$set(item, 'scopedSlots', {customRender: item.tableSlot})
         }
 

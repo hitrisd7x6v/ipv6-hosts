@@ -169,7 +169,7 @@ export default {
             locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'} //
         },
         detail: {
-            mask: false,
+            mask: true,
             isInit: true, // 是否已经初始化
             height: '256px',
             title: '详情',
@@ -177,7 +177,7 @@ export default {
             width: null,
             closable: true,
             placement: 'right', //'top' | 'right' | 'bottom' | 'left'
-            maskClosable: false,
+            maskClosable: true,
             destroyOnClose: false,
         }
     },

@@ -2,11 +2,12 @@
     <a-locale-provider :locale="zhCN">
     <div class="ivz-view ivz-drawer-view ivz-container">
         <ivz-default-list ref="listRef" :table-metas="tableMetas" :table-config="tableConfig"
-             :data="data" :action-metas="actionMetas" :search-metas="searchMetas" :search-config="searchConfig">
+             :data="data" :action-metas="actionMetas" :search-metas="searchMetas"
+              :search-config="searchConfig" :table-alias-metas="tableAliasMetas">
             <template #action="{row, index}">
                 <slot name="action" :row="row" :index="index"></slot>
             </template>
-            <template v-for="meta in tableAliasMetas" #[meta.tableSlot]>
+            <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
                 <slot :name="meta.tableSlot" :meta="meta" :value="value" :row="row" :index="index"></slot>
             </template>
         </ivz-default-list>
@@ -40,8 +41,8 @@
         mixins: [MixPageView],
         components: {IvzDefaultList, IvzDrawerForm, IvzDrawerDetail},
         props: {
-            width: {},
-            height: {},
+            width: {type: String},
+            height: {type: String},
             placement: {type: String, default: 'right'}
         },
         data () {

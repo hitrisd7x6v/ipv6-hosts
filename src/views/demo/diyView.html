@@ -6,14 +6,8 @@
 </head>
 <body>
     <div id="app">
-        <ivz-diy-view :metas="mates" :action-metas="actionMetas"
-             :search-metas="searchMetas" :config="config" :data="data">
-            <template #search="{metas, config}">
-                {{metas}}
-            </template>
-<!--            <template #table="{data}">-->
-<!--                {{data}}-->
-<!--            </template>-->
+        <ivz-diy-view :metas="mates" :search-metas="searchMetas"
+                      :config="config" :data="data">
         </ivz-diy-view>
     </div>
 </body>

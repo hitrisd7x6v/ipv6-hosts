@@ -6,6 +6,7 @@ let defaultGlobalConfig = {
     izStx: '',
     envUrl: '/env', // 获取环境配置Url
     loginUrl: '/login', // 登录地址
+    logoutUrl: '/logout', // 注销系统
     captchaUrl: '/captcha', // 验证码地址
     dictUrl: '/core/dictData/listByType', // 获取字典数据url
     resourcesUrl: '/resources', // 获取菜单资源Url

@@ -14,22 +14,22 @@ let cacheApi = window.parent.CacheApi;
 /**
  * 重写路由的push方法
  */
-const routerPush = VueRouter.prototype.push;
-VueRouter.prototype.push = function push (location) {
-    let url = location;
-    if(location instanceof Object) {
-        url = location['path'];
-    }
-    // 以/IvzSys开头的路径属于页级路由路径, 将使用vue-router的push行为
-    if(url.startsWith("/IvzSys")) { // 系统页级路由, 不改变其行为
-        return routerPush.call(this, location).catch(error => {
-            if(!window.location.href.includes('/IvzSys/void'))
-                routerPush.call(this, '/IvzSys/void')
-        })
-    } else { // 其他路径将会重新打开一个页面
-        cacheApi.openMenu(location)
-    }
-}
+// const routerPush = VueRouter.prototype.push;
+// VueRouter.prototype.push = function push (location) {
+//     let url = location;
+//     if(location instanceof Object) {
+//         url = location['path'];
+//     }
+//     // 以/IvzSys开头的路径属于页级路由路径, 将使用vue-router的push行为
+//     if(url.startsWith("/IvzSys")) { // 系统页级路由, 不改变其行为
+//         return routerPush.call(this, location).catch(error => {
+//             if(!window.location.href.includes('/IvzSys/void'))
+//                 routerPush.call(this, '/IvzSys/void')
+//         })
+//     } else { // 其他路径将会重新打开一个页面
+//         cacheApi.openMenu(location)
+//     }
+// }
 const router = new VueRouter(
     {
         routes: [// 每个页面的路由配置
@@ -251,6 +251,7 @@ export default {
     },
     resolverSlots(scopedSlots) {
         let noMatcher = false;
+        let formatter = (val, row, meta) => val;
         Object.keys(scopedSlots).forEach(name => {
             if(name.startsWith("$")) return;
             let field = Utils.toHump(name.substring(0, name.length-2));
@@ -264,9 +265,9 @@ export default {
                 meta['tableSlot'] = name;
                 this.tableSlotMetas.push(meta);
                 if(!meta['formatter']) {
-                    meta['formatter'] = (val, row, meta) => val;
+                    meta['formatter'] = formatter;
                 }
-                meta['scopedSlots'] = {customRender: name};
+                meta['scopedSlots'] = {customRender: name}
             } else if(name.endsWith('_f')) {
                 meta['formSlot'] = name;
                 this.formSlotMetas.push(meta);

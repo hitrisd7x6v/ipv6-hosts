@@ -129,6 +129,7 @@
 
 <script>
 import CacheApi from '@/utils/cache.utils'
+import Global from "@/components/global.config"
 import IvzSubMenu from '@/components/basic/IvzSubMenu'
 export default {
     name: 'index',
@@ -218,7 +219,9 @@ export default {
         },
         moreOpera (item) {
             if (item.key === 'logout') {
-                location.href = this.izCtx + '/auth/logout'
+                this.$http.get(Global.logoutUrl).then(()=>{
+                    location.href = this.izCtx + Global.loginUrl;
+                });
             }
         },
         viewHandler (view) {

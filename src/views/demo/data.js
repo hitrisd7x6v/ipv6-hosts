@@ -96,7 +96,15 @@ Mock.mock(RegExp('/core/dictData/listByType.*'), 'get', (options) => {
         }
     })
 })
-
+/* 注销登录 */
+Mock.mock(RegExp('/logout.*'), 'get', (options) => {
+    // let query = Utils.getUrlParam(options.url)
+    return Mock.mock({
+        code: 200,
+        message: '注销成功',
+        data: { }
+    })
+})
 /* 获取系统配置 */
 Mock.mock(RegExp('/env'), 'get', (options) => {
     return Mock.mock({
@@ -130,9 +138,10 @@ Mock.mock(RegExp('/resources'), 'get', (options) => {
                                 // {id: 113, name: 'ModalView', icon: '', type: 'V', url: '/demo/modalView.html'},
                                 {id: 114, name: '可编辑表页', icon: 'iz-icon-page-edit', type: 'V'
                                     , url: '/demo/editView.html', children: getChildrenMenus()},
-                                // {id: 116, name: 'diy视图页', type: 'V', url: '/demo/diyView.html'},
-                                {id: 117, name: 'slot表单视图页', type: 'V', url: '/demo/diyFormView.html'},
-                                {id: 118, name: 'slot表格视图页', type: 'V', url: '/demo/diyTableView.html'},
+                                {id: 116, name: 'diy视图页', type: 'V', url: '/demo/diyView.html/#/list'
+                                    , children: getChildrenMenus()},
+                                // {id: 117, name: 'slot表单视图页', type: 'V', url: '/demo/diyFormView.html'},
+                                // {id: 118, name: 'slot表格视图页', type: 'V', url: '/demo/diyTableView.html'},
                             ]
                         },
                         {id: 22, name: '功能组件', type: 'M', icon: '', children: [
