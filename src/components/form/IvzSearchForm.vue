@@ -117,7 +117,7 @@
         },
         created () {
             this.model = this.searchModel || {};
-            this.$utils.assignProperty(this.model, this.oriModel)
+            this.$utils.mergeObject(this.model, this.oriModel);
         },
         mounted () { },
         methods: {

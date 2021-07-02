@@ -24,16 +24,6 @@ export const MixPageForm = {
     },
     created () {
         this.saveMeta = this.actionMetas['Save'];
-        let actionMeta = this.$page.getStore("actionMeta");
-        if(null == actionMeta) { // 默认情况使用新增操作的数据信息
-            this.operaMeta = this.actionMetas['Add'];
-            this.$page.putStore("editModel", this.$page.getOriModel(this))
-        } else if(actionMeta.id == 'add') {
-            this.operaMeta = this.actionMetas['Add']
-        } else if(actionMeta.id == 'edit') {
-            this.operaMeta = this.actionMetas['Edit'];
-        }
-
         this.oriModel = this.$page.oriModel;
         this.fieldMetaMap = this.$page.editFieldMetaMap;
     },
@@ -50,8 +40,13 @@ export const MixPageForm = {
             this.initEditModel();
         },
         initEditModel () {
-            if (this.actionMetas.Edit == this.operaMeta) {
+            let actionMeta = this.$page.getStore("actionMeta");
+            if(null == actionMeta) { // 默认情况使用新增操作的数据信息
+                this.operaMeta = this.actionMetas['Add'] || {};
+                this.$page.putStore("editModel", this.$page.getOriModel(this))
+            } else if (actionMeta.id == 'edit') {
                 this.queryParams = this.$route.query;
+                this.operaMeta = this.actionMetas['Edit'];
 
                 this.title = this.formConfig.editTitle
                     ? this.formConfig.editTitle : this.operaMeta['label'];
@@ -62,7 +57,9 @@ export const MixPageForm = {
                 } else { // 新增的数据从表单对象获取
                     this.getDetail(this.queryParams)
                 }
-            } else if(this.actionMetas.Add == this.operaMeta) {
+            } else if(actionMeta.id == 'add') {
+                this.operaMeta = this.actionMetas['Add']
+
                 this.title = this.formConfig.addTitle
                     ? this.formConfig.addTitle : this.operaMeta['label'];
 

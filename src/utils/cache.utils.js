@@ -370,6 +370,8 @@ export default {
             case '_blank':
                 if (!this.taskBarData.includes(menu)) {
                     this.taskBarData.push(menu)
+                } else {
+
                 }
                 break;
             default: console.log(`不支持：${target}`);

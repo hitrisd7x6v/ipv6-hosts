@@ -5,6 +5,7 @@ import VueRouter from 'vue-router'
 import Logger from '@/utils/logger.utils'
 import Utils from '@/utils/basic.utils'
 import Resolver from '@/utils/resolver.utils'
+import moment from "moment";
 
 Vue.use(VueRouter);
 // 获取父框架的缓存api对象
@@ -226,14 +227,23 @@ export default {
         }
         // 设置编辑表单配置项
         this.beforeResolverMetasHandle(oriMetas, formConfig, vue);
+        let queryParams = this.getQueryParams() || {};
         return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
             // 如果是编辑表单
             if(this.isEditForm(formConfig)) {
-
                 this.editFieldMetaMap[meta.field] = meta;
                 // 解析此表单字段的默认值
                 Resolver.resolverMetaDefaultValue(meta, this.oriModel);
             } else if(this.isSearchForm(formConfig)) {
+                let param = queryParams[meta.field];
+                if(param) { // 覆写掉初始值, 以页面url的参数为准
+                    if(Utils.isDate(meta.type)) {
+                        meta['decorate']['initialValue'] = moment(param)
+                    } else {
+                        meta['decorate']['initialValue'] = param
+                    }
+                }
+
                 this.searchFieldMetaMap[meta.field] = meta;
                 Resolver.resolverMetaDefaultValue(meta, this.oriSearchModel)
             }
@@ -247,7 +257,7 @@ export default {
             let meta = this.editFieldMetaMap[field];
             if(!meta) {
                 Logger.warningLog(`slot ${name} 找不到匹配的字段 ${field}`
-                    , "slot名称必须遵循驼峰式字段用'_'隔开");
+                    , "slot名称必须遵循：如果是驼峰式的字段则必须用'_'隔开");
                 return;
             }
             if(name.endsWith('_t')) {
@@ -264,6 +274,7 @@ export default {
                 meta['detailSlot'] = name;
                 this.detailSlotMetas.push(meta);
             } else {
+                noMatcher = true;
                 Logger.warningLog(`slot ${name}名称不规范, 将舍弃`, 'slot名称必须以：_f、_t、_d结尾');
             }
         });

@@ -66,7 +66,7 @@ export const MixPageView = {
         this.registerActionEvent();
         this.listRef = this.$refs['listRef']; // 页级列表组件的引用
         this.detailRef = this.$refs['detailRef'];
-        this.$page.resolverSlots(this.$scopedSlots, this);
+        this.$page.resolverSlots(this.$scopedSlots);
         this.$page.registerPageRef(this, this.listRef)
     },
     methods: {

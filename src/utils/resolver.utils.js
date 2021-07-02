@@ -195,8 +195,8 @@ export default {
      * @returns {Array}
      */
     resolverFormMetas (oriMetas, formConfig, vue, callBack) {
-        let returnVal = []
-
+        let returnVal = [];
+        if(!callBack) callBack = ()=>{};
         let doResolverFormMetas = (metas, vue, callBack, type, group) => {
             if (Utils.isArray(metas)) {
                 metas.forEach((meta, index) => {
@@ -218,9 +218,9 @@ export default {
                         doResolverFormMetas([meta], vue, callBack, 'mate', group)
                     } else {
                         if (meta.type !== 'action') {
-                            group['metas'].push(meta)
+                            group['metas'].push(meta);
                             this.initFormMate(meta, formConfig, vue)
-                            if (callBack) callBack(meta, metas)
+                            callBack(meta)
                         }
                     }
                 })
