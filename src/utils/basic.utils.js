@@ -210,8 +210,39 @@ const Utils = {
             } else {
                 ori[key] = target[key]
             }
-        })
+        });
         return ori
+    },
+    clone(ori) {
+        if(!ori) return null;
+        let _this = this;
+        function doClone(origin) {
+            if(_this.isObject(origin)) {
+                let retObj = {};
+                Object.keys(origin).forEach(key=>{
+                    let value = origin[key];
+                    if(_this.isObject(value)) {
+                        retObj[key] = doClone(value);
+                    } else if(_this.isArray(value)) {
+                        retObj[key] = doClone(value);
+                    } else {
+                        retObj[key] = value;
+                    }
+                });
+                return retObj;
+            } else if(_this.isArray(origin)) {
+                let retArr = [];
+                origin.forEach(item=>{
+                    retArr.push(doClone(item));
+                })
+                return retArr;
+            } else {
+                return origin;
+            }
+        }
+        let clone = doClone(ori);
+        console.log(clone);
+        return clone;
     },
     /**
      * 合并默认的对象
@@ -244,6 +275,12 @@ const Utils = {
                 }
             }
         })
+    },
+    isIe() {
+        let userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+        let isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器
+        let isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
+        return isIE || isIE11;
     },
     /*
     *  无任何功能的函数

@@ -7,8 +7,8 @@
 <body>
     <div id="app">
         <ivz-drawer-view :metas="groupMetas" :search-metas="searchMetas" :config="config">
-            <template #name_t="{value, meta, row}">
-                <a-tag color="green">{{value}}</a-tag>
+            <template #name_t="params">
+                <a-tag color="green">{{params.value}}</a-tag>
             </template>
         </ivz-drawer-view>
     </div>

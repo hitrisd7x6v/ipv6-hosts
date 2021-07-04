@@ -1,6 +1,6 @@
-import './ivzone.css' // 导入全局样式
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+import './ivzone.css' // 导入全局样式
 import '../utils/icon.utils'
 import Page from './page.config' // 导入每个iframe页面独有的库
 /* 导入组件 */

@@ -9,27 +9,27 @@ import moment from "moment";
 
 Vue.use(VueRouter);
 // 获取父框架的缓存api对象
-let cacheApi = window.parent.CacheApi;
+let cacheApi = window.parent.CacheApi || {};
 
 /**
  * 重写路由的push方法
  */
-// const routerPush = VueRouter.prototype.push;
-// VueRouter.prototype.push = function push (location) {
-//     let url = location;
-//     if(location instanceof Object) {
-//         url = location['path'];
-//     }
-//     // 以/IvzSys开头的路径属于页级路由路径, 将使用vue-router的push行为
-//     if(url.startsWith("/IvzSys")) { // 系统页级路由, 不改变其行为
-//         return routerPush.call(this, location).catch(error => {
-//             if(!window.location.href.includes('/IvzSys/void'))
-//                 routerPush.call(this, '/IvzSys/void')
-//         })
-//     } else { // 其他路径将会重新打开一个页面
-//         cacheApi.openMenu(location)
-//     }
-// }
+const routerPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push (location) {
+    let url = location;
+    if(location instanceof Object) {
+        url = location['path'];
+    }
+    // 以/IvzSys开头的路径属于页级路由路径, 将使用vue-router的push行为
+    if(url.startsWith("/IvzSys")) { // 系统页级路由, 不改变其行为
+        return routerPush.call(this, location).catch(error => {
+            if(!window.location.href.includes('/IvzSys/void'))
+                routerPush.call(this, '/IvzSys/void')
+        })
+    } else { // 其他路径将会重新打开一个页面
+        cacheApi.openMenu(location)
+    }
+}
 const router = new VueRouter(
     {
         routes: [// 每个页面的路由配置
@@ -39,7 +39,6 @@ const router = new VueRouter(
         ]
     }
 )
-
 Vue.prototype.$nav = router.push;
 Vue.prototype.$cache = cacheApi; // 父页面缓存
 Vue.prototype.formSize = 'default'; // 表单尺寸
@@ -60,8 +59,9 @@ export default {
     tableSlotMetas: [], // table slot
     detailSlotMetas: [], // detail slot
     editFieldMetaMap: {}, // 编辑表单：field -> meta
+    pageActionMetas: null, // 当前页功能点
     searchFieldMetaMap: {}, // 搜索表单：field -> meta
-    menu: cacheApi.currentMenu, // 每个页面对应的菜单
+    menu: cacheApi.getCurrentMenu(), // 每个页面对应的菜单
     getMeta(key) {
         return this.editFieldMetaMap[key];
     },
@@ -72,13 +72,26 @@ export default {
         return cacheApi.getActionMeta(action, options);
     },
     getActionMetas() {
-        return cacheApi.getActionMates();
+        if(!this.pageActionMetas) {
+            this.pageActionMetas = cacheApi.getActionMates();
+        }
+        return this.pageActionMetas;
     },
     addActionMeta(action, options) {
-        return cacheApi.addActionMeta(action, options);
+        let actionMate = this.getActionMetas()[action];
+        if(!actionMate) {
+            this.getActionMetas()[action] =
+                actionMate = cacheApi.getActionMeta(action, options);
+        }
+        return actionMate;
     },
     setActionMeta(action, options) {
-        return cacheApi.setActionMeta(action, options);
+        let actionMate = this.getActionMetas()[action];
+        if(actionMate) {
+            Object.assign(actionMate, options);
+        } else {
+            Logger.debugLog("设置actionMeta options", `${action} 不存在`, options);
+        }
     },
     getQueryParams() {
         return cacheApi.currentMenu['IvzQueryParams'];

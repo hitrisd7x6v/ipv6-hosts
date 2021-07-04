@@ -4,11 +4,12 @@
         <ivz-default-list ref="listRef" :table-metas="tableMetas" :table-config="tableConfig"
              :data="data" :action-metas="actionMetas" :search-metas="searchMetas"
               :search-config="searchConfig" :table-alias-metas="tableAliasMetas">
-            <template #action="{row, index}">
-                <slot name="action" :row="row" :index="index"></slot>
+            <template #action="params">
+                <slot name="action" :row="params.row" :index="params.index"></slot>
             </template>
-            <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
-                <slot :name="meta.tableSlot" :meta="meta" :value="value" :row="row" :index="index"></slot>
+            <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="params">
+                <slot :name="meta.tableSlot" :meta="meta" :value="params.value"
+                      :row="params.row" :index="params.index"></slot>
             </template>
         </ivz-default-list>
         <ivz-drawer-form ref="formRef" :form-group="formGroup" :placement="placement" :visible="!listView"
@@ -22,8 +23,8 @@
         </ivz-drawer-form>
         <ivz-drawer-detail ref="detailRef" :form-group="formGroup"
                v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
-            <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="{row}">
-                <slot :name="meta.detailSlot" :meta="meta" :row="row"></slot>
+            <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="params">
+                <slot :name="meta.detailSlot" :meta="meta" :row="params.row"></slot>
             </template>
         </ivz-drawer-detail>
     </div>

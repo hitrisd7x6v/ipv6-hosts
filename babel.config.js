@@ -1,10 +1,8 @@
 module.exports = {
   presets: [
-    ['@vue/app', {
-      useBuiltIns: 'entry'
+    ["@babel/preset-env", {
+      useBuiltIns: "entry", // or "usage"
+      corejs: 3,
     }]
   ],
-  plugins: [
-    // ['@babel/plugin-transform-runtime']
-  ]
 }

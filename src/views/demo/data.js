@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Mock from 'mockjs'
 import '@/components/ivzone.css'
 import Ivzone from '@/components/ivzone'
-import Cache from '@/utils/cache.utils'
 import Utils from '@/utils/basic.utils'
 import Logger from '@/utils/logger.utils' // 缓存
 
@@ -77,7 +76,7 @@ function getChildrenMenus() {
         {id: 1000, name:'删除', permType: 'Del', url: '/test/del', position: 'T'},
         {id: 1001, name:'编辑', permType: 'Edit', url: '/test/edit', position: 'T'},
         {id: 1002, name:'取消', permType: 'Cancel', url: '/test/cancel', position: 'T'},
-        {id: 1003, name:'浏览', permType: 'View', url: '/test/view', position: 'M'},
+        {id: 1003, name:'查询', permType: 'View', url: '/test/view', position: 'M'},
         {id: 1004, name:'保存', permType: 'Save', url: ''},
         {id: 1005, name:'新增', permType: 'Add', url: '/test/add', position: 'M'},
         {id: 1006, name:'详情', permType: 'Detail', url: '', position: 'T'},

@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import './index.css'
-import '@/utils'
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+import '@/utils'
+import Vue from 'vue'
+import './index.css'
 import Index from './index.vue'
 import '@/utils/icon.utils'
 import CacheApi from '@/utils/cache.utils'

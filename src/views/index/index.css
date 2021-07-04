@@ -1,24 +1,12 @@
-body,.ivz-index-layout::before {
-    background: url("/img/login.jpg") 0 / cover fixed;
-}
-.ivz-index-layout::before {
-    content: '';
-    margin:-30px;
-    filter: blur(20px);
-    position: absolute;
-    top:0;right:0;bottom:0;left:0;
-}
 .ivz-index-layout {
     overflow: hidden;
     position: relative;
-    background: hsla(0,0%,100%,.3);
 }
 .layout-header-bar{
     z-index: 0;
     padding: 0px!important;
     height: 84px!important;
-    background-color: unset!important;
-    background-image: linear-gradient(rgba(255,255,255,0.96),rgba(255,255,255,0.85))!important;
+    background-color: #ffffff!important;
 }
 .iz-header-col {
     /*height: 48px!important;*/
@@ -122,9 +110,6 @@ body,.ivz-index-layout::before {
     margin-top: 0px;
     padding-left: 52px;
 }
-.ant-tabs-tab-prev {
-    /*box-shadow: 1px 0 1px rgba(0,0,0,.1);*/
-}
 .ant-tabs-tab-prev,.ant-tabs-tab-next {
     height: 100%;
     width: 22px!important;
@@ -132,9 +117,6 @@ body,.ivz-index-layout::before {
     opacity: 1!important;
     color: #17233d!important;
     pointer-events: auto!important;
-}
-.ant-tabs-tab-next {
-    /*box-shadow: -1px 0 1px rgba(0,0,0,.1);*/
 }
 .ant-tabs-tab {
     color: #212121;
@@ -197,7 +179,7 @@ body,.ivz-index-layout::before {
 }
 /*侧边栏*/
 .ant-layout-sider {
-    background: rgba(255, 255, 255, 0.9)!important;
+    background: rgb(255, 255, 255) !important;
 }
 .ant-layout-sider-collapsed .ivz-avatar {
     height: 82px;
@@ -235,7 +217,7 @@ body,.ivz-index-layout::before {
 /*侧边菜单栏样式*/
 .ant-menu {
     height: calc(100% - 148px);
-    background: rgba(254, 254, 254, 0)!important;
+    /*background: rgba(254, 254, 254, 0)!important;*/
 }
 .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
     border-right: 0px!important;
@@ -253,11 +235,8 @@ body,.ivz-index-layout::before {
 .ant-menu .ant-menu-submenu {
     color: #353739;
 }
-.ant-menu-submenu .ant-menu-submenu-title:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
 .ant-menu-submenu .ant-menu-sub {
-    background: rgba(181, 181, 181, 0.12)!important;
+    background: rgb(252, 252, 252) !important;
 }
 .ant-menu-inline .ant-menu-submenu-title {
     font-size: 16px!important;

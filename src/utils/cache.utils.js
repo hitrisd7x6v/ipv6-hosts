@@ -251,6 +251,9 @@ export default {
             }
         })
     },
+    getCurrentMenu() {
+        return Utils.clone(this.currentMenu);
+    },
     getActionMeta (action, option) {
         let upperCase = Utils.firstUpperCase(action);
         let actionMate = operaMates[upperCase];
@@ -260,59 +263,37 @@ export default {
         }
         return Object.assign({}, actionMate, option)
     },
-    addActionMeta(action, options) {
-        let actionMate = this.getActionMates()[action];
-        if(!actionMate) {
-            this.getActionMates()[action] =
-                actionMate = this.getActionMeta(action, options);
-        }
-        return actionMate;
-    },
-    setActionMeta(action, options) {
-        let actionMate = this.getActionMates()[action];
-        if(actionMate) {
-            Object.assign(actionMate, options);
-        } else {
-            Logger.debugLog("设置actionMeta options", `${action} 不存在`, options);
-        }
-    },
     getActionMates () {
-        let pageActionMate = this.pageActionMates[this.currentMenu.id] || {};
-        if (Utils.isNotBlank(pageActionMate)) {
-            return pageActionMate
-        } else {
-            let points = this.currentMenu['children']; // 返回当前菜单的功能点
-            if (Utils.isBlank(points)) {
-                Logger.warningLog('当前视图功能点不存在', '新增要操作的功能点', this.currentMenu);
-                return {}
+        let pageActionMate = {};
+        let points = this.currentMenu['children']; // 返回当前菜单的功能点
+        if (Utils.isBlank(points)) {
+            Logger.warningLog('当前视图功能点不存在', '新增要操作的功能点', this.currentMenu);
+            return {}
+        }
+
+        points.forEach(item => {
+            let action = item['permType'];
+            if (!action) {
+                return Logger.warningLog('此功能不存在权限类型', '请设置permType的值到Add、Edit...', item)
             }
 
-            points.forEach(item => {
-                let action = item['permType'];
-                if (!action) {
-                    return Logger.warningLog('此功能不存在权限类型', '请设置permType的值到Add、Edit...', item)
-                }
+            if (pageActionMate[action]) return;
 
-                if (pageActionMate[action]) return;
+            // 如果有新增和编辑的权限 则添加保存和取消的动作
+            if (action === 'Add' || action === 'Edit') {
+                pageActionMate['Save'] = this.getActionMeta('Save', {});
+                pageActionMate['Cancel'] = this.getActionMeta('Cancel', {})
+            }
 
-                // 如果有新增和编辑的权限 则添加保存和取消的动作
-                if (action === 'Add' || action === 'Edit') {
-                    pageActionMate['Save'] = this.getActionMeta('Save', {});
-                    pageActionMate['Cancel'] = this.getActionMeta('Cancel', {})
-                }
-
-                let operaMate = this.getActionMeta(action, {
-                    url: item['url'], label: item['name'], position: item['position']
-                });
-
-                if (Utils.isNotBlank(operaMate)) {
-                    pageActionMate[action] = operaMate
-                }
+            let operaMate = this.getActionMeta(action, {
+                url: item['url'], label: item['name'], position: item['position']
             });
-            this.pageActionMates[this.currentMenu.id] = pageActionMate
-        }
 
-        return pageActionMate
+            if (Utils.isNotBlank(operaMate)) {
+                pageActionMate[action] = operaMate
+            }
+        });
+        return pageActionMate;
     },
     activityMenuRegister(activityMenu) {},
     /**

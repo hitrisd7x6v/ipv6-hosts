@@ -14,13 +14,13 @@
                 </template>
             </router-view>
         </div>
-<!--        <ivz-diy-list ref="listRef" :table-metas="tableMetas" :table-config="tableConfig"-->
-<!--           :action-metas="actionMetas" :search-metas="searchMetas" :search-config="searchConfig"-->
-<!--           :data="data" v-show="listView">-->
-<!--        </ivz-diy-list>-->
-<!--        <ivz-diy-form ref="formRef" :action-metas="actionMetas"-->
-<!--              :form-config="formConfig" :form-group="formGroup">-->
-<!--        </ivz-diy-form>-->
+        <ivz-diy-list ref="listRef" :table-metas="tableMetas" :table-config="tableConfig"
+           :action-metas="actionMetas" :search-metas="searchMetas" :search-config="searchConfig"
+           :data="data" v-show="listView">
+        </ivz-diy-list>
+        <ivz-diy-form ref="formRef" :action-metas="actionMetas"
+              :form-config="formConfig" :form-group="formGroup">
+        </ivz-diy-form>
     </a-locale-provider>
 </template>
 
