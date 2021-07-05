@@ -22,6 +22,7 @@
     import {MixPageList} from '../mixins/MixPageList'
     import zhCN from 'ant-design-vue/es/locale-provider/zh_CN'
     import IvzPageSearch from "@/components/form/IvzPageSearch";
+    import Resolver from "@/utils/resolver.utils";
 
 export default {
     name: 'IvzEditList',
@@ -61,7 +62,7 @@ export default {
                 actionMate['position'] = 'T'
             }
 
-            PageOptions.registerPosition('search', actionMate, this.searchMainMetas, this.searchMoreMetas)
+            Resolver.registerPosition('search', actionMate, this.searchMainMetas, this.searchMoreMetas)
         }
     }
 }
@@ -71,9 +72,5 @@ export default {
     .ivz-edit-row td{
         height: 36px;
         padding: 2px 4px!important;
-    }
-    .ivz-edit-list .ivz-edit-table {
-        background-color: #ffffff;
-        border: 3px solid #ffffff;
     }
 </style>

@@ -44,12 +44,6 @@ export const MixBasicForm = {
             let fieldsValue = this.form.getFieldsValue();
             this.$utils.assignVueProperty(this.model, fieldsValue)
         },
-        pressEnter (col) {
-            if (col.event.pressEnter) {
-                col.event.pressEnter(this.searchModel[col.field], this.searchModel, this)
-            }
-            this.$emit('pressEnter', this.searchModel, col)
-        },
         getOriFormModel () {
             return this.$utils.assignVueProperty({}, this.oriModel, this)
         },

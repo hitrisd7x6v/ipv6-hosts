@@ -43,15 +43,15 @@ const topSearchMetas = [
     {field: 'name', title: '产品名称', type: 'text', span: 8, ls: 6, fs: 16},
     {field: 'spec', title: '规格', type: 'checkbox', span: 8, fs: 16, data: spec},
     {field: 'type', title: '产品类型', type: 'radio', span: 8, ls: 6, fs: 18, data: productType}
-]
+];
 const searchMetas = [
-    {field: 'name', title: '产品名称', type: 'text', event: {}},
+    {field: 'name', title: '产品名称', type: 'text', event: {}, default: '茶叶'},
     {field: 'spec', title: '规格', type: 'checkbox', data: spec},
     {field: 'cat', title: '产品类别', type: 'select', data: productCat},
     // {field: 'type', title: '产品类型', type: 'radio', data: productType, span: [6, 18]},
-    // {field: 'createTime', title: '上架时间', type: 'date', default: '2019-12-10 09:02'}
-]
-Mock.setup({ timeout: '200-1800' })
+    {field: 'createTime', title: '上架时间', type: 'date', default: '2019-12-10 09:02'}
+];
+Mock.setup({ timeout: '200-1800' });
 let dataSource = Mock.mock({
     'rows|53': [
         {
@@ -66,8 +66,8 @@ let dataSource = Mock.mock({
             'createTime': '@datetime' // 随机生成1-5的数字
         }
     ]
-})['rows']
-let dataSourceMap = {}
+})['rows'];
+let dataSourceMap = {};
 dataSource.forEach(item => {
     dataSourceMap[item['id']] = item
 });
@@ -276,6 +276,9 @@ export default {
                 }
             ]
         },
+        {title: '图片信息', metas: [
+                {field: 'productPic', title: '产品图片', type: 'upload'}
+            ]},
         {title: '产品属性', metas: [
                 {field: 'spec', title: '规格', type: 'checkbox', dictType: 'spec'},
                 {field: 'cat', title: '产品类别', type: 'select', data: productCat, required: true, min: 2,

@@ -2,7 +2,7 @@
     <a-form class="ivz-form" :form="form" :hide-required-mark="formConfig.hideRequiredMark" :layout="formConfig.layout">
         <div v-for="group in formGroup" :key="group.name" class="ivz-group" :style="group.style">
             <div v-if="group.name" class="ivz-group-head">
-                <label style="color: #6eb5ff; font-size: 15px; font-style: oblique">{{group.name}}</label>
+                <label style="color: #6eb5ff; font-size: 14px; padding-left: 12px;">{{group.name}}</label>
             </div>
             <div class="ivz-group-body">
                 <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter" type="flex">
@@ -59,27 +59,23 @@
                                        @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
                                        @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
                                     </a-date-picker>
-                                    <a-month-picker v-else-if="col.type=='month'" :size="formSize" v-decorator="[col.field, col['decorate']]"
+                                    <a-range-picker v-else-if="col.type=='dateRange'" :size="formSize"
                                         :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
-                                        :disabled-date="col.config.disabledDate" style="width: 100%"
-                                        :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
-                                        @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
-                                        @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
-                                    </a-month-picker>
-                                    <a-week-picker v-else-if="col.type=='week'" :size="formSize" v-decorator="[col.field, col['decorate']]"
-                                       :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
-                                       :disabled-date="col.config.disabledDate" style="width: 100%"
-                                       :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
-                                       @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
-                                       @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
-                                    </a-week-picker>
-                                    <a-range-picker v-else-if="col.type=='dateRange'" :size="formSize" v-decorator="[col.field, col['decorate']]"
-                                        :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
-                                        :disabled-date="col.config.disabledDate" style="width: 100%"
-                                        :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
+                                        :disabled-date="col.config.disabledDate" style="width: 100%" @ok="col.event.ok(model)"
+                                        :blur="col.event.blur" :focus="col.event.focus" v-decorator="[col.field, col['decorate']]"
                                         @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
                                         @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
                                     </a-range-picker>
+                                    <a-upload v-else-if="col.type=='upload'" :action="col.config.action" :name="col.config.name"
+                                            :listType="col.config.listType" :accept="col.config.accept" :directory="col.config.directory"
+                                            :data="col.data" :disabled="disabledHandle(col)" :headers="col.config.headers"
+                                            :multiple="col.config.multiple" :showUploadList="col.config.showUploadList"
+                                            :withCredentials="col.config.withCredentials" :remove="col.config.remove"
+                                              :fileList="getFileList(col)" @preview="handlePreview" @change="handleChange">
+                                        <div v-if="getFileList(col).length<=5">
+                                            <a-icon type="plus" style="font-size: 26px" />
+                                        </div>
+                                    </a-upload>
                                     <a-input-number v-else-if="col.type == 'number'" :min="col.config.min" :max="col.config.max" :step="col.config.step"
                                         v-decorator="[col.field, col['decorate']]" :disabled="disabledHandle(col)"
                                         :formatter="col.formatter" :precision="col.config.precision" :parser="col.config.parser"
@@ -138,6 +134,18 @@
         this.$emit('mountedFinished', this) // 挂载完成事件
     },
     methods: {
+        getFileList(col) {
+            let fileList = this.model[col.field];
+            if(!fileList) fileList = [];
+            if(Utils.isArray(fileList)) return fileList;
+            else return fileList.split(',');
+        },
+        handlePreview() {
+
+        },
+        handleChange() {
+
+        },
         /**
          * 返回当前正在编辑的对象
          * @returns {null|*|undefined}

@@ -65,6 +65,12 @@
                 }
             }
         },
+        mounted() {
+            this.$page.registerVueRef(this, 'detail');
+        },
+        beforeDestroy() {
+            this.$page.registerVueRef(null, 'detail');
+        },
         methods: {
             open() {
                 this.visible = true;
@@ -72,6 +78,13 @@
             },
             close() {
                 this.visible = false;
+            },
+            toggle() {
+                if(this.visible) {
+                    this.close();
+                } else {
+                    this.open();
+                }
             },
             viewForm (col) {
                 if (typeof col['isForm'] === 'function') {
@@ -92,15 +105,17 @@
             },
             getDetailModel() {
                 let url = this.detailMeta.url;
+                this.detailModel = this.$page.getStore("detailModel");
                 if(url) {
                     this.spinning = true;
-                    this.$http.get(url, this.$route.query).then(resp=>{
+                    let query = {};
+                    let detailField = this.detailConfig.detailField;
+                    query[detailField] = this.detailModel[detailField];
+                    this.$http.get(url, {params: query}).then(resp=>{
                         this.detailModel = resp['detail'];
                     }).finally(()=>{
                         this.spinning = false;
                     })
-                } else {
-                    this.detailModel = this.$page.getStore("detailModel");
                 }
             }
         }

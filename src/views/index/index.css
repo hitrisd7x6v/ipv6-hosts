@@ -5,7 +5,7 @@
 .layout-header-bar{
     z-index: 0;
     padding: 0px!important;
-    height: 84px!important;
+    height: 82px!important;
     background-color: #ffffff!important;
 }
 .iz-header-col {
@@ -17,8 +17,8 @@
 }
 
 .ivz-header-row {
-    height: 48px;
-    line-height: 48px;
+    height: 44px;
+    line-height: 44px;
     color: #000000;
     position: relative;
 }
@@ -44,7 +44,7 @@
     padding: 0px 10px;
 }
 .iz-view-col:hover,.ivz-opera-col:hover,.iz-view-activity {
-    background: #c0c0c014;
+    background: #dfdfdf14;
 }
 .iz-right-dropdown {
     top: 52px!important;
@@ -73,19 +73,15 @@
 /*任务栏*/
 .ivz-task-bar {
     z-index: 0;
-    height: 40px;
-    /*display: flex;*/
+    height: 32px;
+    margin-top: 4px;
     position: relative;
-    margin-top: 2px;
-    /*align-items: center;*/
-    /*background: #fbfbfb;*/
-    /*justify-content: center;*/
 }
 .ivz-task-opera {
     width: 18px;
     position: absolute;
     top: 0px;
-    left: 26px;
+    left: 23px;
     cursor: pointer;
     height: 32px;
     line-height: 35px;
@@ -94,7 +90,6 @@
 }
 .ant-tabs {
     width: 100%;
-    padding: 0px 6px!important;
 }
 .ant-tabs-bar {
     border-radius: 16px;
@@ -118,6 +113,9 @@
     color: #17233d!important;
     pointer-events: auto!important;
 }
+:root .ant-tabs-tab-prev-icon-target, :root .ant-tabs-tab-next-icon-target {
+    font-size: 14px;
+}
 .ant-tabs-tab {
     color: #212121;
     padding: 0px 10px!important;
@@ -127,9 +125,7 @@
     transform: skewX(-28deg);
     line-height: 33px!important;
 }
-.ivz-task-bar,.ant-tabs-tab {
-    background-color: unset!important;
-}
+
 .ant-tabs-tab>div{
     transform: skewX(28deg);
 }
@@ -148,6 +144,9 @@
     width: 100%;
     flex-grow: 1;
     z-index: 0;
+    border-radius: 8px;
+    border: 2px solid #ffffff;
+    border-bottom: 0px solid #ffffff;
     background-color: rgba(243, 243, 243, 0.93);
 }
 .ivz-avatar {
@@ -228,12 +227,18 @@
 .ant-menu-inline .ant-menu-item, .ant-menu-inline .ant-menu-submenu-title {
     width: calc(100%)!important;
 }
+.ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+    padding: 0px 27px!important;
+}
 .ant-menu.ant-menu-root {
     overflow-y: auto;
     overflow-x: hidden;
 }
 .ant-menu .ant-menu-submenu {
     color: #353739;
+}
+.ant-menu-submenu .ant-menu-submenu-title:hover {
+    background: rgba(5, 130, 255, 0.04);
 }
 .ant-menu-submenu .ant-menu-sub {
     background: rgb(252, 252, 252) !important;

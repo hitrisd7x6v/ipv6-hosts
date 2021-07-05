@@ -25,7 +25,8 @@ export const MixPageList = {
         this.searchModel = this.$page.getQueryParams();
     },
     mounted () {
-        this.setTableHeight()
+        this.setTableHeight();
+        this.$page.registerVueRef(this, 'list');
     },
     beforeUpdate () {
         this.setTableHeight();

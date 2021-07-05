@@ -1,8 +1,8 @@
 export const MixBasicTable = {
     props: {
         data: {type: Array, default: null},
-        tableConfig: {type: Object, required: true},
-        tableMetas: {type: Array, default: () => { return [] }},
+        tableConfig: {type: Object, required: true, default: () => {}},
+        tableMetas: {type: Array, required: true, default: () => { return [] }},
         searchModel: {type: Object, default: () => { return {} }},
         actionMetas: {type: Object, default: () => { return {} }}
     },
@@ -55,10 +55,12 @@ export const MixBasicTable = {
             if (!this.queryMate) {
                 return this.$log.errorLog('没有指定查询动作', '在后台菜单新增查询功能点(View)或在代码里面添加')
             }
-            this.queryMate.callBack(this.searchModel, this).then(param => {
-                this.loading = true
+
+            let searchModel = this.$utils.resolverSearchModel(this.searchModel);
+            this.queryMate.callBack(searchModel, this).then(param => {
+                this.loading = true;
                 let promiseResolve = this.$utils.getPromiseResolve(param)
-                this.$http.get(this.queryMate.url, {params: this.searchModel}).then(resp => {
+                this.$http.get(this.queryMate.url, {params: searchModel}).then(resp => {
                     this.dataSource = resp[this.tableConfig.queryField]
                     if (typeof promiseResolve.success === 'function') {
                         promiseResolve.success(resp)
@@ -90,7 +92,7 @@ export const MixBasicTable = {
             return this.moreMetas
         },
         getSelectionRows () {
-            let selection = this.tableConfig.selection
+            let selection = this.tableConfig.selection;
             return selection ? selection['selectedRows'] : []
         },
         getSelectionKeys () {
@@ -138,11 +140,7 @@ export const MixBasicTable = {
         cancelActionHandle(meta, row) { },
         detailActionHandle(meta, row) {
             meta.callBack(row).then(() => {
-                let izField = this.$page.izField;
-                this.$page.putStore("detailModel", row);
-                let query = {}[izField] = row[izField];
-                console.log(new Date().getTime())
-                this.$router.push({path: "/IvzSys/detail", query: query})
+                this.$page.detail(row);
             })
 
         },

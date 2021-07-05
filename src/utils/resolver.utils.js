@@ -4,6 +4,7 @@ import Vue from 'vue'
 import moment from 'moment'
 import Http from '@/utils/http.utils'
 import Utils from '@/utils/basic.utils'
+import Logger from "@/utils/logger.utils";
 
 // 获取父框架的缓存api对象
 let cacheApi = window.parent.CacheApi;
@@ -398,6 +399,29 @@ export default {
             }, _this)
         }
     },
+    registerPosition (type, mate, mates, moreMates) {
+        if (type === 'table') { // 表格元数据
+            switch (mate.position) {
+                case 'T': mates.push(mate); break
+                case 'TM': moreMates.push(mate); break
+                case 'AM': mates.push(mate); break
+                default: break
+            }
+        } else { // 搜索栏元数据
+            switch (mate.position) {
+                case 'M': mates.push(mate); break
+                case 'MM': moreMates.push(mate); break
+                case 'AM': mates.push(mate); break
+                default: break
+            }
+        }
+        mates.sort((a, b) => {
+            return a.sort - b.sort
+        })
+        moreMates.sort((a, b) => {
+            return a.sort - b.sort
+        })
+    },
     izOptionType (type) {
         return type === 'select' || type === 'radio' || type === 'checkbox' || type === 'stree'
     },
@@ -428,9 +452,7 @@ export default {
             if (!decorate['rules']) _this.$set(decorate, 'rules', [])
         } else {
             _this.$set(mate, 'decorate', {
-                initialValue: metaDefault,
-                validateFirst: true,
-                rules: []
+                initialValue: metaDefault, validateFirst: true, rules: []
             }) // 初始化：decorate
         }
 
@@ -442,21 +464,17 @@ export default {
             if(!metaConfig.labelCol) _this.$set(metaConfig, 'labelCol', this.labelCol);
             if(!metaConfig.wrapperCol) _this.$set(metaConfig, 'wrapperCol', this.wrapperCol);
         } else {
-            let labelSpan = 0, wrapperSpan = 0, span = 0;
-            if(typeof formSpan === 'number') {
-                labelSpan = formSpan; wrapperSpan = 24 - formSpan; span = spanNum;
+            let labelSpan = 0, wrapperSpan = 0, span = spanNum;
+            if(!Utils.isArray(formSpan)) {
+                Logger.warningLog("span属性必须是数组格式: [labelCol, wrapperCol, span(可选)], 且labelCol+wrapperCol必须<=24, span必须<=24"
+                    , `请按正确格式设置${mate.field}字段的span属性`, mate);
             } else {
-                labelSpan = formSpan[0]; wrapperSpan = formSpan[1]; span = formSpan[2] || spanNum;
+                labelSpan = formSpan[0]; wrapperSpan = formSpan[1]; span = formSpan[2] || span;
             }
-            if(labelSpan) {
-                _this.$set(metaConfig, 'labelCol', {span: labelSpan})
-                if(wrapperSpan) _this.$set(metaConfig, 'wrapperCol', {span: wrapperSpan});
-                else _this.$set(metaConfig, 'wrapperCol', {span: 24 - labelSpan});
-            } else {
-                _this.$set(metaConfig, 'labelCol', this.labelCol);
-                _this.$set(metaConfig, 'wrapperCol', this.wrapperCol);
-            }
-            _this.$set(metaConfig, 'span', span)
+
+            _this.$set(metaConfig, 'span', span);
+            _this.$set(metaConfig, 'labelCol', {span: labelSpan});
+            _this.$set(metaConfig, 'wrapperCol', {span: wrapperSpan});
         }
 
         let validate = this.validate

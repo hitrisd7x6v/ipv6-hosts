@@ -6,6 +6,7 @@ import Logger from '@/utils/logger.utils'
 import Utils from '@/utils/basic.utils'
 import Resolver from '@/utils/resolver.utils'
 import moment from "moment";
+import logger from "less/lib/less/logger";
 
 Vue.use(VueRouter);
 // 获取父框架的缓存api对象
@@ -62,6 +63,76 @@ export default {
     pageActionMetas: null, // 当前页功能点
     searchFieldMetaMap: {}, // 搜索表单：field -> meta
     menu: cacheApi.getCurrentMenu(), // 每个页面对应的菜单
+    /**
+     * 新增数据
+     * @param meta
+     */
+    add(index) {
+        let editModel = this.getStore("editModel");
+        let operaMeta = this.getStore("actionMeta");
+        operaMeta.callBack(editModel).then(()=>{
+            this.getViewRef().viewEditPage();
+            this.getListRef().actionHandleWrapper(operaMeta, editModel, index)
+        });
+    },
+    /**
+     * 删除指定行
+     * @param meta
+     * @param row
+     */
+    del(row) {
+        let delMeta = this.pageActionMetas.Del;
+        this.getListRef().actionHandleWrapper(delMeta, row)
+    },
+    /**
+     * 编辑数据
+     */
+    edit(row) {
+        let operaMeta = this.pageActionMetas.Edit;
+        operaMeta.callBack(row).then(()=>{
+            this.getViewRef().viewEditPage();
+        });
+    },
+    /**
+     * 获取表格数据
+     */
+    query() {
+        let viewMeta = this.pageActionMetas.View;
+        this.getListRef().actionHandleWrapper(viewMeta)
+    },
+    /**
+     * 打开或者关闭详情页
+     */
+    detail(row) {
+        this.putStore("detailModel", row);
+        this.getDetailRef().toggle();
+    },
+    /**
+     * 返回列表页
+     */
+    list() {
+        this.query();
+        this.cancel();
+    },
+    /**
+     * 取消编辑
+     */
+    cancel() {
+        this.getViewRef().viewListPage();
+    },
+    /**
+     * 刷新数据
+     */
+    freshen() {
+        this.getFormRef().freshenHandle();
+    },
+    /**
+     * 提交数据
+     */
+    submit() {
+        this.getFormRef().submitHandle();
+    },
+
     getMeta(key) {
         return this.editFieldMetaMap[key];
     },
@@ -112,42 +183,24 @@ export default {
         return this.vueRef['viewRef'];
     },
     getFormRef() {
-        return this.vueRef['formRef'];
+        return this.vueRef['formRef'] ||
+            Logger.errorLog("没有编辑表单引用, 可能未启用或已注销", "此方法请在编辑页调用");
     },
     getListRef() {
         return this.vueRef['listRef'];
     },
-    registerPageRef(viewRef, listRef) {
-        if(viewRef) this.vueRef['viewRef'] = viewRef;
-        if(listRef) this.vueRef['listRef'] = listRef;
+    getDetailRef() {
+        return this.vueRef['detailRef']
+            || Logger.errorLog("没有详情页引用", "传入查看详情功能的Meta, 将会开启此功能");
     },
-    registerFormRef(formRef) {
-        this.vueRef['formRef'] = formRef;
-    },
-    registerPosition (type, mate, mates, moreMates) {
-        if (type === 'table') { // 表格元数据
-            switch (mate.position) {
-                case 'T': mates.push(mate); break
-                case 'TM': moreMates.push(mate); break
-                case 'AM': mates.push(mate); break
-                default: break
-            }
-        } else { // 搜索栏元数据
-            switch (mate.position) {
-                case 'M': mates.push(mate); break
-                case 'MM': moreMates.push(mate); break
-                case 'AM': mates.push(mate); break
-                default: break
-            }
+    registerVueRef(ref, type) {
+        switch (type) {
+            case 'view': this.vueRef['viewRef'] = ref; break;
+            case 'list': this.vueRef['listRef'] = ref; break;
+            case 'form': this.vueRef['formRef'] = ref; break;
+            case 'detail': this.vueRef['detailRef'] = ref; break;
         }
-        mates.sort((a, b) => {
-            return a.sort - b.sort
-        })
-        moreMates.sort((a, b) => {
-            return a.sort - b.sort
-        })
     },
-
     /**
      *  解析复杂结构的元数据, {key: name, children: [{key: name1}]}
      * @param mates 元数据对象
@@ -182,7 +235,6 @@ export default {
      */
     beforeResolverMetasHandle: function (metas, formConfig, vue) {
         // 表单的源编辑模型
-        if (!formConfig['oriModel']) vue.$set(formConfig, 'oriModel', {});
         if (formConfig.formType === 'search') { // 说明是搜索表单元数据的解析
             if (formConfig.viewTop === null) { // 没有指定显示的位置, 则根据表单多少来判断, 小于等于3显示在顶栏
                 let length = metas.length
@@ -232,7 +284,7 @@ export default {
      * @returns {Array}
      */
     resolverFormMetas (oriMetas, formConfig, vue, callBack) {
-        if(Utils.isBlank(oriMetas)) return;
+        if(Utils.isBlank(oriMetas)) return [];
         if(!formConfig) {
             Logger.warningLog("没有指定表单解析配置, 将跳过初始化配置"
                 , "请检查配置项：config", formConfig);
@@ -240,27 +292,31 @@ export default {
         }
         // 设置编辑表单配置项
         this.beforeResolverMetasHandle(oriMetas, formConfig, vue);
-        let queryParams = this.getQueryParams() || {};
-        return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
-            // 如果是编辑表单
-            if(this.isEditForm(formConfig)) {
+        if(this.isEditForm(formConfig)) {
+            return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
                 this.editFieldMetaMap[meta.field] = meta;
+
                 // 解析此表单字段的默认值
                 Resolver.resolverMetaDefaultValue(meta, this.oriModel);
-            } else if(this.isSearchForm(formConfig)) {
+            })
+        } else if(this.isSearchForm(formConfig)) {
+            let queryParams = this.getQueryParams() || {};
+            return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
                 let param = queryParams[meta.field];
+                Resolver.resolverMetaDefaultValue(meta, this.oriSearchModel);
                 if(param) { // 覆写掉初始值, 以页面url的参数为准
-                    if(Utils.isDate(meta.type)) {
-                        meta['decorate']['initialValue'] = moment(param)
-                    } else {
-                        meta['decorate']['initialValue'] = param
-                    }
+                    this.oriSearchModel[meta.field] = param;
                 }
 
-                this.searchFieldMetaMap[meta.field] = meta;
-                Resolver.resolverMetaDefaultValue(meta, this.oriSearchModel)
-            }
-        });
+                if(Utils.isDate(meta.type) && this.oriSearchModel[meta.field]) {
+                    let momentValue = moment(this.oriSearchModel[meta.field]);
+                    this.oriSearchModel[meta.field] = momentValue;
+                    this.searchFieldMetaMap[meta.field] = meta;
+                }
+            })
+        } else {
+            return []
+        }
     },
     resolverSlots(scopedSlots) {
         let noMatcher = false;
@@ -270,8 +326,8 @@ export default {
             let field = Utils.toHump(name.substring(0, name.length-2));
             let meta = this.editFieldMetaMap[field];
             if(!meta) {
-                Logger.warningLog(`slot ${name} 找不到匹配的字段 ${field}`
-                    , "slot名称必须遵循：如果是驼峰式的字段则必须用'_'隔开");
+                Logger.warningLog(`slot ${name} 找不到匹配的Meta`
+                    , "slot名称必须遵循：如果是驼峰式的字段则必须用'_'隔开，且以_t(表格)、_d(详情)、_f(表单)结尾");
                 return;
             }
             if(name.endsWith('_t')) {
@@ -347,18 +403,6 @@ export default {
     putStore (key, value) { // 设置存储值
         let storeCache = cacheApi.StoreCache
         storeCache.putPageStore(this.menu['url'], key, value)
-    },
-    izOptionType (type) {
-        return type === 'select' || type === 'radio' || type === 'checkbox' || type === 'stree'
-    },
-    initFormMate (mate, config, vue) {
-        Resolver.initFormMate(mate, config, vue)
-    },
-    initCommonMate (mate, vue) {
-        Resolver.initCommonMate(mate, vue)
-    },
-    initTableMate (item, config, vue) {
-        Resolver.initTableMate(item, config, vue)
     },
     isSearchForm(formConfig) {
         return formConfig.formType == 'search';

@@ -4,7 +4,7 @@ html, body {
 /*容器样式*/
 .ivz-container {
     height: 100%;
-    padding: 6px 8px;
+    padding: 4px 6px;
     position: relative;
 }
 .ivz-block-outer {
@@ -79,8 +79,10 @@ html, body {
 .ivz-opera {
     float: left;
     height: 24px;
-    cursor: pointer;
     line-height: 24px;
+}
+.ivz-opera .ant-tag{
+    cursor: pointer;
 }
 .ivz-opera .ivz-tag-disabled{
     color: #ffffff!important;
@@ -137,7 +139,16 @@ html, body {
 .ivz-drawer-form-wrap .ant-drawer-body .ant-spin-nested-loading {
     position: static!important;
 }
-
+/*默认页级表单 default-form*/
+.ivz-default-form .ant-affix {
+    left: 0px!important;
+    width: 100%!important;
+}
+.ivz-default-form .ant-affix .form-header {
+    border: 0px;
+    border-radius: 0px;
+    box-shadow: rgba(126, 126, 126, 0.69) 0px 4px 6px -3px;
+}
 /*树组件样式*/
 .ivz-tree-node {
 }
@@ -189,17 +200,14 @@ html, body {
 }
 /* 页组件(View) */
 .ivz-view  .ivz-basic-search {
-    padding: 3px;
-    margin: 3px 0px 10px;
-}
-.ivz-view .ivz-button-query {
-    /*margin-top: 4px;*/
+    padding: 6px;
+    margin: 2px 0px 6px;
 }
 .ivz-view .ivz-opera-left {
     z-index: 1;
     height: 40px;
     min-width: 146px;
-    padding-left: 5px;
+    padding-left: 6px;
     line-height: 40px;
     box-shadow: 4px 0px 8px -7px #c9c4c4;
 }
@@ -220,13 +228,13 @@ html, body {
     /*border-right: 5px solid #868686;*/
 }
 .ivz-view .ivz-view-table {
-    padding: 3px;
+    padding: 6px;
     background-color: #ffffff;
     /*border-right: 5px solid #868686;*/
 }
 /* 搜索组件 */
 .ivz-basic-search {
-    margin: 10px 0px 12px;
+    /*margin: 10px 0px 12px;*/
     background-color: #ffffff;
 }
 .ivz-basic-search .ivz-basic-opera {
@@ -250,4 +258,12 @@ html, body {
 }
 .ivz-basic-search .ant-form-item {
     margin: 0px;
+}
+
+/*通用样式*/
+.ivz-icon-back {
+    cursor: pointer;
+}
+.ivz-icon-back:hover {
+    color: dodgerblue;
 }

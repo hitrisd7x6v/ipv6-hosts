@@ -31,12 +31,12 @@ export const MixPageForm = {
         this.formConfig.mountedFinished(this)
     },
     beforeDestroy() {
-        this.$page.registerFormRef(null);
+        this.$page.registerVueRef(null, 'form');
     },
     methods: {
         mountedFinished (formRef) {
             this.basicFormRef = formRef;
-            this.$page.registerFormRef(formRef);
+            this.$page.registerVueRef(formRef, 'form');
             this.initEditModel();
         },
         initEditModel () {
@@ -86,7 +86,7 @@ export const MixPageForm = {
         },
         cancelHandle () {
             this.actionMetas.Cancel.callBack().then(()=>{
-                this.$router.push('/IvzSys/cancel')
+                this.$page.cancel();
             })
         },
         freshenHandle () {
@@ -109,12 +109,12 @@ export const MixPageForm = {
             this.basicFormRef.validate().then(resp => {
                 let editModel = this.basicFormRef.getEditModel()
                 this.saveMeta.callBack(editModel).then(resp => {
-                    this.spinning = true
+                    this.spinning = true;
                     this.loadingText = this.formConfig.submitTip
                     let resolve = this.$utils.getPromiseResolve(resp)
                     this.$http.post(this.operaMeta.url, editModel).then(data => {
                         this.$msg.submitSuccessNotify(resolve, data, this, editModel, () => {
-                            this.$router.push('/IvzSys/list'); // 返回列表页
+                            this.$page.list() // 返回列表页
                         })
                     }).catch(reason => {
                         this.$msg.submitFailNotify(resolve, reason, this, editModel)

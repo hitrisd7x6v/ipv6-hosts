@@ -222,7 +222,11 @@ const Utils = {
                 Object.keys(origin).forEach(key=>{
                     let value = origin[key];
                     if(_this.isObject(value)) {
-                        retObj[key] = doClone(value);
+                        if(moment.isMoment(value)) {
+                            retObj[key] = value;
+                        } else {
+                            retObj[key] = doClone(value);
+                        }
                     } else if(_this.isArray(value)) {
                         retObj[key] = doClone(value);
                     } else {
@@ -240,9 +244,7 @@ const Utils = {
                 return origin;
             }
         }
-        let clone = doClone(ori);
-        console.log(clone);
-        return clone;
+        return doClone(ori);
     },
     /**
      * 合并默认的对象
@@ -263,7 +265,11 @@ const Utils = {
                 } else if (Utils.isArray(target[item])) {
                     ori[item] = [...target[item]]
                 } else if (Utils.isObject(target[item])) {
-                    ori[item] = Object.assign({}, target[item])
+                    if(moment.isMoment(target[item])) {
+                        ori[item] = target[item];
+                    } else {
+                        ori[item] = Object.assign({}, target[item])
+                    }
                 } else {
                     ori[item] = target[item]
                 }
@@ -271,7 +277,11 @@ const Utils = {
                 if (this.isArray(ori[item])) {
 
                 } else if (Utils.isObject(ori[item])) {
-                    this.mergeObject(ori[item], target[item])
+                    if(moment.isMoment(target[item])) {
+                        ori[item] = target[item];
+                    } else {
+                        this.mergeObject(ori[item], target[item])
+                    }
                 }
             }
         })
@@ -290,7 +300,21 @@ const Utils = {
      * 作为标记函数使用
      * @constructor
      */
-    FlagFunction () {}
+    FlagFunction () {},
+
+    resolverSearchModel(searchModel) {
+        if(!this.isObject(searchModel)) return searchModel;
+        let returnModel = {};
+        Object.keys(searchModel).forEach(key=>{
+            let value = searchModel[key];
+            if(moment.isMoment(value)) {
+                returnModel[key] = value.format("YYYY-MM-DD HH:mm:ss");
+            } else {
+                returnModel[key] = value;
+            }
+        });
+        return returnModel;
+    }
 }
 
 export default Utils

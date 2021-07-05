@@ -72,6 +72,10 @@ export default {
         text: {
             enterSearch: true // 搜索框text表单, 按下enter键是否搜索
         },
+        upload: {
+            Temp_Data: {}, // 临时存放的数据
+            listType: 'picture-card',
+        },
         switch: {},
         number: {},
         slider: {},
@@ -150,15 +154,16 @@ export default {
             layout: 'horizontal'
         },
         table: { // 表格配置
+            rowKey: "id", // 默认唯一标识
             isInit: true, // 是否已经初始化
             size: 'small', // 表的默认尺寸 default | middle | small
             bordered: true, // 显示边框
             indentSize: 16, // 树形表格子行缩进的长度
             pagination: false, // 默认不显示
             position: 'bottom', // 分页器显示的位置 'top' | 'bottom' | 'both'
+            delField: 'id', // 声明使用哪个字段作为删除字段
             queryField: 'rows', // 查询字段
             scroll: {x: 0, y: 0}, // 表格的宽高
-            rowKey: "id", // 默认唯一标识
             expandedRowKeys: null, // 可控制的展开行的key
             expandRowByClick: false, // 是否点击展开行
             defaultExpandAllRows: true, // 默认展开所有行,
@@ -176,6 +181,7 @@ export default {
             zIndex: 1000,
             width: null,
             closable: true,
+            detailField: 'id',
             placement: 'right', //'top' | 'right' | 'bottom' | 'left'
             maskClosable: true,
             destroyOnClose: false,

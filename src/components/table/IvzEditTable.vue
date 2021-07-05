@@ -1,62 +1,62 @@
 <template>
-    <div class="ivz-edit-table ivz-border-radius">
-        <a-table ref="tableRef" :columns="tableMetas" :data-source="dataSource" bordered
-             :position="tableConfig.position" :loading="loading" :indentSize="tableConfig.indentSize"
-             size="small" :scroll="tableConfig.scroll" :locale="tableConfig.locale" :rowKey="tableConfig.rowKey"
-             :showHeader="tableConfig.showHeader" :pagination="tableConfig.pagination" @change="change"
-             :rowSelection="tableConfig.selection" :expandRowByClick="tableConfig.expandRowByClick"
-             :defaultExpandedRowKeys="tableConfig.defaultExpandedRowKeys" :rowClassName="()=>{return 'ivz-edit-row'}"
-             :defaultExpandAllRows="tableConfig.defaultExpandAllRows" :expandedRowKeys="tableConfig.expandedRowKeys">
-            <template v-for="col in slotMetas" :slot="col.tableSlot" slot-scope="text, row, index">
-                <slot :name="col.tableSlot" :row="row" :index="index" :value="text">
-                    <div v-if="row['EditableFlag'] && col['editable']" :key="col.field">
-                        <a-select v-if="col.type=='select'" :allow-clear="col.clear"
-                          dropdown-class-name="ivz-select-class" :token-separators="col.config.separators"
-                          @change="changeHandle(col, row, text)" :value="row[col.field]"
-                          :disabled="disabledHandle(col, row)" :max-tag-count="col.config.tagCount" style="width: 100%">
-                            <a-select-option v-for="option in col.data" :key="option.value"
-                                 :disabled="option.disabled" class="ivz-option-class">
-                                {{option.label}}
-                            </a-select-option>
-                        </a-select>
-                        <a-radio-group v-else-if="col.type=='radio'" :options="col.data" :name="col.field" :disabled="col.disabled"
-                           @change="(e)=>changeHandle(col, row, e)" :value="row[col.field]" :default-value="col.default"></a-radio-group>
-                        <a-checkbox-group v-else-if="col.type=='checkbox'" :options="col.data" :value="row[col.field]"
-                          :default-value="col.default" @change="(val)=>changeHandle(col, row, val)"></a-checkbox-group>
-                        <a-input-number v-else-if="col.type == 'number'" :min="col.config.min" :max="col.config.max" :step="col.config.step"
-                            :disabled="disabledHandle(col, row)" :blur="eventHandle(col, row, 'blur')" style="width: 100%"
-                            :formatter="col.formatter" :precision="col.config.precision" :parser="col.config.parser" :value="row[col.field]"
-                            @change="(val)=>changeHandle(col, row, val)" :focus="eventHandle(col, row, 'focus')"></a-input-number>
-                        <a-input v-else :type="col.type" :placeholder="col.placeholder"
-                             :value="row[col.field]" :disabled="disabledHandle(col, row)"
-                             :prefix="col.config.prefix" :suffix="col.config.suffix" :blur="()=>eventHandle(col, row, 'blur')"
-                             @press-enter="eventHandle(col, row, 'pressEnter')" @change="(e)=>changeHandle(col, row, e.target.value)" >
-                        </a-input>
-                    </div>
-                    <div v-else v-html="col.formatter(text, row, col)" :key="col.field"></div>
-                </slot>
-            </template>
-            <template slot="action_t" slot-scope="text, row, index">
-                <slot name="action_t" :row="row" :index="index">
-                    <a-row align="middle" justify="center" type="flex">
-                        <a-col v-for="mate in mainMetas" :key="mate.id" class="ivz-opera">
-                            <a-popconfirm v-if="mate.id=='del'" title="确认删除？" trigger="click"
-                                  @confirm="actionHandle(mate, row, index)" :arrow-point-at-center="true"
-                                  okText="确认" cancelText="取消">
-                                <a-tag :color="mate.color" :class="disabledClass(mate, row)">{{mate.label}}</a-tag>
-                            </a-popconfirm>
-                            <a-tag v-else :color="mate.color" :class="disabledClass(mate, row)"
-                                   @click="actionHandle(mate, row, index)">{{mate.label}}</a-tag>
-                        </a-col>
-                    </a-row>
-                </slot>
-            </template>
-        </a-table>
-    </div>
+    <a-table ref="tableRef" :columns="tableMetas" :data-source="dataSource" bordered
+         :position="tableConfig.position" :loading="loading" :indentSize="tableConfig.indentSize"
+         size="small" :scroll="tableConfig.scroll" :locale="tableConfig.locale"
+         :showHeader="tableConfig.showHeader" :pagination="tableConfig.pagination" @change="change"
+         :rowSelection="tableConfig.selection" :expandRowByClick="tableConfig.expandRowByClick"
+         :defaultExpandedRowKeys="tableConfig.defaultExpandedRowKeys" :rowClassName="()=>{return 'ivz-edit-row'}"
+         :defaultExpandAllRows="tableConfig.defaultExpandAllRows" :expandedRowKeys="tableConfig.expandedRowKeys"
+         class="ivz-view-table ivz-edit-table ivz-border-radius" :rowKey="tableConfig.rowKey">
+        <template v-for="col in slotMetas" :slot="col.tableSlot" slot-scope="text, row, index">
+            <slot :name="col.tableSlot" :row="row" :index="index" :value="text">
+                <div v-if="row['EditableFlag'] && col['editable']" :key="col.field">
+                    <a-select v-if="col.type=='select'" :allow-clear="col.clear"
+                      dropdown-class-name="ivz-select-class" :token-separators="col.config.separators"
+                      @change="changeHandle(col, row, text)" :value="row[col.field]"
+                      :disabled="disabledHandle(col, row)" :max-tag-count="col.config.tagCount" style="width: 100%">
+                        <a-select-option v-for="option in col.data" :key="option.value"
+                             :disabled="option.disabled" class="ivz-option-class">
+                            {{option.label}}
+                        </a-select-option>
+                    </a-select>
+                    <a-radio-group v-else-if="col.type=='radio'" :options="col.data" :name="col.field" :disabled="col.disabled"
+                       @change="(e)=>changeHandle(col, row, e)" :value="row[col.field]" :default-value="col.default"></a-radio-group>
+                    <a-checkbox-group v-else-if="col.type=='checkbox'" :options="col.data" :value="row[col.field]"
+                      :default-value="col.default" @change="(val)=>changeHandle(col, row, val)"></a-checkbox-group>
+                    <a-input-number v-else-if="col.type == 'number'" :min="col.config.min" :max="col.config.max" :step="col.config.step"
+                        :disabled="disabledHandle(col, row)" :blur="eventHandle(col, row, 'blur')" style="width: 100%"
+                        :formatter="col.formatter" :precision="col.config.precision" :parser="col.config.parser" :value="row[col.field]"
+                        @change="(val)=>changeHandle(col, row, val)" :focus="eventHandle(col, row, 'focus')"></a-input-number>
+                    <a-input v-else :type="col.type" :placeholder="col.placeholder"
+                         :value="row[col.field]" :disabled="disabledHandle(col, row)"
+                         :prefix="col.config.prefix" :suffix="col.config.suffix" :blur="()=>eventHandle(col, row, 'blur')"
+                         @press-enter="eventHandle(col, row, 'pressEnter')" @change="(e)=>changeHandle(col, row, e.target.value)" >
+                    </a-input>
+                </div>
+                <div v-else v-html="col.formatter(text, row, col)" :key="col.field"></div>
+            </slot>
+        </template>
+        <template slot="action_t" slot-scope="text, row, index">
+            <slot name="action_t" :row="row" :index="index">
+                <a-row align="middle" justify="center" type="flex">
+                    <a-col v-for="mate in mainMetas" :key="mate.id" class="ivz-opera">
+                        <a-popconfirm v-if="mate.id=='del'" title="确认删除？" trigger="click"
+                              @confirm="actionHandle(mate, row, index)" :arrow-point-at-center="true"
+                              okText="确认" cancelText="取消">
+                            <a-tag :color="mate.color" :class="disabledClass(mate, row)">{{mate.label}}</a-tag>
+                        </a-popconfirm>
+                        <a-tag v-else :color="mate.color" :class="disabledClass(mate, row)"
+                               @click="actionHandle(mate, row, index)">{{mate.label}}</a-tag>
+                    </a-col>
+                </a-row>
+            </slot>
+        </template>
+    </a-table>
 </template>
 
 <script>
     import {MixBasicTable} from '../mixins/MixBasicTable'
+    import Resolver from "@/utils/resolver.utils";
     export default {
         name: 'IvzEditTable',
         mixins: [MixBasicTable],
@@ -87,7 +87,7 @@
                     actionMate['position'] = 'T'
                 }
 
-                this.$page.registerPosition('table', actionMate, this.mainMetas, this.moreMetas)
+                Resolver.registerPosition('table', actionMate, this.mainMetas, this.moreMetas)
             },
             resetBackModel () {
                 this.backEditModel = {} // 重置对象
@@ -193,12 +193,10 @@
                 col.event.change(val, row, col)
             },
             disabledHandle (col, row) {
-                if (!col.disabled) {
-                    return false
-                } else if (typeof col.disabled === 'function') {
+                if (typeof col.disabled === 'function') {
                     return col.disabled(row, col)
                 } else {
-                    return col.disabled
+                    return col.disabled ? true : false;
                 }
             }
         }

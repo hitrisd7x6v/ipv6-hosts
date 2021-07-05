@@ -15,10 +15,6 @@ new Vue({
             {field: 'password', title: '密码'},
             {field: 'password1', title: '密码'},
             {field: 'password2', title: '密码'},
-            {field: 'password3', title: '密码'},
-            {field: 'password4', title: '密码'},
-            {field: 'password5', title: '密码'},
-            {field: 'password6', title: '密码'},
         ],
         saveMeta: {id: 'save', label: '提交', url: '/test/save', callBack: () => {
                 return new Promise((resolve, reject) => {

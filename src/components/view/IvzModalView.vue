@@ -10,6 +10,7 @@
 
 <script>
     import PageOptions from '../page.config'
+    import Resolver from "@/utils/resolver.utils";
     export default {
         name: 'IvzModalView',
         components: {},
@@ -40,7 +41,7 @@
 
             this.saveMate = this.actionMates.Save
             PageOptions.resolverMetas(this.mates, (item, index, ori) => {
-                PageOptions.initCommonMate(item, this) // 初始化通用的元数据
+                Resolver.initCommonMate(item, this) // 初始化通用的元数据
             })
         },
         mounted () {

@@ -6,7 +6,7 @@
               <a-form :form="form" layout="horizontal">
                   <a-form-item has-feedback :label-col="labelCol" :wrapper-col="wrapperCol">
                       <a-input placeholder="用户名" size="large"
-                               v-decorator="['userName', {rules: [{ required: true, message: '请输入用户名' }]}]">
+                               v-decorator="['username', {rules: [{ required: true, message: '请输入用户名' }]}]">
                           <ivz-icon slot="prefix" type="iz-icon-account"></ivz-icon>
                       </a-input>
                   </a-form-item>

@@ -1,17 +1,17 @@
 <template>
-    <a-form class="ivz-search-form" :form="form" :layout="formConfig.layout">
+    <a-form class="ivz-search-form" :form="form" :layout="formConfig.layout" :labelAlign="formConfig.labelAlign">
         <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter" type="flex">
             <template v-for="col in searchMetas">
                 <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
                     <a-form-item :label="col.title" :extra="col.config.extra" :colon="izColon"
                              :label-col="col.config.labelCol" :wrapper-col="col.config.wrapperCol">
-                        <a-select v-if="col.type=='select'" v-decorator="[col.field, col['decorate']]" :size="formSize"
-                                  :allowClear="col.clear" :maxTagCount="col.config.maxTagCount" :placeholder="col.placeholder"
-                                  dropdownClassName="iz-select-class" :mode="col.config.mode" :tokenSeparators="col.config.tokenSeparators"
+                        <a-select v-if="col.type=='select'" v-decorator="[col.field, col['decorate']]"
+                                  :allowClear="col.clear" :maxTagCount="col.config.maxTagCount" :size="formSize"
+                                  dropdownClassName="iz-select-class" :mode="col.config.mode" :placeholder="col.placeholder"
                                   :disabled="disabledHandle(col)" @search="(val) => col.event.search(val, model)"
                                   @select="(val, option) => col.event.select({value: val, option: option}, model)"
                                   @deselect="(val, option) => col.event.deselect({value: val, option: option}, model)"
-                                  @inputKeydown="col.event.inputKeydown(model)">
+                                  @inputKeydown="col.event.inputKeydown(model)" :tokenSeparators="col.config.tokenSeparators">
                             <a-select-option v-for="option in col.data" :key="option.value"
                                  :disabled="option.disabled" class="ivz-option-class">
                                 {{option.label}}
@@ -29,11 +29,6 @@
                            @search="(val) => {col.event.search(val, model)}"
                            @select="(val, node, extra) => col.event.select({value: val, node: node, extra: extra}, model)">
                         </a-tree-select>
-                        <a-slider v-else-if="col.type=='slider'" v-decorator="[col.field, col['decorate']]" :disabled="disabledHandle(col)"
-                              :dots="col.config.dots" :marks="col.config.marks" :min="col.config.min" :max="col.config.max" :step="col.config.step"
-                              :tooltipVisible="col.config.tooltipVisible" :tipFormatter="col.config.tipFormatter" :range="col.config.range"
-                              :blur="col.event.blur" :focus="col.event.focus"
-                              @afterChange="col.event.afterChange"></a-slider>
                         <a-radio-group v-else-if="col.type=='radio'" :options="col.data" :name="col.field" :blur="col.event.blur" :focus="col.event.focus"
                                :disabled="disabledHandle(col)" v-decorator="[col.field, col['decorate']]"></a-radio-group>
                         <a-switch v-else-if="col.type=='switch'" v-decorator="[col.field, col['decorate']]"
@@ -121,6 +116,12 @@
         },
         mounted () { },
         methods: {
+            pressEnter (col) {
+                if (col.event.pressEnter) {
+                    col.event.pressEnter(this.searchModel[col.field], this.searchModel, this)
+                }
+                this.$emit('pressEnter', this.searchModel, col)
+            },
             eventHandle (type, val, col) {
                 let eventFunction = col.event[type]
                 val = val || this.model[col.field]
@@ -136,20 +137,4 @@
     }
 </script>
 
-<style>
-    .ivz-form {
-
-    }
-    .ivz-form .ivz-group {
-        padding: 0px 8px;
-        margin-top: 3px;
-    }
-    .ivz-form .ivz-group-head {
-        margin: 3px 8px 15px;
-        padding-bottom: 3px;
-        border-bottom: 1px solid #eaedf1;
-    }
-    .ivz-form .ivz-group-body {
-        margin: 0px 24px 0px 8px;
-    }
-</style>
+<style></style>

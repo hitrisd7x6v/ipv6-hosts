@@ -48,8 +48,9 @@ $http.interceptors.response.use(
         } else {
             let response = error.response
             if (response.status === 401) {
-                if (parent) parent.location.reload()
-                else location.reload()
+                let data = response.data;
+                let loginUrl = data.message;
+                window.parent.location.href = loginUrl;
             } else if (response.status === 404) {
                 errMsg = '您请求的功能不存在或没有权限!';
             }

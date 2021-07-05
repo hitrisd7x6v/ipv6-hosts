@@ -2,14 +2,17 @@
     <a-drawer ref="drawerRef" :width="drawerWidth" @close="drawerClose"
           :wrapStyle="{overflow: 'auto'}" :placement="placement"
           :closable="false" :mask-closable="maskClosable" :mask="mask"
-          wrap-class-name="ivz-drawer-form-wrap" :height="height" :handle="handle"
-              :destroyOnClose="true" :mask-style="{}" :visible="visible">
+          wrap-class-name="ivz-drawer-form-wrap" :height="height"
+              :destroyOnClose="true" :visible="visible">
         <a-row slot="title" type="flex" align="middle" justify="space-between" style="color: #000000">
-            <a-col span="12" style="padding-left: 12px; font-size: 17px">
-                <ivz-icon :type="operaMeta.icon" style="font-size: 17px"></ivz-icon>
-                <em style="font-size: 16px; color: #000000">{{title}}</em>
+            <a-col span="8">
+                <span @click="cancelHandle" class="ivz-icon-back">
+                        <a-icon type="arrow-left" style="font-size: 18px"/>
+                    </span>
+                <em style="font-size: 16px; color: #000000">&nbsp;{{title}}</em>
             </a-col>
-            <a-col span="12" style="padding-right: 20px; text-align: right"></a-col>
+            <a-col span="8" style="text-align: center"></a-col>
+            <a-col span="8" style="padding-right: 20px; text-align: right"></a-col>
         </a-row>
         <a-spin :tip="loadingText" :spinning="spinning">
             <ivz-basic-form :form-group="formGroup" :ori-model="oriModel"
@@ -41,7 +44,7 @@
         },
         data () {
             return {
-                mask: false,
+                mask: true,
                 handle: null,
                 drawerWidth: 0, // 抽屉宽度
                 maskClosable: false

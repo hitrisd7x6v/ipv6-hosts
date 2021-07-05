@@ -18,8 +18,6 @@ import IvzModalForm from './form/IvzModalForm'
 import IvzDrawerEditTable from './table/IvzDrawerEditTable'
 import IvzDiyView from "@/components/view/IvzDiyView";
 
-// ivzGlobalConfig已经挂载到首页(index.js)的window对象上面
-
 /* 注册组件 */
 if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.prototype.$page = Page

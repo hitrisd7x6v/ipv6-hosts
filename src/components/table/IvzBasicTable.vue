@@ -44,6 +44,7 @@
 <script>
 import {MixBasicTable} from '../mixins/MixBasicTable'
 import PageOptions from "@/components/page.config";
+import Resolver from "@/utils/resolver.utils";
 export default {
     name: 'IvzBasicTable',
     mixins: [MixBasicTable],
@@ -62,29 +63,24 @@ export default {
             if (this.actionMetaKeys.includes(key)) return
 
             this.actionMetaKeys.push(key)
-            this.$page.registerPosition('table', actionMate, this.mainMetas, this.moreMetas)
+            Resolver.registerPosition('table', actionMate, this.mainMetas, this.moreMetas)
             return this
         },
-        addActionHandle (meta, row, index) { },
         editActionHandle (meta, row) {
-            meta.callBack(row, this).then(() => {
-                let query = {};
-                PageOptions.putStore('editModel', row);
-                PageOptions.putStore("actionMeta", meta);
-                query[PageOptions.izField] = row[PageOptions.izField];
-                this.$router.push({path: '/IvzSys/edit', query: query})
-            }).catch(reason => {});
+            this.$page.putStore('editModel', row);
+            this.$page.putStore("actionMeta", meta);
+            this.$page.edit(row);
         },
-        delActionHandle: function (mate, selectionRows, submit) {
+        delActionHandle(mate, selectionRows, submit) {
             mate.callBack(selectionRows, this).then((resp) => {
-                let resolve = this.$utils.getPromiseResolve(resp)
-                let tipTitle = resolve.tipTitle ? resolve.tipTitle : '数据删除操作!'
+                let resolve = this.$utils.getPromiseResolve(resp);
+                let tipTitle = resolve.tipTitle ? resolve.tipTitle : '数据删除操作!';
                 let tipContent = resolve.tipContent ? resolve.tipContent : `您确认删除此条数据?`
                 this.$msg.confirm(tipTitle, tipContent).then(() => {
-                    this.loading = true
+                    this.loading = true;
                     // 删除时提交的数据只能是id或者是id数组
                     if (!(this.isArray(submit))) {
-                        submit = [submit[this.$page.izField]]
+                        submit = [submit[this.tableConfig.delField]]
                     }
                     this.$http.post(mate.url, submit).then(data => {
                         this.$msg.delSuccessNotify(resolve, data, this, submit, () => {
@@ -98,7 +94,7 @@ export default {
                 }).catch(reason => null)
             }).catch(reason => {})
         },
-        otherActionHandle: function (mate, selectionRows, submit) {
+        otherActionHandle(mate, selectionRows, submit) {
             mate.callBack(selectionRows).then(resp => {
                 let resolve = this.$utils.getPromiseResolve(resp)
                 let tipTitle = resolve.tipTitle

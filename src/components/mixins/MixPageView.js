@@ -63,109 +63,23 @@ export const MixPageView = {
         this.detailAliasMetas = this.$page.detailSlotMetas;
     },
     mounted () {
-        this.registerActionEvent();
         this.listRef = this.$refs['listRef']; // 页级列表组件的引用
         this.detailRef = this.$refs['detailRef'];
         this.$page.resolverSlots(this.$scopedSlots);
-        this.$page.registerPageRef(this, this.listRef)
+        this.$page.registerVueRef(this, 'view');
     },
     methods: {
-        registerActionEvent() {
-            const vue = this;
-            this.$router.beforeEach((to, form, next) => {
-                let path = to.path;
-                switch (path) {
-                    case '/IvzSys/list':
-                        vue.list();
-                        return next('/IvzSys/void');
-                    case '/IvzSys/cancel':
-                        vue.cancel();
-                        return next('/IvzSys/void');
-                    case '/IvzSys/add':
-                        vue.add(0);
-                        return next();
-                    case '/IvzSys/edit':
-                        this.listView = false;
-                        return next();
-                    case '/IvzSys/detail':
-                        this.detailRef.open();
-                        return next('/IvzSys/void');
-                    case '/IvzSys/action':
-                        let actionMeta = this.$page.getStore('actionMeta');
-                        vue.action(actionMeta, null);
-                    case '/IvzSys/void': return next();
-                    default: return next('/IvzSys/void');
-                }
-            })
-        },
         /**
-         * 新增数据
-         * @param meta
+         * 显示列表页
          */
-        add(index) {
-            this.listView = false;
-            let editModel = this.$page.getStore("editModel");
-            this.operaMeta = this.$page.getStore("actionMeta");
-            this.listRef.actionHandleWrapper(this.operaMeta, editModel, index)
-        },
-        /**
-         * 编辑数据
-         */
-        edit(row) {
-            this.listView = false;
-            this.operaMeta = this.actionMetas.Edit;
-            if(row) {
-                this.listRef.actionHandleWrapper(this.operaMeta, row)
-            }
-        },
-        /**
-         * 返回列表
-         */
-        list() {
-            this.listView = true;
-            this.listRef.query();
-        },
-        /**
-         * 删除指定行
-         * @param meta
-         * @param row
-         */
-        del(row) {
-            let delMeta = this.actionMetas.Del;
-            this.listRef.actionHandleWrapper(delMeta)
-        },
-        /**
-         * 元数据动作
-         * @param meta
-         * @param row
-         */
-        action(meta, row) {
-            this.listRef.actionHandleWrapper(meta, row)
-        },
-        /**
-         * 获取表格数据
-         */
-        query() {
-            let viewMeta = this.actionMetas.View;
-            this.listRef.actionHandleWrapper(viewMeta)
-        },
-        /**
-         * 取消编辑
-         */
-        cancel() {
+        viewListPage() {
             this.listView = true;
         },
         /**
-         * 刷新数据
+         * 显示编辑页
          */
-        freshen() {
-            this.$refs['formRef'].freshenHandle();
-        },
-        /**
-         * 提交数据
-         */
-        submit() {
-            this.$refs['formRef'].submitHandle();
+        viewEditPage() {
+            this.listView = false;
         },
     }
 }

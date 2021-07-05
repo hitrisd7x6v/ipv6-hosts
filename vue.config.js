@@ -61,8 +61,6 @@ module.exports = {
                     // 'axios': 'axios',
                     'moment': 'moment',
                     "ant-design-vue": 'antd', // antd类库
-                    "core-js": "window",
-                    "regenerator-runtime/runtime": "window",
                     // "ant-design-vue/lib/style": 'ants'
                 },
                 plugins: [

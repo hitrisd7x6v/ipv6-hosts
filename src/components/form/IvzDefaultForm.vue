@@ -1,12 +1,19 @@
 <template>
     <a-locale-provider :locale="zhCN">
     <div class="ivz-default-form ivz-border-radius">
-        <div class="form-header ivz-border-radius">
-            <div class="form-header-left">
-                <ivz-icon :type="operaMeta.icon" style="font-size: 17px"></ivz-icon>
-                <em style="font-size: 16px; color: #000000">{{title}}</em>
-            </div>
-        </div>
+        <a-affix :offsetTop="0" @change="affixChange">
+            <a-row type="flex" align="middle" justify="space-between"
+                   class="form-header ivz-border-radius" style="color: #000000">
+                <a-col span="8" style="padding-left: 12px">
+                    <span @click="cancelHandle" class="ivz-icon-back">
+                        <a-icon type="arrow-left" style="font-size: 18px"/>
+                    </span>
+                    <em style="font-size: 16px; color: #000000">&nbsp;{{title}}</em>
+                </a-col>
+                <a-col span="8" style="text-align: center"></a-col>
+                <a-col span="8" style="padding-right: 20px; text-align: right"></a-col>
+            </a-row>
+        </a-affix>
         <div class="form-body">
             <a-spin :tip="loadingText" :spinning="spinning">
                 <ivz-basic-form ref="basicFormRef" :ori-model="oriModel" @mountedFinished="mountedFinished"
@@ -43,22 +50,27 @@
         created () {},
         mounted () {},
         methods: {
-
+            affixChange(affixed) {
+                // alert(affixed);
+            }
         }
     }
 </script>
 
 <style scoped>
+    .ant-affix {
+        left: 0px!important;
+        width: 100%!important;
+    }
     .ivz-default-form {
-        background-color: #ffffff;
-        margin-top: 16px;
+        margin-top: 5px;
         box-shadow: 0px 0px 5px 0px #fafafa;
     }
     .ivz-default-form .form-header {
-        height: 38px;
-        margin: 8px 0px 10px;
+        height: 48px;
+        margin: 0px 0px 10px;
+        border: 5px solid #ffffff;
         background-color: #fafafa;
-        border-left: 5px solid #606266;
     }
     .form-header-left {
         width: 240px;
@@ -67,7 +79,10 @@
         line-height: 38px;
     }
     .ivz-default-form .form-body {
-        padding: 3px 12px;
+        padding: 3px 0px;
+        border-radius: 6px;
+        border: 5px solid #ffffff;
+        background-color: #ffffff;
     }
     .ivz-default-form .form-footer {
         padding: 8px;
