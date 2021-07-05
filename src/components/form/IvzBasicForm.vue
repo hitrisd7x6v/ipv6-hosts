@@ -71,8 +71,8 @@
                                             :data="col.data" :disabled="disabledHandle(col)" :headers="col.config.headers"
                                             :multiple="col.config.multiple" :showUploadList="col.config.showUploadList"
                                             :withCredentials="col.config.withCredentials" :remove="col.config.remove"
-                                              :fileList="getFileList(col)" @preview="handlePreview" @change="handleChange">
-                                        <div v-if="getFileList(col).length<=5">
+                                              :fileList="getFileList(col)" @preview="handlePreview" @change="(e)=>{handleChange(e, col)}">
+                                        <div v-if="getFileList(col).length < col.config.limit">
                                             <a-icon type="plus" style="font-size: 26px" />
                                         </div>
                                     </a-upload>
@@ -99,6 +99,9 @@
                 </a-row>
             </div>
         </div>
+        <a-modal :visible="previewFile.url!=null" :footer="null" @cancel="previewCancel">
+            <img :alt="previewFile.name" style="width: 100%" :src="previewFile.url" />
+        </a-modal>
     </a-form>
 </template>
 
@@ -125,7 +128,9 @@
         }
     },
     data () {
-        return {}
+        return {
+            previewFile: {url: null}
+        }
     },
     created () {
 
@@ -136,15 +141,57 @@
     methods: {
         getFileList(col) {
             let fileList = this.model[col.field];
-            if(!fileList) fileList = [];
-            if(Utils.isArray(fileList)) return fileList;
-            else return fileList.split(',');
-        },
-        handlePreview() {
+            let list = col.config.FileList;
+            if(Utils.isNotBlank(list)) return list;
 
+            if(!fileList)  {
+                this.$set(this.model, col.field, []);
+            } else if(Utils.isArray(fileList)) {
+                fileList.forEach((url, index)=>{
+                    list.push({url, uid: -index});
+                });
+            } else {
+                fileList.split(',').forEach((url, index)=>{
+                    list.push({url, uid: -index});
+                });
+            }
+            return list;
         },
-        handleChange() {
+        handlePreview(file) {
+            this.previewFile = file;
+        },
+        previewCancel() {
+            this.previewFile = {url: null};
+        },
+        handleChange(e, col) {
+            function getBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                });
+            }
+            let file = e.file;
+            let modelElement = this.model[col.field];
+            if (file.status == 'uploading') {
+                getBase64(file.originFileObj).then(resp=>{
+                    modelElement.push(resp);
+                    col.config.FileList.push({url: resp, uid: -1, name: 'xx'})
+                })
+            } else if(file.status == 'done') {
+                let response = file.response;
+                this.$log.debugLog("上传文件", "服务端响应数据", response);
 
+                let url = response.data[col.config.respField];
+                modelElement.push(url);
+                col.config.FileList.push({url: url, uid: -(modelElement.length), name: url})
+            } else if(file.status == 'removed') {
+                Utils.delArrayEle(modelElement, file.url);
+                Utils.delArrayEle(col.config.FileList, file)
+            } else {
+                this.$msg.warningNotify("上传文件", "文件上传失败")
+            }
         },
         /**
          * 返回当前正在编辑的对象

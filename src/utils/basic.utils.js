@@ -130,9 +130,7 @@ const Utils = {
         if (Utils.isObject(del)) {
             for (let i = 0; i < arr.length; i++) {
                 if (del === arr[i]) {
-                    let splice = arr.splice(i, 1)
-                    splice.push(i)
-                    return splice
+                    return arr.splice(i, 1)
                 }
             }
         } else if (key) {
@@ -142,9 +140,13 @@ const Utils = {
                     return ts[0]
                 }
                 if (del === arr[i]) {
-                    let splice = arr.splice(i, 1)
-                    splice.push(i)
-                    return splice
+                    return arr.splice(i, 1)
+                }
+            }
+        } else {
+            for (let i = 0; i < arr.length; i++) {
+                if (del === arr[i]) {
+                    return arr.splice(i, 1)
                 }
             }
         }
