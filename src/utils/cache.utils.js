@@ -73,7 +73,7 @@ export default {
             enterSearch: true // 搜索框text表单, 按下enter键是否搜索
         },
         upload: {
-            limit: 3, // 图片限制, 默认五张
+            limit: 1, // 图片限制, 默认五张
             FileList: [], // 文件列表
             respField: 'url', // 服务端响应的字段
             listType: 'picture-card',

@@ -42,6 +42,15 @@
             placement: {type: String, default: 'right'},
             drawerClose: {type: Function, default: () => {}}
         },
+        watch: {
+            visible(newVal) {
+                if(!newVal) {
+                    this.$page.removePageStore();
+                    this.$router.push("/IvzSys/void");
+                    this.$page.registerVueRef(null, 'form');
+                }
+            }
+        },
         data () {
             return {
                 mask: true,

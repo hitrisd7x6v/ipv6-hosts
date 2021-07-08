@@ -31,6 +31,8 @@ export const MixPageForm = {
         this.formConfig.mountedFinished(this)
     },
     beforeDestroy() {
+        this.$page.removePageStore();
+        this.$router.push("/IvzSys/void");
         this.$page.registerVueRef(null, 'form');
     },
     methods: {

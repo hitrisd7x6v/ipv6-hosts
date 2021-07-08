@@ -75,8 +75,8 @@
                     case 'add':
                         let oriModel = this.$page.getOriModel(this);
                         this.$page.putStore("actionMeta", meta);
-                        this.$page.putStore('editModel', oriModel);
-                        this.$page.add(0);
+                        this.$page.putStore("editModel", oriModel);
+                        this.$page.add(oriModel, meta, 0);
                         break;
                     case 'view':
                         this.$page.query();

@@ -300,11 +300,7 @@ export default {
         {title: '其他信息', metas: [
                 {field: 'createTime', title: '上架时间', type: 'date', default: '2019-12-10 09:02'},
                 {field: 'rate', title: '评分', type: 'rate', config: {count: 8, tootips: ['低评分']}},
-                {field: 'ext.desc', title: '说明', event: {
-                        change: (val, {form, bind}) => {
-                            console.log(val)
-                        }
-                    }},
+                {field: 'ext.desc', title: '说明'},
                 {field: 'range', title: '下单数量', type: 'slider', config: {step: 3, max: 120}}
             ]},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}

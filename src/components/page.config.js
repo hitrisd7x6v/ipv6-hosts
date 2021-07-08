@@ -64,14 +64,23 @@ export default {
     searchFieldMetaMap: {}, // 搜索表单：field -> meta
     menu: cacheApi.getCurrentMenu(), // 每个页面对应的菜单
     /**
+     * 其他动作处理
+     * @param row
+     * @param meta
+     */
+    action(row, meta) {
+        this.getListRef().actionHandleWrapper(meta, row);
+    },
+    /**
      * 新增数据
      * @param meta
      */
-    add(index) {
-        let editModel = this.getStore("editModel");
-        let operaMeta = this.getStore("actionMeta");
+    add(row, meta, index) {
+        let editModel = this.putStore("editModel", row);
+        let operaMeta = meta || this.pageActionMetas.Add;
         operaMeta.callBack(editModel).then(()=>{
             this.getViewRef().viewEditPage();
+            router.push("/IvzSys/add");
             this.getListRef().actionHandleWrapper(operaMeta, editModel, index)
         });
     },
@@ -87,10 +96,13 @@ export default {
     /**
      * 编辑数据
      */
-    edit(row) {
-        let operaMeta = this.pageActionMetas.Edit;
+    edit(row, meta) {
+        let operaMeta = meta || this.pageActionMetas.Edit;
+        this.putStore("editModel", row);
+        this.putStore("actionMeta", operaMeta);
         operaMeta.callBack(row).then(()=>{
             this.getViewRef().viewEditPage();
+            router.push("/IvzSys/edit");
         });
     },
     /**
@@ -403,6 +415,10 @@ export default {
     putStore (key, value) { // 设置存储值
         let storeCache = cacheApi.StoreCache
         storeCache.putPageStore(this.menu['url'], key, value)
+    },
+    removePageStore() {
+        this.putStore("editModel", null);
+        this.putStore("actionMeta", null);
     },
     isSearchForm(formConfig) {
         return formConfig.formType == 'search';

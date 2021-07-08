@@ -67,9 +67,7 @@ export default {
             return this
         },
         editActionHandle (meta, row) {
-            this.$page.putStore('editModel', row);
-            this.$page.putStore("actionMeta", meta);
-            this.$page.edit(row);
+            this.$page.edit(row, meta);
         },
         delActionHandle(mate, selectionRows, submit) {
             mate.callBack(selectionRows, this).then((resp) => {

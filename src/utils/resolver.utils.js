@@ -197,23 +197,24 @@ export default {
      */
     resolverFormMetas (oriMetas, formConfig, vue, callBack) {
         let returnVal = [];
+        let trueView = () => {return true};
         if(!callBack) callBack = ()=>{};
         let doResolverFormMetas = (metas, vue, callBack, type, group) => {
             if (Utils.isArray(metas)) {
                 metas.forEach((meta, index) => {
                     if (meta['metas']) { // 属于组元数据
-                        let groupMeta = {name: meta.title, metas: [], style: meta.style}
+                        let groupMeta = {name: meta.title, metas: [], style: meta.style, view: meta.view || trueView};
                         returnVal.push(groupMeta);
                         doResolverFormMetas(meta['metas'], vue, callBack, 'group', groupMeta)
                     } else if (Utils.isNotBlank(meta['children'])) {
                         if (!group) {
-                            group = {name: '', metas: []};
+                            group = {name: '', metas: [], view: meta.view || trueView};
                             returnVal.push(group)
                         }
                         doResolverFormMetas(meta['children'], vue, callBack, 'child', group)
                     } else if (!type && meta.type !== 'action') {
                         if (!group) {
-                            group = {name: '', metas: []};
+                            group = {name: '', metas: [], view: meta.view || trueView};
                             returnVal.push(group)
                         }
                         doResolverFormMetas([meta], vue, callBack, 'mate', group)

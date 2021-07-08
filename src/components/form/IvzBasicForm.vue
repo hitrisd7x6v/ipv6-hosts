@@ -1,6 +1,7 @@
 <template>
     <a-form class="ivz-form" :form="form" :hide-required-mark="formConfig.hideRequiredMark" :layout="formConfig.layout">
-        <div v-for="group in formGroup" :key="group.name" class="ivz-group" :style="group.style">
+        <template v-for="group in formGroup">
+        <div v-show="groupView(group)" :key="group.name" class="ivz-group" :style="group.style">
             <div v-if="group.name" class="ivz-group-head">
                 <label style="color: #6eb5ff; font-size: 14px; padding-left: 12px;">{{group.name}}</label>
             </div>
@@ -99,6 +100,7 @@
                 </a-row>
             </div>
         </div>
+        </template>
         <a-modal :visible="previewFile.url!=null" :footer="null" @cancel="previewCancel">
             <img :alt="previewFile.name" style="width: 100%" :src="previewFile.url" />
         </a-modal>
@@ -144,16 +146,26 @@
             let list = col.config.FileList;
             if(Utils.isNotBlank(list)) return list;
 
-            if(!fileList)  {
-                this.$set(this.model, col.field, []);
-            } else if(Utils.isArray(fileList)) {
+            if(Utils.isArray(fileList)) {
                 fileList.forEach((url, index)=>{
-                    list.push({url, uid: -index});
+                    list.push({url: url, uid: -index, name: url});
                 });
             } else {
-                fileList.split(',').forEach((url, index)=>{
-                    list.push({url, uid: -index});
-                });
+                if(col.config.limit == 1) { // 单张
+                    this.$set(this.model, col.field, fileList);
+                    if(fileList) {
+                        list.push({url: fileList, uid: -1, name: fileList})
+                    }
+                } else { // 多张
+                    if(fileList) {
+                        fileList.split(',').forEach((url, index)=>{
+                            list.push({url: url, uid: -index, name: url});
+                        });
+                    } else {
+                        this.$set(this.model, col.field, []);
+                    }
+                }
+
             }
             return list;
         },
@@ -164,34 +176,45 @@
             this.previewFile = {url: null};
         },
         handleChange(e, col) {
-            function getBase64(file) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = error => reject(error);
-                });
-            }
             let file = e.file;
             let modelElement = this.model[col.field];
             if (file.status == 'uploading') {
-                getBase64(file.originFileObj).then(resp=>{
-                    modelElement.push(resp);
-                    col.config.FileList.push({url: resp, uid: -1, name: 'xx'})
-                })
+                try {
+                    this.getBase64(file.originFileObj).then(resp => {
+                        // modelElement.push(resp);
+                        col.config.FileList.push({url: resp, uid: col.config.FileList.length + 1, name: 'xx'})
+                    })
+                } catch (e) {
+                    this.$log.warningLog("上传文件警告", "解析base64失败", file);
+                }
             } else if(file.status == 'done') {
                 let response = file.response;
                 this.$log.debugLog("上传文件", "服务端响应数据", response);
 
                 let url = response.data[col.config.respField];
-                modelElement.push(url);
-                col.config.FileList.push({url: url, uid: -(modelElement.length), name: url})
+                if(col.config.limit == 1) {
+                    this.model[col.field] = url;
+                } else {
+                    modelElement.push(url);
+                }
+                col.config.FileList.push({url: url, uid: modelElement.length + 1, name: url})
             } else if(file.status == 'removed') {
                 Utils.delArrayEle(modelElement, file.url);
                 Utils.delArrayEle(col.config.FileList, file)
             } else {
                 this.$msg.warningNotify("上传文件", "文件上传失败")
             }
+        },
+        getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        },
+        groupView(group) {
+            return group.view(this.model);
         },
         /**
          * 返回当前正在编辑的对象
