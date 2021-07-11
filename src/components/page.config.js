@@ -76,12 +76,12 @@ export default {
      * @param meta
      */
     add(row, meta, index) {
-        let editModel = this.putStore("editModel", row);
+        this.putStore("editModel", row);
         let operaMeta = meta || this.pageActionMetas.Add;
-        operaMeta.callBack(editModel).then(()=>{
+        operaMeta.callBack(row).then(()=>{
             this.getViewRef().viewEditPage();
             router.push("/IvzSys/add");
-            this.getListRef().actionHandleWrapper(operaMeta, editModel, index)
+            this.getListRef().actionHandleWrapper(operaMeta, row, index)
         });
     },
     /**

@@ -70,8 +70,7 @@ export const MixBasicForm = {
          * @param param
          */
         setFieldsValue(param) {
-            // 如果是双向绑定, 则此方法无效
-            if(param && this.bindType == 'void') {
+            if(param) {
                 this.form.setFieldsValue(param);
             }
         },

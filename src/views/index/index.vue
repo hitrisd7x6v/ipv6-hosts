@@ -234,10 +234,8 @@ export default {
         },
         taskBarCloseMoreOpera (item) { // 任务栏菜单关闭处理
             if (item.key === 'all') {
-                // 关闭除了工作台之外的其他任务
-                this.openMenu(this.workMenu)
-                this.taskBarData.splice(1, this.taskBarData.length - 1)
-            } else { // 关闭除工作台和当前激活的任务以外的所有任务
+                this.taskBarData.splice(0, this.taskBarData.length)
+            } else { // 关闭除当前激活的任务以外的所有任务
                 var position = 1
                 this.taskBarData.forEach((item, index, ori) => {
                     if (item === this.activityMenu) {
@@ -246,7 +244,7 @@ export default {
                     }
                 })
                 this.taskBarData.splice(position + 1, this.taskBarData.length - position - 1)
-                this.taskBarData.splice(1, position - 1)
+                this.taskBarData.splice(0, position)
             }
         },
         breakpoint (broken) { // 响应式处理

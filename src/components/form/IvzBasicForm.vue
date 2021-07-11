@@ -119,16 +119,6 @@
     props: {
         formGroup: {type: Array, default: () => {}}, // 表单元数据
     },
-    watch: {
-        model: {
-            handler (newVal, oldVal) {
-                if (this.bindType === 'both') { // 如果是双向数据绑定, 则会始终更新
-                    this.form.updateFields()
-                }
-            },
-            deep: true
-        }
-    },
     data () {
         return {
             previewFile: {url: null}
@@ -148,18 +138,18 @@
 
             if(Utils.isArray(fileList)) {
                 fileList.forEach((url, index)=>{
-                    list.push({url: url, uid: -index, name: url});
+                    list.push({url: url, uid: -index, name: url, status: 'done'});
                 });
             } else {
                 if(col.config.limit == 1) { // 单张
                     this.$set(this.model, col.field, fileList);
                     if(fileList) {
-                        list.push({url: fileList, uid: -1, name: fileList})
+                        list.push({url: fileList, uid: -1, name: fileList, status: 'done'})
                     }
                 } else { // 多张
                     if(fileList) {
                         fileList.split(',').forEach((url, index)=>{
-                            list.push({url: url, uid: -index, name: url});
+                            list.push({url: url, uid: -index, name: url, status: 'done'});
                         });
                     } else {
                         this.$set(this.model, col.field, []);
@@ -179,17 +169,10 @@
             let file = e.file;
             let modelElement = this.model[col.field];
             if (file.status == 'uploading') {
-                try {
-                    this.getBase64(file.originFileObj).then(resp => {
-                        // modelElement.push(resp);
-                        col.config.FileList.push({url: resp, uid: col.config.FileList.length + 1, name: 'xx'})
-                    })
-                } catch (e) {
-                    this.$log.warningLog("上传文件警告", "解析base64失败", file);
-                }
+                col.config.FileList = e.fileList
             } else if(file.status == 'done') {
                 let response = file.response;
-                this.$log.debugLog("上传文件", "服务端响应数据", response);
+                this.$log.debugLog("上传文件", "服务端响应数据", file);
 
                 let url = response.data[col.config.respField];
                 if(col.config.limit == 1) {
@@ -197,11 +180,21 @@
                 } else {
                     modelElement.push(url);
                 }
-                col.config.FileList.push({url: url, uid: modelElement.length + 1, name: url})
+                col.config.FileList = col.config.FileList.map(item=>{
+                    if(item.response) {
+                        item['url'] = url;
+                    }
+                    return item;
+                });
             } else if(file.status == 'removed') {
+                this.model[col.field] = null;
                 Utils.delArrayEle(modelElement, file.url);
                 Utils.delArrayEle(col.config.FileList, file)
+                this.$log.debugLog("上传文件", "移除文件", file);
             } else {
+                file['thumbUrl'] = '';
+                let response = file.response;
+                this.$log.errorLog("上传文件", '上传失败', response);
                 this.$msg.warningNotify("上传文件", "文件上传失败")
             }
         },
@@ -227,11 +220,7 @@
             return this.fieldMetaMap;
         },
         onValuesChange (props, values) { // 表单的值同步到model
-            if (this.bindType === 'both') { // 双向同步
-                this.syncFormToModel(this.model, values)
-            } else if (this.bindType === 'void') { // 不同步
-                this.syncFormChangeEvent(values, null, this.model)
-            }
+            this.syncFormChangeEvent(values, null, this.model)
         },
         /**
          * 触发表单事件

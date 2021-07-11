@@ -277,7 +277,8 @@ export default {
             ]
         },
         {title: '图片信息', metas: [
-                {field: 'productPic', title: '产品图片', type: 'upload'}
+                {field: 'productPic', title: '产品图片', type: 'upload'
+                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}}
             ]},
         {title: '产品属性', metas: [
                 {field: 'spec', title: '规格', type: 'checkbox', dictType: 'spec'},

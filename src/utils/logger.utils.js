@@ -29,13 +29,14 @@ const Logger = {
         console.warn(this.getLogContent('warning', title, desc, arg))
     },
     isDebug() {
-        let env = window.CacheApi.env;
-        if(env) {
-            let profiles = env['profiles'];
-            return profiles ? profiles.includes['dev'] : false;
-        } else {
-            return false;
-        }
+        // let env = window.CacheApi || window.CacheApi.env;
+        // if(env) {
+        //     let profiles = env['profiles'];
+        //     return profiles ? profiles.includes['dev'] : false;
+        // } else {
+        //     return true;
+        // }
+        return true;
     }
 }
 
