@@ -57,15 +57,15 @@ module.exports = {
             return {
                 externals: { // 生产环境, 打包时不包含下面的类库, 使用cdn引入
                     'vue': 'Vue',
-                    // 'mockjs': 'Mock',
-                    // 'axios': 'axios',
+                    'mockjs': 'Mock',
+                    'axios': 'axios',
                     'moment': 'moment',
                     "ant-design-vue": 'antd', // antd类库
                     // "ant-design-vue/lib/style": 'ants'
                 },
                 plugins: [
                     new scriptExtHtmlWebpackPlugin({
-                        inline: ['index.js', 'index.css'],
+                        inline: ['index.min.js', 'index.min.css'],
                         custom: [
                             {
                                 test: /.*/,
@@ -79,7 +79,7 @@ module.exports = {
                         ]
                     }),
                     new scriptExtHtmlWebpackPlugin({
-                        inline: ['login.js', 'login.css'],
+                        inline: ['login.min.js', 'login.min.css'],
                         custom: [
                             {
                                 test: /.*/,
@@ -109,12 +109,12 @@ module.exports = {
         if (process.env.NODE_ENV === 'production') {
             config.optimization.delete('splitChunks')
             // 清除css，js版本号
-            config.output.filename('libs/[name].js').end();
-            config.output.chunkFilename('libs/[name].js').end();
+            config.output.filename('umd/[name].min.js').end();
+            config.output.chunkFilename('umd/[name].min.js').end();
             // 为生产环境修改配置...
             config.plugin('extract-css').tap(args => [{
-                filename: `libs/[name].css`,
-                chunkFilename: `libs/[name].css`
+                filename: `umd/[name].min.css`,
+                chunkFilename: `umd/[name].min.css`
             }])
             config.plugin("ignore").use(
                     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn$/)

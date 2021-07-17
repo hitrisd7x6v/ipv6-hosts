@@ -1,7 +1,15 @@
 {
   "name": "ivzone",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
+  "license": "apache",
+  "author": {
+    "name": "iteaj",
+    "email": "iteaj@outlook.com",
+    "url": "http://www.iteaj.com"
+  },
+
+  "description": "使用vue、antdv开发的多页面组件, 一个视图组件即一个页面(html)；一个视图组件包含了增删改查常用功能的组件库",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -53,7 +61,7 @@
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not ie <= 8",
+    "not ie <= 9",
     "ie 8"
   ]
 }
