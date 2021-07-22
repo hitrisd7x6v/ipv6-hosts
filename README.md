@@ -5,7 +5,8 @@
 2. 充分发挥vue框架数据驱动视图的能力， 使得字典，select等常见组件数据获取到展示的便利性以及表格对这些组件的数据格式展示能力，最大简化了前端开发
 3. 项目采用json数据格式定义一个页面， 这使得创建一个页面只需要定义一些字段的描述性语言
 
-![菜单](https://images.gitee.com/uploads/images/2020/0414/191721_edecbc42_1230742.jpeg "1586862411(1).jpg")
+![菜单列表页](https://images.gitee.com/uploads/images/2020/0414/191721_edecbc42_1230742.jpeg "1586862411(1).jpg")
+![菜单编辑页面](https://images.gitee.com/uploads/images/2020/0414/191936_2f45126b_1230742.jpeg "编辑菜单页面.jpg")
 #### 软件架构
 软件架构说明
 
