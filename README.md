@@ -4,11 +4,10 @@
 1. 使用vue、antdv开发的多页面组件, 一个视图组件即一个页面(html)；视图组件包含了增删改查常用功能。
 2. 充分发挥vue框架数据驱动视图的能力， 使得字典，select等常见组件数据获取到展示的便利性以及表格对这些组件的数据格式展示能力，最大简化了前端开发
 3. 项目采用json数据格式定义一个页面， 这使得创建一个页面只需要定义一些字段的描述性语言
-4. 以下是系统的一些页面展示, 以及对应的代码
-1. 以菜单页为例
+4. 以下是系统的一些页面展示, 以及对应的代码，以菜单页为例(使用<ivz-basic-view>组件)
 ![菜单列表页](https://images.gitee.com/uploads/images/2020/0414/191721_edecbc42_1230742.jpeg "1586862411(1).jpg")
 ![菜单编辑页面](https://images.gitee.com/uploads/images/2020/0414/191936_2f45126b_1230742.jpeg "编辑菜单页面.jpg")
-2. 以下是实现菜单页增删改查的代码
+6. 实现菜单页增删改查的代码
 ```
 <ivz-basic-view ref="vbt" :metas="mates" :config="config" :search-metas="searchMetas">
     <template #perm_type_f="params">
@@ -192,6 +191,104 @@
       }
   });
 </script>
+```
+字典页面（使用 Ivz-eidt-view组件）
+![字典页面](https://images.gitee.com/uploads/images/2020/0414/193119_e978ad4a_1230742.jpeg "字典列表.jpg")
+![字典数据](https://images.gitee.com/uploads/images/2020/0414/193229_f189b924_1230742.jpeg "字典数据.jpg")
+代码：
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <th:block th:include="libs :: header('字典管理')"></th:block>
+</head>
+<body>
+  <div id="DictComponent">
+    <ivz-edit-view ref="vbt" :metas="metas" :config="config" :search-metas="searchMetas"></ivz-edit-view>
+    <ivz-drawer-edit-table :metas="dictData.metas" :action-metas="dictData.actionMetas"
+        :config="dictData.config" ref="det" :height="300"></ivz-drawer-edit-table>
+  </div>
+  <th:block th:include="libs :: footer"></th:block>
+</body>
+<script>
+  let vue = new Vue({
+      el: "#DictComponent",
+      data: {
+          editRow: null,
+          metas: [
+              {field: 'name', title: '字典名称', width: 180, required: true, editable: true},
+              {field: 'type', title: '字典类型', required: true, editable: true},
+              {field: 'status', title: '状态', type: 'select', data: [
+                      {label: '启用', value: '正常'}, {label: '禁用', value: '禁用'}
+                  ], default: '正常', editable: true, width: 180},
+              {field: 'remark', title: '备注', width: 280, editable: true},
+              {field: 'createTime', title: '创建时间', width: 160, type: 'date', isForm: false},
+              {field: 'action', title: '操作', type: 'action'},
+          ],
+          searchMetas: [
+              {field: 'status', title: '状态', type: 'select', data: [
+                      {label: '启用', value: '正常'}, {label: '禁用', value: '禁用'}
+                  ]},
+          ],
+          dictData: {
+              metas: [
+                  {field: 'type', title: '字典类型', width: 120},
+                  {field: 'label', title: '标签', type: 'text', width: 120, editable: true},
+                  {field: 'value', title: '字典值', type: 'text', width: 100, editable: true},
+                  {field: 'remark', title: '备注', type: 'text', width: 160, editable: true},
+                  {field: 'action', title: '操作', type: 'action', width: 160}
+              ],
+              config: {
+                  table: {
+                      scroll: {y: 180}
+                  }
+              },
+              actionMetas: {}
+          },
+          config: {
+              form: {}
+          }
+      },
+      created: function() {
+          this.$page.addActionMeta("DictData", {id: 'dictData', position: 'T'
+            , label: '字典数据', color: 'green', callBack: function(row) {
+              return new Promise(function(resolve, reject) {
+                if(row['id']) {
+                  vue.editRow = row
+                  vue.$refs['det'].open()
+                }
+                return reject();
+              })
+            }
+          })
+          this.dictData.actionMetas['Del'] = this.$page.getActionMeta('Del', {url: '/core/dictData/del'})
+          this.dictData.actionMetas['Edit'] = this.$page.getActionMeta('Edit', {url: '/core/dictData/edit'})
+          this.dictData.actionMetas['Save'] = this.$page.getActionMeta('Save', {})
+          this.dictData.actionMetas['Add'] = this.$page.getActionMeta('Add', {
+              url: '/core/dictData/add',
+              callBack: function(row) {
+                  return new Promise(function(resolve, reject) {
+                      row['type'] = vue.editRow['type'];
+                      return resolve()
+                  })
+              }
+          });
+          this.dictData.actionMetas['View'] = this.$page.getActionMeta('View', {
+              url: '/core/dictData/view',
+              callBack: function(row) {
+                  return new Promise(function(resolve, reject) {
+                      row['type'] = vue.editRow['type'];
+                      return resolve()
+                  })
+              }
+          });
+          this.dictData.actionMetas['Cancel'] = this.$page.getActionMeta('Cancel', {})
+      },
+  });
+</script>
+</html>
+
 ```
 
 #### 软件架构
