@@ -8,7 +8,7 @@
 1. 以菜单页为例
 ![菜单列表页](https://images.gitee.com/uploads/images/2020/0414/191721_edecbc42_1230742.jpeg "1586862411(1).jpg")
 ![菜单编辑页面](https://images.gitee.com/uploads/images/2020/0414/191936_2f45126b_1230742.jpeg "编辑菜单页面.jpg")
-
+2. 以下是实现菜单页增删改查的代码
 ```
 <ivz-basic-view ref="vbt" :metas="mates" :config="config" :search-metas="searchMetas">
     <template #perm_type_f="params">
