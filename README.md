@@ -5,7 +5,9 @@
 2. 充分发挥vue框架数据驱动视图的能力， 使得字典，select等常见组件数据获取到展示的便利性以及表格对这些组件的数据格式展示能力，最大简化了前端开发
 3. 项目采用json数据格式定义一个页面， 这使得创建一个页面只需要定义一些字段的描述性语言
 4. 以下是系统的一些页面展示, 以及对应的代码，以菜单页为例(使用<ivz-basic-view>组件)
+菜单管理列表页
 ![菜单列表页](https://images.gitee.com/uploads/images/2020/0414/191721_edecbc42_1230742.jpeg "1586862411(1).jpg")
+菜单管理编辑页
 ![菜单编辑页面](https://images.gitee.com/uploads/images/2020/0414/191936_2f45126b_1230742.jpeg "编辑菜单页面.jpg")
 6. 实现菜单页增删改查的代码
 ```
@@ -192,8 +194,9 @@
   });
 </script>
 ```
-字典页面（使用 Ivz-eidt-view组件）
+字典列表页（使用 Ivz-eidt-view 组件）
 ![字典页面](https://images.gitee.com/uploads/images/2020/0414/193119_e978ad4a_1230742.jpeg "字典列表.jpg")
+字典数据抽屉列表(使用 ivz-drawer-edit-table 组件)
 ![字典数据](https://images.gitee.com/uploads/images/2020/0414/193229_f189b924_1230742.jpeg "字典数据.jpg")
 代码：
 
