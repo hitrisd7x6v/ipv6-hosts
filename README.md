@@ -298,6 +298,37 @@
 
 #### 使用说明
 下面通过一些简短的代码片段说明一些开发中常用的功能
+1. 引用字典数据到下来菜单
+
+```
+{field: 'status', title: '订单状态', dictType: 'pay_status', type: 'select', width: 80}
+```
+2. 时间格式化
+
+```
+{field: 'createTime', title: '创建时间', type: 'date', config: {
+                        format: 'YYYY-MM-DD'
+                    }
+                }
+```
+3. 自定义表单验证
+
+```
+{field: 'account', title: '帐号', placeholder: '帐号只能是手机号或邮箱', required: true
+                    , validator: function (rule, val, callback) {
+                    if(!email(val) && !phone(val)){
+                        callback(new Error('账号只能是手机号或邮箱'));
+                    } else {
+                        callback();
+                    }
+             }},
+```
+4. 树下拉选择列表
+
+```
+{field: 'pid', title: '父级代理', isTable: false, type: 'stree', url: '/pay/agent/stree'}
+```
+
 
 #### 参与贡献
 
