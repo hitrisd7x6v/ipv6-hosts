@@ -2,7 +2,9 @@
 
 #### 介绍
 1. 项目的由来：提炼于开发过程中常用功能点的简化以及开发时碰到的一些痛点(繁琐、麻烦、通用)
-2. 此项目的目标：希望以最简单的方式, 最少的代码实现一个页面最基础的增删改查功能, 且提供灵活、强大的可扩展性
+2. 项目的目标：希望以最简单的方式, 最少的代码实现一个页面最基础的增删改查功能, 且提供灵活、强大的可扩展性
+3. 项目已提供的组件：ivz-basic-view(基础列表组件+默认编辑组件+抽屉详情组件)、ivz-drawer-view(基础列表组件+抽屉编辑组件+抽屉详情组件)、ivz-edit-view(可编辑的表格页)、ivz-drawer-edit-table（可编辑的列表组件 抽屉下拉方式） 这些组件基本可以覆盖80%的业务功能
+
 
 #### 组件界面截图以及代码实现
 以下是系统的一些页面展示, 以及对应的代码，以菜单页为例(使用<ivz-basic-view>组件)
@@ -328,7 +330,29 @@
 ```
 {field: 'pid', title: '父级代理', isTable: false, type: 'stree', url: '/pay/agent/stree'}
 ```
+5. 自定义插槽用法
+表单项slot：
 
+```
+<ivz-basic-view ref="vbt" :metas="mates" :config="config" :search-metas="searchMetas">
+    <template #perm_type_f="params">
+        <a-input v-decorator="[params.meta.field, params.meta['decorate']]"
+                 :disabled="params.meta.disabled">
+            <a-select slot="addonAfter" :options="PermTypeOptions"
+                style="width: 88px" :value="typeValue" :disabled="typeDisabled"
+                @change="permTypeHandler"></a-select>
+        </a-input>
+    </template>
+</ivz-basic-view>
+```
+表格列slot
+```
+<ivz-basic-view ref="vbt" :metas="mates" :config="config" :search-metas="searchMetas">
+    <template #status_t="{row, index, meta}">
+        <span>{{row.status}}</span>
+    </template>
+</ivz-basic-view>
+```
 
 #### 参与贡献
 
