@@ -300,7 +300,7 @@
 
 #### 使用说明
 下面通过一些简短的代码片段说明一些开发中常用的功能
-1. 引用字典数据到下来菜单
+1. 引用字典数据到下拉框
 
 ```
 {field: 'status', title: '订单状态', dictType: 'pay_status', type: 'select', width: 80}
@@ -325,7 +325,7 @@
                     }
              }},
 ```
-4. 树下拉选择列表
+4. 树类型下拉选择框
 
 ```
 {field: 'pid', title: '父级代理', isTable: false, type: 'stree', url: '/pay/agent/stree'}
