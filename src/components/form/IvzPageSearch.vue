@@ -33,8 +33,7 @@
         </ul>
         <slot name="search">
             <ivz-search-model class="ivz-search-bottom" :search-model="searchModel" ref="searchRef"
-                 :search-metas="searchMetas" :ori-model="oriModel" :form-config="searchConfig"
-                             :field-meta-map="fieldMetaMap" @pressEnter="pressEnter">
+                 :metas="searchMetas" :form-config="searchConfig" @pressEnter="pressEnter">
             </ivz-search-model>
         </slot>
     </div>

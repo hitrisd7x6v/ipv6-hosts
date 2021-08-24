@@ -1,9 +1,9 @@
 <template>
-    <a-form-model :model="model" :label-col="formConfig.labelCol"
+    <a-form-model ref="formModelRef" :model="model" :label-col="formConfig.labelCol"
           :layout="formConfig.layout" :wrapper-col="formConfig.wrapperCol" :colon="izColon"
           :labelAlign="formConfig.labelAlign" :validateOnRuleChange="formConfig.validateOnRuleChange">
         <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter" type="flex">
-            <template v-for="col in searchMetas">
+            <template v-for="col in metas">
                 <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
                     <a-form-model-item :label="col.title" :prop="col.field" :ref="col.field"
                            :labelCol="col.config.labelCol" :wrapperCol="col.config.wrapperCol">
@@ -15,7 +15,7 @@
                                   @deselect="(val, option) => col.event.deselect({value: val, option: option}, model)"
                                   @inputKeydown="col.event.inputKeydown(model)">
                             <a-select-option v-for="option in col.data" :key="option.value"
-                                             :disabled="option.disabled" class="ivz-option-class">
+                                         :disabled="option.disabled" class="ivz-option-class">
                                 {{option.label}}
                             </a-select-option>
                         </a-select>
@@ -96,13 +96,12 @@
 </template>
 
 <script>
-    import {MixBasicForm} from "@/components/mixins/MixBasicForm";
+    import {MixBasicModel} from "@/components/mixins/MixBasicModel";
 
     export default {
         name: "IvzSearchModel",
-        mixins: [MixBasicForm],
+        mixins: [MixBasicModel],
         props: {
-            searchMetas: {type: Array, default: () => {}}, // 表单元数据,
             searchModel: {type: Object, default: () => {}}
         },
         created () {
@@ -114,6 +113,7 @@
                 if (col.event.pressEnter) {
                     col.event.pressEnter(this.searchModel[col.field], this.searchModel, this)
                 }
+
                 this.$emit('pressEnter', this.searchModel, col)
             },
             eventHandle (type, val, col) {

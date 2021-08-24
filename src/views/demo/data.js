@@ -13,7 +13,13 @@ const productCat = [
      {label: '护肤产品', value: 6}
 ]
 const productType = [
-    {label: '生活用品', value: 1}, {label: '体育用品', value: 2}
+    {label: '生活用品', value: 1, children: [
+            {label: '毛巾', value: '3'},
+            {label: '牙刷', value: '4'},
+        ]}, {label: '体育用品', value: 2, children: [
+            {label: '篮球', value: '5'},
+            {label: '台球', value: '6'},
+        ]}
 ]
 const spec = [
     {label: '颜色', value: '0'}, {label: '重量', value: '1'}
@@ -58,12 +64,14 @@ let dataSource = Mock.mock({
             'rate|1-5': 3,
             'id|+1': 1,
             'spec': [0],
+            'obj': {desc: '格式a.b'},
+            'list': [{desc: '格式list[0].desc', gg: '格式list[0].gg'}],
             'range|1-100': 3,
-            'cat|1-6': 3, // 随机生成日期时间
+            'cat|1-6': 3, // 随机生成1-6的数字
             'markSale|1-800': 800, // 随机生成1-800的数字
             'price|1-1000': 100, // 随机生成1-100的数字
             'name': '@cname', // 随机生成中文名字,
-            'createTime': '@datetime' // 随机生成1-5的数字
+            'createTime': '@datetime' // 随机生成日期时间
         }
     ]
 })['rows'];
@@ -259,8 +267,8 @@ export default {
     groupConfig: groupConfig,
     groupMetas: [
         {title: '基础信息', metas: [
-                {field: 'name', title: '产品名称', required: true, align: 'left'},
-                {field: 'area', title: '产地', type: 'stree', url: '/test/stree', min: 2, editable: true,
+                {field: 'name', title: 'text', required: true, align: 'left'},
+                {field: 'area', title: 'stree', type: 'stree', url: '/test/stree', min: 2, editable: true,
                     config: {
                         showSearch: true,
                         treeCheckable: true
@@ -277,32 +285,35 @@ export default {
             ]
         },
         {title: '图片信息', metas: [
-                {field: 'productPic', title: '产品图片', type: 'upload'
+                {field: 'productPic', title: 'upload', type: 'upload'
                     , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}}
             ]},
         {title: '产品属性', metas: [
-                {field: 'spec', title: '规格', type: 'checkbox', dictType: 'spec'},
-                {field: 'cat', title: '产品类别', type: 'select', data: productCat, required: true, min: 2,
+                {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
+                {field: 'cat', title: 'select', type: 'select', data: productCat, required: true, min: 2,
                      config: {mode: 'multiple'}},
-                {field: 'type', title: '产品类型', type: 'cascade', data: productType, formatter: (val, row, col, text) => {
+                {field: 'type', title: 'cascade', type: 'cascade', data: productType, formatter: (val, row, col, text) => {
                         return '<a href="/editView.html">' + text + '</a>'
                     }, disabled: false}
             ]},
-        {title: '价格信息', metas: [
-                {field: 'price', title: '产品价格', type: 'text', validator: (rule, val, call) => {
+        {title: '数字格式', metas: [
+                {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
                         call()
-                    }, event: {
-                        change(val, {form, bind}) {
-                            bind({markSale: val - 1.2, 'ext.desc': `产品价格是${val}`})
-                        }
                     }},
-                {field: 'markSale', title: '市场价', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}}
+                {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}}
             ]},
         {title: '其他信息', metas: [
-                {field: 'createTime', title: '上架时间', type: 'date', default: '2019-12-10 09:02'},
-                {field: 'rate', title: '评分', type: 'rate', config: {count: 8, tootips: ['低评分']}},
-                {field: 'ext.desc', title: '说明'},
-                {field: 'range', title: '下单数量', type: 'slider', config: {step: 3, max: 120}}
+                {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'},
+                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
+                {field: 'obj.desc', title: '对象'},
+                {field: 'list[0].desc', title: '数组', isTable: false, default: 3, event:{
+                        change(val) {
+
+                        }
+                    }},
+                {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
+
+                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}}
             ]},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],

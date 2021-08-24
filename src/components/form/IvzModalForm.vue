@@ -1,30 +1,41 @@
 <template>
-    <a-modal class="ivz-modal-container ivz-modal-form" :get-container="$getModalContainer"
-         :closable="config.closable" :centered="config.centered" :width="width"
+    <a-locale-provider :locale="zhCN">
+    <a-modal class="ivz-modal-container ivz-modal-form" :getContainer="$getModalContainer"
+         :closable="config.closable" :centered="config.centered" :width="modalWidth"
          :mask-closable="config.maskClosable" ok-text="提交" cancel-text="取消" :visible="visible"
-         :keyboard="config.keyboard" :maskStyle="config.maskStyle" :bodyStyle="config.bodyStyle">
+         :keyboard="config.keyboard" :destroyOnClose="true" :maskStyle="config.maskStyle"
+         :bodyStyle="config.bodyStyle">
         <div slot="title" style="text-align: center;">
-            <i class="izc iz-icon-edit"></i> {{title}}
+            <slot name="title">
+                <i class="izc iz-icon-edit"></i> {{title}}
+            </slot>
         </div>
         <a-spin :tip="submitTip" :spinning="spinning">
-            <ivz-basic-form ref="basicForm" :form-config="formConfig" :ori-model="oriModel"
-                        :field-meta-map="fieldMetaMap" :form-group="formGroup"></ivz-basic-form>
+            <ivz-basic-model ref="basicFormRef" @mountedFinished="mountedFinished" :metas="metas" :form-config="formConfig">
+                <template v-for="meta in slotsMetas" #[meta.formSlot]>
+                    <slot :name="meta.formSlot"></slot>
+                </template>
+            </ivz-basic-model>
         </a-spin>
-        <div slot="footer" style="text-align: center">
-            <div>
-                <a-button @click="cancel">取 消</a-button>
-                <a-button @click="submit" :loading="spinning" type="primary">提 交</a-button>
-                <a-button @click="reset" type="dashed">重 置</a-button>
-            </div>
-        </div>
+        <template slot="footer">
+            <slot name="footer">
+                <div style="text-align: center">
+                    <a-button @click="cancel">取 消</a-button>
+                    <a-button @click="submit" :loading="spinning" type="primary">提 交</a-button>
+                    <a-button @click="reset" type="dashed">重 置</a-button>
+                </div>
+            </slot>
+        </template>
     </a-modal>
+    </a-locale-provider>
 </template>
 
 <script>
+    import zhCN from 'ant-design-vue/es/locale-provider/zh_CN'
     export default {
         name: 'IvzModalForm',
         props: {
-            width: {default: 480},
+            width: {type: Number},
             title: {type: String, default: '未指定标题'},
             metas: {type: Array, required: true},
             saveMeta: {type: Object, required: true},
@@ -32,14 +43,18 @@
         },
         data () {
             return {
+                zhCN,
                 oriModel: {},
                 submitTip: '',
+                editModel: {},
+                modalWidth: 0,
+                slotsMetas: [],
                 visible: false,
                 spinning: false,
-                formGroup: null,
                 $basicForm: null,
                 formConfig: null,
-                fieldMetaMap: {}
+                fieldMetaMap: {},
+                dateFieldMeta: [],
             }
         },
         created () {
@@ -51,41 +66,63 @@
             this.$utils.assignVueProperty(this.config, this.$resolver.modalOptions, this)
 
             this.submitTip = this.formConfig.submitTip
-            this.$resolver.initDefaultFormConfig(this.formConfig, this)
-            this.formGroup = this.$resolver.resolverFormMetas(this.metas, this.formConfig, this, meta=>{
+            this.$resolver.initDefaultFormConfig(this.formConfig, this);
+            if(this.formConfig.column > 1) {
+                this.modalWidth = this.width || 320 * this.formConfig.column;
+            } else {
+                this.modalWidth = this.width || 420;
+            }
+            this.$resolver.resolverFormMetas(this.metas, this.formConfig, this, meta=>{
                 this.fieldMetaMap[meta.field] = meta;
+                if(this.$utils.isDate(meta.type)) {
+                    this.dateFieldMeta.push(meta);
+                    meta.config.getCalendarContainer = this.$getModalContainer;
+                }
+
+                if(meta.type == 'select' || meta.type == 'stree' || meta.type == 'cascade') {
+                    meta.config.getPopupContainer = this.$getModalContainer;
+                }
+
                 this.$resolver.resolverMetaDefaultValue(meta, this.oriModel);
             })
         },
-        updated () {
-            this.$basicForm = this.$refs['basicForm']
+        mounted () {
+            this.slotsMetas = this.$resolver.resolverFormSlots(this.fieldMetaMap, this.$scopedSlots);
         },
         methods: {
             reset () {
                 this.$basicForm.resetForm()
             },
             open (model) {
-                this.visible = true
-                this.$nextTick(() => {
-                    let editModel = model || this.$basicForm.getOriFormModel()
-                    this.$basicForm.setEditModel(editModel)
-                })
+                this.visible = true;
+                this.editModel = model;
             },
             cancel () {
                 this.visible = false
             },
+            getOriModel() {
+                return this.$utils.clone(this.oriModel);
+            },
             getEditModel () {
                 return this.$basicForm.getEditModel()
             },
+            mountedFinished(basicFormRef) {
+                this.$basicForm = basicFormRef;
+                this.editModel = this.editModel || this.$basicForm.getOriFormModel();
+                this.$basicForm.setEditModel(this.editModel);
+            },
             submit () {
                 this.$basicForm.validate().then(resp => {
-                    let editModel = this.$basicForm.getEditModel()
                     if (!this.saveMeta['url']) {
                         return this.$log.errorLog('保存元数据未指定Url', '指定saveMeta["url"]属性')
                     }
+
+                    let editModel = this.$utils.clone(this.editModel);
                     this.saveMeta.callBack(editModel).then(resp => {
-                        this.spinning = true
-                        let resolve = this.$utils.getPromiseResolve(resp)
+                        this.spinning = true;
+                        let resolve = this.$utils.getPromiseResolve(resp);
+                        this.$utils.formatDateForEditModel(this.dateFieldMeta, editModel);
+
                         this.$http.post(this.saveMeta.url, editModel).then(data => {
                             if (typeof resolve.success === 'function') {
                                 resolve.success(data, this)
@@ -104,9 +141,6 @@
                         })
                     }).catch(reason => reason)
                 }).catch(reason => {})
-            },
-            isEditMate () {
-                return this.operaMate['id'] === 'edit'
             },
             trigger () {
                 this.visible = !this.visible

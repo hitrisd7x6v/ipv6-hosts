@@ -56,6 +56,7 @@ export default {
     router: router, // 每個頁面路由
     queryField: 'rows', // 数据列表字段
     formSlotMetas: [], // form slot
+    dateFieldMeta: [], // 日期类型的字段
     oriSearchModel: {}, // 搜索默认数据
     tableSlotMetas: [], // table slot
     detailSlotMetas: [], // detail slot
@@ -144,12 +145,21 @@ export default {
     submit() {
         this.getFormRef().submitHandle();
     },
-
-    getMeta(key) {
-        return this.editFieldMetaMap[key];
+    /**
+     * 获取指定field的元数据
+     * @param field
+     * @returns {*}
+     */
+    getMeta(field) {
+        return this.editFieldMetaMap[field];
     },
-    getSearchMeta(key) {
-        return this.searchFieldMetaMap[key];
+    /**
+     * 获取指定field的元数据
+     * @param field
+     * @returns {*}
+     */
+    getSearchMeta(field) {
+        return this.searchFieldMetaMap[field];
     },
     getActionMeta(action, options) {
         return cacheApi.getActionMeta(action, options);
@@ -179,14 +189,18 @@ export default {
     getQueryParams() {
         return cacheApi.currentMenu['IvzQueryParams'];
     },
-    getOriModel(vue) {
-        return vue.$utils.assignVueProperty({}, this.oriModel, vue);
+    getEditModel() { // 克隆一份
+        let editModel = this.getStore("editModel");
+        return Utils.clone(editModel);
     },
-    bind(params) {
-        if(!params) return;
+    getOriModel() {
+        return Utils.clone(this.oriModel);
+    },
+    bind(fieldsValue) {
+        if(!fieldsValue) return;
 
         if(this.getFormRef()) {
-            this.getFormRef().setFieldsValue(params);
+            this.getFormRef().bind(fieldsValue);
         } else {
             console.warn("bind只能在编辑页面使用")
         }
@@ -307,6 +321,9 @@ export default {
         if(this.isEditForm(formConfig)) {
             return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
                 this.editFieldMetaMap[meta.field] = meta;
+                if(Utils.isDate(meta.type)) {
+                    this.dateFieldMeta.push(meta);
+                }
 
                 // 解析此表单字段的默认值
                 Resolver.resolverMetaDefaultValue(meta, this.oriModel);

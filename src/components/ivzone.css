@@ -64,6 +64,17 @@ html, body {
 }
 
 /*表单组件*/
+.ivz-form .ivz-group {
+    padding: 0px 8px;
+    margin-top: 3px;
+}
+.ivz-form .ivz-group-head {
+    margin: 3px 8px;
+    border-bottom: 1px solid #eaedf1;
+}
+.ivz-form .ivz-group-body {
+    margin: 8px 16px 0px 28px;
+}
 .ant-form-item {
     margin-bottom: 20px;
 }

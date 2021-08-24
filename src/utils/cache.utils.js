@@ -212,7 +212,7 @@ export default {
         form: {
             gutter: 2,
             isInit: true, // 是否已经初始化
-            column: null, // 编辑表单列, 如果type是default则为1 group则为3
+            column: 1, // 编辑表单列, 如果type是default则为1 group则为3
             type: 'default', // 表单布局类型 default || group
             align: 'middle', // 垂直对齐方式
             justify: 'start', // 水平对齐方式

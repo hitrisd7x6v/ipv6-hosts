@@ -14,10 +14,16 @@
             <template #mark_sale_f="params">
                 <span>{{params.meta['field']}}</span>
             </template>
+            <template #test7_f="params">
+                <span>{{params.meta['field']}}</span>
+            </template>
             <template #name_d>detailName</template>
         </ivz-basic-view>
-        <ivz-modal-form ref="mf" :metas="ModalMetas" :save-meta="saveMeta"
-                        title="测试模态框"></ivz-modal-form>
+        <ivz-modal-form ref="mf" :metas="ModalMetas" :save-meta="saveMeta" title="测试模态框">
+            <template #test_f>
+                <span>slot 测试</span>
+            </template>
+        </ivz-modal-form>
     </div>
 </body>
 </html>

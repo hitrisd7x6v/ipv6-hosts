@@ -5,15 +5,18 @@ import '../utils/icon.utils'
 import Page from './page.config' // 导入每个iframe页面独有的库
 /* 导入组件 */
 import IvzSearchForm from './form/IvzSearchForm'
+import IvzSearchModel from "./form/IvzSearchModel";
+
 import IvzEditView from './view/IvzEditView'
 import IvzBasicView from './view/IvzBasicView'
 import IvzModalView from './view/IvzModalView'
 import IvzBasicForm from './form/IvzBasicForm'
+import IvzBasicModel from './form/IvzBasicModel'
+
 import IvzDrawerView from './view/IvzDrawerView'
-
 import IvzEditTable from './table/IvzEditTable'
-import IvzBasicTable from './table/IvzBasicTable'
 
+import IvzBasicTable from './table/IvzBasicTable'
 import IvzModalForm from './form/IvzModalForm'
 import IvzDrawerEditTable from './table/IvzDrawerEditTable'
 import IvzDiyView from "@/components/view/IvzDiyView";
@@ -31,7 +34,10 @@ if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.component(IvzDrawerView.name, IvzDrawerView)
 
     window.Vue.component(IvzSearchForm.name, IvzSearchForm)
+    window.Vue.component(IvzSearchModel.name, IvzSearchModel)
+
     window.Vue.component(IvzBasicForm.name, IvzBasicForm)
+    window.Vue.component(IvzBasicModel.name, IvzBasicModel)
     window.Vue.component(IvzModalForm.name, IvzModalForm)
 
     window.Vue.component(IvzDrawerEditTable.name, IvzDrawerEditTable)
@@ -54,7 +60,10 @@ export default {
         // 表单组件
         Vue.component(IvzModalForm.name, IvzModalForm)
         Vue.component(IvzBasicForm.name, IvzBasicForm)
+        Vue.component(IvzBasicModel.name, IvzBasicModel)
+
         Vue.component(IvzSearchForm.name, IvzSearchForm)
+        Vue.component(IvzSearchModel.name, IvzSearchModel)
 
         // 其他组件
         Vue.component(IvzDrawerEditTable.name, IvzDrawerEditTable)

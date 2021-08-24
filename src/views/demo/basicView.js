@@ -12,9 +12,10 @@ new Vue({
         mates: Data.mates,
         config: Data.config,
         ModalMetas: [
-            {field: 'password', title: '密码'},
-            {field: 'password1', title: '密码'},
-            {field: 'password2', title: '密码'},
+            {field: 'name', title: 'text', required: true, span: [6, 16]},
+            {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec', default: ['1']},
+            {field: 'test', title: 'slot'},
+            {field: 'createTime', title: 'date', type: 'date', required: true, span: [6, 16], default: new Date()},
         ],
         saveMeta: {id: 'save', label: '提交', url: '/test/save', callBack: () => {
                 return new Promise((resolve, reject) => {
@@ -32,7 +33,7 @@ new Vue({
             label: '模态框',
             callBack: (model) => {
                 return new Promise((resolve, reject) => {
-                    this.$refs['mf'].open()
+                    this.$refs['mf'].open(model);
                 })
             }
         })

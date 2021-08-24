@@ -1,6 +1,6 @@
 <template>
     <a-locale-provider :locale="zhCN">
-    <div class="ivz-default-form ivz-border-radius">
+    <div class="ivz-form ivz-default-form ivz-border-radius">
         <a-affix :offsetTop="0" @change="affixChange">
             <a-row type="flex" align="middle" justify="space-between"
                    class="form-header ivz-border-radius" style="color: #000000">
@@ -16,12 +16,21 @@
         </a-affix>
         <div class="form-body">
             <a-spin :tip="loadingText" :spinning="spinning">
-                <ivz-basic-form ref="basicFormRef" :ori-model="oriModel" @mountedFinished="mountedFinished"
-                    :form-group="formGroup" :field-meta-map="fieldMetaMap" :form-config="formConfig">
-                    <template v-for="meta in formAliasMetas" #[meta.formSlot]>
-                        <slot :name="meta.formSlot"></slot>
-                    </template>
-                </ivz-basic-form>
+                <div v-for="group in formGroup" v-if="groupView(group)" :key="group.name" class="ivz-group" :style="group.style">
+                    <div v-if="group.name" class="ivz-group-head">
+                        <label style="color: #6eb5ff; font-size: 14px; padding-left: 12px;">{{group.name}}</label>
+                    </div>
+                    <div class="ivz-group-body">
+                        <ivz-basic-form ref="basicFormRef" @mountedFinished="mountedFinished"
+                            :metas="group.metas" :form-config="formConfig">
+                            <template v-for="meta in group.metas" v-if="meta.formSlot">
+                                <template :slot="meta.formSlot">
+                                    <slot :name="meta.formSlot"></slot>
+                                </template>
+                            </template>
+                        </ivz-basic-form>
+                    </div>
+                </div>
             </a-spin>
         </div>
         <div class="form-footer ivz-opera-row" style="text-align: center">

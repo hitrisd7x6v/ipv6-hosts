@@ -50,17 +50,58 @@ const Utils = {
     deepSetValue (key, value, model) {
         let split = key.split('.');
         let length = split.length;
-        if(length && length == 1) return model[key] = value;
+        if(length && length == 1)
+            return model[key] = value;
 
         let temp = model;
         for(let i=0; i<length; i++) {
+            let item = split[i];
             if(i === length -1) {
-                temp[split[i]] = value; break;
+                temp[item] = value; return;
             } else {
-                temp = model[split[i]] || {};
-                model[split[i]] = temp;
+                if(item.endsWith(']')) { // field: list[0].name   model: {list: [{name: 'iteaj'}]}
+                    let r = /(\w+)\[(\d)\]/.exec(item); // r = [ignore, 'list', 0]
+                    let array = temp[r[1]]; // value = [{name: 'iteaj'}]
+                    if(array) {
+                        temp = array[r[2]]; // temp = {name: 'iteaj'}
+                        temp = array[r[2]] ? array[r[2]] : array[r[2]] = {}
+                    } else {
+                        temp = temp[r[1]] = []; // {list: []}
+                        temp = temp[r[2]] = {}; // {list: [...{}]}
+                    }
+                } else {
+                    if(temp[item]) {
+                        temp = temp[item];
+                    } else {
+                        temp = temp[item] = {};
+                    }
+                }
             }
         }
+    },
+    /**
+     *
+     * @param field
+     * @param model
+     * @returns {null|*}
+     */
+    getDeepValue(field, model) {
+        if(!field || !model) return null;
+
+        let split = field.split('.');
+        if(split.length == 1) return model[field];
+
+        let temp = model;
+        split.forEach(item=>{
+            if(item.endsWith(']')) { // field: list[0].name   model: {list: [{name: 'iteaj'}]}
+                let r = /(\w+)\[(\d)\]/.exec(item);
+                let value = temp[r[1]]; // 返回数组
+                if(value) temp = value[r[2]];
+            } else { // field: a.b or list[0].name
+                temp = temp ? temp[item] : null;
+            }
+        });
+        return temp;
     },
     /**
      * 首字母大写
@@ -316,6 +357,22 @@ const Utils = {
             }
         });
         return returnModel;
+    },
+    formatDateForEditModel(dateFieldMeta, editModel) {
+        dateFieldMeta.forEach(meta=>{
+            let deepValue = this.getDeepValue(meta.field, editModel);
+            let formatDateValue = null;
+
+            if(!deepValue) {
+                return;
+            } else if(moment.isMoment(deepValue)) {
+                formatDateValue = deepValue.format(meta.config.format);
+            } else if(typeof deepValue === 'string') {
+                formatDateValue = moment(deepValue).format(meta.config.format);
+            }
+
+            this.deepSetValue(meta.field, formatDateValue, editModel);
+        })
     }
 }
 

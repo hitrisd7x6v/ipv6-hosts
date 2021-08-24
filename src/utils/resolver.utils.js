@@ -15,7 +15,7 @@ export default {
     pageNumField: 'current', // 页码字段
     pageSizeField: 'size', // 页数字段
     viewFormat: 'YYYY-MM-DD', // 表格显示日期格式
-    dateFormat: 'YYYY-MM-DD hh:mm:ss', // 表单默认时间格式
+    dateFormat: 'YYYY-MM-DD HH:mm:ss', // 表单默认时间格式
     gutter: {xs: 0, sm: 10, md: 20, lg: 40, xl: 60, xxl: 80},
     labelCol: {span: 8}, // offset: 0, pull: 0, push: 0, order: 0
     wrapperCol: {span: 14}, // offset: 0, pull: 0, push: 0, order: 0
@@ -171,22 +171,7 @@ export default {
         return returnVal
     },
     resolverMetaDefaultValue (meta, model) {
-        let field = meta['field'];
-        let split = field.split('.');
-        let length = split.length;
-        if(length == 1) { // 长度为一, 说明字段格式：a
-            model[field] = meta['default'];
-        } else if(length > 1){ // 长度大于1, 说明字段格式为：a.b
-            let temp = model;
-            split.forEach((item, index, ori) => {
-                if (index === (length - 1)) {
-                    temp[item] = meta['default']
-                } else {
-                    temp[item] = {}
-                    temp = temp[item]
-                }
-            });
-        }
+        Utils.deepSetValue(meta.field, meta['default'], model);
     },
     /**
      * 解析表单 元数据
@@ -290,6 +275,7 @@ export default {
             vue.$log.errorLog('合并表格配置项失败', '传入的配置必须是对象类型', tableConfig)
         }
     },
+
     /**
      * 设置表格全选列的配置到默认
      * @param selection
@@ -442,8 +428,8 @@ export default {
         if (!mate.type) _this.$set(mate, 'type', 'text') // 默认类型为：text
         if (mate.isForm === undefined)_this.$set(mate, 'isForm', true)
 
-        let decorate = mate['decorate']
-        let metaDefault = mate['default']
+        let decorate = mate['decorate'];
+        let metaDefault = mate['default'];
         // 日期类型的默认值, 必须转成moment格式
         if (metaDefault && Utils.isDate(mate['type'])) {
             metaDefault = moment(metaDefault)
@@ -696,4 +682,34 @@ export default {
         if (!item.align) _this.$set(item, 'align', 'center'); // 默认居中对齐
         item['resolveType'] = item['resolveType'] ? item['resolveType'] + '3' : '3' // 说明此字段已经完成table解析
     },
+    resolverFormSlots(fieldMetaMap, scopedSlots) {
+        let noMatcher = false;
+        let formSlots = [];
+        let formatter = (val, row, meta) => val;
+        Object.keys(scopedSlots).forEach(name => {
+            if (name.startsWith("$")) return;
+            let field = Utils.toHump(name.substring(0, name.length - 2));
+            let meta = fieldMetaMap[field];
+            if (!meta) {
+                Logger.warningLog(`slot ${name} 找不到匹配的Meta`
+                    , "slot名称必须遵循：如果是驼峰式的字段则必须用'_'隔开，且以_f结尾");
+                return;
+            }
+            if (name.endsWith('_f')) {
+                meta['formSlot'] = name;
+                formSlots.push(meta);
+            } else {
+                noMatcher = true;
+                Logger.warningLog(`slot ${name}名称不规范, 将舍弃`, 'slot名称必须以：_f结尾');
+            }
+        });
+
+        if (noMatcher) {
+            Logger.warningLog(`解析slot时名称不规范：`
+                , "slot名称遵循以下规范：\r\n 1. 字段名称+表单(_f)结尾\r\n 2.驼峰式的字段名要转成a_b形式" +
+                "\r\n 3.如：字段userName分别写成user_name_f")
+        }
+
+        return formSlots;
+    }
 }
