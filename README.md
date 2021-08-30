@@ -18,7 +18,7 @@
 1. 使用ide开发工具克隆源代码 或者使用git命令：git clone https://gitee.com/iteaj/ivzone.git
 2. 安装依赖：npm install
 3. 启动项目, 默认端口是8080, 访问测试环境页面：http://localhost:8080/index.html
-正式环境 暂时请使用spring boot后台脚手架[sboot管理后台](https://gitee.com/iteaj/izone-sboot)
+正式环境 暂时请使用izone-sboot后台脚手架[sboot管理后台](https://gitee.com/iteaj/izone-sboot)
 
 #### 组件界面截图以及代码实现
 以下是系统的一些页面展示, 以及对应的代码，以菜单页为例(使用<ivz-basic-view>组件)
