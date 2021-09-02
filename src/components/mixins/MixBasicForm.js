@@ -96,13 +96,42 @@ export const MixBasicForm = {
 
             this.metas.forEach(meta=>{
                 let value = this.$utils.getDeepValue(meta.field, newModel);
-                if(this.$utils.isDate(meta.type) && value) {
+                if(this.$utils.isDate(meta.type) && typeof value === 'string') {
                     formValues[meta.field] = this.$form.createFormField({value: moment(value)});
+                } else if(meta.type == 'tree') { // 树节点并非表单, 需要单独设置
+                    meta.config.checkedKeys = value || meta.config.checkedKeys;
+                    if(meta.config.expandedAll) {
+                        this.$nextTick(()=>{
+                            meta.config.expandedKeys = this.getTreeAllKeys(meta.data, []);
+                        })
+                    }
+                } else if(meta.type == 'stree') {
+                    if(value) {
+                        // 默认展开已经选中的
+                        meta.config.treeExpandedKeys = this.$utils.isArray(value) ? value : [value];
+                    }
+
+                    if(meta.config.expandedAll) {
+                        this.$nextTick(()=>{
+                            meta.config.treeExpandedKeys = this.getTreeAllKeys(meta.data, []);
+                        })
+                    }
+                    formValues[meta.field] = this.$form.createFormField({value: value});
                 } else {
                     formValues[meta.field] = this.$form.createFormField({value: value});
                 }
             });
+
             return formValues
+        },
+        getTreeAllKeys(data, keys) {
+            data.forEach(node=>{
+                if(node.children) {
+                    keys.push(node['value']);
+                    this.getTreeAllKeys(node.children, keys);
+                }
+            });
+            return keys;
         },
         changeHandle(val, col) {
             if(val instanceof Event) {
@@ -112,6 +141,10 @@ export const MixBasicForm = {
             this.$utils.deepSetValue(col.field, val, this.model);
             let onChange = col.event['change'];
             if(onChange) onChange(val, this.model, col);
+        },
+        treeCheck(checkedKeys, col, node) {
+            col.event.check(checkedKeys, col, node);
+            this.changeHandle(checkedKeys, col);
         },
         /**
          * 返回当前正在编辑的对象

@@ -1,10 +1,10 @@
 /* 每个子页面都需要用到的对象 */
 import '@/utils' // 导入基础类库
-import Vue from 'vue'
 import moment from 'moment'
 import Http from '@/utils/http.utils'
 import Utils from '@/utils/basic.utils'
 import Logger from "@/utils/logger.utils";
+import Global from '@/components/global.config'
 
 // 获取父框架的缓存api对象
 let cacheApi = window.parent.CacheApi;
@@ -410,7 +410,8 @@ export default {
         })
     },
     izOptionType (type) {
-        return type === 'select' || type === 'radio' || type === 'checkbox' || type === 'stree'
+        return type === 'select' || type === 'radio' ||
+            type === 'checkbox' || type === 'stree' || type === 'tree'
     },
     initFormMate (mate, config, _this) {
         // 已经解析过, 无需再次解析
@@ -495,6 +496,18 @@ export default {
         // 说明此字段已经完成form解析
         mate['resolveType'] = mate['resolveType'] ? mate['resolveType'] + '2' : '2'
     },
+    optionsLabelFormatter(val, model, meta) {
+        if(!val) return '';
+        if(Utils.isArray(val)) {
+            return val.map(value=>{
+                let option = meta.DataMap[value];
+                return option ? option['label'] : '';
+            });
+        } else {
+            let option = meta.DataMap[val];
+            return option ? option['label'] : '';
+        }
+    },
     initCommonMate (mate, _this) {
         // 已经解析过, 无需再次解析
         if (Utils.isResolveCommon(mate)) return;
@@ -502,121 +515,115 @@ export default {
         if (mate.type == 'action') return;
 
         // 合并默认配置
-        if (!mate.config) _this.$set(mate, 'config', {})
+        if (!mate.config) _this.$set(mate, 'config', {});
         this.mergeDefaultObject(mate.config, cacheApi.izMetaDefaultConfig(mate.type), _this) // 何必默认配置
 
         // 合并默认事件
-        if (!mate.event) _this.$set(mate, 'event', {})
+        if (!mate.event) _this.$set(mate, 'event', {});
         this.mergeDefaultObject(mate.event, cacheApi.izMetaDefaultEvent(mate.type), _this)
 
-        let metaConfig = mate['config']
+        let metaConfig = mate['config'];
         if (this.izOptionType(mate.type)) {
-            let valueField = metaConfig['valueField']
-            let labelField = metaConfig['labelField']
-            let queryField = metaConfig['queryField'] ? metaConfig['queryField'] : 'rows'
+            let valueField = metaConfig['valueField'];
+            let labelField = metaConfig['labelField'];
+            let queryField = metaConfig['queryField'];
+
+            mate['DataMap'] = {};
             if (Utils.isNotBlank(mate.data)) { // 自带的options
-                let izValueLabelMap = {}
-                if (mate.type === 'stree') {
+                if (mate.type === 'stree' || mate.type === 'tree') {
                     this.resolverTree(mate.data, (item) => {
-                        izValueLabelMap[item['value']] = item['label']
+                        mate['DataMap'][item['value']] = item
                     })
                 } else {
                     mate.data.forEach(option => {
-                        izValueLabelMap[option['value']] = option['label']
+                        mate['DataMap'][option['value']] = option
                     })
                 }
-                if (mate['formatter']) {
-                    let oriFormatter = mate['formatter']
-                    _this.$set(mate, 'formatter', (val, row, col) => {
-                        return oriFormatter(val, row, col, izValueLabelMap[val])
-                    })
-                } else {
-                    _this.$set(mate, 'formatter', (val, row, col) => {
-                        if (!val) return ''
-                        return izValueLabelMap[val]
-                    })
+
+                if (!mate['formatter']) {
+                    _this.$set(mate, 'formatter', this.optionsLabelFormatter)
                 }
             } else if (mate.dictType) { // 字典数据
-                let options = cacheApi.izGetOptions(mate.dictType)
-                _this.$set(mate, 'data', options)
+                let options = [];
+                labelField = Global.dictLabelField;
+                valueField = Global.dictValueField;
+                cacheApi.izGetOptions(mate.dictType).then(data=>{
+                    data.forEach(item => {
+                        let option = {label: item[labelField], dataRef: item
+                            , value: item[valueField], disabled: false};
+                        options.push(option);
+                        mate.DataMap[option.value] = option;
+                    })
+                });
+                _this.$set(mate, 'data', options);
                 if (!mate.formatter) {
                     _this.$set(mate, 'formatter', (val, row, col)=>{
                         return cacheApi.izGetDictDataLabel(col.dictType, val)
                     })
-                } else {
-                    let oriFormatter = mate['formatter']
-                    _this.$set(mate, 'formatter', (val, row, col) => {
-                        let cacheElement = cacheApi.DictDataMapCache[col.dictType];
-                        return oriFormatter(val, row, col, cacheElement)
-                    })
                 }
-            } else if (mate.type === 'stree') {
+            } else if (mate.type === 'stree' || mate.type === 'tree') {
                 if (Utils.isBlank(mate.url)) {
                     _this.$set(mate, 'data', [])
-                    return _this.$log.warningLog(`字段(${mate.field})解析警告`, '设置stree类型的数据源Url或data', mate)
-                }
-                let TreeMap = {}
-                let options = []
-                _this.$set(mate, 'data', options)
-                Http.get(mate.url).then(resp => {
-                    let data = resp[queryField]
-                    if (_this.$utils.isNotBlank(data)) {
-                        this.resolverTree(data, (obj) => {
-                            TreeMap[obj[valueField]] = obj[labelField]
-                            _this.$set(obj, 'value', obj[valueField])
-                            _this.$set(obj, 'label', obj[labelField])
-                            _this.$set(obj, 'selectable', true)
-                        })
-                        data.forEach(item => {
-                            options.push(item)
-                        })
-                    }
-
-                    // 数据加载完成之后, 触发完成事件
-                    let onLoadFinished = mate.event['loadFinished']
-                    if (typeof onLoadFinished === 'function') onLoadFinished(mate, options, _this)
-                })
-                if (!mate.formatter) {
-                    _this.$set(mate, 'formatter', (val, row, col) => {
-                        return TreeMap[val]
-                    })
+                    return _this.$log.warningLog(`字段(${mate.field})解析警告`
+                        , '设置stree或tree类型的数据源Url或data', mate)
                 } else {
-                    let oriFormatter = mate['formatter']
-                    _this.$set(mate, 'formatter', (val, row, col) => {
-                        return oriFormatter(val, row, col, TreeMap[val])
-                    })
+                    let options = []
+                    _this.$set(mate, 'data', options)
+                    Http.get(mate.url).then(resp => {
+                        let data = resp[queryField];
+                        if (_this.$utils.isNotBlank(data)) {
+                            this.resolverTree(data, (obj) => {
+                                _this.$set(obj, 'label', obj[labelField]);
+                                _this.$set(obj, 'value', obj[valueField]);
+                                mate.DataMap[obj.value] = obj;
+                            });
+
+                            data.forEach(item=>options.push(item));
+                        } else {
+                            _this.$log.warningLog(`解析字段(${mate.field})获取url:(${mate.url})数据失败`
+                                , `请检查服务端返回或者queryField(${queryField})`, mate)
+                        }
+
+                        // 数据加载完成之后, 触发完成事件
+                        let onLoadFinished = mate.event['loadFinished']
+                        if (typeof onLoadFinished === 'function') onLoadFinished(options, mate)
+                    });
+                }
+
+                if (!mate.formatter) {
+                    _this.$set(mate, 'formatter', this.optionsLabelFormatter)
                 }
             } else if (mate.url) { // 是url
-                let SelectMap = {}
                 if (Utils.isBlank(mate.url)) {
-                    _this.$set(mate, 'data', [])
+                    _this.$set(mate, 'data', []);
                     return _this.$log.warningLog(`字段(${mate.field})解析警告`, `设置${mate.type}类型的数据源Url或者data`, mate)
                 }
-                let selectOptions = []
+
+                let selectOptions = [];
                 _this.$set(mate, 'data', selectOptions)
                 Http.get(mate.url).then(resp => {
-                    let rows = resp[queryField]
-                    if (Utils.isNotBlank(rows)) {
+                    let rows = resp[queryField];
+                    if (rows) {
                         rows.forEach(item => {
-                            SelectMap[item[valueField]] = item[labelField]
-                            selectOptions.push({disabled: false, label: item[labelField], value: item[valueField]})
-                        })
+                            let option = {disabled: false, dataRef: item
+                                , label: item[labelField], value: item[valueField]};
+                            selectOptions.push(option);
+                            mate.DataMap[option.value] = option;
+                        });
+
+                        // 数据加载完成之后, 触发完成事件
+                        let onLoadFinished = mate.event['loadFinished']
+                        if (typeof onLoadFinished === 'function') {
+                            onLoadFinished(selectOptions, mate)
+                        }
+                    } else {
+                        _this.$log.warningLog(`解析字段(${mate.field})获取url:(${mate.url})数据失败`
+                            , `请检查服务端返回或者queryField(${queryField})`, mate)
                     }
-                    // 数据加载完成之后, 触发完成事件
-                    let onLoadFinished = mate.event['loadFinished']
-                    if (typeof onLoadFinished === 'function') {
-                        onLoadFinished(mate, selectOptions, _this)
-                    }
-                })
+                });
+
                 if (!mate.formatter) {
-                    _this.$set(mate, 'formatter', (val, row, col) => {
-                        return SelectMap[val]
-                    })
-                } else {
-                    let oriFormatter = mate['formatter']
-                    _this.$set(mate, 'formatter', (val, row, col) => {
-                        return oriFormatter(val, row, col, SelectMap[val])
-                    })
+                    _this.$set(mate, 'formatter', this.optionsLabelFormatter)
                 }
             }
         }

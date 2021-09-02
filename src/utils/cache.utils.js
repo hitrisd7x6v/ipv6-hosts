@@ -56,19 +56,20 @@ export default {
     pageActionMates: {}, // 所有页面的动作功能点缓存 菜单id和与之对应的功能点
     DictDataMapCache: {}, // {dictType -> dictValue -> dictLabel}
     MetaConfigCache: { // 其他的配置参考antd-vue https://www.antdv.com/docs/vue/introduce-cn/
-        stree: {valueField: 'id', labelField: 'name',
+        stree: {valueField: 'id', labelField: 'name', queryField: 'rows',
             treeNodeFilterProp: 'label',
+            treeExpandedKeys: [],
             dropdownStyle: {maxHeight: '320px'},
                 filterTreeNode: (value, node) => {
                     return node['data']['props']['title'].includes(value)
                 }
             },
-        select: {valueField: 'id', labelField: 'name',
+        select: {valueField: 'id', labelField: 'name', queryField: 'rows',
             maxTagCount: 2, // 在tags或者multiple 模式下最大能选择多少个
             tokenSeparators: [','] // 自动分词分隔符
         },
-        radio: {valueField: 'id', labelField: 'name'},
-        checkbox: {valueField: 'id', labelField: 'name'},
+        radio: {valueField: 'id', labelField: 'name', queryField: 'rows'},
+        checkbox: {valueField: 'id', labelField: 'name', queryField: 'rows'},
         text: {
             enterSearch: true // 搜索框text表单, 按下enter键是否搜索
         },
@@ -78,6 +79,9 @@ export default {
             respField: 'url', // 服务端响应的字段
             listType: 'picture-card',
         },
+        tree: {checkable: true, checkedKeys: [], expandedKeys: [], selectedKeys: []
+            , valueField: 'id', labelField: 'name', queryField: 'rows'
+            , replaceFields: {title: 'label', key: 'value', children: 'children'}},
         switch: {},
         number: {},
         slider: {},
@@ -123,8 +127,14 @@ export default {
         slider: {click: VoidEventHandle, change: VoidEventHandle, afterChange: VoidEventHandle},
         cascade: {click: VoidEventHandle, change: VoidEventHandle},
         switch: {click: VoidEventHandle, change: VoidEventHandle},
+        tree: {dragend: VoidEventHandle, dragenter: VoidEventHandle, dragleave: VoidEventHandle
+            , dragstart: VoidEventHandle, drop: VoidEventHandle, dragover: VoidEventHandle
+            , expand: (expandKeys, model, meta, node)=>{meta.config.expandedKeys = expandKeys;}
+            , check: (checkedKeys, model, meta, node)=>{meta.config.checkedKeys=checkedKeys}
+            , load: VoidEventHandle, rightClick: VoidEventHandle, select: VoidEventHandle},
         rate: {click: VoidEventHandle, change: VoidEventHandle, keydown: VoidEventHandle, hoverChange: VoidEventHandle},
-        stree: {click: VoidEventHandle, change: VoidEventHandle, search: VoidEventHandle, select: VoidEventHandle, treeExpand: VoidEventHandle},
+        stree: {click: VoidEventHandle, change: VoidEventHandle, search: VoidEventHandle, select: VoidEventHandle
+            , treeExpand: (expandedKeys, model, meta)=>{meta.config.treeExpandedKeys = expandedKeys}},
         select: {click: VoidEventHandle, change: VoidEventHandle, select: VoidEventHandle, search: VoidEventHandle, deselect: VoidEventHandle, inputKeydown: VoidEventHandle}
     },
     pageDefaultConfig: {
@@ -407,15 +417,9 @@ export default {
     },
     // 返回字典数据的options {label: 'xx', value: 'xx', disabled: false}
     izGetOptions (dictType) {
-        let temp = []
-        this.izGetDict(dictType).then(data => {
-            data.forEach(item => {
-                temp.push({label: item.label, value: item.value, disabled: false})
-            })
-        }).catch(reason => {
+        return this.izGetDict(dictType).catch(reason => {
             Logger.errorLog('获取字典数据失败' + reason, '--', dictType)
-        })
-        return temp
+        });
     },
     /**
      * 根据字典类型和字典值获取完整的字典数据
@@ -425,8 +429,7 @@ export default {
      */
     izGetDictData (dictType, dictValue) {
         let element = this.DictDataMapCache[dictType]
-        if (element) return element[dictValue]
-        return {}
+        return element ? element[dictValue] : null;
     },
     /**
      * 根据字典类型和字典值, 获取对应的label
@@ -434,9 +437,16 @@ export default {
      * @returns {*}
      */
     izGetDictDataLabel (dictType, value) {
-        if (!value || !dictType) return ''
-        let element = this.izGetDictData(dictType, value)
-        return element ? element['label'] : ''
+        if (!value || !dictType) return '';
+        if(Utils.isArray(value)) {
+            return value.map(item => {
+                let element = this.izGetDictData(dictType, item);
+                return element ? element['label'] : ''
+            })
+        } else {
+            let element = this.izGetDictData(dictType, value);
+            return element ? element['label'] : ''
+        }
     },
     izMetaDefaultConfig (type) {
         let metaConfig = this.MetaConfigCache[type]

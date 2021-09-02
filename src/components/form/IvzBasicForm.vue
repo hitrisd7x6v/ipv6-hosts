@@ -22,22 +22,37 @@
                             </a-select>
                             <a-tree-select v-else-if="col.type == 'stree'" :allowClear="col.clear" style="width: 100%"
                                    v-decorator="[col.field, col['decorate']]" :placeholder="col.placeholder" :treeData="col.data"
-                                   :dropdownStyle="col.config.dropdownStyle" :disabled="disabledHandle(col)"
-                                   :showSearch="col.config.showSearch" :getPopupContainer="col.config.getPopupContainer"
-                                   :multiple="col.config.multiple" :searchPlaceholder="col.searchPlaceholder" :size="formSize"
+                                   :dropdownStyle="col.config.dropdownStyle" :disabled="disabledHandle(col)" :multiple="col.config.multiple"
+                                   :showSearch="col.config.showSearch" :getPopupContainer="col.config.getPopupContainer" :size="formSize"
+                                   :treeExpandedKeys="col.config.treeExpandedKeys" :searchPlaceholder="col.searchPlaceholder"
                                    :showCheckedStrategy="col.config.showCheckedStrategy" :maxTagCount="col.config.maxTagCount"
                                    :treeCheckable="col.config.treeCheckable" :treeDefaultExpandAll="col.config.treeDefaultExpandAll"
                                    :treeNodeFilterProp="col.config.valueField" treeNodeLabelProp="label" :loadData="col.config.loadData"
                                    :filterTreeNode="col.config.filterTreeNode" :treeCheckStrictly="col.config.treeCheckStrictly"
-                                   :blur="col.event.blur" :focus="col.event.focus" @treeExpand="(val) => {col.event.treeExpand(val, model)}"
+                                   :blur="col.event.blur" :focus="col.event.focus" @treeExpand="(val) => {col.event.treeExpand(val, model, col)}"
                                    @search="(val) => {col.event.search(val, model, col)}" @change="(val)=>changeHandle(val, col)"
                                    @select="(val, node, extra) => col.event.select({value: val, node: node, extra: extra}, model, col)">
                             </a-tree-select>
+                            <a-tree v-else-if="col.type == 'tree'" v-model="col.config.checkedKeys" :blockNode="col.config.blockNode"
+                                    :checkable="col.config.checkable" :expandedKeys="col.config.expandedKeys" :replaceFields="col.config.replaceFields"
+                                    :defaultExpandAll="col.config.defaultExpandAll" :filterTreeNode="col.config.filterTreeNode"
+                                    :autoExpandParent="col.config.autoExpandParent" :selectedKeys="col.config.selectedKeys" :loadData="col.config.loadData"
+                                    :defaultSelectedKeys="col.config.defaultSelectedKeys" :disabled="disabledHandle(col)" :draggable="col.config.draggable"
+                                    :defaultExpandedKeys="col.config.defaultExpandedKeys" :defaultExpandParent="col.config.defaultExpandParent"
+                                    :treeData="col.data" :checkStrictly="col.config.checkStrictly" :defaultCheckedKeys="col.config.defaultCheckedKeys"
+                                    :loadedKeys="col.config.loadedKeys" :multiple="col.config.multiple" :selectable="col.config.selectable"
+                                    :showIcon="col.config.showIcon" :showLine="col.config.showLine" @select="col.event.select"
+                                    @dragend="col.event.dragend" @check="(a, k)=>treeCheck(a, model, col, k)" @load="col.event.load"
+                                    @dragenter="col.event.dragenter" @dragleave="col.event.dragleave" @dragover="col.event.dragover"
+                                    @dragstart="col.event.dragstart" @drop="col.event.drop" @expand="(a, k)=>col.event.expand(a, model, col, k)"
+                                    @rightClick="col.event.rightClick">
+                            </a-tree>
                             <a-slider v-else-if="col.type=='slider'" v-decorator="[col.field, col['decorate']]" :disabled="disabledHandle(col)"
                                   :dots="col.config.dots" :marks="col.config.marks" :min="col.config.min" :max="col.config.max" :step="col.config.step"
                                   :tooltipVisible="col.config.tooltipVisible" :tipFormatter="col.config.tipFormatter" :range="col.config.range"
                                   :blur="col.event.blur" :focus="col.event.focus" @change="(val)=>changeHandle(val, col)"
-                                  @afterChange="col.event.afterChange"></a-slider>
+                                  @afterChange="col.event.afterChange">
+                            </a-slider>
                             <a-radio-group v-else-if="col.type=='radio'" :options="col.data" :name="col.field"
                                    :blur="col.event.blur" :focus="col.event.focus" @change="(val)=>changeHandle(val, col)"
                                    :disabled="disabledHandle(col)" v-decorator="[col.field, col['decorate']]">

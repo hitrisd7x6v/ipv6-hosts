@@ -24,6 +24,7 @@ export const MixPageForm = {
             spinning: false,
             basicFormRef: null,
             fieldMetaMap: {},
+            identifying: false // 读取详情数据http请求
         }
     },
     created () {
@@ -56,14 +57,12 @@ export const MixPageForm = {
                 if (this.formConfig.editSource === 'local') { // 编辑数据来源于本地从缓存获取
                     formRef.setEditModel(this.getEditModel())
                 } else { // 新增的数据从表单对象获取
-                    this.queryParams = {};
-                    let editModel = this.getEditModel();
-                    let izField = this.$page.izField;
-                    this.queryParams[izField] = editModel[izField];
-                    this.getDetail(this.queryParams)
+                    if(!this.identifying) {
+                        this.getDetail()
+                    }
                 }
             } else if(actionMeta.id == 'add') {
-                this.operaMeta = this.actionMetas['Add']
+                this.operaMeta = this.actionMetas['Add'];
 
                 this.title = this.formConfig.addTitle
                     ? this.formConfig.addTitle : this.operaMeta['label'];
@@ -98,6 +97,7 @@ export const MixPageForm = {
         },
         destroyPageForm() {
             this.editModel = {};
+            this.identifying = false;
             this.$page.removePageStore();
             this.$router.push("/IvzSys/void");
             this.$page.registerVueRef(null, 'form');
@@ -106,12 +106,18 @@ export const MixPageForm = {
             let oriModel = this.getOriModel();
             this.basicFormRefs.forEach(ref=>ref.resetForm(oriModel))
         },
-        getDetail (params) {
+        getDetail () {
             if (!this.operaMeta) return this.$log.errorLog('缺失编辑元数据'
                 , '新增编辑功能点：Edit', this.actionMetas);
 
+            let params = {};
+            this.identifying = true;
+            let izField = this.$page.izField;
+            let editModel = this.getEditModel();
+            params[izField] = editModel[izField];
+
             this.operaMeta.callBack(params).then(resp => {
-                this.spinning = true
+                this.spinning = true;
                 this.loadingText = '正在获取数据详情...';
                 let resolve = this.$utils.getPromiseResolve(resp);
                 this.$http.get(this.operaMeta.url, {params: params}).then(data => {
@@ -124,7 +130,7 @@ export const MixPageForm = {
                 }).catch(reason => {
                     this.$msg.defaultFailNotify(resolve, reason, this, params)
                 }).finally(() => { this.spinning = false })
-            })
+            });
         },
         cancelHandle () {
             this.actionMetas.Cancel.callBack().then(()=>{

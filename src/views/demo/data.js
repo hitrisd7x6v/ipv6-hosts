@@ -57,13 +57,26 @@ const searchMetas = [
     // {field: 'type', title: '产品类型', type: 'radio', data: productType, span: [6, 18]},
     {field: 'createTime', title: '上架时间', type: 'date', default: '2019-12-10 09:02'}
 ];
+const Menus = [
+    {label: '系统管理', value: 1, children: [
+            {label: '菜单管理', value: 11},
+            {label: '系统设置', value: 12, disabled: true},
+            {label: '字典管理', value: 13},
+        ]},
+    {label: '组织架构', value: 2, children: [
+            {label: '用户管理', value: 22, children: [
+                    {label: '代理商', value: 221},
+                    {label: '合作商', value: 222},
+                ]}
+        ]},
+]
 Mock.setup({ timeout: '200-1800' });
 let dataSource = Mock.mock({
     'rows|53': [
         {
             'rate|1-5': 3,
             'id|+1': 1,
-            'spec': [0],
+            'spec': ['0'],
             'obj': {desc: '格式a.b'},
             'list': [{desc: '格式list[0].desc', gg: '格式list[0].gg'}],
             'range|1-100': 3,
@@ -268,6 +281,36 @@ export default {
     groupMetas: [
         {title: '基础信息', metas: [
                 {field: 'name', title: 'text', required: true, align: 'left'},
+                {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
+                {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'},
+                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
+                {field: 'obj.desc', title: '对象'},
+                {field: 'list[0].desc', title: '数组', isTable: false, default: 3, event:{
+                        change(val) {
+
+                        }
+                    }},
+                {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
+
+                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}}
+            ]
+        },
+        {title: '上传组件', metas: [
+                {field: 'productPic', title: 'upload', type: 'upload'
+                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}}
+            ]},
+        {title: '数字组件', metas: [
+                {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
+                        call()
+                    }},
+                {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}}
+            ]},
+        {title: '下拉框组件', metas: [
+                {field: 'cat', title: 'select', type: 'select', data: productCat, required: true, min: 2,
+                    config: {mode: 'multiple'}},
+                {field: 'type', title: 'cascade', type: 'cascade', data: productType, formatter: (val, row, col, text) => {
+                        return '<a href="/editView.html">' + text + '</a>'
+                    }, disabled: false},
                 {field: 'area', title: 'stree', type: 'stree', url: '/test/stree', min: 2, editable: true,
                     config: {
                         showSearch: true,
@@ -281,40 +324,13 @@ export default {
                             console.log(val)
                         }
                     }
-                }
+                },
+                {field: 'tree', title: 'tree', type: 'tree', url: '/test/stree', config: {
+                        defaultExpandAll: true, checkedKeys: [1], showLine: true, expandedAll: true
+                    }, event: {change: (val, model, meta)=>{
+                        }}}
             ]
         },
-        {title: '图片信息', metas: [
-                {field: 'productPic', title: 'upload', type: 'upload'
-                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}}
-            ]},
-        {title: '产品属性', metas: [
-                {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
-                {field: 'cat', title: 'select', type: 'select', data: productCat, required: true, min: 2,
-                     config: {mode: 'multiple'}},
-                {field: 'type', title: 'cascade', type: 'cascade', data: productType, formatter: (val, row, col, text) => {
-                        return '<a href="/editView.html">' + text + '</a>'
-                    }, disabled: false}
-            ]},
-        {title: '数字格式', metas: [
-                {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
-                        call()
-                    }},
-                {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}}
-            ]},
-        {title: '其他信息', metas: [
-                {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'},
-                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
-                {field: 'obj.desc', title: '对象'},
-                {field: 'list[0].desc', title: '数组', isTable: false, default: 3, event:{
-                        change(val) {
-
-                        }
-                    }},
-                {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
-
-                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}}
-            ]},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],
     searchMates: searchMetas,
