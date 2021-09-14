@@ -130,7 +130,7 @@ export default {
         tree: {dragend: VoidEventHandle, dragenter: VoidEventHandle, dragleave: VoidEventHandle
             , dragstart: VoidEventHandle, drop: VoidEventHandle, dragover: VoidEventHandle
             , expand: (expandKeys, model, meta, node)=>{meta.config.expandedKeys = expandKeys;}
-            , check: (checkedKeys, model, meta, node)=>{meta.config.checkedKeys=checkedKeys}
+            , check: (checkedKeys, model, meta, node)=>{meta.config.checkedKeys = checkedKeys}
             , load: VoidEventHandle, rightClick: VoidEventHandle, select: VoidEventHandle},
         rate: {click: VoidEventHandle, change: VoidEventHandle, keydown: VoidEventHandle, hoverChange: VoidEventHandle},
         stree: {click: VoidEventHandle, change: VoidEventHandle, search: VoidEventHandle, select: VoidEventHandle

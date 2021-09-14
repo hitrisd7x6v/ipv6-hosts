@@ -143,7 +143,7 @@ export const MixBasicForm = {
             if(onChange) onChange(val, this.model, col);
         },
         treeCheck(checkedKeys, col, node) {
-            col.event.check(checkedKeys, col, node);
+            col.event.check(checkedKeys, this.model, col, node);
             this.changeHandle(checkedKeys, col);
         },
         /**

@@ -42,7 +42,7 @@
                                     :treeData="col.data" :checkStrictly="col.config.checkStrictly" :defaultCheckedKeys="col.config.defaultCheckedKeys"
                                     :loadedKeys="col.config.loadedKeys" :multiple="col.config.multiple" :selectable="col.config.selectable"
                                     :showIcon="col.config.showIcon" :showLine="col.config.showLine" @select="col.event.select"
-                                    @dragend="col.event.dragend" @check="(a, k)=>treeCheck(a, model, col, k)" @load="col.event.load"
+                                    @dragend="col.event.dragend" @check="(a, k)=>treeCheck(a, col, k)" @load="col.event.load"
                                     @dragenter="col.event.dragenter" @dragleave="col.event.dragleave" @dragover="col.event.dragover"
                                     @dragstart="col.event.dragstart" @drop="col.event.drop" @expand="(a, k)=>col.event.expand(a, model, col, k)"
                                     @rightClick="col.event.rightClick">
