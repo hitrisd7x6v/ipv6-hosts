@@ -282,6 +282,7 @@ export default {
         {title: '基础信息', metas: [
                 {field: 'name', title: 'text', required: true, align: 'left'},
                 {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
+                {field: 'radio', title: 'radio', type: 'radio', dictType: 'spec'},
                 {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'},
                 {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
                 {field: 'obj.desc', title: '对象'},

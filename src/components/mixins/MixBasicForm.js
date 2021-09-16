@@ -136,6 +136,8 @@ export const MixBasicForm = {
         changeHandle(val, col) {
             if(val instanceof Event) {
                 val = val.target.value;
+            } else if(col.type == 'radio') {
+                val = val.target.value;
             }
 
             this.$utils.deepSetValue(col.field, val, this.model);

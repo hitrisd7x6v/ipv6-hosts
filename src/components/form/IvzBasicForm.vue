@@ -57,6 +57,10 @@
                                    :blur="col.event.blur" :focus="col.event.focus" @change="(val)=>changeHandle(val, col)"
                                    :disabled="disabledHandle(col)" v-decorator="[col.field, col['decorate']]">
                             </a-radio-group>
+                            <a-checkbox-group v-else-if="col.type=='checkbox'" v-decorator="[col.field, col['decorate']]"
+                                  :options="col.data" :blur="col.event.blur" :focus="col.event.focus"
+                                  :disabled="disabledHandle(col)" @change="(val)=>changeHandle(val, col)">
+                            </a-checkbox-group>
                             <a-switch v-else-if="col.type=='switch'" v-decorator="[col.field, col['decorate']]"
                                   :checkedChildren="col.config.checkedChildren" :unCheckedChildren="col.config.unCheckedChildren"
                                   :loading="col.config.loading" :size="formSize" style="margin-bottom:5px" :disabled="disabledHandle(col)"
@@ -67,10 +71,6 @@
                                 :blur="col.event.blur" :focus="col.event.focus" :disabled="disabledHandle(col)" :size="formSize"
                                 @change="(val)=>changeHandle(val, col)" :getPopupContainer="col.config.getPopupContainer">
                             </a-cascader>
-                            <a-checkbox-group v-else-if="col.type=='checkbox'" v-decorator="[col.field, col['decorate']]"
-                                  :options="col.data" :blur="col.event.blur" :focus="col.event.focus"
-                                   :disabled="disabledHandle(col)" @change="(val)=>changeHandle(val, col)">
-                            </a-checkbox-group>
                             <a-date-picker v-else-if="col.type=='date'" :size="formSize" v-decorator="[col.field, col['decorate']]"
                                    :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
                                    :disabled-date="col.config.disabledDate" style="width: 100%"
