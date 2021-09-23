@@ -1,11 +1,9 @@
 # ivzone
 一个组件一个页面, 一个组件包含增删改查功能, 将增删改查的功能封装在一个组件里面, 将以前增删改查四个html页面变为一个html页面， 且共用一套元数据描述， 此项目只包含前端组件库, 不包含后台管理模块, 如果需要使用完整的后台管理(包含前后端, 后端使用spring boot2)请移步[izone-sboot管理后台](https://gitee.com/iteaj/izone-sboot)
 
-## 最新版本更新日志 (1.1.0) [历史版本](https://gitee.com/iteaj/ivzone/wikis/%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97?sort_id=2131566)
-1. 新增可用于双向绑定的组件, IvzBasicModel
-2. 修改IvzModalForm组件从单项绑定转成双向绑定(内部使用IvzbasicModel组件)
-3. 元数据field支持嵌套对象格式写法：a.b，以及列表数据格式写法：a[0].b
-4. 新增表单分组功能, 一组代表一个form组件, 在antd-vue框架中将提高需要大量表单域时的性能
+## 最新版本更新日志 (1.1.1) ##### [历史版本](https://gitee.com/iteaj/ivzone/wikis/%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97?sort_id=2131566)
+1. 新增tree组件到表单域, 通过类型type='tree'
+2. 修改表格读取组件radio、checkbox、stree、tree、date、select数据的方式
 
 #### 最核心功能说明
 1. 一个组件代表一个页面(包含增删改查、查看详情页), 其中有两种格式 1. 普通纯表单编辑 2. 表格行嵌套表单编辑
