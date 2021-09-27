@@ -12,7 +12,7 @@
 2. 元数据field支持嵌套写法：如对象嵌套{field: 'a.b'} 列表(数组)嵌套{field: 'a[0].b'}
 3. 支持通过元数据dictType声明，直接获取字典数据(1. 在表单下拉框直接展示 2. 在表格直接显示) {dictType: 'status'}
 4. 支持通过元数据url声明, 直接获取后台的数据(1. 在表单下拉框直接展示 2. 在表格直接显示) {url: '/user/list'}
-5. 基于3和4的基础上， 支持在table里面直接显示以下组件的信息：radio、checkbox、select、date、stree、tree
+5. 基于3和4的基础上， 支持在table里面直接显示以下组件对应的字段值：radio、checkbox、select、date、stree、tree
 
 #### 介绍
 1. 项目的由来：提炼于开发过程中常用功能点的简化以及开发时碰到的一些痛点(繁琐、麻烦、通用)
