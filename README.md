@@ -6,8 +6,7 @@
 1. 新增tree组件到表单域, 通过类型type='tree'
 2. 修改表格读取组件radio、checkbox、stree、tree、date、select数据的方式
 
-##### [历史版本更新日志](https://gitee.com/iteaj/ivzone/wikis/%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97?sort_id=2131566)
-##### [项目预览](http://106.13.169.219:8080/) 用户名：amdin 密码：123456
+##### [历史版本更新日志](https://gitee.com/iteaj/ivzone/wikis/%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97?sort_id=2131566)   [项目预览](http://106.13.169.219:8080/) 用户名：amdin 密码：123456
 
 #### 最核心功能说明
 1. 一个组件代表一个页面(包含增删改查、查看详情页), 其中有两种格式 1. 普通纯表单编辑 2. 表格行嵌套表单编辑
