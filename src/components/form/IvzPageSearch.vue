@@ -81,7 +81,7 @@
                         this.$page.query();
                     default:
                         this.$page.putStore('actionMeta', meta);
-                        this.$router.push("/IvzSys/action"); break;
+                        this.$page.action(null, meta); break;
                 }
             },
             pressEnter (model, col) {

@@ -114,7 +114,7 @@ export const MixBasicTable = {
         },
         actionHandle (mate, row, index) { //
             if(!mate || !mate['id']) {
-                return this.$log.errorLog("入参错误, 未指定动作", "请传入要操作的动作.e.g {id: 'add', label: '新增', ...}");
+                return this.$log.errorLog("未指定动作, 或作元数据错误(需指定id)", "请指定要操作的元数据", mate);
             }
             let disabled = this.disabledClass(mate, row);
             if (disabled) return null;
