@@ -650,9 +650,9 @@ export default {
                 })
             }
 
-            if (!mate['format']) _this.$set(metaConfig, 'format', this.dateFormat) // 日期表单显示格式
-            if (!mate.formatter) _this.$set(mate, 'formatter', this.dateFormatter)
-            if (!mate['viewFormat']) _this.$set(metaConfig, 'viewFormat', this.viewFormat) // 日期文本显示格式
+            if (!mate.formatter) _this.$set(mate, 'formatter', this.dateFormatter);
+            if (!metaConfig['format']) _this.$set(metaConfig, 'format', this.dateFormat); // 日期 表单显示格式
+            if (!metaConfig['viewFormat']) _this.$set(metaConfig, 'viewFormat', this.viewFormat) // 日期 表格显示格式
         }
         mate['resolveType'] = mate['resolveType'] ? mate['resolveType'] + '1' : '1' // 说明此字段已经完成common解析
     },
