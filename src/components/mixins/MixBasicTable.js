@@ -39,7 +39,6 @@ export const MixBasicTable = {
     mounted () {
         this.$emit('finished', this); // 挂载完成
         this.tableConfig.mountedFinished(this);
-        if (this.isBlank(this.data)) this.query()
     },
     beforeUpdate() {
         // 解析元数据, 获取需要slot的字段
@@ -51,17 +50,18 @@ export const MixBasicTable = {
         });
     },
     methods: {
-        query () { // 查询
+        query (model) { // 查询
             if (!this.queryMate) {
                 return this.$log.errorLog('没有指定查询动作', '在后台菜单新增查询功能点(View)或在代码里面添加')
             }
 
-            let searchModel = this.$utils.resolverSearchModel(this.searchModel);
-            this.queryMate.callBack(searchModel, this).then(param => {
+            model = model || this.searchModel;
+            this.queryMate.callBack(model, this).then(param => {
                 this.loading = true;
-                let promiseResolve = this.$utils.getPromiseResolve(param)
-                this.$http.get(this.queryMate.url, {params: searchModel}).then(resp => {
-                    this.dataSource = resp[this.tableConfig.queryField]
+                let promiseResolve = this.$utils.getPromiseResolve(param);
+
+                this.$http.get(this.queryMate.url, {params: model}).then(resp => {
+                    this.dataSource = resp[this.tableConfig.queryField] || [];
                     if (typeof promiseResolve.success === 'function') {
                         promiseResolve.success(resp)
                     }
@@ -96,11 +96,13 @@ export const MixBasicTable = {
             return selection ? selection['selectedRows'] : []
         },
         getSelectionKeys () {
-            let selection = this.tableConfig.selection
+            let selection = this.tableConfig.selection;
             return selection ? selection['selectedRowKeys'] : []
         },
         change (pagination, filter, sorted) {
             if (pagination) {
+                this.searchModel[this.tableConfig.pageNumField] = pagination.current;
+                this.searchModel[this.tableConfig.pageSizeField] = pagination.pageSize;
                 pagination.change({page: pagination, query: this.query, model: this.searchModel})
             }
         },

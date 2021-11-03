@@ -22,10 +22,8 @@
                 <div class="ivz-group-body">
                     <ivz-basic-form ref="basicFormRef" @mountedFinished="mountedFinished"
                                     :metas="group.metas" :form-config="formConfig">
-                        <template v-for="meta in group.metas">
-                            <template v-if="meta.formSlot" :slot="meta.formSlot">
-                                <slot :name="meta.formSlot"></slot>
-                            </template>
+                        <template v-for="meta in formAliasMetas" #[meta.formSlot]="{model}">
+                            <slot :name="meta.formSlot" :model="model"></slot>
                         </template>
                     </ivz-basic-form>
                 </div>

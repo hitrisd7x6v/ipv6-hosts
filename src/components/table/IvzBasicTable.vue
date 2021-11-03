@@ -52,18 +52,16 @@ export default {
     data () {
         return {}
     },
-    created () {
-
-    },
+    created () { },
     methods: {
         register (actionMate) {
-            if (!actionMate) throw new Error('未指定元对象')
-            let key = this.$utils.firstUpperCase(actionMate.id)
+            if (!actionMate) throw new Error('未指定元对象');
+            let key = this.$utils.firstUpperCase(actionMate.id);
 
-            if (this.actionMetaKeys.includes(key)) return
+            if (this.actionMetaKeys.includes(key)) return;
 
-            this.actionMetaKeys.push(key)
-            Resolver.registerPosition('table', actionMate, this.mainMetas, this.moreMetas)
+            this.actionMetaKeys.push(key);
+            Resolver.registerPosition('table', actionMate, this.mainMetas, this.moreMetas);
             return this
         },
         editActionHandle (meta, row) {

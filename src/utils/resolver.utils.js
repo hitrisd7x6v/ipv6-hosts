@@ -12,8 +12,6 @@ let cacheApi = window.parent.CacheApi;
 export default {
     izField: 'id', // 唯一字段, 默认值
     queryField: 'rows', // 数据列表字段
-    pageNumField: 'current', // 页码字段
-    pageSizeField: 'size', // 页数字段
     viewFormat: 'YYYY-MM-DD', // 表格显示日期格式
     dateFormat: 'YYYY-MM-DD HH:mm:ss', // 表单默认时间格式
     gutter: {xs: 0, sm: 10, md: 20, lg: 40, xl: 60, xxl: 80},
@@ -371,17 +369,12 @@ export default {
                 pageSize: 20, // 每页条数
                 defaultCurrent: 1, // 默认当前
                 // 页码改变时的回调
-                change: (args) => {
-                    let model = args['model']
-                    model[this.pageNumField] = args['page'].current
-                    model[this.pageSizeField] = args['page'].pageSize
-                    args.query()
-                },
+                change: (args) => { args.query(); },
                 hideOnSinglePage: false, // 只有一页时是否隐藏分页器
                 defaultPageSize: 20, // 默认的每页条数
                 showQuickJumper: false, // 是否可以快速跳转至某页
                 showSizeChanger: true, // 显示
-                showTotal: (total, range) => `共 ${total} 条(${range})`,
+                showTotal: (total, range) => `共${total}条 (${range})`,
                 pageSizeOptions: ['20', '30', '50', '100'] // 指定每页可以显示多少条
             }, _this)
         }
@@ -426,14 +419,21 @@ export default {
             return
         }
 
-        if (!mate.type) _this.$set(mate, 'type', 'text') // 默认类型为：text
-        if (mate.isForm === undefined)_this.$set(mate, 'isForm', true)
+        if (!mate.type) _this.$set(mate, 'type', 'text'); // 默认类型为：text
+        if (mate.isForm === undefined)_this.$set(mate, 'isForm', true);
 
         let decorate = mate['decorate'];
         let metaDefault = mate['default'];
         // 日期类型的默认值, 必须转成moment格式
         if (metaDefault && Utils.isDate(mate['type'])) {
-            metaDefault = moment(metaDefault)
+            if(mate['type'] == 'dateRange') {
+                if(!Utils.isArray(metaDefault)) {
+                    metaDefault = [metaDefault];
+                }
+                metaDefault = metaDefault.map(item=>moment(item));
+            } else {
+                metaDefault = moment(metaDefault)
+            }
         }
         if (decorate) {
             _this.$set(decorate, 'initialValue', metaDefault)

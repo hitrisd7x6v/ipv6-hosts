@@ -41,6 +41,7 @@ const groupConfig = {
         editSource: 'local'
     },
     table: {
+        selection: {},
         pagination: {}
     },
     search: { }
@@ -55,7 +56,7 @@ const searchMetas = [
     {field: 'spec', title: '规格', type: 'checkbox', data: spec},
     {field: 'cat', title: '产品类别', type: 'select', data: productCat},
     // {field: 'type', title: '产品类型', type: 'radio', data: productType, span: [6, 18]},
-    {field: 'createTime', title: '上架时间', type: 'date', default: '2019-12-10 09:02'}
+    {field: 'createTime', title: '上架时间', type: 'dateRange', default: '2019-12-10 09:02'}
 ];
 const Menus = [
     {label: '系统管理', value: 1, children: [
@@ -94,7 +95,7 @@ dataSource.forEach(item => {
 });
 function getChildrenMenus() {
     return [
-        {id: 1000, name:'删除', permType: 'Del', url: '/test/del', position: 'T'},
+        {id: 1000, name:'删除', permType: 'Del', url: '/test/del', position: 'M'},
         {id: 1001, name:'编辑', permType: 'Edit', url: '/test/edit', position: 'T'},
         {id: 1002, name:'取消', permType: 'Cancel', url: '/test/cancel', position: 'T'},
         {id: 1003, name:'查询', permType: 'View', url: '/test/view', position: 'M'},
@@ -134,6 +135,8 @@ Mock.mock(RegExp('/env'), 'get', (options) => {
             env: {
                 user: {avatar: '#'},
                 config: {
+                    main_url: {name: '主页名称', value: ''},
+                    main_name: {name: '主页名称', value: '主页'},
                     work_name: {name: '首页名称', value: '工作台'},
                     sys_name: {name: '系统名称', value: '厦门由创源科技'}
                 },

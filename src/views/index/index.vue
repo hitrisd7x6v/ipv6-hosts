@@ -156,7 +156,7 @@ export default {
             activityView: null, // 激活的视图
             selectedKeys: [], // 当前选中的菜单
             taskBarData: CacheApi.taskBarData, // 任务栏数据
-            // workMenu: {name: '工作台', url: '', id: 0, closable: false, icon: 'iz-icon-work'}
+            workMenu: null
         }
     },
     created () {
@@ -170,12 +170,16 @@ export default {
             let envConfig = env['config'];
             this.avatarUrl = this.user['avatar'];
             this.sysName = envConfig['sys_name'] ? envConfig['sys_name']['value'] : '参数异常';
-            // this.workMenu['name'] = envConfig['work_name'] ? envConfig['work_name']['value'] : '参数异常';
+            let mainUrl = envConfig['main_url'];
+            if(mainUrl.value && mainUrl.value.trim().length>0) {
+                this.workMenu = {name: envConfig['main_name'].value
+                    , url: envConfig['main_url'].value, id: 0, closable: false, icon: 'iz-icon-work'};
+                this.activityMenu = this.workMenu;
+                this.taskBarData.splice(0, 0, this.workMenu);
+            }
+
             this.expandMode = envConfig['expand_mode'] ? envConfig['expand_mode']['value'] : 'single'
         });
-        // this.activityMenu = this.workMenu; // 工作台菜单默认激活
-        // this.activityMenu['url'] = this.izStx + '/framework/work';
-        // this.openMenu(this.activityMenu)
     },
     mounted () {
         let _this = this;
@@ -190,7 +194,13 @@ export default {
             return false
         },
         switchTask (url) { // 切换任务菜单处理
-            this.openMenu(url);
+            for(let item of this.taskBarData) {
+                if(item.url == url) {
+                    this.activityMenu = item;
+                    break;
+                }
+            }
+
             this.selectedKeys[0] = url;
         },
         closeTask (url, action) { // 关闭任务处理
@@ -203,7 +213,7 @@ export default {
                 }
             });
             if(prevTemp) {
-                this.openMenu(prevTemp);
+                this.activityMenu = prevTemp;
                 this.selectedKeys[0] = prevTemp['url']
             } else {
                 this.selectedKeys[0] = '';
@@ -225,26 +235,32 @@ export default {
             }
         },
         viewHandler (view) {
-            this.activityView = view
-            let menus = view['children']
+            this.activityView = view;
+            let menus = view['children'];
             this.menus = menus || []
         },
         openMenu (url) {
             CacheApi.openMenu(url)
         },
         taskBarCloseMoreOpera (item) { // 任务栏菜单关闭处理
+            let start = this.workMenu ? 1 : 0;
             if (item.key === 'all') {
-                this.taskBarData.splice(0, this.taskBarData.length)
+                if(this.workMenu) {
+                    this.activityMenu = this.workMenu;
+                    this.selectedKeys[0] = this.activityMenu['url']
+                }
+
+                this.taskBarData.splice(start, this.taskBarData.length)
             } else { // 关闭除当前激活的任务以外的所有任务
-                var position = 1
-                this.taskBarData.forEach((item, index, ori) => {
+                let position = 1
+                for(let index=0; index < this.taskBarData.length; index++) {
+                    let item = this.taskBarData[index];
                     if (item === this.activityMenu) {
-                        position = index
-                        return false
+                        position = index; break;
                     }
-                })
+                }
                 this.taskBarData.splice(position + 1, this.taskBarData.length - position - 1)
-                this.taskBarData.splice(0, position)
+                this.taskBarData.splice(start, Math.abs(position - start))
             }
         },
         breakpoint (broken) { // 响应式处理

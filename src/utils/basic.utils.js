@@ -280,8 +280,16 @@ const Utils = {
             } else if(_this.isArray(origin)) {
                 let retArr = [];
                 origin.forEach(item=>{
-                    retArr.push(doClone(item));
-                })
+                    if(_this.isObject(item)) {
+                        if(moment.isMoment(item)) {
+                            retArr.push(item);
+                        } else {
+                            retArr.push(doClone(item));
+                        }
+                    } else {
+                        retArr.push(doClone(item));
+                    }
+                });
                 return retArr;
             } else {
                 return origin;
@@ -357,6 +365,23 @@ const Utils = {
             }
         });
         return returnModel;
+    },
+    formatDateForSearchModel(dateFieldMeta, searchModel) {
+        let clone = this.clone(searchModel);
+        dateFieldMeta.forEach(meta=>{
+            let value = clone[meta.field];
+            if(value) {
+                if(meta.type == 'dateRange') {
+                    clone[meta.field] = value.map(item=> {
+                        return moment.isMoment(item)
+                            ? item.format(meta.config.format) : item
+                    })
+                } else if(moment.isMoment(value)) {
+                    clone[meta.field] = value.format(meta.config.format);
+                }
+            }
+        });
+        return clone;
     },
     formatDateForEditModel(dateFieldMeta, editModel) {
         dateFieldMeta.forEach(meta=>{

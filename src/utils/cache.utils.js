@@ -6,7 +6,7 @@ import Global from '../components/global.config'
 
 function getActionPromise (model) {
     return new Promise((resolve, reject) => {
-        return resolve({model: model, success: null, fail: null})
+        return resolve()
     })
 }
 const VoidEventHandle = (e) => {} // 空事件处理
@@ -177,6 +177,8 @@ export default {
             queryField: 'rows', // 查询字段
             scroll: {x: 0, y: 0}, // 表格的宽高
             expandedRowKeys: null, // 可控制的展开行的key
+            pageSizeField: 'size', // 页数字段
+            pageNumField: 'current', // 页码字段
             expandRowByClick: false, // 是否点击展开行
             defaultExpandAllRows: true, // 默认展开所有行,
             defaultExpandedRowKeys: null, // 要展开行的数组
@@ -210,6 +212,9 @@ export default {
             queryField: 'rows', // 查询字段
             scroll: {x: 0, y: 0}, // 表格的宽高
             rowKey: "id", // 默认唯一标识
+            delField: 'id', // 声明使用哪个字段作为删除字段
+            pageSizeField: 'size', // 页数字段
+            pageNumField: 'current', // 页码字段
             expandedRowKeys: null, // 可控制的展开行的key
             expandRowByClick: false, // 是否点击展开行
             defaultExpandAllRows: true, // 默认展开所有行,
@@ -250,11 +255,6 @@ export default {
             return resp['env']
         }).catch(reason => {
             Logger.warningLog('获取项目环境配置失败：', reason, Global.envUrl)
-            return {user: {avatar: '#'}, config: {
-                    work_name: {name: '主页名称', value: '工作台'},
-                    expand_mode: {name: '菜单模式', value: 'single'},
-                    sys_name: {name: '系统名称', value: '厦门由创源科技'}
-                }, profiles: ['dev']}
         })
     },
     resolverMenuMap (menus) {
@@ -324,7 +324,7 @@ export default {
      *              , label: '编辑', icon: '图标', callBack:(model)=>new Promise(((resolve, reject) => resolve()}]
      */
     openMenu (location) {
-        if (!location) throw new Error('未指定路由配置');
+        if (!location) throw new Error('未指定要打开的页面地址');
 
         let menu, query = {}, urlParams;
         let target = '_blank', {uri} = Utils.resolverUrl(window.location.href);
@@ -342,14 +342,22 @@ export default {
             } else { // 打开本系统页面
                 let {uri, params} = Utils.resolverUrl(path);
                 urlParams = params;
-                menu = this.urlMenuMap[uri]
-                if (!menu) throw new Error(`不存在此功能或无权限：${uri}`)
+                menu = this.urlMenuMap[uri];
+                if (!menu) {
+                    Logger.warningLog("打开页面", `不存在此功能或无权限：${uri}`);
+                    window.location.href = location;
+                    return;
+                }
             }
         } else { // 如果location是字符串, 说明是系统菜单
             let {uri, params} = Utils.resolverUrl(location);
             urlParams = params;
             menu = this.urlMenuMap[uri];
-            if (!menu) throw new Error(`不存在此功能或无权限：${uri}`)
+            if (!menu) {
+                Logger.warningLog("打开页面", `不存在此功能或无权限：${uri}`);
+                window.location.href = location;
+                return;
+            }
         }
 
         switch (target) {

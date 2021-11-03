@@ -5,8 +5,6 @@ import VueRouter from 'vue-router'
 import Logger from '@/utils/logger.utils'
 import Utils from '@/utils/basic.utils'
 import Resolver from '@/utils/resolver.utils'
-import moment from "moment";
-import logger from "less/lib/less/logger";
 
 Vue.use(VueRouter);
 // 获取父框架的缓存api对象
@@ -57,6 +55,7 @@ export default {
     queryField: 'rows', // 数据列表字段
     formSlotMetas: [], // form slot
     dateFieldMeta: [], // 日期类型的字段
+    dateSearchMeta: [], // 搜索栏的日期字段
     oriSearchModel: {}, // 搜索默认数据
     tableSlotMetas: [], // table slot
     detailSlotMetas: [], // detail slot
@@ -331,15 +330,15 @@ export default {
         } else if(this.isSearchForm(formConfig)) {
             let queryParams = this.getQueryParams() || {};
             return Resolver.resolverFormMetas(oriMetas, formConfig, vue, (meta) => {
+                this.oriSearchModel[meta.field] = meta['decorate']['initialValue'];
+
                 let param = queryParams[meta.field];
-                Resolver.resolverMetaDefaultValue(meta, this.oriSearchModel);
                 if(param) { // 覆写掉初始值, 以页面url的参数为准
                     this.oriSearchModel[meta.field] = param;
                 }
 
-                if(Utils.isDate(meta.type) && this.oriSearchModel[meta.field]) {
-                    let momentValue = moment(this.oriSearchModel[meta.field]);
-                    this.oriSearchModel[meta.field] = momentValue;
+                if(Utils.isDate(meta.type)) {
+                    this.dateSearchMeta.push(meta);
                     this.searchFieldMetaMap[meta.field] = meta;
                 }
             })

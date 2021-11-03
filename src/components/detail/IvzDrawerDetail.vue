@@ -4,34 +4,36 @@
               :closable="detailConfig.closable" :maskClosable="detailConfig.maskClosable"
               wrap-class-name="ivz-drawer-detail-wrap" :height="detailConfig.height"
               :destroyOnClose="detailConfig.destroyOnClose" :visible="visible">
-        <a-row slot="title" type="flex" align="middle" justify="space-between" style="color: #000000">
-            <a-col span="12" style="padding-left: 12px; font-size: 17px">
-                <ivz-icon :type="detailMeta.icon" style="font-size: 17px"></ivz-icon>
-                <em style="font-size: 16px; color: #000000">{{detailMeta.label}}</em>
-            </a-col>
-            <a-col span="12" style="padding-right: 20px; text-align: right"></a-col>
-        </a-row>
-        <a-spin tip="正在加载详情..." :spinning="spinning">
-            <div v-for="group in formGroup" :key="group.name" class="ivz-detail ivz-group" :style="group.style">
-                <div v-if="group.name" class="ivz-group-head">
-                    <label style="color: #6eb5ff; font-size: 15px; font-style: oblique">{{group.name}}</label>
+        <slot name="detail" :model="detailModel">
+            <a-row slot="title" type="flex" align="middle" justify="space-between" style="color: #000000">
+                <a-col span="12" style="padding-left: 12px; font-size: 17px">
+                    <ivz-icon :type="detailMeta.icon" style="font-size: 17px"></ivz-icon>
+                    <em style="font-size: 16px; color: #000000">{{detailMeta.label}}</em>
+                </a-col>
+                <a-col span="12" style="padding-right: 20px; text-align: right"></a-col>
+            </a-row>
+            <a-spin tip="正在加载详情..." :spinning="spinning">
+                <div v-for="group in formGroup" :key="group.name" class="ivz-detail ivz-group" :style="group.style">
+                    <div v-if="group.name" class="ivz-group-head">
+                        <label style="color: #6eb5ff; font-size: 15px; font-style: oblique">{{group.name}}</label>
+                    </div>
+                    <div class="ivz-group-body">
+                        <a-row :align="formConfig.align" :justify="formConfig.justify"
+                               :gutter="formConfig.gutter" type="flex">
+                            <template v-for="col in group.metas">
+                                <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
+                                    <a-form-item :label="col.title" :label-col="col.config.labelCol"
+                                                 :wrapper-col="col.config.wrapperCol">
+                                        <slot v-if="col.detailSlot" :name="col.detailSlot" :row="detailModel"></slot>
+                                        <div v-else style="padding-left: 16px" v-html="getFieldValue(col)"></div>
+                                    </a-form-item>
+                                </a-col>
+                            </template>
+                        </a-row>
+                    </div>
                 </div>
-                <div class="ivz-group-body">
-                    <a-row :align="formConfig.align" :justify="formConfig.justify"
-                           :gutter="formConfig.gutter" type="flex">
-                        <template v-for="col in group.metas">
-                            <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
-                                <a-form-item :label="col.title" :label-col="col.config.labelCol"
-                                             :wrapper-col="col.config.wrapperCol">
-                                    <slot v-if="col.detailSlot" :name="col.detailSlot" :row="detailModel"></slot>
-                                    <div v-else style="padding-left: 16px" v-html="getFieldValue(col)"></div>
-                                </a-form-item>
-                            </a-col>
-                        </template>
-                    </a-row>
-                </div>
-            </div>
-        </a-spin>
+            </a-spin>
+        </slot>
     </a-drawer>
 </template>
 <!--抽屉详情页-->

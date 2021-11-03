@@ -18,12 +18,15 @@
             <template #submit>
                 <slot name="submit"></slot>
             </template>
-            <template v-for="meta in formAliasMetas" #[meta.formSlot]>
-                <slot :name="meta.formSlot" :meta="meta"></slot>
+            <template v-for="meta in formAliasMetas" #[meta.formSlot]="{model}">
+                <slot :name="meta.formSlot" :meta="meta" :model="model"></slot>
             </template>
         </ivz-default-form>
         <ivz-drawer-detail ref="detailRef" :form-group="formGroup"
             v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
+            <template #detail="{model}">
+                <slot name="detail" :model="model"></slot>
+            </template>
             <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="{row}">
                 <slot :name="meta.detailSlot" :meta="meta" :row="row"></slot>
             </template>

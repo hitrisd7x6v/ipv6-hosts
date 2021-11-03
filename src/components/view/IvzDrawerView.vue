@@ -12,17 +12,21 @@
                       :row="params.row" :index="params.index"></slot>
             </template>
         </ivz-default-list>
-        <ivz-drawer-form ref="formRef" :form-group="formGroup" :placement="placement" :visible="!listView"
-             :height="height" :width="width" :action-metas="actionMetas" :form-config="formConfig">
+        <ivz-drawer-form ref="formRef" :form-group="formGroup" :visible="!listView"
+             :height="height" :width="width" :placement="placement" :action-metas="actionMetas"
+             :form-alias-metas="formAliasMetas" :form-config="formConfig">
             <template #default>
                 <slot name="submit"></slot>
             </template>
-            <template v-for="meta in formAliasMetas" #[meta.formSlot]>
-                <slot :name="meta.formSlot" :meta="meta"></slot>
+            <template v-for="meta in formAliasMetas" #[meta.formSlot]="{model}">
+                <slot :name="meta.formSlot" :meta="meta" :model="model"></slot>
             </template>
         </ivz-drawer-form>
         <ivz-drawer-detail ref="detailRef" :form-group="formGroup"
                v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
+            <template #detail="{model}">
+                <slot name="detail" :model="model"></slot>
+            </template>
             <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="params">
                 <slot :name="meta.detailSlot" :meta="meta" :row="params.row"></slot>
             </template>
