@@ -53,7 +53,7 @@ export const MixPageList = {
             let delMeta = this.actionMetas['Del'];
             if(delMeta) {
                 let oriCall = delMeta.callBack;
-                // 代理
+                // 删除动作代理
                 delMeta.callBack = (row) => {
                     return new Promise((resolve, reject) => {
                         oriCall(row).then(resp=>{
@@ -65,6 +65,14 @@ export const MixPageList = {
                             reject(reason);
                         });
                     })
+                }
+            }
+
+            // 分页动作代理
+            let pagination = this.tableConfig['pagination'];
+            if(pagination) {
+                pagination.change = (args)=>{
+                    this.query();
                 }
             }
         },

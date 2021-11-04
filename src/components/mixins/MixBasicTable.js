@@ -61,7 +61,12 @@ export const MixBasicTable = {
                 let promiseResolve = this.$utils.getPromiseResolve(param);
 
                 this.$http.get(this.queryMate.url, {params: model}).then(resp => {
-                    this.dataSource = resp[this.tableConfig.queryField] || [];
+                    let rows = resp[this.tableConfig.queryField];
+                    if(this.$utils.isBlank(this.dataSource)) { // 只在第一次加载
+                        this.tableConfig.loadFinished(rows); // 触发数据加载完成事件
+                    }
+
+                    this.dataSource = rows;
                     if (typeof promiseResolve.success === 'function') {
                         promiseResolve.success(resp)
                     }

@@ -2,6 +2,7 @@
     <a-table ref="tableRef" :columns="tableMetas" :data-source="dataSource" bordered
          :position="tableConfig.position" :loading="loading" :indentSize="tableConfig.indentSize"
          size="small" :scroll="tableConfig.scroll" :locale="tableConfig.locale"
+         @expandedRowsChange="tableConfig.expandedRowsChange"
          :showHeader="tableConfig.showHeader" :pagination="tableConfig.pagination" @change="change"
          :rowSelection="tableConfig.selection" :expandRowByClick="tableConfig.expandRowByClick"
          :defaultExpandedRowKeys="tableConfig.defaultExpandedRowKeys" :rowClassName="()=>{return 'ivz-edit-row'}"

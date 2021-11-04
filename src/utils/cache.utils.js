@@ -184,8 +184,10 @@ export default {
             defaultExpandedRowKeys: null, // 要展开行的数组
             childrenColumnName: 'children', // 树形表格的列名
             rowClassName: () => 'iz-table-row', // 表格行列名
+            loadFinished: (data) => {},
             mountedFinished: (tableVue) => {}, // 表格组件更新完成
-            locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'} //
+            locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'}, //
+            expandedRowsChange: (expandedRowKeys) => {}
         },
         detail: {
             mask: true,
@@ -221,8 +223,10 @@ export default {
             defaultExpandedRowKeys: null, // 要展开行的数组
             childrenColumnName: 'children', // 树形表格的列名
             rowClassName: () => 'iz-table-row', // 表格行列名
+            loadFinished: (data) => {},
             mountedFinished: (tableVue) => {}, // 表格组件更新完成
-            locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'} //
+            locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'}, //
+            expandedRowsChange: (expandedRowKeys) => {}
         },
         form: {
             gutter: 2,

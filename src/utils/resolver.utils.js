@@ -430,9 +430,10 @@ export default {
                 if(!Utils.isArray(metaDefault)) {
                     metaDefault = [metaDefault];
                 }
-                metaDefault = metaDefault.map(item=>moment(item));
+                metaDefault = metaDefault.map(item=>moment.isMoment(item) ? item : moment(item));
             } else {
-                metaDefault = moment(metaDefault)
+                metaDefault = moment.isMoment(metaDefault)
+                    ? metaDefault : moment(metaDefault);
             }
         }
         if (decorate) {

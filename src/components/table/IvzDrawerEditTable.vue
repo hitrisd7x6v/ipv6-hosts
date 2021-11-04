@@ -84,6 +84,7 @@ export default {
         },
         mountFinished (tableRef) {
             this.tableRef = tableRef
+            this.freshen();
         }
     }
 }

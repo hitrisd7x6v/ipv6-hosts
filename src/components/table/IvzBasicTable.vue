@@ -3,6 +3,7 @@
              :rowClassName="tableConfig.rowClassName" :position="tableConfig.position" @change="change"
              :bordered="tableConfig.bordered" :loading="loading" :indentSize="tableConfig.indentSize"
              :size="tableConfig.size" :scroll="tableConfig.scroll" :pagination="tableConfig.pagination"
+             @expandedRowsChange="tableConfig.expandedRowsChange"
              :defaultExpandAllRows="tableConfig.defaultExpandAllRows" :expandedRowKeys="tableConfig.expandedRowKeys"
              class="ivz-view-table ivz-block-outer ivz-border-radius" :expandRowByClick="tableConfig.expandRowByClick"
              :defaultExpandedRowKeys="tableConfig.defaultExpandedRowKeys" :rowSelection="tableConfig.selection">
