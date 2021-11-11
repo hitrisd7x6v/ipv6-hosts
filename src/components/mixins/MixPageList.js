@@ -25,13 +25,10 @@ export const MixPageList = {
         this.searchModel = this.$page.getQueryParams();
     },
     mounted () {
-        this.setTableHeight();
+        this.setDetailProxy();
         this.setTableQueryProxy();
         this.$page.registerVueRef(this, 'list');
         if (this.isBlank(this.data)) this.query();
-    },
-    beforeUpdate () {
-        this.setTableHeight();
     },
     methods: {
         query () {
@@ -76,11 +73,27 @@ export const MixPageList = {
                 }
             }
         },
-        setTableHeight () {
-            let tableRef = this.$refs['tableRef']
-            let pagination = this.tableConfig['pagination']
-            let remain = tableRef.$el.offsetTop + 64 + (pagination ? 34 : 0);
-            let height = 'calc(100vh - ' + (remain) + 'px)'
+        /**
+         * 设置查看详情代理
+         */
+        setDetailProxy() {
+            let detailMeta = this.actionMetas['Detail'];
+            if(detailMeta) {
+                let oriCall = detailMeta.callBack;
+                detailMeta.callBack = (row) => {
+                    return new Promise((resolve, reject) => {
+                        oriCall(row).then(resp=>{
+                            resolve(resp);
+                            this.$page.detail(row);
+                        }).catch(reason=>reject(reason))
+                    })
+                }
+            }
+        },
+        setTableHeight (outHeight) {
+            let tableRef = this.$refs['tableRef'];
+            let remain = tableRef.$el.offsetTop + 33 + outHeight;
+            let height = 'calc(100vh - ' + (remain) + 'px)';
             this.tableConfig.scroll.y = height
         },
     }

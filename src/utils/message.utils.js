@@ -9,16 +9,16 @@ const respTitle = '数据操作通知'
 const messageVue = new Vue()
 /* 通知全局配置 */
 messageVue.$notification.config({
-    top: '10px', // 消息从顶部弹出时，距离顶部的位置，单位像素。
-    bottom: '30px', // 消息从底部弹出时，距离底部的位置，单位像素
-    duration: 4.5, // 多少秒后关闭 配置为 null 则不自动关闭
-    placement: 'topRight'
+    top: '24px', // 消息从顶部弹出时，距离顶部的位置，单位像素。
+    bottom: '24px', // 消息从底部弹出时，距离底部的位置，单位像素
+    duration: 3.5, // 多少秒后关闭 配置为 null 则不自动关闭
+    placement: 'bottomRight'
     // getContainer: messageVue.$getModalContainer()
 
 })
 messageVue.$message.config({
     top: '24px', // 消息距离顶部的位置
-    duration: 4.5, // 延迟2秒关闭
+    duration: 3.5, // 延迟2秒关闭
     maxCount: 3 // 最大显示数, 超过限制时，最早的消息会被自动关闭
 })
 export default {

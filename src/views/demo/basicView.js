@@ -9,7 +9,7 @@ new Vue({
     components: {IvzBasicView, IvzModalForm},
     data: {
         data: Data.data,
-        mates: Data.mates,
+        metas: Data.childrenMetas,
         config: Data.config,
         ModalMetas: [
             {field: 'name', title: 'text', required: true, span: [6, 16]},
@@ -22,7 +22,6 @@ new Vue({
                     return resolve()
                 })
             }},
-        groupMetas: Data.groupMetas,
         groupConfig: Data.groupConfig,
         searchMetas: Data.searchMates,
     },

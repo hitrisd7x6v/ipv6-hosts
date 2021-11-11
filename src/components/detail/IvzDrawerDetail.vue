@@ -5,33 +5,17 @@
               wrap-class-name="ivz-drawer-detail-wrap" :height="detailConfig.height"
               :destroyOnClose="detailConfig.destroyOnClose" :visible="visible">
         <slot name="detail" :model="detailModel">
-            <a-row slot="title" type="flex" align="middle" justify="space-between" style="color: #000000">
-                <a-col span="12" style="padding-left: 12px; font-size: 17px">
-                    <ivz-icon :type="detailMeta.icon" style="font-size: 17px"></ivz-icon>
-                    <em style="font-size: 16px; color: #000000">{{detailMeta.label}}</em>
-                </a-col>
-                <a-col span="12" style="padding-right: 20px; text-align: right"></a-col>
-            </a-row>
             <a-spin tip="正在加载详情..." :spinning="spinning">
-                <div v-for="group in formGroup" :key="group.name" class="ivz-detail ivz-group" :style="group.style">
-                    <div v-if="group.name" class="ivz-group-head">
-                        <label style="color: #6eb5ff; font-size: 15px; font-style: oblique">{{group.name}}</label>
-                    </div>
-                    <div class="ivz-group-body">
-                        <a-row :align="formConfig.align" :justify="formConfig.justify"
-                               :gutter="formConfig.gutter" type="flex">
-                            <template v-for="col in group.metas">
-                                <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
-                                    <a-form-item :label="col.title" :label-col="col.config.labelCol"
-                                                 :wrapper-col="col.config.wrapperCol">
-                                        <slot v-if="col.detailSlot" :name="col.detailSlot" :row="detailModel"></slot>
-                                        <div v-else style="padding-left: 16px" v-html="getFieldValue(col)"></div>
-                                    </a-form-item>
-                                </a-col>
-                            </template>
-                        </a-row>
-                    </div>
-                </div>
+                <a-descriptions :title="detailConfig.title" :bordered="detailConfig.bordered"
+                        :column="detailConfig.column" :size="detailConfig.size" :layout="detailConfig.layout"
+                        :colon="detailConfig.colon">
+                    <template v-for="meta in metas">
+                        <a-descriptions-item v-if="meta.isDetail" :label="meta.title" :span="meta.column" :key="meta.field">
+                            <slot v-if="meta.detailSlot" :name="meta.detailSlot" :row="detailModel"></slot>
+                            <div v-else v-html="getFieldValue(meta)"></div>
+                        </a-descriptions-item>
+                    </template>
+                </a-descriptions>
             </a-spin>
         </slot>
     </a-drawer>
@@ -47,6 +31,7 @@
         },
         data() {
             return {
+                metas: [],
                 visible: false,
                 spinning: false,
                 drawerWidth: '',
@@ -56,15 +41,15 @@
         },
         created() {
             this.detailMeta = this.$page.getActionMetas()['Detail'];
+            this.$resolver.resolverGroup(this.formGroup, meta=>{
+                this.metas.push(meta);
+            });
+            this.detailConfig.title = this.detailConfig.title || this.detailMeta['label'] || '查看详情';
 
             if (this.detailConfig.width) {
                 this.drawerWidth = this.detailConfig.width
             } else {
-                if (this.formConfig.type === 'group') {
-                    this.drawerWidth = (260 * this.formConfig.column)
-                } else {
-                    this.drawerWidth = 420
-                }
+                this.drawerWidth = (280 * this.detailConfig.column)
             }
         },
         mounted() {
@@ -88,21 +73,14 @@
                     this.open();
                 }
             },
-            viewForm (col) {
-                if (typeof col['isForm'] === 'function') {
-                    return col.isForm(this.model, this)
-                } else if (col.type === 'hidden') {
-                    return false
-                } else {
-                    return col['isForm']
-                }
-            },
             getFieldValue(col) {
-                let fieldValue = this.detailModel[col.field];
                 if(col['formatter']) {
+                    let fieldValue = this.detailModel[col.field];
                     return col.formatter(fieldValue, this.detailModel, col);
+                } else if(col.field.includes('.')){
+                    return this.$utils.getDeepValue(col.field, this.detailModel);
                 } else {
-                    return fieldValue;
+                    return this.detailModel[col.field];
                 }
             },
             getDetailModel() {

@@ -5,7 +5,7 @@
             <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
                 :action-metas="actionMetas" :search-metas="searchMetas"></ivz-page-search>
             <ivz-basic-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
-                    :data="data" :search-model="searchModel" :action-metas="actionMetas">
+                    :data="data" :search-model="searchModel" :action-metas="actionMetas" @heightChange="setTableHeight">
                 <template #action="{row, index}">
                     <slot name="action" :row="row" :index="index"></slot>
                 </template>

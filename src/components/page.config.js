@@ -37,7 +37,7 @@ const router = new VueRouter(
             , {path: '/IvzSys/void'}
         ]
     }
-)
+);
 Vue.prototype.$nav = router.push;
 Vue.prototype.$cache = cacheApi; // 父页面缓存
 Vue.prototype.formSize = 'default'; // 表单尺寸
@@ -381,9 +381,6 @@ export default {
                 , "slot名称遵循以下规范：\r\n 1. 字段名称+表单(_f)、表格(_t)、详情(_d)结尾\r\n 2.驼峰式的字段名要转成a_b形式" +
                 "\r\n 3.如：字段userName分别写成user_name_f、user_name_t、user_name_d")
         }
-    },
-    resolverGroup (group, vue, callBack) {
-        Resolver.resolverGroup(group, vue, callBack);
     },
     resolverTree (children, callBack) {
         Resolver.resolverTree(children, callBack);

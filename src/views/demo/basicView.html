@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>BasicView测试页面</title>
+    <!-- 全局引入TinyMCE -->
+    <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
 </head>
 <body>
     <div id="app">
-        <ivz-basic-view :metas="groupMetas" :search-metas="searchMetas" :config="groupConfig" ref="ibv">
+        <ivz-basic-view :metas="metas" :search-metas="searchMetas" :config="groupConfig" ref="ibv">
             <template #name_t="params">
                 <a-tag color="green">{{params.value}}</a-tag>
             </template>

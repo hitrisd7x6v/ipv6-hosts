@@ -205,6 +205,7 @@ export default {
                         if (meta.type !== 'action') {
                             group['metas'].push(meta);
                             this.initFormMate(meta, formConfig, vue)
+                            this.initDetailMeta(meta, vue);
                             callBack(meta)
                         }
                     }
@@ -216,11 +217,13 @@ export default {
         doResolverFormMetas(oriMetas, vue, callBack, null, null)
         return returnVal
     },
-    resolverGroup (group, vue, callBack) {
-        if (!group) return null
+    resolverGroup (group, callBack) {
+        if (!group) return null;
         group.forEach(item => {
             if (item['metas']) {
-                this.resolverMetas(item['metas'], vue, callBack);
+                this.resolverGroup(item['metas'], callBack);
+            } else {
+                callBack(item);
             }
         })
     },
@@ -497,16 +500,21 @@ export default {
         // 说明此字段已经完成form解析
         mate['resolveType'] = mate['resolveType'] ? mate['resolveType'] + '2' : '2'
     },
+    initDetailMeta(meta, vue) {
+        if(meta['isDetail'] == null) {
+            meta['isDetail'] = true;
+        }
+    },
     optionsLabelFormatter(val, model, meta) {
         if(!val) return '';
         if(Utils.isArray(val)) {
             return val.map(value=>{
                 let option = meta.DataMap[value];
-                return option ? option['label'] : '';
+                return option != null ? option['label'] : '';
             });
         } else {
             let option = meta.DataMap[val];
-            return option ? option['label'] : '';
+            return option != null ? option['label'] : '';
         }
     },
     initCommonMate (mate, _this) {
@@ -674,7 +682,8 @@ export default {
         if (item['type'] === 'action') { // action列的宽度必须手动指定, 否则不指定
             _this.$set(item, 'scopedSlots', {customRender: item.field + '_t'})
         } else {
-            if (!item.width) _this.$set(item, 'width', 136) // 默认宽度为136px
+            if(item.width == -1) delete item.width;
+            else if (!item.width) _this.$set(item, 'width', 136) // 默认宽度为136px
         }
         if (item['formatter']) { // 只要是存在需要重新格式化数据的字段, 在表里面全部使用slot
             item['tableSlot'] = item.field + '_t';

@@ -2,13 +2,16 @@
   "name": "ivzone",
   "version": "1.1.2",
   "private": false,
-  "license": "apache",
+  "license": "Apache 2.0",
   "author": {
     "name": "iteaj",
     "email": "iteaj@outlook.com",
     "url": "http://www.iteaj.com"
   },
-
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/iteaj/ivzone"
+  },
   "description": "使用vue、antdv开发的多页面组件, 一个视图组件即一个页面(html)；一个视图组件包含了增删改查常用功能的组件库",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -16,10 +19,12 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^3.2.0",
     "ant-design-vue": "^1.5.1",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "qs": "^6.9.3",
+    "tinymce": "^5.2.2",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6"
   },

@@ -11,7 +11,7 @@
                 <a-button-group>
                     <template v-if="searchMainMetas">
                         <a-button v-for="item in searchMainMetas" :key="item.id"
-                                  :type="item.color" @click="actionEvent(item)">
+                                  :type="item.type" @click="actionEvent(item)">
                             <span>&nbsp;{{item.label}}</span>
                         </a-button>
                     </template>

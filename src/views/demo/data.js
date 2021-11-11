@@ -269,47 +269,30 @@ export default {
     mates: [
         {field: 'name', title: '产品名称', type: 'text', required: true, align: 'left'},
         {field: 'price', title: '产品价格', type: 'text', editable: true},
-        {field: 'spec', title: '规格', type: 'checkbox', data: spec},
-        {field: 'cat', title: '类别', type: 'select', data: productCat},
-        {field: 'type', title: '类型', type: 'radio', data: productType, config: {extra: 'lksdf'}},
+        {field: 'spec', title: '规格', type: 'checkbox', data: spec, editable: true, width: 150},
+        {field: 'cat', title: '类别', type: 'select', data: productCat, editable: true
+            , config: {showSearch: true}},
+        {field: 'type', title: '类型', type: 'radio', data: productType},
         {field: 'range', title: '下单数量', type: 'slider'},
         {field: 'markSale', title: '市场价', type: 'number', editable: true},
         {field: 'ext.desc', title: '说明'},
         {field: 'createTime', title: '上架时间', type: 'date'},
-        {field: 'action', title: '操作', type: 'action', width: 240}
+        {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],
     data: dataSource,
     config: config,
     groupConfig: groupConfig,
-    groupMetas: [
-        {title: '基础信息', metas: [
-                {field: 'name', title: 'text', required: true, align: 'left'},
-                {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
-                {field: 'radio', title: 'radio', type: 'radio', dictType: 'spec'},
-                {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'},
-                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
-                {field: 'obj.desc', title: '对象'},
-                {field: 'list[0].desc', title: '数组', isTable: false, default: 3, event:{
-                        change(val) {
+    childrenMetas: [
 
-                        }
-                    }},
-                {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
-
-                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}}
-            ]
-        },
-        {title: '上传组件', metas: [
+        {title: '其他组件', children: [
                 {field: 'productPic', title: 'upload', type: 'upload'
-                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}}
-            ]},
-        {title: '数字组件', metas: [
+                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}},
                 {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
                         call()
                     }},
                 {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}}
             ]},
-        {title: '下拉框组件', metas: [
+        {title: '下拉框组件', children: [
                 {field: 'cat', title: 'select', type: 'select', data: productCat, required: true, min: 2,
                     config: {mode: 'multiple'}},
                 {field: 'type', title: 'cascade', type: 'cascade', data: productType, formatter: (val, row, col, text) => {
@@ -332,9 +315,24 @@ export default {
                 {field: 'tree', title: 'tree', type: 'tree', url: '/test/stree', config: {
                         defaultExpandAll: true, checkedKeys: [1], showLine: true, expandedAll: true
                     }, event: {change: (val, model, meta)=>{
+
                         }}}
             ]
         },
+        {field: 'editor', title: 'editor', type: 'editor', span: [3, 21, 23], default: '这是富文本编辑器', isTable: false},
+        {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
+    ],
+    groupMetas: [
+        {title: '基础信息', metas: [
+                {field: 'name', title: 'text', required: true, align: 'left'},
+                {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
+                {field: 'radio', title: 'radio', type: 'radio', dictType: 'spec'},
+                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
+                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}},
+                {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'}
+            ]
+        },
+        {field: 'editor', title: 'editor', type: 'editor', width: -1, span: [3, 21, 23], default: '这是富文本编辑器'},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],
     searchMates: searchMetas,

@@ -9,7 +9,10 @@
                         <template v-else>
                             <a-select v-if="col.type=='select'" v-decorator="[col.field, col['decorate']]" :size="formSize"
                                   :allowClear="col.clear" :maxTagCount="col.config.maxTagCount" :placeholder="col.placeholder"
-                                  dropdownClassName="iz-select-class" :mode="col.config.mode"
+                                  dropdownClassName="iz-select-class" :mode="col.config.mode" :showSearch="col.config.showSearch"
+                                  :maxTagTextLength="col.config.maxTagTextLength" :maxTagPlaceholder="col.config.maxTagPlaceholder"
+                                  :autoClearSearchValue="col.config.autoClearSearchValue"
+                                  :defaultActiveFirstOption="col.config.defaultActiveFirstOption"
                                   :tokenSeparators="col.config.tokenSeparators" :getPopupContainer="col.config.getPopupContainer"
                                   :disabled="disabledHandle(col)" @search="(val) => col.event.search(val, model, col)"
                                   @select="(val, option) => col.event.select({value: val, option: option}, model, col)"
@@ -108,6 +111,8 @@
                                     :disabled="disabledHandle(col)" :tooltips="col.config.tooltips" @keydown="(e) => {col.event.keydown(e, model, col)}"
                                     @hoverChange="(val) => col.event.hoverChange(val, model, col)" :blur="col.event.blur" :focus="col.event.focus">
                             </a-rate>
+                            <ivz-editor v-else-if="col.type == 'editor'" :meta="col" :model="model" :disabled="disabledHandle(col)">
+                            </ivz-editor>
                             <a-textarea v-else-if="col.type == 'textarea'" :placeholder="col.placeholder" :autosize="col.config.autoSize"
                                         v-decorator="[col.field, col['decorate']]" @press-enter="(e)=>col.event.pressEnter(e, model, col)"
                                         @change="(val)=>changeHandle(val, col)" :disabled="disabledHandle(col)"
@@ -132,10 +137,12 @@
 <script>
     import {MixBasicForm} from '../mixins/MixBasicForm'
     import Utils from "@/utils/basic.utils";
+    import IvzEditor from "@/components/basic/IvzEditor";
 
     export default {
     name: 'IvzBasicForm',
-    mixins: [MixBasicForm],
+        components: {IvzEditor},
+        mixins: [MixBasicForm],
     data () {
         return {
             previewFile: {url: null}

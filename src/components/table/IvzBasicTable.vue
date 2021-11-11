@@ -81,9 +81,9 @@ export default {
 
                     // 删除时提交的数据只能是数组类型
                     if (!(this.isArray(selectionRows))) {
-                        submit = [selectionRows[this.tableConfig.delField]]
+                        submit = [selectionRows[this.tableConfig.submitField]]
                     } else {
-                        submit = selectionRows.map(item=>item[this.tableConfig.delField]);
+                        submit = selectionRows.map(item=>item[this.tableConfig.submitField]);
                     }
 
                     this.$http.post(mate.url, submit).then(data => {
@@ -97,34 +97,6 @@ export default {
                     })
                 }).catch(reason => null)
             }).catch(reason => {})
-        },
-        otherActionHandle(mate, selectionRows, submit) {
-            mate.callBack(selectionRows).then(resp => {
-                let resolve = this.$utils.getPromiseResolve(resp)
-                let tipTitle = resolve.tipTitle
-                let tipContent = resolve.tipContent
-                if (tipTitle && tipContent) { // 需要提交确认
-                    this.$msg.confirm(tipTitle, tipContent).then(() => {
-                        this.loading = true
-                        this.$http.post(mate.url, submit).then(data => {
-                            this.$msg.submitSuccessNotify(resolve, data, this, submit)
-                        }).catch(reason => {
-                            this.$msg.submitFailNotify(resolve, reason, this, submit)
-                        }).finally(() => {
-                            this.loading = false
-                        })
-                    }).catch(reason => null)
-                } else { // 不需要提交确认
-                    this.loading = true
-                    this.$http.post(mate.url, submit).then(data => {
-                        this.$msg.submitSuccessNotify(resolve, data, this, submit)
-                    }).catch(reason => {
-                        this.$msg.submitFailNotify(resolve, reason, this, submit)
-                    }).finally(() => {
-                        this.loading = false
-                    })
-                }
-            })
         },
     }
 }

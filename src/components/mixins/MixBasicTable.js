@@ -13,9 +13,15 @@ export const MixBasicTable = {
             queryMate: null, // 查询元数据
             slotMetas: [],
             loading: false,
+            outHeight: 0,
             pagination: null,
             dataSource: null,
             actionMetaKeys: []
+        }
+    },
+    watch: {
+        outHeight: function (newVal) {
+            this.$emit("heightChange", newVal);
         }
     },
     created () {
@@ -41,6 +47,8 @@ export const MixBasicTable = {
         this.tableConfig.mountedFinished(this);
     },
     beforeUpdate() {
+        this.handleTableHeight();
+
         // 解析元数据, 获取需要slot的字段
         this.slotMetas.length = 0;
         this.$page.resolverMetas(this.tableMetas, this, (meta) => {
@@ -96,6 +104,22 @@ export const MixBasicTable = {
         getMoreOperaMates () {
             return this.moreMetas
         },
+        handleTableHeight() {
+            let outHeight = 0;
+            let tableHeader = this.$el.querySelector(".ant-table-thead");
+            if(tableHeader) {
+                outHeight = tableHeader.clientHeight;
+            }
+
+            let pagination = this.$el.querySelector(".ant-table-pagination");
+            if(pagination) {
+                outHeight += pagination.clientHeight;
+            }
+
+            if(outHeight>0 && this.outHeight != outHeight) {
+                this.outHeight = outHeight
+            }
+        },
         getSelectionRows () {
             let selection = this.tableConfig.selection;
             return selection ? selection['selectedRows'] : []
@@ -128,6 +152,16 @@ export const MixBasicTable = {
 
             let submit = row || this.getSelectionKeys();
             let selectionRows = row || this.getSelectionRows();
+
+            // 如果此动作在主栏和主表栏, 提交的必须是数组
+            if(mate['position'] == 'AM') {
+                if(!this.$utils.isArray(submit)) {
+                    let value = submit[this.tableConfig.submitField];
+                    submit = [value];
+                    selectionRows = [selectionRows];
+                }
+            }
+
             switch(mate['id']) {
                 case 'view': this.viewActionHandle(); break;
                 case 'add': this.addActionHandle(mate, row, index); break;
@@ -145,12 +179,34 @@ export const MixBasicTable = {
         saveActionHandle (meta, row) { },
         delActionHandle (meta, row, submit) { },
         cancelActionHandle(meta, row) { },
-        detailActionHandle(meta, row) {
-            meta.callBack(row).then(() => {
-                this.$page.detail(row);
-            })
+        detailActionHandle(meta, row) { meta.callBack(row) },
+        otherActionHandle(mate, selectionRows, submit) {
+            if(this.$utils.isBlank(selectionRows)) {
+                return this.$msg.warningMessage("请选择要操作的记录");
+            }
 
+            mate.callBack(selectionRows).then(resp => {
+                let resolve = this.$utils.getPromiseResolve(resp)
+                let tipTitle = resolve.tipTitle;
+                let tipContent = resolve.tipContent;
+                if (tipTitle && tipContent) { // 需要提交确认
+                    this.$msg.confirm(tipTitle, tipContent).then(() => {
+                        this.submitData(mate, resolve, submit)
+                    }).catch(reason => null)
+                } else { // 不需要提交确认
+                    this.submitData(mate, resolve, submit)
+                }
+            })
         },
-        otherActionHandle (meta, row, submit) { },
+        submitData(mate, resolve, submit) {
+            this.loading = true;
+            this.$http.post(mate.url, submit).then(data => {
+                this.$msg.submitSuccessNotify(resolve, data, this, submit)
+            }).catch(reason => {
+                this.$msg.submitFailNotify(resolve, reason, this, submit)
+            }).finally(() => {
+                this.loading = false
+            })
+        }
     }
 }

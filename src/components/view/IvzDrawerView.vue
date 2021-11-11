@@ -14,7 +14,7 @@
         </ivz-default-list>
         <ivz-drawer-form ref="formRef" :form-group="formGroup" :visible="!listView"
              :height="height" :width="width" :placement="placement" :action-metas="actionMetas"
-             :form-alias-metas="formAliasMetas" :form-config="formConfig">
+             :form-alias-metas="formAliasMetas" :form-config="formConfig" :mask-closable="maskClosable">
             <template #default>
                 <slot name="submit"></slot>
             </template>
@@ -25,10 +25,10 @@
         <ivz-drawer-detail ref="detailRef" :form-group="formGroup"
                v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
             <template #detail="{model}">
-                <slot name="detail" :model="model"></slot>
+                <slot name="detail" :row="model"></slot>
             </template>
-            <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="params">
-                <slot :name="meta.detailSlot" :meta="meta" :row="params.row"></slot>
+            <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="{row}">
+                <slot :name="meta.detailSlot" :meta="meta" :row="row"></slot>
             </template>
         </ivz-drawer-detail>
     </div>
@@ -48,7 +48,8 @@
         props: {
             width: {type: String},
             height: {type: String},
-            placement: {type: String, default: 'right'}
+            placement: {type: String, default: 'right'},
+            maskClosable: {type: Boolean, default: false}
         },
         data () {
             return {

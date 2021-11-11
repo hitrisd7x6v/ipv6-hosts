@@ -50,7 +50,7 @@
             height: {default: '38%'},
             visible: {type: Boolean, default: false},
             placement: {type: String, default: 'right'},
-            drawerClose: {type: Function, default: () => {}}
+            maskClosable: {type: Boolean, default: false}
         },
         watch: {
             visible(newVal) {
@@ -64,7 +64,6 @@
                 mask: true,
                 handle: null,
                 drawerWidth: 0, // 抽屉宽度
-                maskClosable: false
             }
         },
         created () {
@@ -79,7 +78,11 @@
             }
         },
         mounted () { },
-        methods: { }
+        methods: {
+            drawerClose() {
+                this.visible = false;
+            }
+        }
     }
 </script>
 

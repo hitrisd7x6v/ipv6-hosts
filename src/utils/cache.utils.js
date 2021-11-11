@@ -14,34 +14,33 @@ const DisabledHandle = (row) => { return false } // 默认不禁用
 /**
  * 页面操作按钮元数据(默认, 会根据数据库的数据动态增减)
  * 其中编辑和新增的url指的是编辑保存和新增保存的链接
- * access: false, 说明没有权限, 默认为false
  * @type {{Add: {icon: string, callBack: (function(*): Promise<any>), label: string}, Import: {icon: string, callBack: (function(*): Promise<any>), label: string}, Query: {icon: string, callBack: (function(*): Promise<any>), label: string}, Export: {icon: string, callBack: (function(*): Promise<any>), label: string}, Del: {icon: string, callBack: (function(*): Promise<any>), label: string}, Edit: {icon: string, callBack: (function(*): Promise<any>), label: string}}}
  */
 const operaMates = {
-    View: {id: 'view', icon: 'iz-icon-chaxun', color: 'primary', position: 'M', sort: 1,
-        url: null, disabled: DisabledHandle, access: false, label: '查询', callBack: (model, page) => getActionPromise(model)},
+    View: {id: 'view', icon: 'iz-icon-chaxun', color: 'blue', position: 'M', sort: 1,
+        url: null, disabled: DisabledHandle, type: 'primary', label: '查询', callBack: (model, page) => getActionPromise(model)},
     Add: {id: 'add', icon: 'iz-icon-add', url: null, color: '#108ee9', position: 'M', sort: 5,
-         disabled: DisabledHandle, access: false, label: '新增', callBack: (model) => getActionPromise(model)},
+         disabled: DisabledHandle, type: 'default', label: '新增', callBack: (model) => getActionPromise(model)},
     Edit: {id: 'edit', icon: 'iz-icon-edit', url: null, color: '#2db7f5', position: 'T', sort: 10,
-         disabled: DisabledHandle, access: false, label: '编辑', callBack: (model) => getActionPromise(model)},
+         disabled: DisabledHandle, type: 'default', label: '编辑', callBack: (model) => getActionPromise(model)},
     Cancel: {id: 'cancel', icon: 'iz-icon-cancel', color: 'orange', position: '', sort: 15,
-        url: null, disabled: DisabledHandle, access: false, label: '取消', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'dashed', label: '取消', callBack: (model) => getActionPromise(model)},
     Save: {id: 'save', icon: 'iz-icon-tijiao', color: '#87d068', position: '', sort: 20,
-        url: null, disabled: DisabledHandle, access: false, label: '提交', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'default', label: '提交', callBack: (model) => getActionPromise(model)},
     Status: {id: 'status', icon: 'iz-icon-status', color: '#9dd7ff', position: '', sort: 25,
-        url: null, disabled: DisabledHandle, access: false, label: '状态', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'default', label: '状态', callBack: (model) => getActionPromise(model)},
     Detail: {id: 'detail', icon: 'iz-icon-detail', color: 'blue', position: 'T', sort: 30,
-        url: null, disabled: DisabledHandle, access: false, label: '详情', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'default', label: '详情', callBack: (model) => getActionPromise(model)},
     Import: {id: 'import', icon: 'iz-icon-import', color: 'blue', position: 'M', sort: 50,
-        url: null, disabled: DisabledHandle, access: false, label: '导入', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'default', label: '导入', callBack: (model) => getActionPromise(model)},
     Export: {id: 'export', icon: 'iz-icon-export', color: 'blue', position: 'M', sort: 55,
-        url: null, disabled: DisabledHandle, access: false, label: '导出', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'default', label: '导出', callBack: (model) => getActionPromise(model)},
     Default: {id: 'default', icon: 'iz-icon-default', color: 'blue', position: 'T', sort: 60,
-        url: null, disabled: DisabledHandle, access: false, label: '默认', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'default', label: '默认', callBack: (model) => getActionPromise(model)},
     Reset: {id: 'reset', icon: 'iz-icon-reset', color: '#ffc609', position: 'M', sort: 85,
-        url: null, disabled: DisabledHandle, access: false, label: '重置', callBack: (model) => getActionPromise(model)},
+        url: null, disabled: DisabledHandle, type: 'default', label: '重置', callBack: (model) => getActionPromise(model)},
     Del: {id: 'del', icon: 'iz-icon-delete', url: null, color: '#f50', position: 'T', sort: 90,
-        disabled: DisabledHandle, access: false, label: '删除', callBack: (model) => getActionPromise(model)}
+        disabled: DisabledHandle, type: 'danger', label: '删除', callBack: (model) => getActionPromise(model)}
 }
 export default {
     env: null, // 环境配置
@@ -78,6 +77,30 @@ export default {
             FileList: [], // 文件列表
             respField: 'url', // 服务端响应的字段
             listType: 'picture-card',
+        },
+        editor: {
+            tinymce: {
+                height: 350, //编辑器高度
+                inline: false,
+                minHeight: 300,
+                branding: true,
+                menubar: false,
+                language: 'zh_CN',
+                toolbar_mode : 'wrap',
+                images_upload_handler: null,
+                quickbars_insert_toolbar: 'quickimage table emoticons',
+                autosave_ask_before_unload: false,
+                quickbars_selection_toolbar: 'bold italic underline strikethrough link anchor | ' +
+                    'forecolor backcolor fontselect fontsizeselect',
+                fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
+                plugins: ['image', 'quickbars', 'table'],
+                toolbar: 'code undo redo restoredraft | cut copy paste pastetext | ' +
+                    'bold italic underline strikethrough link anchor forecolor backcolor fontselect fontsizeselect | ' +
+                    'alignleft aligncenter alignright alignjustify outdent indent | table image media charmap | ' +
+                    'blockquote subscript superscript removeformat | bullist numlist fullscreen | ' +
+                    'bdmap indent2em lineheight formatpainter axupimgs | ' +
+                    'emoticons hr pagebreak insertdatetime print preview',
+            }
         },
         tree: {checkable: true, checkedKeys: [], expandedKeys: [], selectedKeys: []
             , valueField: 'id', labelField: 'name', queryField: 'rows'
@@ -127,6 +150,7 @@ export default {
         slider: {click: VoidEventHandle, change: VoidEventHandle, afterChange: VoidEventHandle},
         cascade: {click: VoidEventHandle, change: VoidEventHandle},
         switch: {click: VoidEventHandle, change: VoidEventHandle},
+        editor: {click: VoidEventHandle},
         tree: {dragend: VoidEventHandle, dragenter: VoidEventHandle, dragleave: VoidEventHandle
             , dragstart: VoidEventHandle, drop: VoidEventHandle, dragover: VoidEventHandle
             , expand: (expandKeys, model, meta, node)=>{meta.config.expandedKeys = expandKeys;}
@@ -201,6 +225,12 @@ export default {
             placement: 'right', //'top' | 'right' | 'bottom' | 'left'
             maskClosable: true,
             destroyOnClose: false,
+
+            colon: true, //
+            size: 'default', // default | middle | small bordered=true生效
+            column: 3, // 默认三列 支持响应式{ xs: 8, sm: 16, md: 24}
+            bordered: true, // 是否展示边框
+            layout: 'horizontal'	// 描述布局	horizontal | vertical
         }
     },
     defaultConfig: {
@@ -214,7 +244,7 @@ export default {
             queryField: 'rows', // 查询字段
             scroll: {x: 0, y: 0}, // 表格的宽高
             rowKey: "id", // 默认唯一标识
-            delField: 'id', // 声明使用哪个字段作为删除字段
+            submitField: 'id', // 声明使用哪个字段作为删除字段
             pageSizeField: 'size', // 页数字段
             pageNumField: 'current', // 页码字段
             expandedRowKeys: null, // 可控制的展开行的key
@@ -324,7 +354,7 @@ export default {
      *     url: 要跳转的url
      *     name: 任务栏名称
      *     params: 跳转时的url参数
-     *     children: 动作权限列表 eg. [{url: '', access: true, position: 'T'
+     *     children: 动作权限列表 eg. [{url: '', position: 'T'
      *              , label: '编辑', icon: '图标', callBack:(model)=>new Promise(((resolve, reject) => resolve()}]
      */
     openMenu (location) {

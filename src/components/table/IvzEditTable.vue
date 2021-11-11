@@ -13,23 +13,30 @@
                 <div v-if="row['EditableFlag'] && col['editable']" :key="col.field">
                     <a-select v-if="col.type=='select'" :allow-clear="col.clear"
                       dropdown-class-name="ivz-select-class" :token-separators="col.config.separators"
-                      @change="changeHandle(col, row, text)" :value="row[col.field]"
+                      @change="(val)=>changeHandle(col, row, val)" v-model="row[col.field]"
+                      :optionFilterProp="col.config.optionFilterProp" :showSearch="col.config.showSearch"
                       :disabled="disabledHandle(col, row)" :max-tag-count="col.config.tagCount" style="width: 100%">
                         <a-select-option v-for="option in col.data" :key="option.value"
                              :disabled="option.disabled" class="ivz-option-class">
                             {{option.label}}
                         </a-select-option>
                     </a-select>
+                    <a-switch v-else-if="col.type=='switch'" :defaultValue="col.default" v-model="row[col.field]"
+                      :checkedChildren="col.config.checkedChildren" :unCheckedChildren="col.config.unCheckedChildren"
+                      :loading="col.config.loading" style="margin-bottom:5px" :disabled="disabledHandle(col, row)"
+                      @change="(val)=>changeHandle(col, row, val)" :blur="col.event.blur" :focus="col.event.focus"
+                      @click="col.event.click">
+                    </a-switch>
                     <a-radio-group v-else-if="col.type=='radio'" :options="col.data" :name="col.field" :disabled="col.disabled"
-                       @change="(e)=>changeHandle(col, row, e)" :value="row[col.field]" :default-value="col.default"></a-radio-group>
-                    <a-checkbox-group v-else-if="col.type=='checkbox'" :options="col.data" :value="row[col.field]"
+                       @change="(e)=>changeHandle(col, row, e)" v-model="row[col.field]" :default-value="col.default"></a-radio-group>
+                    <a-checkbox-group v-else-if="col.type=='checkbox'" :options="col.data" v-model="row[col.field]"
                       :default-value="col.default" @change="(val)=>changeHandle(col, row, val)"></a-checkbox-group>
                     <a-input-number v-else-if="col.type == 'number'" :min="col.config.min" :max="col.config.max" :step="col.config.step"
                         :disabled="disabledHandle(col, row)" :blur="eventHandle(col, row, 'blur')" style="width: 100%"
-                        :formatter="col.formatter" :precision="col.config.precision" :parser="col.config.parser" :value="row[col.field]"
+                        :formatter="col.formatter" :precision="col.config.precision" :parser="col.config.parser" v-model="row[col.field]"
                         @change="(val)=>changeHandle(col, row, val)" :focus="eventHandle(col, row, 'focus')"></a-input-number>
                     <a-input v-else :type="col.type" :placeholder="col.placeholder"
-                         :value="row[col.field]" :disabled="disabledHandle(col, row)"
+                             v-model="row[col.field]" :disabled="disabledHandle(col, row)"
                          :prefix="col.config.prefix" :suffix="col.config.suffix" :blur="()=>eventHandle(col, row, 'blur')"
                          @press-enter="eventHandle(col, row, 'pressEnter')" @change="(e)=>changeHandle(col, row, e.target.value)" >
                     </a-input>
@@ -115,6 +122,9 @@
                 })
             },
             delActionHandle (meta, row, submit) {
+                if(this.$utils.isBlank(row))
+                    return this.$msg.warningMessage("请选择要删除的记录");
+
                 meta.callBack(row).then(param => {
                     let resolve = this.$utils.getPromiseResolve(param)
                     if (row[this.tableConfig.rowKey]) {
@@ -174,23 +184,12 @@
                     }
                 }
             },
-            otherActionHandle (meta, row, submit) {
-                meta.callBack(row).then(param => {
-                    let resolve = this.$utils.getPromiseResolve(param)
-                    this.$http.post(meta['url'], row).then(resp => {
-                        this.$msg.defaultSuccessNotify(resolve, resp, this, row)
-                    }).catch(reason => {
-                        this.$msg.defaultFailNotify(resolve, reason, this, row)
-                    })
-                })
-
-            },
             eventHandle (col, row, type) {
                 let eventElement = col.event[type];
                 if (eventElement) eventElement(row[col.field], row, col)
             },
             changeHandle (col, row, val) {
-                this.$set(row, col.field, val);
+                // this.$set(row, col.field, val);
                 col.event.change(val, row, col)
             },
             disabledHandle (col, row) {

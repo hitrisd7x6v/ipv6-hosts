@@ -46,6 +46,24 @@ module.exports = {
             entry: 'src/views/login/login.js',
             template: 'src/views/login/login.html',
         },
+        403: { // 无权限页面
+            inlineSource: '.(css)$',
+            filename: 'views/403.html',
+            entry: 'src/views/error/403/403.js',
+            template: 'src/views/error/403/403.html',
+        },
+        404: { // 404页面
+            inlineSource: '.(css)$',
+            filename: 'views/404.html',
+            entry: 'src/views/error/404/404.js',
+            template: 'src/views/error/404/404.html',
+        },
+        500: { // 异常页面
+            inlineSource: '.(css)$',
+            filename: 'views/500.html',
+            entry: 'src/views/error/500/500.js',
+            template: 'src/views/error/500/500.html',
+        },
         ivzone: {
             entry: 'src/components/ivzone.js'
         }
@@ -60,6 +78,7 @@ module.exports = {
                     'mockjs': 'Mock',
                     'axios': 'axios',
                     'moment': 'moment',
+                    'tinymce/tinymce': 'tinymce',
                     "ant-design-vue": 'antd', // antd类库
                     // "ant-design-vue/lib/style": 'ants'
                 },
@@ -92,6 +111,48 @@ module.exports = {
                             }
                         ]
                     }),
+                    new scriptExtHtmlWebpackPlugin({
+                        inline: ['403.min.js'],
+                        custom: [
+                            {
+                                test: /.*/,
+                                attribute: "type",
+                                value: "text/javascript"
+                            }, {
+                                test: /.*/,
+                                attribute: "th:inline",
+                                value: "none"
+                            }
+                        ]
+                    }),
+                    new scriptExtHtmlWebpackPlugin({
+                        inline: ['404.min.js'],
+                        custom: [
+                            {
+                                test: /.*/,
+                                attribute: "type",
+                                value: "text/javascript"
+                            }, {
+                                test: /.*/,
+                                attribute: "th:inline",
+                                value: "none"
+                            }
+                        ]
+                    }),
+                    new scriptExtHtmlWebpackPlugin({
+                        inline: ['500.min.js'],
+                        custom: [
+                            {
+                                test: /.*/,
+                                attribute: "type",
+                                value: "text/javascript"
+                            }, {
+                                test: /.*/,
+                                attribute: "th:inline",
+                                value: "none"
+                            }
+                        ]
+                    }),
                     new HtmlWebpackInlineSourcePlugin()
                 ]
             }
@@ -107,7 +168,9 @@ module.exports = {
     // webpack配置
     chainWebpack: config => {
         if (process.env.NODE_ENV === 'production') {
-            config.optimization.delete('splitChunks')
+            config.plugins.delete('preload-index');
+            config.plugins.delete('prefetch-index');
+            config.optimization.delete('splitChunks');
             // 清除css，js版本号
             config.output.filename('umd/[name].min.js').end();
             config.output.chunkFilename('umd/[name].min.js').end();

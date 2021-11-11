@@ -22,10 +22,10 @@
                 <slot :name="meta.formSlot" :meta="meta" :model="model"></slot>
             </template>
         </ivz-default-form>
-        <ivz-drawer-detail ref="detailRef" :form-group="formGroup"
+        <ivz-drawer-detail ref="detailRef" :form-group="formGroup" :metas="metas"
             v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
             <template #detail="{model}">
-                <slot name="detail" :model="model"></slot>
+                <slot name="detail" :row="model"></slot>
             </template>
             <template v-for="meta in detailAliasMetas" #[meta.detailSlot]="{row}">
                 <slot :name="meta.detailSlot" :meta="meta" :row="row"></slot>
@@ -39,7 +39,6 @@
     import IvzDefaultList from '../list/IvzDefaultList'
     import IvzDefaultForm from '../form/IvzDefaultForm'
     import IvzDrawerDetail from "@/components/detail/IvzDrawerDetail";
-
     export default {
         name: 'IvzBasicView',
         mixins: [MixPageView],
