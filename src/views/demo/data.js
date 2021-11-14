@@ -135,7 +135,7 @@ Mock.mock(RegExp('/env'), 'get', (options) => {
             env: {
                 user: {avatar: '#'},
                 config: {
-                    main_url: {name: '主页名称', value: ''},
+                    main_url: {name: '主页名称', value: '/main'},
                     main_name: {name: '主页名称', value: '主页'},
                     work_name: {name: '首页名称', value: '工作台'},
                     sys_name: {name: '系统名称', value: '厦门由创源科技'}
@@ -161,8 +161,8 @@ Mock.mock(RegExp('/resources'), 'get', (options) => {
                                 // {id: 113, name: 'ModalView', icon: '', type: 'V', url: '/demo/modalView.html'},
                                 {id: 114, name: '可编辑表页', icon: 'iz-icon-page-edit', type: 'V'
                                     , url: '/demo/editView.html', children: getChildrenMenus()},
-                                {id: 116, name: 'diy视图页', type: 'V', url: '/demo/diyView.html/#/list'
-                                    , children: getChildrenMenus()},
+                                {id: 116, name: 'diy视图页', type: 'V', url: '/demo/diyView.html'
+                                    , children: getChildrenMenus(), status: 'hide'},
                                 // {id: 117, name: 'slot表单视图页', type: 'V', url: '/demo/diyFormView.html'},
                                 // {id: 118, name: 'slot表格视图页', type: 'V', url: '/demo/diyTableView.html'},
                             ]
@@ -283,15 +283,18 @@ export default {
     config: config,
     groupConfig: groupConfig,
     childrenMetas: [
-
-        {title: '其他组件', children: [
-                {field: 'productPic', title: 'upload', type: 'upload'
-                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}},
+        {title: '基础信息', children: [
+                {field: 'name', title: 'text', required: true, align: 'left'},
+                {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
+                {field: 'radio', title: 'radio', type: 'radio', dictType: 'spec'},
                 {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
                         call()
+                    }, sorter: function (a, b) {
+                        return a.price - b.price
                     }},
-                {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}}
-            ]},
+                {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'}
+            ]
+        },
         {title: '下拉框组件', children: [
                 {field: 'cat', title: 'select', type: 'select', data: productCat, required: true, min: 2,
                     config: {mode: 'multiple'}},
@@ -319,6 +322,15 @@ export default {
                         }}}
             ]
         },
+        {title: '其他组件', children: [
+                {field: 'obj.desc', title: '对象'},
+                {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
+                {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}},
+                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
+                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}},
+                {field: 'productPic', title: 'upload', type: 'upload'
+                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}},
+            ]},
         {field: 'editor', title: 'editor', type: 'editor', span: [3, 21, 23], default: '这是富文本编辑器', isTable: false},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],

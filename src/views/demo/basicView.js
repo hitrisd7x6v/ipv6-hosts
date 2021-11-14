@@ -40,6 +40,10 @@ new Vue({
     methods: {
         add() {
             this.$refs['ibv'].cancel();
+        },
+        jump(params) {
+            let model = params.row;
+            this.$nav({path: '/demo/drawerView.html', params: {name: model.name}, refresh: true});
         }
     }
 })

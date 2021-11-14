@@ -2,8 +2,8 @@
     <a-drawer ref="drawerRef" :width="drawerWidth" @close="drawerClose"
           :wrapStyle="{overflow: 'auto'}" :placement="placement"
           :closable="false" :mask-closable="maskClosable" :mask="mask"
-          wrap-class-name="ivz-drawer-form-wrap" :height="height"
-              :destroyOnClose="true" :visible="visible" class="ivz-form">
+          wrap-class-name="ivz-form" :height="height"
+              :destroyOnClose="true" :visible="visible">
         <a-row slot="title" type="flex" align="middle" justify="space-between" style="color: #000000">
             <a-col span="8">
                 <span @click="cancelHandle" class="ivz-icon-back">
@@ -15,7 +15,8 @@
             <a-col span="8" style="padding-right: 20px; text-align: right"></a-col>
         </a-row>
         <a-spin :tip="loadingText" :spinning="spinning">
-            <div v-for="group in formGroup" v-if="groupView(group)" :key="group.name" class="ivz-group" :style="group.style">
+            <div v-for="group in formGroup" v-if="groupView(group)" :key="group.name"
+                 class="ivz-group" :style="group.style">
                 <div v-if="group.name" class="ivz-group-head">
                     <label style="color: #6eb5ff; font-size: 14px; padding-left: 12px;">{{group.name}}</label>
                 </div>

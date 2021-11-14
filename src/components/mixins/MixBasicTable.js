@@ -128,12 +128,8 @@ export const MixBasicTable = {
             let selection = this.tableConfig.selection;
             return selection ? selection['selectedRowKeys'] : []
         },
-        change (pagination, filter, sorted) {
-            if (pagination) {
-                this.searchModel[this.tableConfig.pageNumField] = pagination.current;
-                this.searchModel[this.tableConfig.pageSizeField] = pagination.pageSize;
-                pagination.change({page: pagination, query: this.query, model: this.searchModel})
-            }
+        change (pagination, filter, sorted, type) {
+
         },
         initActionMates (actionMetas) {
             if (this.isBlank(actionMetas)) {

@@ -21,7 +21,7 @@ export const MixPageList = {
         }
     },
     created () {
-        // 获取当前页面的查询参数
+        // 获取当前页面的查询参数, 或者从其他页面跳转过来指定的参数
         this.searchModel = this.$page.getQueryParams();
     },
     mounted () {
@@ -68,9 +68,11 @@ export const MixPageList = {
             // 分页动作代理
             let pagination = this.tableConfig['pagination'];
             if(pagination) {
-                pagination.change = (args)=>{
+                pagination.onShowSizeChange = pagination.onChange = (page, pageSize)=>{
+                    this.searchModel[this.tableConfig.pageNumField] = page;
+                    this.searchModel[this.tableConfig.pageSizeField] = pageSize;
                     this.query();
-                }
+                };
             }
         },
         /**

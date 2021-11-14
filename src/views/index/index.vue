@@ -183,8 +183,19 @@ export default {
     },
     mounted () {
         let _this = this;
-        CacheApi.activityMenuRegister = (activityMenu) => {
+        CacheApi.activityMenuRegister = (activityMenu, refresh) => {
             _this.activityMenu = activityMenu;
+            _this.selectedKeys[0] = activityMenu['url'];
+            if(refresh) { // 如果当前的页面需要重新刷新
+                let iframes = window.document.getElementsByTagName("iframe");
+                for(let iframe of iframes) {
+                    if(iframe.id == activityMenu['url']) {
+                        iframe.contentWindow.location.reload();
+                        break;
+                    }
+                }
+
+            }
         }
     },
     methods: {
@@ -194,14 +205,12 @@ export default {
             return false
         },
         switchTask (url) { // 切换任务菜单处理
-            for(let item of this.taskBarData) {
-                if(item.url == url) {
-                    this.activityMenu = item;
-                    break;
-                }
+            if(this.isWorkMenu(url)) {
+                this.activityMenu = this.workMenu;
+                this.selectedKeys[0] = '';
+            } else {
+                this.openMenu(url);
             }
-
-            this.selectedKeys[0] = url;
         },
         closeTask (url, action) { // 关闭任务处理
             let prevTemp = null; // 用来保存当前关闭的上一个任务
@@ -212,9 +221,9 @@ export default {
                     if(!prevTemp) prevTemp = ori[index];
                 }
             });
+
             if(prevTemp) {
-                this.activityMenu = prevTemp;
-                this.selectedKeys[0] = prevTemp['url']
+                this.switchTask(prevTemp['url']);
             } else {
                 this.selectedKeys[0] = '';
             }
@@ -262,6 +271,9 @@ export default {
                 this.taskBarData.splice(position + 1, this.taskBarData.length - position - 1)
                 this.taskBarData.splice(start, Math.abs(position - start))
             }
+        },
+        isWorkMenu(url) {
+            return this.workMenu && this.workMenu.url == url;
         },
         breakpoint (broken) { // 响应式处理
             this.isCollapsed = broken

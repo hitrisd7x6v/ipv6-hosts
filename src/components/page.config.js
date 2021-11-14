@@ -133,9 +133,15 @@ export default {
         this.getViewRef().viewListPage();
     },
     /**
-     * 刷新数据
+     * 刷新页面数据
      */
-    freshen() {
+    freshen(params) {
+        this.getFormRef().freshenHandle();
+    },
+    /**
+     * 重置表单
+     */
+    reset() {
         this.getFormRef().freshenHandle();
     },
     /**
@@ -185,8 +191,12 @@ export default {
             Logger.debugLog("设置actionMeta options", `${action} 不存在`, options);
         }
     },
+
+    getIvzMetas() {
+        return this.menu['IvzMetas'];
+    },
     getQueryParams() {
-        return cacheApi.currentMenu['IvzQueryParams'];
+        return this.getIvzMetas()['QueryParams'];
     },
     getEditModel() { // 克隆一份
         let editModel = this.getStore("editModel");

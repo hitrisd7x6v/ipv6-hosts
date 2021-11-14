@@ -10,7 +10,7 @@
     <div id="app">
         <ivz-basic-view :metas="metas" :search-metas="searchMetas" :config="groupConfig" ref="ibv">
             <template #name_t="params">
-                <a-tag color="green">{{params.value}}</a-tag>
+                <a-tag color="green" @click="jump(params)">{{params.value}}</a-tag>
             </template>
             <template #mark_sale_f="params">
                 <span>{{params.meta['field']}}</span>

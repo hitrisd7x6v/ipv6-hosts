@@ -239,37 +239,19 @@ export default {
         })
     },
     /**
-     * 设置页(View)组件的默认配置
-     * 此配置只能页级别组件才能调用, 以View结尾的为页级别组件
-     * @param config
-     * @param vue
-     */
-    initPageDefaultConfig (config, vue) {
-        if (!config.form) vue.$set(config, 'form', {})
-        if (!config.table) vue.$set(config, 'table', {})
-        if (!config.search) vue.$set(config, 'search', {})
-
-        // 合并编辑表单默认配置项
-        this.initDefaultFormConfig(config.form, vue)
-        // 合并搜索表单默认配置项
-        this.initDefaultSearchConfig(config.search, vue)
-        // 合并表格默认配置项
-        this.initDefaultTableConfig(config.table, vue)
-    },
-    /**
      * 初始化编辑表单默认配置
      * @param formConfig
      * @param vue
      */
     initDefaultFormConfig (formConfig, vue) {
         if (!formConfig || formConfig.isInit) return
-        this.mergeDefaultObject(formConfig, cacheApi.defaultConfig.form, vue)
+        this.mergeDefaultObject(formConfig, cacheApi.pageDefaultConfig.form, vue)
     },
 
     initDefaultTableConfig (tableConfig, vue) {
         if (!tableConfig || tableConfig.isInit) return // 已经初始化直接返回
         if (Utils.isObject(tableConfig)) {
-            this.mergeDefaultObject(tableConfig, cacheApi.defaultConfig.table, vue)
+            this.mergeDefaultObject(tableConfig, cacheApi.pageDefaultConfig.table, vue)
             this.mergeDefaultPage(tableConfig['pagination'], vue)
             this.izDefaultTableSelection(tableConfig, vue)
         } else {
@@ -378,7 +360,9 @@ export default {
                 showQuickJumper: false, // 是否可以快速跳转至某页
                 showSizeChanger: true, // 显示
                 showTotal: (total, range) => `共${total}条 (${range})`,
-                pageSizeOptions: ['20', '30', '50', '100'] // 指定每页可以显示多少条
+                pageSizeOptions: ['20', '30', '50', '100'], // 指定每页可以显示多少条
+                onChange: null,
+                onShowSizeChange: null
             }, _this)
         }
     },

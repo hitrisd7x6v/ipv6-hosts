@@ -197,7 +197,7 @@ export default {
             indentSize: 16, // 树形表格子行缩进的长度
             pagination: false, // 默认不显示
             position: 'bottom', // 分页器显示的位置 'top' | 'bottom' | 'both'
-            delField: 'id', // 声明使用哪个字段作为删除字段
+            submitField: 'id', // 声明使用哪个字段作为删除字段
             queryField: 'rows', // 查询字段
             scroll: {x: 0, y: 0}, // 表格的宽高
             expandedRowKeys: null, // 可控制的展开行的key
@@ -233,53 +233,12 @@ export default {
             layout: 'horizontal'	// 描述布局	horizontal | vertical
         }
     },
-    defaultConfig: {
-        table: {
-            isInit: true, // 是否已经初始化
-            size: 'small', // 表的默认尺寸 default | middle | small
-            bordered: true, // 显示边框
-            indentSize: 16, // 树形表格子行缩进的长度
-            pagination: false, // 默认不显示
-            position: 'bottom', // 分页器显示的位置 'top' | 'bottom' | 'both'
-            queryField: 'rows', // 查询字段
-            scroll: {x: 0, y: 0}, // 表格的宽高
-            rowKey: "id", // 默认唯一标识
-            submitField: 'id', // 声明使用哪个字段作为删除字段
-            pageSizeField: 'size', // 页数字段
-            pageNumField: 'current', // 页码字段
-            expandedRowKeys: null, // 可控制的展开行的key
-            expandRowByClick: false, // 是否点击展开行
-            defaultExpandAllRows: true, // 默认展开所有行,
-            defaultExpandedRowKeys: null, // 要展开行的数组
-            childrenColumnName: 'children', // 树形表格的列名
-            rowClassName: () => 'iz-table-row', // 表格行列名
-            loadFinished: (data) => {},
-            mountedFinished: (tableVue) => {}, // 表格组件更新完成
-            locale: {filterConfirm: '确定', filterReset: '重置', emptyText: '暂无数据'}, //
-            expandedRowsChange: (expandedRowKeys) => {}
-        },
-        form: {
-            gutter: 2,
-            isInit: true, // 是否已经初始化
-            column: 1, // 编辑表单列, 如果type是default则为1 group则为3
-            type: 'default', // 表单布局类型 default || group
-            align: 'middle', // 垂直对齐方式
-            justify: 'start', // 水平对齐方式
-            formType: 'edit', // 编辑类型
-            bindType: null, // 数据绑定类型, both(双向绑定), void(不绑定)
-            editSource: 'local', // 编辑时的数据来源, local(本地) || remote(远程)
-            layout: 'horizontal',
-            hasFeedback: true, // 校验图标, 只有再需要有校验规则的时候才有
-            hideRequiredMark: false, // 是否隐藏必填标志
-            submitTip: '数据提交中...',
-            mountedFinished: (formVue) => {} // 表组件更新完成
-        }, // 编辑表单配置
-    },
     /* 获取菜单 */
     getResources () {
         return Http.get(Global.resourcesUrl).then((resp) => {
-            this.resolverMenuMap(resp['resources'])
-            return resp['resources']
+            let menus = resp['resources'];
+            this.resolverMenuMap(menus);
+            return menus
         }).catch(reason => {
             return reason
         })
@@ -292,12 +251,19 @@ export default {
         })
     },
     resolverMenuMap (menus) {
-        menus.forEach(menu => {
+        menus.forEach((menu, index) => {
             if (menu['type'] === 'V') {
                 let {uri} = Utils.resolverUrl(menu['url']);
                 menu['url'] = uri;
+
+                // 隐藏的菜单将不显示在前台
+                if(menu.status == 'hide')
+                    Utils.delArrayEle(menus, menu);
+
+                // 隐藏的菜单一样可以解析
                 this.urlMenuMap[menu.url] = menu;
             } else if (menu['children']) {
+
                 this.rootKeys.push(menu['id']);
                 this.resolverMenuMap(menu['children'])
             }
@@ -347,7 +313,8 @@ export default {
         });
         return pageActionMate;
     },
-    activityMenuRegister(activityMenu) {},
+    // 此页由首页提供
+    activityMenuRegister(activityMenu, refresh) {},
     /**
      * 再任务栏里面打开一个新菜单
      * @param location {url: '/article', name: '文章管理', params: {id: 1}}<br>
@@ -360,9 +327,10 @@ export default {
     openMenu (location) {
         if (!location) throw new Error('未指定要打开的页面地址');
 
-        let menu, query = {}, urlParams;
+        let menu, query = {}, urlParams, refresh = false;
         let target = '_blank', {uri} = Utils.resolverUrl(window.location.href);
         if (Utils.isObject(location)) {
+            refresh = location.refresh || false;
             target = location.target || target;
             let path = location.url || location.path;
             query = location.query || location.params || {};
@@ -419,8 +387,31 @@ export default {
         }
 
         Utils.assignProperty(query, urlParams);
-        this.currentMenu = Utils.assignProperty({IvzQueryParams: query}, menu);
-        this.activityMenuRegister(menu); // 此方法由首页实现
+        this.currentMenu = Utils.assignProperty({IvzMetas: {QueryParams: query, formUrl: this.currentMenu['url']}}, menu);
+        this.activityMenuRegister(menu, refresh); // 此方法由首页实现
+    },
+    /**
+     * 关闭当前并且返回原先菜单
+     */
+    closeAndBack() {
+        let currentUrl = this.currentMenu.url;
+        let ivzMetas = this.currentMenu['IvzMetas'];
+        if(ivzMetas.formUrl) {
+            let menu = this.urlMenuMap[ivzMetas.formUrl];
+            // 激活原先的菜单
+            if (this.taskBarData.includes(menu)) {
+                this.currentMenu = Utils.assignProperty({IvzMetas: {QueryParams: {}}}, menu);
+                this.activityMenuRegister(menu); // 此方法由首页实现
+            }
+        }
+
+        let currentMenu = this.urlMenuMap[currentUrl];
+        for(let item in this.taskBarData) {
+            if (currentMenu == item) {
+                this.taskBarData.splice(index, 1);
+                break;
+            }
+        }
     },
     /* 模态框插入的位置 */
     modalContainer () {

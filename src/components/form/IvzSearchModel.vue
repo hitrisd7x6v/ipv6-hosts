@@ -106,7 +106,9 @@
         },
         created () {
             this.model = this.searchModel || {};
-            this.$utils.assignVueProperty(this.model, this.oriModel, this);
+
+            // 这边只能合并, searchModel有可能包含从其他页面跳转过来的参数, 不能覆盖
+            this.$utils.mergeObject(this.model, this.oriModel);
         },
         methods: {
             pressEnter (col) {
