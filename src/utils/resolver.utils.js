@@ -490,13 +490,15 @@ export default {
         }
     },
     optionsLabelFormatter(val, model, meta) {
-        if(!val) return '';
+        if(val == null) return '';
+
         if(Utils.isArray(val)) {
             return val.map(value=>{
                 let option = meta.DataMap[value];
                 return option != null ? option['label'] : '';
             });
         } else {
+
             let option = meta.DataMap[val];
             return option != null ? option['label'] : '';
         }

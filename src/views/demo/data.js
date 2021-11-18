@@ -3,10 +3,14 @@ import Mock from 'mockjs'
 import '@/components/ivzone.css'
 import Ivzone from '@/components/ivzone'
 import Utils from '@/utils/basic.utils'
-import Logger from '@/utils/logger.utils' // 缓存
+import Logger from '@/utils/logger.utils'
+import boolean from "less/lib/less/functions/boolean"; // 缓存
 
 Vue.use(Ivzone);
-
+const RadioData = [
+    {label: '是', value: true},
+    {label: '否', value: false},
+]
 const productCat = [
     {label: '果汁', value: 1}, {label: '茶', value: 3},
      {label: '母婴产品', value: 4}, {label: '电子产品', value: 5},
@@ -78,6 +82,7 @@ let dataSource = Mock.mock({
             'rate|1-5': 3,
             'id|+1': 1,
             'spec': ['0'],
+            'radio': '@boolean',
             'obj': {desc: '格式a.b'},
             'list': [{desc: '格式list[0].desc', gg: '格式list[0].gg'}],
             'range|1-100': 3,
@@ -267,16 +272,13 @@ Mock.mock(RegExp('/test/stree.*'), 'get', (options) => {
 /* 测试数据 */
 export default {
     mates: [
-        {field: 'name', title: '产品名称', type: 'text', required: true, align: 'left'},
-        {field: 'price', title: '产品价格', type: 'text', editable: true},
-        {field: 'spec', title: '规格', type: 'checkbox', data: spec, editable: true, width: 150},
-        {field: 'cat', title: '类别', type: 'select', data: productCat, editable: true
+        {field: 'name', title: 'text', type: 'text', required: true, align: 'left'},
+        {field: 'price', title: 'number', type: 'number', editable: true},
+        {field: 'spec', title: 'checkbox', type: 'checkbox', data: spec, editable: true, width: 150},
+        {field: 'radio', title: 'radio', type: 'radio', data: RadioData, editable: true, width: 150},
+        {field: 'cat', title: 'select', type: 'select', data: productCat, editable: true
             , config: {showSearch: true}},
-        {field: 'type', title: '类型', type: 'radio', data: productType},
-        {field: 'range', title: '下单数量', type: 'slider'},
-        {field: 'markSale', title: '市场价', type: 'number', editable: true},
-        {field: 'ext.desc', title: '说明'},
-        {field: 'createTime', title: '上架时间', type: 'date'},
+        {field: 'createTime', title: 'data', type: 'date'},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],
     data: dataSource,
@@ -286,7 +288,7 @@ export default {
         {title: '基础信息', children: [
                 {field: 'name', title: 'text', required: true, align: 'left'},
                 {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
-                {field: 'radio', title: 'radio', type: 'radio', dictType: 'spec'},
+                {field: 'radio', title: 'radio', type: 'radio', data: RadioData},
                 {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
                         call()
                     }, sorter: function (a, b) {
@@ -338,7 +340,7 @@ export default {
         {title: '基础信息', metas: [
                 {field: 'name', title: 'text', required: true, align: 'left'},
                 {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
-                {field: 'radio', title: 'radio', type: 'radio', dictType: 'spec'},
+                {field: 'radio', title: 'radio', type: 'radio', data: RadioData},
                 {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
                 {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}},
                 {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'}
