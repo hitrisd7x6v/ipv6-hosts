@@ -48,19 +48,19 @@ module.exports = {
         },
         403: { // 无权限页面
             inlineSource: '.(css)$',
-            filename: 'views/403.html',
+            filename: 'views/error/403.html',
             entry: 'src/views/error/403/403.js',
             template: 'src/views/error/403/403.html',
         },
         404: { // 404页面
             inlineSource: '.(css)$',
-            filename: 'views/404.html',
+            filename: 'views/error/404.html',
             entry: 'src/views/error/404/404.js',
             template: 'src/views/error/404/404.html',
         },
         500: { // 异常页面
             inlineSource: '.(css)$',
-            filename: 'views/500.html',
+            filename: 'views/error/500.html',
             entry: 'src/views/error/500/500.js',
             template: 'src/views/error/500/500.html',
         },
@@ -83,34 +83,6 @@ module.exports = {
                     // "ant-design-vue/lib/style": 'ants'
                 },
                 plugins: [
-                    new scriptExtHtmlWebpackPlugin({
-                        inline: ['index.min.js', 'index.min.css'],
-                        custom: [
-                            {
-                                test: /.*/,
-                                attribute: "type",
-                                value: "text/javascript"
-                            }, {
-                                test: /.*/,
-                                attribute: "th:inline",
-                                value: "none"
-                            }
-                        ]
-                    }),
-                    new scriptExtHtmlWebpackPlugin({
-                        inline: ['login.min.js', 'login.min.css'],
-                        custom: [
-                            {
-                                test: /.*/,
-                                attribute: "type",
-                                value: "text/javascript"
-                            }, {
-                                test: /.*/,
-                                attribute: "th:inline",
-                                value: "none"
-                            }
-                        ]
-                    }),
                     new scriptExtHtmlWebpackPlugin({
                         inline: ['403.min.js'],
                         custom: [
@@ -168,8 +140,14 @@ module.exports = {
     // webpack配置
     chainWebpack: config => {
         if (process.env.NODE_ENV === 'production') {
-            config.plugins.delete('preload-index');
-            config.plugins.delete('prefetch-index');
+            for(let item of [403, 404, 500, 'index', 'login', 'ivzone']) {
+                config.plugins.delete('preload-'+item);
+                config.plugins.delete('prefetch-'+item);
+            }
+            config.plugins.delete('html-ivzone');
+            config.plugins.delete('html-index');
+            config.plugins.delete('html-login');
+
             config.optimization.delete('splitChunks');
             // 清除css，js版本号
             config.output.filename('umd/[name].min.js').end();

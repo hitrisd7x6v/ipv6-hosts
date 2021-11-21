@@ -191,7 +191,12 @@ export default {
             Logger.debugLog("设置actionMeta options", `${action} 不存在`, options);
         }
     },
-
+    /**
+     * 关闭当前页面, 并且返回
+     */
+    closeAndBack() {
+        cacheApi.closeAndBack();
+    },
     getIvzMetas() {
         return this.menu['IvzMetas'];
     },

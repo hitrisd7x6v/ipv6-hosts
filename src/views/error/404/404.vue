@@ -7,9 +7,11 @@
 </template>
 
 <script>
-    import Utils from '@/utils/basic.utils' // 工具库
+    import Utils from '@/utils/basic.utils'
+    import {MixError} from "@/views/error/MixError"; // 工具库
     export default {
     name: '404',
+    mixins:  [MixError],
     components: {},
     data () {
         return {
@@ -23,10 +25,5 @@
     mounted () {
 
     },
-    methods: {
-        back() {
-            history.go(-1);
-        }
-    }
 }
 </script>

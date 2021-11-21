@@ -396,20 +396,23 @@ export default {
     closeAndBack() {
         let currentUrl = this.currentMenu.url;
         let ivzMetas = this.currentMenu['IvzMetas'];
-        if(ivzMetas.formUrl) {
+
+        if(ivzMetas && ivzMetas.formUrl) {
             let menu = this.urlMenuMap[ivzMetas.formUrl];
             // 激活原先的菜单
             if (this.taskBarData.includes(menu)) {
                 this.currentMenu = Utils.assignProperty({IvzMetas: {QueryParams: {}}}, menu);
                 this.activityMenuRegister(menu); // 此方法由首页实现
             }
-        }
 
-        let currentMenu = this.urlMenuMap[currentUrl];
-        for(let item in this.taskBarData) {
-            if (currentMenu == item) {
-                this.taskBarData.splice(index, 1);
-                break;
+            // 关闭当前菜单
+            let currentMenu = this.urlMenuMap[currentUrl];
+            for(let index in this.taskBarData) {
+                let item = this.taskBarData[index];
+                if (currentMenu == item) {
+                    this.taskBarData.splice(index, 1);
+                    break;
+                }
             }
         }
     },

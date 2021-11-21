@@ -7,8 +7,11 @@
 </template>
 
 <script>
+    import {MixError} from "@/views/error/MixError";
+
     export default {
         name: '500',
+        mixins:  [MixError],
         components: {},
         data () {
             return {
@@ -21,11 +24,6 @@
         },
         mounted () {
 
-        },
-        methods: {
-            back() {
-                history.go(-1);
-            }
         }
     }
 </script>
