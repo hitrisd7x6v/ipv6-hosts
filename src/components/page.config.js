@@ -175,6 +175,9 @@ export default {
         }
         return this.pageActionMetas;
     },
+    getActionMetasByUrl(url) {
+        return cacheApi.getActionMetasByUrl(url);
+    },
     addActionMeta(action, options) {
         let actionMate = this.getActionMetas()[action];
         if(!actionMate) {

@@ -307,7 +307,7 @@ const Utils = {
      * @param _this
      */
     mergeObject (ori, target) {
-        if (!ori || !target) return
+        if (!ori || !target) return;
 
         Object.keys(target).forEach((item) => {
             if (ori[item] === undefined) { // 源不存在直接合并
@@ -336,6 +336,9 @@ const Utils = {
                 }
             }
         })
+    },
+    mergeVueObject(ori, target, vue) {
+
     },
     isIe() {
         let userAgent = navigator.userAgent; //取得浏览器的userAgent字符串

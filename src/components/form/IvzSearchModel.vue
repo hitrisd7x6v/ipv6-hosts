@@ -13,7 +13,7 @@
                                   :disabled="disabledHandle(col)" @search="(val) => col.event.search(val, model)"
                                   @select="(val, option) => col.event.select({value: val, option: option}, model)"
                                   @deselect="(val, option) => col.event.deselect({value: val, option: option}, model)"
-                                  @inputKeydown="col.event.inputKeydown(model)">
+                                  @inputKeydown="col.event.inputKeydown(model)" @change="(val)=>changeHandle(val, col)">
                             <a-select-option v-for="option in col.data" :key="option.value"
                                          :disabled="option.disabled" class="ivz-option-class">
                                 {{option.label}}
@@ -29,64 +29,76 @@
                                :filterTreeNode="col.config.filterTreeNode" :treeCheckStrictly="col.config.treeCheckStrictly"
                                :blur="col.event.blur" :focus="col.event.focus" @treeExpand="(val) => {col.event.treeExpand(val, model)}"
                                @search="(val) => {col.event.search(val, model)}" :loadData="col.config.loadData"
-                               @select="(val, node, extra) => col.event.select({value: val, node: node, extra: extra}, model)">
+                               @select="(val, node, extra) => col.event.select({value: val, node: node, extra: extra}, model)"
+                                       @change="(val)=>changeHandle(val, col)">
                         </a-tree-select>
                         <a-radio-group v-else-if="col.type=='radio'" v-model="model[col.field]" :options="col.data"
-                               :blur="col.event.blur" :focus="col.event.focus" :name="col.field" :disabled="disabledHandle(col)">
+                               :blur="col.event.blur" :focus="col.event.focus" :name="col.field"
+                               :disabled="disabledHandle(col)" @change="(val)=>changeHandle(val, col)">
                         </a-radio-group>
                         <a-switch v-else-if="col.type=='switch'" v-model="model[col.field]" :size="formSize"
                               :checkedChildren="col.config.checkedChildren" :unCheckedChildren="col.config.unCheckedChildren"
                               :loading="col.config.loading" style="margin-bottom:5px" :disabled="disabledHandle(col)"
-                              :blur="col.event.blur" :focus="col.event.focus" @click="col.event.click">
+                              :blur="col.event.blur" :focus="col.event.focus" @click="col.event.click"
+                                  @change="(val)=>changeHandle(val, col)">
                         </a-switch>
                         <a-cascader v-else-if="col.type=='cascade'" :options="col.data" changeOnSelect
                                 v-model="model[col.field]" :loadData="loadData" :placeholder="col.placeholder"
-                                :blur="col.event.blur" :focus="col.event.focus" :disabled="disabledHandle(col)">
+                                :blur="col.event.blur" :focus="col.event.focus" :disabled="disabledHandle(col)"
+                                    @change="(val)=>changeHandle(val, col)">
                         </a-cascader>
                         <a-checkbox-group v-else-if="col.type=='checkbox'" :options="col.data" :blur="col.event.blur"
-                                :disabled="disabledHandle(col)" :focus="col.event.focus" v-model="model[col.field]">
+                                :disabled="disabledHandle(col)" :focus="col.event.focus"
+                                v-model="model[col.field]" @change="(val)=>changeHandle(val, col)">
                         </a-checkbox-group>
                         <a-date-picker v-else-if="col.type=='date'" :size="formSize" v-model="model[col.field]"
                                :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
                                :disabled-date="col.config.disabledDate" style="width: 100%" :allowClear="col.clear"
                                :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
-                               @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
+                               @openChange="(status) => {col.event.openChange(status, model)}"
+                               :disabled="disabledHandle(col)" @change="(val)=>changeHandle(val, col)"
                                @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
                         </a-date-picker>
                         <a-month-picker v-else-if="col.type=='month'" :size="formSize" v-model="model[col.field]"
                                 :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
                                 :disabled-date="col.config.disabledDate" style="width: 100%" :allowClear="col.clear"
                                 :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
-                                @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
+                                @openChange="(status) => {col.event.openChange(status, model)}"
+                                :disabled="disabledHandle(col)" @change="(val)=>changeHandle(val, col)"
                                 @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
                         </a-month-picker>
                         <a-week-picker v-else-if="col.type=='week'" :size="formSize" v-model="model[col.field]"
                                :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
                                :disabled-date="col.config.disabledDate" style="width: 100%" :disabled="disabledHandle(col)"
                                :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
-                               @openChange="(status) => {col.event.openChange(status, model)}" :allowClear="col.clear"
+                               @openChange="(status) => {col.event.openChange(status, model)}"
+                               :allowClear="col.clear" @change="(val)=>changeHandle(val, col)"
                                @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
                         </a-week-picker>
                         <a-range-picker v-else-if="col.type=='dateRange'" :size="formSize" v-model="model[col.field]"
                                 :format="col.config.format" :show-time="col.config.showTime" :ranges="col.config.ranges"
                                 :disabled-date="col.config.disabledDate" style="width: 100%" :allowClear="col.clear"
                                 :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
-                                @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
+                                @openChange="(status) => {col.event.openChange(status, model)}"
+                                :disabled="disabledHandle(col)" @change="(val)=>changeHandle(val, col)"
                                 @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}">
                         </a-range-picker>
                         <a-input-number v-else-if="col.type == 'number'" v-model="model[col.field]" :min="col.config.min"
                                  :disabled="disabledHandle(col)" :max="col.config.max" :step="col.config.step"
-                                :formatter="col.formatter" :precision="col.config.precision" :parser="col.config.parser"
+                                :formatter="col.formatter" :precision="col.config.precision"
+                                :parser="col.config.parser" @change="(val)=>changeHandle(val, col)"
                                 :size="formSize" style="width: 100%" :blur="col.event.blur" :focus="col.event.focus">
                         </a-input-number>
                         <a-rate v-else-if="col.type == 'rate'" v-model="model[col.field]" :allowClear="col.clear"
                                 :count="col.config.count" :allowHalf="col.config.allowHalf" :disabled="disabledHandle(col)"
                                 :tooltips="col.config.tooltips" @keydown="(e) => {col.event.keydown(e, model)}"
-                                @hoverChange="(val) => col.event.hoverChange(val, model)" :blur="col.event.blur" :focus="col.event.focus">
+                                @hoverChange="(val) => col.event.hoverChange(val, model)" :blur="col.event.blur"
+                                :focus="col.event.focus" @change="(val)=>changeHandle(val, col)">
                         </a-rate>
                         <a-input v-else v-model="model[col.field]" :type="col.type" :size="formSize"
                                  :prefix="col.prefix" :suffix="col.suffix" :disabled="disabledHandle(col)"
-                                 :placeholder="col.placeholder" @pressEnter="pressEnter(col)" :allowClear="col.clear">
+                                 :placeholder="col.placeholder" @pressEnter="pressEnter(col)"
+                                 :allowClear="col.clear" @change="(val)=>changeHandle(val, col)">
                         </a-input>
                     </a-form-model-item>
                 </a-col>
@@ -105,10 +117,14 @@
             searchModel: {type: Object, default: () => {}}
         },
         created () {
-            this.model = this.searchModel || {};
-
-            // 这边只能合并, searchModel有可能包含从其他页面跳转过来的参数, 不能覆盖
-            this.$utils.mergeObject(this.model, this.oriModel);
+            // 合并搜索字段到searchModel
+            // 这里不能直接覆盖searchModel
+            Object.keys(this.oriModel).forEach(key=>{
+                if(!this.searchModel[key]) {
+                    this.$set(this.searchModel, key, this.oriModel[key]);
+                }
+            });
+            this.model = this.searchModel;
         },
         methods: {
             pressEnter (col) {

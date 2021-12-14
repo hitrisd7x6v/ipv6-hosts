@@ -251,23 +251,21 @@ export default {
         })
     },
     resolverMenuMap (menus) {
-        menus.forEach((menu, index) => {
+        for(let i=0; i<menus.length; i++) {
+            let menu = menus[i];
             if (menu['type'] === 'V') {
-                let {uri} = Utils.resolverUrl(menu['url']);
-                menu['url'] = uri;
+                menu['url'] = Utils.resolverUrl(menu['url'])['uri'];
 
-                // 隐藏的菜单将不显示在前台
-                if(menu.status == 'hide')
-                    Utils.delArrayEle(menus, menu);
+                if(menu.status == 'hide') {
+                    menus.splice(i, 1); i--;
+                }
 
-                // 隐藏的菜单一样可以解析
                 this.urlMenuMap[menu.url] = menu;
             } else if (menu['children']) {
-
                 this.rootKeys.push(menu['id']);
                 this.resolverMenuMap(menu['children'])
             }
-        })
+        }
     },
     getCurrentMenu() {
         return Utils.clone(this.currentMenu);
@@ -282,13 +280,29 @@ export default {
         return Object.assign({}, actionMate, option)
     },
     getActionMates () {
-        let pageActionMate = {};
         let points = this.currentMenu['children']; // 返回当前菜单的功能点
         if (Utils.isBlank(points)) {
             Logger.warningLog('当前视图功能点不存在', '新增要操作的功能点', this.currentMenu);
             return {}
         }
+        return this.resolverActionMetas(points);
+    },
+    getActionMetasByUrl (url) {
+        let menu = this.urlMenuMap[url];
+        if(null == menu) {
+            Logger.warningLog('当前url对应的菜单不存在', '--', url);
+            return {}
+        }
 
+        let points = menu['children'];
+        if (Utils.isBlank(points)) {
+            Logger.warningLog('当前url对应的功能点不存在', '新增要操作的功能点', url);
+            return {}
+        }
+        return this.resolverActionMetas(points);
+    },
+    resolverActionMetas(points) {
+        let pageActionMate = {};
         points.forEach(item => {
             let action = item['permType'];
             if (!action) {
@@ -311,6 +325,7 @@ export default {
                 pageActionMate[action] = operaMate
             }
         });
+
         return pageActionMate;
     },
     // 此页由首页提供
@@ -329,6 +344,7 @@ export default {
 
         let menu, query = {}, urlParams, refresh = false;
         let target = '_blank', {uri} = Utils.resolverUrl(window.location.href);
+
         if (Utils.isObject(location)) {
             refresh = location.refresh || false;
             target = location.target || target;
@@ -346,9 +362,7 @@ export default {
                 urlParams = params;
                 menu = this.urlMenuMap[uri];
                 if (!menu) {
-                    Logger.warningLog("打开页面", `不存在此功能或无权限：${uri}`);
-                    window.location.href = location;
-                    return;
+                    return Logger.warningLog("打开页面", `不存在此功能或无权限：${uri}`);
                 }
             }
         } else { // 如果location是字符串, 说明是系统菜单
@@ -356,9 +370,7 @@ export default {
             urlParams = params;
             menu = this.urlMenuMap[uri];
             if (!menu) {
-                Logger.warningLog("打开页面", `不存在此功能或无权限：${uri}`);
-                window.location.href = location;
-                return;
+                return Logger.warningLog("打开页面", `不存在此功能或无权限：${uri}`);
             }
         }
 
@@ -387,7 +399,8 @@ export default {
         }
 
         Utils.assignProperty(query, urlParams);
-        this.currentMenu = Utils.assignProperty({IvzMetas: {QueryParams: query, formUrl: this.currentMenu['url']}}, menu);
+        this.currentMenu = Utils.assignProperty({IvzMetas:
+                {QueryParams: query, formUrl: this.currentMenu['url']}}, menu);
         this.activityMenuRegister(menu, refresh); // 此方法由首页实现
     },
     /**
