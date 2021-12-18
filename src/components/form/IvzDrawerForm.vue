@@ -2,7 +2,7 @@
     <a-drawer ref="drawerRef" :width="drawerWidth" @close="drawerClose"
           :wrapStyle="{overflow: 'auto'}" :placement="placement"
           :closable="false" :mask-closable="maskClosable" :mask="mask"
-          wrap-class-name="ivz-form" :height="height"
+          wrap-class-name="ivz-form ivz-drawer-form-wrap" :height="height"
               :destroyOnClose="true" :visible="visible">
         <a-row slot="title" type="flex" align="middle" justify="space-between" style="color: #000000">
             <a-col span="8">

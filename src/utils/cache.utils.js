@@ -198,6 +198,7 @@ export default {
             pagination: false, // 默认不显示
             position: 'bottom', // 分页器显示的位置 'top' | 'bottom' | 'both'
             submitField: 'id', // 声明使用哪个字段作为删除字段
+            submitType: 'default', // 提交的数据类型 可选 entity
             queryField: 'rows', // 查询字段
             scroll: {x: 0, y: 0}, // 表格的宽高
             expandedRowKeys: null, // 可控制的展开行的key

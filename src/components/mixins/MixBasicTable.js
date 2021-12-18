@@ -185,6 +185,10 @@ export const MixBasicTable = {
                 let resolve = this.$utils.getPromiseResolve(resp)
                 let tipTitle = resolve.tipTitle;
                 let tipContent = resolve.tipContent;
+                // 提交数据实体
+                if(this.tableConfig.submitType == 'entity')
+                    submit = selectionRows;
+
                 if (tipTitle && tipContent) { // 需要提交确认
                     this.$msg.confirm(tipTitle, tipContent).then(() => {
                         this.submitData(mate, resolve, submit)
