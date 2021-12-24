@@ -51,7 +51,9 @@ export default {
     mixins: [MixBasicTable],
     props: {},
     data () {
-        return {}
+        return {
+            die: ['title', 'footer']
+        }
     },
     created () { },
     methods: {

@@ -12,7 +12,7 @@
             </template>
         </ivz-edit-list>
         <ivz-drawer-detail ref="detailRef" :form-group="formGroup" :metas="metas"
-                           v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
+            v-if="detailVisible" :form-config="formConfig" :detail-config="detailConfig">
             <template #detail="{model}">
                 <slot name="detail" :row="model"></slot>
             </template>

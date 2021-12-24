@@ -21,11 +21,10 @@
                             {{option.label}}
                         </a-select-option>
                     </a-select>
-                    <a-switch v-else-if="col.type=='switch'" :defaultValue="col.default" v-model="row[col.field]"
+                    <a-switch v-else-if="col.type=='switch'" :defaultChecked="col.default" @click="col.event.click"
                       :checkedChildren="col.config.checkedChildren" :unCheckedChildren="col.config.unCheckedChildren"
-                      :loading="col.config.loading" style="margin-bottom:5px" :disabled="disabledHandle(col, row)"
-                      @change="(val)=>changeHandle(col, row, val)" :blur="col.event.blur" :focus="col.event.focus"
-                      @click="col.event.click">
+                      :loading="col.config.loading" :disabled="disabledHandle(col, row)" v-model="row[col.field]"
+                      @change="(val)=>changeHandle(col, row, val)" :blur="col.event.blur" :focus="col.event.focus">
                     </a-switch>
                     <a-radio-group v-else-if="col.type=='radio'" :options="col.data" :name="col.field" :disabled="col.disabled"
                        @change="(e)=>changeHandle(col, row, e)" v-model="row[col.field]" :default-value="col.default"></a-radio-group>
@@ -35,8 +34,7 @@
                         :disabled="disabledHandle(col, row)" :blur="eventHandle(col, row, 'blur')" style="width: 100%"
                         :formatter="col.formatter" :precision="col.config.precision" :parser="col.config.parser" v-model="row[col.field]"
                         @change="(val)=>changeHandle(col, row, val)" :focus="eventHandle(col, row, 'focus')"></a-input-number>
-                    <a-input v-else :type="col.type" :placeholder="col.placeholder"
-                             v-model="row[col.field]" :disabled="disabledHandle(col, row)"
+                    <a-input v-else :type="col.type" :placeholder="col.placeholder" v-model="row[col.field]" :disabled="disabledHandle(col, row)"
                          :prefix="col.config.prefix" :suffix="col.config.suffix" :blur="()=>eventHandle(col, row, 'blur')"
                          @press-enter="eventHandle(col, row, 'pressEnter')" @change="(e)=>changeHandle(col, row, e.target.value)" >
                     </a-input>
@@ -173,13 +171,13 @@
                 let rowKey = this.tableConfig.rowKey;
                 if (this.isNotBlank(this.backEditModel) && this.backEditModel[rowKey] === row[rowKey]) {
                     if (!this.backEditModel[rowKey]) { // 取消新增的行
-                        this.backEditModel = {} // 重置对象
+                        this.backEditModel = {}; // 重置对象
                         this.$utils.delArrayEle(this.dataSource, row, null)
                     } else { // 取消编辑的行
-                        delete row['EditableFlag']
+                        delete row['EditableFlag'];
                         // 还原当前数据备份
-                        this.$utils.assignVueProperty(row, this.backEditModel, this)
-                        this.backEditModel = {} // 重置对象
+                        this.$utils.assignVueProperty(row, this.backEditModel, this);
+                        this.backEditModel = {}; // 重置对象
                         this.$refs['tableRef'].$forceUpdate() // 强制更新组件
                     }
                 }

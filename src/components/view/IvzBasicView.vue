@@ -3,8 +3,14 @@
         <ivz-default-list ref="listRef" :table-metas="tableMetas" :table-config="tableConfig"
               :action-metas="actionMetas" :search-metas="searchMetas" :search-config="searchConfig"
               :data="data" v-show="listView" :table-alias-metas="tableAliasMetas">
-            <template #search>
-                <slot name="search"></slot>
+            <template #search="{model}">
+                <slot name="search" :model="model"></slot>
+            </template>
+            <template #header="{data}">
+                <slot name="header" :data="data"></slot>
+            </template>
+            <template #footer="{data}">
+                <slot name="footer" :data="data"></slot>
             </template>
             <template #action="{row, index}">
                 <slot name="action" :row="row" :index="index"></slot>

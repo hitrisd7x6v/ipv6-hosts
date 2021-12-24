@@ -31,11 +31,9 @@
             </li>
             <li style="clear: both"></li>
         </ul>
-        <slot name="search">
-            <ivz-search-model class="ivz-search-bottom" :search-model="searchModel" ref="searchRef"
-                 :metas="searchMetas" :form-config="searchConfig" @pressEnter="pressEnter">
-            </ivz-search-model>
-        </slot>
+        <ivz-search-model class="ivz-search-bottom" :search-model="searchModel" ref="searchRef"
+             :metas="searchMetas" :form-config="searchConfig" @pressEnter="pressEnter">
+        </ivz-search-model>
     </div>
 </template>
 

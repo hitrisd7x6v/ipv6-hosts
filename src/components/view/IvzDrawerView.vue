@@ -4,6 +4,9 @@
         <ivz-default-list ref="listRef" :table-metas="tableMetas" :table-config="tableConfig"
              :data="data" :action-metas="actionMetas" :search-metas="searchMetas"
               :search-config="searchConfig" :table-alias-metas="tableAliasMetas">
+            <template #search="{model}">
+                <slot name="search" :model="model"></slot>
+            </template>
             <template #action="params">
                 <slot name="action" :row="params.row" :index="params.index"></slot>
             </template>

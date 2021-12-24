@@ -21,6 +21,10 @@ export default {
         let metaConfig = col['config'];
         return !val ? '' : moment(val).format(metaConfig['viewFormat'])
     },
+    switchFormatter(val, row, col) {
+        if(val == undefined) return '';
+        return val == true ? col.config.checkedChildren : col.config.unCheckedChildren;
+    },
     // 模态框默认可选项
     modalOptions: {
         keyboard: true, // 是否支持键盘esc关闭
@@ -648,6 +652,9 @@ export default {
             if (!mate.formatter) _this.$set(mate, 'formatter', this.dateFormatter);
             if (!metaConfig['format']) _this.$set(metaConfig, 'format', this.dateFormat); // 日期 表单显示格式
             if (!metaConfig['viewFormat']) _this.$set(metaConfig, 'viewFormat', this.viewFormat) // 日期 表格显示格式
+        }
+        if(mate.type == 'switch' && !mate.formatter) {
+            _this.$set(mate, 'formatter', this.switchFormatter)
         }
         mate['resolveType'] = mate['resolveType'] ? mate['resolveType'] + '1' : '1' // 说明此字段已经完成common解析
     },

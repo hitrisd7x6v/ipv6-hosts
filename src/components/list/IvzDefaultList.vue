@@ -2,10 +2,19 @@
 <template>
     <a-locale-provider :locale="zhCN">
         <div class="ivz-list ivz-default-list">
-            <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
-                :action-metas="actionMetas" :search-metas="searchMetas"></ivz-page-search>
+            <slot name="search" :model="searchModel">
+                <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
+                    :action-metas="actionMetas" :search-metas="searchMetas">
+                </ivz-page-search>
+            </slot>
             <ivz-basic-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
                     :data="data" :search-model="searchModel" :action-metas="actionMetas" @heightChange="setTableHeight">
+                <template #header="{data}">
+                    <slot name="header" :data="data"></slot>
+                </template>
+                <template #footer="{data}">
+                    <slot name="footer" :data="data"></slot>
+                </template>
                 <template #action="{row, index}">
                     <slot name="action" :row="row" :index="index"></slot>
                 </template>

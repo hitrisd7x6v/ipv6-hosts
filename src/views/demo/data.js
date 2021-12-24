@@ -83,6 +83,7 @@ let dataSource = Mock.mock({
             'id|+1': 1,
             'spec': ['0'],
             'radio': '@boolean',
+            'switch': '@boolean',
             'obj': {desc: '格式a.b'},
             'list': [{desc: '格式list[0].desc', gg: '格式list[0].gg'}],
             'range|1-100': 3,
@@ -276,6 +277,8 @@ export default {
         {field: 'price', title: 'number', type: 'number', editable: true},
         {field: 'spec', title: 'checkbox', type: 'checkbox', data: spec, editable: true, width: 150},
         {field: 'radio', title: 'radio', type: 'radio', data: RadioData, editable: true, width: 150},
+        {field: 'switch', title: 'switch', type: 'switch', editable: true
+            , config: {checkedChildren: '是', unCheckedChildren: '否'}},
         {field: 'cat', title: 'select', type: 'select', data: productCat, editable: true
             , config: {showSearch: true}},
         {field: 'createTime', title: 'data', type: 'date'},
@@ -289,6 +292,7 @@ export default {
                 {field: 'name', title: 'text', required: true, align: 'left'},
                 {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
                 {field: 'radio', title: 'radio', type: 'radio', data: RadioData},
+                {field: 'switch', title: 'switch', type: 'switch'},
                 {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
                         call()
                     }, sorter: function (a, b) {

@@ -105,7 +105,7 @@ export default {
         tree: {checkable: true, checkedKeys: [], expandedKeys: [], selectedKeys: []
             , valueField: 'id', labelField: 'name', queryField: 'rows'
             , replaceFields: {title: 'label', key: 'value', children: 'children'}},
-        switch: {},
+        switch: {checkedChildren: '', unCheckedChildren: ''},
         number: {},
         slider: {},
         cascade: {},
