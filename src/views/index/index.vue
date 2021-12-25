@@ -1,7 +1,7 @@
 <template>
     <a-layout style="height: 100%" class="ivz-index-layout">
         <a-layout-sider :trigger="null" collapsible :width="232" @breakpoint="breakpoint"
-              :collapsed="isCollapsed" :collapsedWidth="72" breakpoint="lg">
+              :collapsed="isCollapsed" :collapsedWidth="72" breakpoint="lg" :class="'ivz-theme-'+theme">
           <div class="ivz-sider-menu">
               <div class="ivz-avatar" @click="()=> isCollapsed = !isCollapsed">
                   <div class="ivz-avatar-center">
@@ -12,7 +12,7 @@
                   </div>
               </div>
               <a-menu @select="selectMenu" mode="inline" :inline-collapsed="isCollapsed"
-                      :openKeys="openKeys" @openChange="openChange" :selectedKeys="selectedKeys">
+                      :openKeys="openKeys" :theme="theme" @openChange="openChange" :selectedKeys="selectedKeys">
                   <template v-for="menu in menus">
                       <a-menu-item v-if="!menu.children" :key="menu.url">
                           <ivz-icon type="icon-tuichu" ></ivz-icon>
@@ -85,6 +85,7 @@
                     </div>
                     <div style="clear: both"></div>
                 </div>
+                <div class="ivz-divider"></div>
                 <div class="ivz-task-bar">
                     <a-tabs :active-key="activityMenu.url" @change="switchTask" :hide-add="true"
                             @edit="closeTask" type="editable-card" size="small">
@@ -142,6 +143,7 @@ export default {
             user: {},
             sysName: '',
             openKeys: [],
+            theme: 'dark', // 主题 dark or light
             avatarUrl: null,
             expandMode: 'single', // 菜单展开模式 (single || multi)
             searchValue: null,
