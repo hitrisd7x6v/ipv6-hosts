@@ -33,18 +33,18 @@
                   <span :class="loginModel.class">{{loginModel.errMsg}}</span>
               </div>
           </a-card>
-          <a-divider>其他登录方式</a-divider>
-          <a-row type="flex" justify="space-between" :gutter="3">
-              <a-col span="6" style="text-align: right">
-                  <a-icon type="wechat" :style="iconStyle" />
-              </a-col>
-              <a-col span="6" style="text-align: center;">
-                  <a-icon type="github" :style="iconStyle" />
-              </a-col>
-              <a-col span="6" style="text-align: left">
-                  <a-icon type="alipay-circle" :style="iconStyle" />
-              </a-col>
-          </a-row>
+<!--          <a-divider>其他登录方式</a-divider>-->
+<!--          <a-row type="flex" justify="space-between" :gutter="3">-->
+<!--              <a-col span="6" style="text-align: right">-->
+<!--                  <a-icon type="wechat" :style="iconStyle" />-->
+<!--              </a-col>-->
+<!--              <a-col span="6" style="text-align: center;">-->
+<!--                  <a-icon type="github" :style="iconStyle" />-->
+<!--              </a-col>-->
+<!--              <a-col span="6" style="text-align: left">-->
+<!--                  <a-icon type="alipay-circle" :style="iconStyle" />-->
+<!--              </a-col>-->
+<!--          </a-row>-->
       </div>
   </div>
 </template>

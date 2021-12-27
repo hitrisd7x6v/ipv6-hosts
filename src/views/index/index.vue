@@ -120,8 +120,10 @@
             </a-layout-header>
             <a-layout-content ref="layoutContent" class="iz-main-container">
                 <div class="ivz-content-iframe">
-                    <iframe v-for="menu in taskBarData" :key="menu.url" :id="menu.url" :name="menu.name" :src="izCtx + menu.url"
-                            frameBorder="false" v-show="menu==activityMenu" width="100%" height="100%"></iframe>
+                    <transition-group name="list">
+                        <iframe v-for="menu in taskBarData" :key="menu.url" :id="menu.url" :name="menu.name" :src="izCtx + menu.url"
+                                frameBorder="false" v-show="menu==activityMenu" width="100%" height="100%"></iframe>
+                    </transition-group>
                 </div>
             </a-layout-content>
         </a-layout>

@@ -6,11 +6,11 @@
     background-size: cover;
 }
 .iz-login-card {
-    top: 16%;
-    right: 182px;
-    width: 360px;
-    position: fixed;
-    background-color: rgba(255, 255, 255, 0.46);
+    top: 18%;
+    right: 10%;
+    width: 342px;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0);
 }
 .iz-login .ant-input {
     padding-left: 34px!important;
@@ -19,19 +19,25 @@
     border-radius: 20px;
 }
 .iz-login .ivz-form-valid {
-    width: 178px;
+    width: 158px;
 }
 .iz-login .ivz-valid-img {
     height: 40px;
-    width: 118px;
+    width: 108px;
     margin-left: 16px;
     vertical-align: top;
 }
+.ant-card {
+    background-color: rgba(255, 255, 255, 0);
+}
 .ant-card-body {
-    padding: 12px 24px;
+    padding: 18px 24px;
+    background-color: #ffffffb5;
 }
 .ant-card-head {
     line-height: 48px;
+    background-color: #ffffffd4;
+    border-radius: 16px 16px 0px 0px;
 }
 .ant-card-head-title {
     padding: 0px;

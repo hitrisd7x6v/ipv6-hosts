@@ -35,8 +35,8 @@
     width:100%;
     height: 2px;
     /*margin: 0px auto;*/
-    background:-webkit-linear-gradient(to left, rgba(249, 249, 249, 0.89), rgba(24, 144, 255, 0.52),rgba(249, 249, 249, 0.89));
-    background:linear-gradient(to left, rgba(249, 249, 249, 0.89), rgba(0, 0, 0, 0.61),rgba(249, 249, 249, 0.89));
+    background:-webkit-linear-gradient(to left, rgba(32, 139, 249, 0.43), rgba(0, 0, 0, 0.61),rgba(32, 139, 249, 0.43));
+    background:linear-gradient(to left, rgba(32, 139, 249, 0.43), rgba(0, 0, 0, 0.61),rgba(32, 139, 249, 0.43));
 }
 .ivz-global-search {
     min-width: 236px;
@@ -266,4 +266,13 @@
     padding: 2px 10px;
     min-height: 22px;
     font-size: 12px;
+}
+
+/*动画*/
+.list-enter-active, .list-leave-active {
+    transition: all 0.3s;
+}
+.list-enter, .list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
 }
