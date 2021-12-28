@@ -121,18 +121,7 @@
 #### 组件界面截图
 以下是系统的一些页面展示, 以及对应的代码，以菜单页为例(使用<ivz-basic-view>组件)
 菜单管理列表页
-![菜单列表页](https://images.gitee.com/uploads/images/2020/0414/191721_edecbc42_1230742.jpeg "1586862411(1).jpg")
-菜单管理编辑页
-![菜单编辑页面](https://images.gitee.com/uploads/images/2020/0414/191936_2f45126b_1230742.jpeg "编辑菜单页面.jpg")
-
-字典列表页（使用 Ivz-eidt-view 组件）
-![字典页面](https://images.gitee.com/uploads/images/2020/0414/193119_e978ad4a_1230742.jpeg "字典列表.jpg")
-
-字典数据抽屉列表(使用 ivz-drawer-edit-table 组件)
-![字典数据](https://images.gitee.com/uploads/images/2020/0414/193229_f189b924_1230742.jpeg "字典数据.jpg")
-
-抽屉编辑页
-![配置页面](https://images.gitee.com/uploads/images/2020/0414/202611_6cdee6fb_1230742.jpeg "配置页面.jpg")
+![菜单列表页](https://images.gitee.com/uploads/images/2020/0515/183358_254d766a_1230742.png "{QB3L9QVP%6THQD[)WA}$ZM.png")
 
 #### 参与贡献
 
