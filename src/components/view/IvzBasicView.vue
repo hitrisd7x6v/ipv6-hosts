@@ -7,11 +7,8 @@
                 <template #search="{model}">
                     <slot name="search" :model="model"></slot>
                 </template>
-                <template #header="{data}">
-                    <slot name="header" :data="data"></slot>
-                </template>
-                <template #footer="{data}">
-                    <slot name="footer" :data="data"></slot>
+                <template #table>
+                    <slot name="table"></slot>
                 </template>
                 <template #action="{row, index}">
                     <slot name="action" :row="row" :index="index"></slot>

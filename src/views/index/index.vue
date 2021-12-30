@@ -3,7 +3,7 @@
         <a-layout-sider :trigger="null" collapsible :width="232" @breakpoint="breakpoint"
               :collapsed="isCollapsed" :collapsedWidth="72" breakpoint="lg" :class="'ivz-theme-'+theme">
           <div class="ivz-sider-menu">
-              <div class="ivz-avatar" @click="()=> isCollapsed = !isCollapsed">
+              <div class="ivz-avatar" @click="collapsed">
                   <div class="ivz-avatar-center">
                       <a-avatar :size="64" :src="izStx + '/img/logo.png'"/>
                   </div>
@@ -13,12 +13,24 @@
               </div>
               <a-menu @select="selectMenu" mode="inline" :inline-collapsed="isCollapsed"
                       :openKeys="openKeys" :theme="theme" @openChange="openChange" :selectedKeys="selectedKeys">
-                  <template v-for="menu in menus">
+                  <template v-if="activityView.type == 'M'" v-for="menu in menus">
                       <a-menu-item v-if="!menu.children" :key="menu.url">
                           <ivz-icon type="icon-tuichu" ></ivz-icon>
                           <span>{{menu.name}}</span>
                       </a-menu-item>
                       <ivz-sub-menu v-else :menus="menu" :key="menu.url"></ivz-sub-menu>
+                  </template>
+                  <template v-else-if="activityView.type == 'G'" v-for="menu in menus">
+                      <a-menu-item-group :key="menu.url">
+                          <template slot="title">
+                              <ivz-icon :type="menu.icon"></ivz-icon>
+                              <span>{{ menu.name }}</span>
+                          </template>&nbsp;
+                          <a-menu-item v-for="item in menu.children" :key="item.url">
+                              <ivz-icon :type="item.icon"></ivz-icon>
+                              <span>{{ item.name }}</span>
+                          </a-menu-item>
+                      </a-menu-item-group>
                   </template>
               </a-menu>
           </div>
@@ -248,6 +260,9 @@ export default {
             }
         },
         viewHandler (view) {
+            if(view.type == 'G' && this.isCollapsed) {
+                this.collapsed();
+            }
             this.activityView = view;
             let menus = view['children'];
             this.menus = menus || []
@@ -278,6 +293,11 @@ export default {
         },
         isWorkMenu(url) {
             return this.workMenu && this.workMenu.url == url;
+        },
+        collapsed() {
+            if(this.activityView.type == 'G') return;
+
+            this.isCollapsed = !this.isCollapsed
         },
         breakpoint (broken) { // 响应式处理
             this.isCollapsed = broken

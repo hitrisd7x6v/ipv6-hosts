@@ -4,7 +4,6 @@ import '@/components/ivzone.css'
 import Ivzone from '@/components/ivzone'
 import Utils from '@/utils/basic.utils'
 import Logger from '@/utils/logger.utils'
-import boolean from "less/lib/less/functions/boolean"; // 缓存
 
 Vue.use(Ivzone);
 const RadioData = [
@@ -177,6 +176,14 @@ Mock.mock(RegExp('/resources'), 'get', (options) => {
                                 {id: 221, name: 'ModalView组件', icon: '', type: 'V', url: '/demo/modalView.html'},
                                 // {id: 222, name: 'SlotFormView组件', type: 'V', url: '/demo/slotFormView.html'}
                             ]},
+                    ]
+                }, {
+                    id: 2, name: '菜单组', type: 'G', children: [
+                        {id: 22, name: '聊天交友工具', icon: 'iz-icon-page', children: [
+                                {id: 222, name: 'qq聊天', type: 'V', icon: 'iz-icon-page', url: '/demo/qq', children: getChildrenMenus()},
+                                {id: 223, name: '微信聊天', type: 'V', url: '/demo/wechat', children: getChildrenMenus()},
+                                {id: 224, name: '陌陌交友', type: 'V', url: '/demo/mm', children: getChildrenMenus()},
+                            ]}
                     ]
                 }
             ]

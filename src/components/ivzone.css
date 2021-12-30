@@ -205,6 +205,9 @@ html, body {
 .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-header > table > .ant-table-thead > tr > th{
     background: #f9f9f99c !important;
 }
+.ivz-list {
+    /*min-height: 580px;*/
+}
 .ivz-list .ant-table-pagination.ant-pagination {
     float: left!important;
     margin: 8px 10px 6px!important;

@@ -2,17 +2,21 @@
 <template>
     <a-locale-provider :locale="zhCN">
     <div class="ivz-list ivz-edit-list">
-        <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
-             :action-metas="actionMetas" :search-metas="searchMetas"></ivz-page-search>
-        <ivz-edit-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
-            :action-metas="actionMetas" :search-model="searchModel" :data="data" @heightChange="setTableHeight">
-            <template #action="{row, index}">
-                <slot name="action" :row="row" :index="index"></slot>
-            </template>
-            <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
-                <slot :name="meta.tableSlot" :value="value" :row="row" :index="index"></slot>
-            </template>
-        </ivz-edit-table>
+        <slot name="search" :model="searchModel">
+            <ivz-page-search :search-model="searchModel" :search-config="searchConfig"
+                 :action-metas="actionMetas" :search-metas="searchMetas"></ivz-page-search>
+        </slot>
+        <slot name="table">
+            <ivz-edit-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
+                :action-metas="actionMetas" :search-model="searchModel" :data="data" @heightChange="setTableHeight">
+                <template #action="{row, index}">
+                    <slot name="action" :row="row" :index="index"></slot>
+                </template>
+                <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
+                    <slot :name="meta.tableSlot" :value="value" :row="row" :index="index"></slot>
+                </template>
+            </ivz-edit-table>
+        </slot>
     </div>
     </a-locale-provider>
 </template>

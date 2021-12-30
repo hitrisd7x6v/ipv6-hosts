@@ -7,21 +7,18 @@
                     :action-metas="actionMetas" :search-metas="searchMetas">
                 </ivz-page-search>
             </slot>
-            <ivz-basic-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
-                    :data="data" :search-model="searchModel" :action-metas="actionMetas" @heightChange="setTableHeight">
-                <template #header="{data}">
-                    <slot name="header" :data="data"></slot>
-                </template>
-                <template #footer="{data}">
-                    <slot name="footer" :data="data"></slot>
-                </template>
-                <template #action="{row, index}">
-                    <slot name="action" :row="row" :index="index"></slot>
-                </template>
-                <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
-                    <slot :name="meta.tableSlot" :value="value" :row="row" :index="index"></slot>
-                </template>
-            </ivz-basic-table>
+            <slot name="table">
+                <ivz-basic-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
+                        :data="data" :search-model="searchModel" :action-metas="actionMetas"
+                        @heightChange="setTableHeight">
+                    <template #action="{row, index}">
+                        <slot name="action" :row="row" :index="index"></slot>
+                    </template>
+                    <template v-for="meta in tableAliasMetas" #[meta.tableSlot]="{value, row, index}">
+                        <slot :name="meta.tableSlot" :value="value" :row="row" :index="index"></slot>
+                    </template>
+                </ivz-basic-table>
+            </slot>
         </div>
     </a-locale-provider>
 </template>
@@ -43,9 +40,7 @@
         },
         created () { },
         mounted () { },
-        methods: {
-
-        }
+        methods: { }
     }
 </script>
 

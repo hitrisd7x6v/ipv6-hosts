@@ -364,11 +364,15 @@ export default {
             return []
         }
     },
+    excludeSlots(name) {
+        return name == 'table' || name == 'search' || name == 'action';
+    },
     resolverSlots(scopedSlots) {
         let noMatcher = false;
         let formatter = (val, row, meta) => val;
         Object.keys(scopedSlots).forEach(name => {
             if(name.startsWith("$")) return;
+            if(this.excludeSlots(name)) return;
             let field = Utils.toHump(name.substring(0, name.length-2));
             let meta = this.editFieldMetaMap[field];
             if(!meta) {
