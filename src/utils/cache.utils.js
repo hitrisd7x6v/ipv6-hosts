@@ -173,6 +173,7 @@ export default {
             justify: 'start', // 水平对齐方式
             formType: 'edit', // 编辑类型
             bindType: null, // 数据绑定类型, both(双向绑定), void(不绑定)
+            selfUpdate: true,
             editSource: 'local', // 编辑时的数据来源, local(本地) || remote(远程)
             layout: 'horizontal',
             hasFeedback: true, // 校验图标, 只有再需要有校验规则的时候才有

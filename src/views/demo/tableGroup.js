@@ -9,7 +9,7 @@ new Vue({
     components: {IvzBasicView, IvzModalForm},
     data: {
         data: Data.data,
-        metas: Data.mates,
+        metas: Data.childrenMetas,
         config: Data.config,
         ModalMetas: [
             {field: 'name', title: 'text', required: true, span: [6, 16]},

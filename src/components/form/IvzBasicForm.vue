@@ -1,10 +1,12 @@
 <template>
-    <a-form class="ivz-form" :form="form" :hide-required-mark="formConfig.hideRequiredMark" :layout="formConfig.layout">
+    <a-form class="ivz-form" :form="form" :hide-required-mark="formConfig.hideRequiredMark"
+            :layout="formConfig.layout" :self-update="formConfig.selfUpdate">
         <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter" type="flex">
             <template v-for="col in metas">
                 <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
-                    <a-form-item :label="col.title" :label-col="col.config.labelCol" :wrapper-col="col.config.wrapperCol"
-                                 :colon="izColon" :has-feedback="col.config.hasFeedback" :extra="col.config.extra">
+                    <a-form-item :label-col="col.config.labelCol" :wrapper-col="col.config.wrapperCol"
+                             :colon="izColon" :has-feedback="col.config.hasFeedback" :label="col.title"
+                                 :extra="col.config.extra" :self-update="col.config.selfUpdate">
                         <slot v-if="col.formSlot" :name="col.formSlot" :model="model"></slot>
                         <template v-else>
                             <a-select v-if="col.type=='select'" v-decorator="[col.field, col['decorate']]" :size="formSize"
@@ -140,92 +142,100 @@
     import IvzEditor from "@/components/basic/IvzEditor";
 
     export default {
-    name: 'IvzBasicForm',
+        name: 'IvzBasicForm',
         components: {IvzEditor},
         mixins: [MixBasicForm],
-    data () {
-        return {
-            previewFile: {url: null}
-        }
-    },
-    methods: {
-        getFileList(col) {
-            let fileList = this.model[col.field];
-            let list = col.config.FileList;
-            if(Utils.isNotBlank(list)) return list;
-
-            if(Utils.isArray(fileList)) {
-                fileList.forEach((url, index)=>{
-                    list.push({url: url, uid: -index, name: url, status: 'done'});
-                });
-            } else {
-                if(col.config.limit == 1) { // 单张
-                    this.$set(this.model, col.field, fileList);
-                    if(fileList) {
-                        list.push({url: fileList, uid: -1, name: fileList, status: 'done'})
-                    }
-                } else { // 多张
-                    if(fileList) {
-                        fileList.split(',').forEach((url, index)=>{
-                            list.push({url: url, uid: -index, name: url, status: 'done'});
-                        });
-                    } else {
-                        this.$set(this.model, col.field, []);
-                    }
-                }
-
+        props: {
+            metas: {type: Array, required: true},
+        },
+        data () {
+            return {
+                previewFile: {url: null}
             }
-            return list;
         },
-        handlePreview(file) {
-            this.previewFile = file;
-        },
-        handleChange(e, col) {
-            let file = e.file;
-            let modelElement = this.model[col.field];
-            if (file.status == 'uploading') {
-                col.config.FileList = e.fileList
-            } else if(file.status == 'done') {
-                let response = file.response;
-                this.$log.debugLog("上传文件", "服务端响应数据", file);
+        methods: {
+            getFileList(col) {
+                let fileList = this.model[col.field];
+                let list = col.config.FileList;
+                if(Utils.isNotBlank(list)) return list;
 
-                let url = response.data[col.config.respField];
-                if(col.config.limit == 1) {
-                    this.model[col.field] = url;
+                if(Utils.isArray(fileList)) {
+                    fileList.forEach((url, index)=>{
+                        list.push({url: url, uid: -index, name: url, status: 'done'});
+                    });
                 } else {
-                    modelElement.push(url);
-                }
-                col.config.FileList = col.config.FileList.map(item=>{
-                    if(item.response) {
-                        item['url'] = url;
+                    if(col.config.limit == 1) { // 单张
+                        this.$set(this.model, col.field, fileList);
+                        if(fileList) {
+                            list.push({url: fileList, uid: -1, name: fileList, status: 'done'})
+                        }
+                    } else { // 多张
+                        if(fileList) {
+                            fileList.split(',').forEach((url, index)=>{
+                                list.push({url: url, uid: -index, name: url, status: 'done'});
+                            });
+                        } else {
+                            this.$set(this.model, col.field, []);
+                        }
                     }
-                    return item;
+
+                }
+                return list;
+            },
+            handlePreview(file) {
+                this.previewFile = file;
+            },
+            handleChange(e, col) {
+                let file = e.file;
+                let modelElement = this.model[col.field];
+                if (file.status == 'uploading') {
+                    col.config.FileList = e.fileList
+                } else if(file.status == 'done') {
+                    let response = file.response;
+                    this.$log.debugLog("上传文件", "服务端响应数据", file);
+
+                    let url = response.data[col.config.respField];
+                    if(col.config.limit == 1) {
+                        this.model[col.field] = url;
+                    } else {
+                        modelElement.push(url);
+                    }
+                    col.config.FileList = col.config.FileList.map(item=>{
+                        if(item.response) {
+                            item['url'] = url;
+                        }
+                        return item;
+                    });
+                } else if(file.status == 'removed') {
+                    this.model[col.field] = null;
+                    Utils.delArrayEle(modelElement, file.url);
+                    Utils.delArrayEle(col.config.FileList, file)
+                    this.$log.debugLog("上传文件", "移除文件", file);
+                } else {
+                    file['thumbUrl'] = '';
+                    let response = file.response;
+                    this.$log.errorLog("上传文件", '上传失败', response);
+                    this.$msg.warningNotify("上传文件", "文件上传失败")
+                }
+            },
+            getBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
                 });
-            } else if(file.status == 'removed') {
-                this.model[col.field] = null;
-                Utils.delArrayEle(modelElement, file.url);
-                Utils.delArrayEle(col.config.FileList, file)
-                this.$log.debugLog("上传文件", "移除文件", file);
-            } else {
-                file['thumbUrl'] = '';
-                let response = file.response;
-                this.$log.errorLog("上传文件", '上传失败', response);
-                this.$msg.warningNotify("上传文件", "文件上传失败")
+            },
+            previewCancel() {
+                this.previewFile = {url: null};
+            },
+            handleFieldMetaMap() {
+                this.metas.forEach(meta=>{
+                    this.fieldMetaMap[meta.field] = meta;
+                });
             }
-        },
-        getBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        },
-        previewCancel() {
-            this.previewFile = {url: null};
-        },
+        }
     }
-}
 </script>
 
 <style>

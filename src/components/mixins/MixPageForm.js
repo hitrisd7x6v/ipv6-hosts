@@ -2,8 +2,6 @@
  * 页级表单通用接口
  * @type {{data(): *, created(), methods: {}, mounted(), props: {}}}
  */
-import moment from "moment";
-
 export const MixPageForm = {
     props: {
         formGroup: {type: Array, default: () => { return [] }},
@@ -19,7 +17,6 @@ export const MixPageForm = {
             queryParams: {}, // 编辑动作参数
             saveMeta: null,
             operaMeta: {},
-            basicFormRefs: [],
             loadingText: '',
             spinning: false,
             basicFormRef: null,
@@ -39,8 +36,9 @@ export const MixPageForm = {
         this.destroyPageForm();
     },
     methods: {
+        getFormType() { return 'Default' },
         mountedFinished (formRef) {
-            this.basicFormRefs.push(formRef);
+            this.basicFormRef = formRef;
             this.initEditModel(formRef);
         },
         initEditModel (formRef) {
@@ -76,7 +74,7 @@ export const MixPageForm = {
             return group.view(this.editModel);
         },
         bind(fieldsValue) {
-            this.basicFormRefs.forEach(ref=>ref.setFieldsValue(fieldsValue));
+            this.basicFormRef.setFieldsValue(fieldsValue)
         },
         /**
          * 此方法必须在basicForm组件挂载完成之后调用
@@ -93,7 +91,7 @@ export const MixPageForm = {
             }
         },
         setEditModel(editModel) {
-            this.basicFormRefs.forEach(ref=>ref.setEditModel(editModel));
+            this.basicFormRef.setEditModel(editModel)
         },
         destroyPageForm() {
             this.editModel = {};
@@ -104,7 +102,7 @@ export const MixPageForm = {
         },
         resetForm() {
             let oriModel = this.getOriModel();
-            this.basicFormRefs.forEach(ref=>ref.resetForm(oriModel))
+            this.basicFormRef.resetForm(oriModel)
         },
         getDetail () {
             if (!this.operaMeta) return this.$log.errorLog('缺失编辑元数据'
@@ -151,8 +149,7 @@ export const MixPageForm = {
             }
         },
         validate() {
-            let map = this.basicFormRefs.map(ref=>ref.validate());
-            return Promise.all(map);
+            return this.basicFormRef.validate();
         },
         submitHandle () {
             if (!this.saveMeta) {

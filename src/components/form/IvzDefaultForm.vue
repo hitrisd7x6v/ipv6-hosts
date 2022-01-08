@@ -16,23 +16,16 @@
         </a-affix>
         <div class="form-body">
             <a-spin :tip="loadingText" :spinning="spinning">
-                <div v-for="group in formGroup" v-if="groupView(group)" :key="group.name" class="ivz-group" :style="group.style">
-                    <div v-if="group.name" class="ivz-group-head">
-                        <label style="color: #6eb5ff; font-size: 14px; padding-left: 12px;">{{group.name}}</label>
-                    </div>
-                    <div class="ivz-group-body">
-                        <ivz-basic-form ref="basicFormRef" @mountedFinished="mountedFinished"
-                            :metas="group.metas" :form-config="formConfig">
-                            <template v-for="meta in formAliasMetas" #[meta.formSlot]="{model}">
-                                <slot :name="meta.formSlot" :model="model"></slot>
-                            </template>
-                        </ivz-basic-form>
-                    </div>
-                </div>
+                <ivz-group-form ref="basicFormRef" @mountedFinished="mountedFinished"
+                    :form-group="formGroup" :form-config="formConfig">
+                    <template v-for="meta in formAliasMetas" #[meta.formSlot]="{model}">
+                        <slot :name="meta.formSlot" :model="model"></slot>
+                    </template>
+                </ivz-group-form>
             </a-spin>
         </div>
         <div class="form-footer ivz-opera-row" style="text-align: center">
-            <slot>
+            <slot name="submit" :model="editModel">
                 <a-button class="ivz-button-action" @click="cancelHandle">返回</a-button>
                 <a-button class="ivz-button-action" @click="submitHandle" type="primary">提交</a-button>
                 <a-button class="ivz-button-action" @click="freshenHandle" type="dashed">刷新</a-button>

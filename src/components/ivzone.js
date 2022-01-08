@@ -20,6 +20,7 @@ import IvzBasicTable from './table/IvzBasicTable'
 import IvzModalForm from './form/IvzModalForm'
 import IvzDrawerEditTable from './table/IvzDrawerEditTable'
 import IvzDiyView from "@/components/view/IvzDiyView";
+import IvzGroupForm from "@/components/form/IvzGroupForm";
 
 /* 注册组件 */
 if (typeof window !== 'undefined' && window.Vue) {
@@ -37,6 +38,7 @@ if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.component(IvzSearchModel.name, IvzSearchModel)
 
     window.Vue.component(IvzBasicForm.name, IvzBasicForm)
+    window.Vue.component(IvzGroupForm.name, IvzGroupForm)
     window.Vue.component(IvzBasicModel.name, IvzBasicModel)
     window.Vue.component(IvzModalForm.name, IvzModalForm)
 
@@ -60,6 +62,7 @@ export default {
         // 表单组件
         Vue.component(IvzModalForm.name, IvzModalForm)
         Vue.component(IvzBasicForm.name, IvzBasicForm)
+        Vue.component(IvzGroupForm.name, IvzGroupForm)
         Vue.component(IvzBasicModel.name, IvzBasicModel)
 
         Vue.component(IvzSearchForm.name, IvzSearchForm)

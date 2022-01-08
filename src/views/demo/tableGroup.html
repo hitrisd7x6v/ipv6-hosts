@@ -8,7 +8,7 @@
 </head>
 <body>
     <div id="app">
-        <ivz-basic-view :metas="metas" :search-metas="searchMetas" :config="config" ref="ibv">
+        <ivz-basic-view :metas="metas" :search-metas="searchMetas" :config="groupConfig" ref="ibv">
             <template #name_t="params">
                 <a-tag color="green" @click="jump(params)">{{params.value}}</a-tag>
             </template>

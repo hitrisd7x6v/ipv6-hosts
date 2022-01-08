@@ -195,10 +195,11 @@ export default {
                         doResolverFormMetas(meta['metas'], vue, callBack, 'group', groupMeta)
                     } else if (Utils.isNotBlank(meta['children'])) {
                         if (!group) {
-                            group = {name: '', metas: [], view: meta.view || trueView};
+                            group = {name: meta.title, metas: [], style: meta.style, view: meta.view || trueView};
                             returnVal.push(group)
                         }
                         doResolverFormMetas(meta['children'], vue, callBack, 'child', group)
+                        group = null; // 进入下一个组
                     } else if (!type && meta.type !== 'action') {
                         if (!group) {
                             group = {name: '', metas: [], view: meta.view || trueView};

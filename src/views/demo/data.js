@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Mock from 'mockjs'
 import '@/components/ivzone.css'
 import Ivzone from '@/components/ivzone'
+import Page from '@/components/page.config'
 import Utils from '@/utils/basic.utils'
 import Logger from '@/utils/logger.utils'
 
@@ -29,6 +30,7 @@ const spec = [
 ]
 const config = {
     form: {
+        type: 'group',
         addTitle: '新增产品',
         editSource: 'local'
     },
@@ -174,7 +176,8 @@ Mock.mock(RegExp('/resources'), 'get', (options) => {
                         },
                         {id: 22, name: '功能组件', type: 'M', icon: '', children: [
                                 {id: 221, name: 'ModalView组件', icon: '', type: 'V', url: '/demo/modalView.html'},
-                                // {id: 222, name: 'SlotFormView组件', type: 'V', url: '/demo/slotFormView.html'}
+                                {id: 222, name: '表格分组', icon: 'iz-icon-default', type: 'V'
+                                    , url: '/demo/tableGroup.html?id=3', children: getChildrenMenus()},
                             ]},
                     ]
                 }, {
@@ -280,15 +283,59 @@ Mock.mock(RegExp('/test/stree.*'), 'get', (options) => {
 /* 测试数据 */
 export default {
     mates: [
-        {field: 'name', title: 'text', type: 'text', required: true, align: 'left'},
-        {field: 'price', title: 'number', type: 'number', editable: true},
+        {field: 'name', title: 'text', type: 'text', required: true, align: 'left'
+            , config: {selfUpdate: false}, event: {
+                change: (a, b)=>{
+                    Page.bind({number: a.length});
+                }
+            }},
+        {field: 'number', title: 'number', type: 'number', editable: true},
         {field: 'spec', title: 'checkbox', type: 'checkbox', data: spec, editable: true, width: 150},
         {field: 'radio', title: 'radio', type: 'radio', data: RadioData, editable: true, width: 150},
         {field: 'switch', title: 'switch', type: 'switch', editable: true
             , config: {checkedChildren: '是', unCheckedChildren: '否'}},
         {field: 'cat', title: 'select', type: 'select', data: productCat, editable: true
             , config: {showSearch: true}},
+        {field: 'type', title: 'cascade', type: 'cascade', data: productType, formatter: (val, row, col, text) => {
+                return '<a href="/editView.html">' + text + '</a>'
+            }, disabled: false},
+        {field: 'area', title: 'stree', type: 'stree', url: '/test/stree', min: 2, editable: true,
+            config: {
+                showSearch: true,
+                treeCheckable: true
+            },
+            event: {
+                select: (val, model) => {
+                    console.log(val)
+                },
+                change: (val, model) => {
+                    console.log(val)
+                }
+            }
+        },
+        {field: 'tree', title: 'tree', type: 'tree', url: '/test/stree', config: {
+                defaultExpandAll: true, checkedKeys: [1], showLine: true, expandedAll: true
+            }, event: {change: (val, model, meta)=>{
+
+                }}},
+        {field: 'obj.desc', title: '对象'},
+        {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
+        {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}},
+        {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
+        {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}},
         {field: 'createTime', title: 'data', type: 'date'},
+        {field: 'test1', title: 'test1', type: 'text'},
+        {field: 'test2', title: 'test2', type: 'text'},
+        {field: 'test3', title: 'test3', type: 'text'},
+        {field: 'test4', title: 'test4', type: 'text'},
+        {field: 'test5', title: 'test5', type: 'text'},
+        {field: 'test6', title: 'test6', type: 'text'},
+        {field: 'test7', title: 'test7', type: 'text'},
+        {field: 'test8', title: 'test8', type: 'text'},
+        {field: 'test9', title: 'test9', type: 'text'},
+        {field: 'test10', title: 'test10', type: 'text'},
+        {field: 'test11', title: 'test11', type: 'text'},
+        {field: 'test12', title: 'test12', type: 'text'},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],
     data: dataSource,
@@ -296,11 +343,15 @@ export default {
     groupConfig: groupConfig,
     childrenMetas: [
         {title: '基础信息', children: [
-                {field: 'name', title: 'text', required: true, align: 'left'},
+                {field: 'name', title: 'text', required: true, align: 'left', event: {
+                        change: (a, b)=>{
+                            Page.bind({number: a.length});
+                        }
+                    }},
                 {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
                 {field: 'radio', title: 'radio', type: 'radio', data: RadioData},
                 {field: 'switch', title: 'switch', type: 'switch'},
-                {field: 'price', title: 'number', type: 'number', validator: (rule, val, call) => {
+                {field: 'number', title: 'number', type: 'number', validator: (rule, val, call) => {
                         call()
                     }, sorter: function (a, b) {
                         return a.price - b.price
@@ -349,15 +400,59 @@ export default {
     ],
     groupMetas: [
         {title: '基础信息', metas: [
-                {field: 'name', title: 'text', required: true, align: 'left'},
+                {field: 'name', title: 'text', required: true, align: 'left', event: {
+                        change: (a, b)=>{
+                            Page.bind({number: a.length});
+                        }
+                    }},
                 {field: 'spec', title: 'checkbox', type: 'checkbox', dictType: 'spec'},
                 {field: 'radio', title: 'radio', type: 'radio', data: RadioData},
-                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
-                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}},
+                {field: 'switch', title: 'switch', type: 'switch'},
+                {field: 'number', title: 'number', type: 'number', validator: (rule, val, call) => {
+                        call()
+                    }, sorter: function (a, b) {
+                        return a.price - b.price
+                    }},
                 {field: 'createTime', title: 'date', type: 'date', default: '2019-12-10 09:02'}
             ]
         },
-        {field: 'editor', title: 'editor', type: 'editor', width: -1, span: [3, 21, 23], default: '这是富文本编辑器'},
+        {title: '下拉框组件', metas: [
+                {field: 'cat', title: 'select', type: 'select', data: productCat, required: true, min: 2,
+                    config: {mode: 'multiple'}},
+                {field: 'type', title: 'cascade', type: 'cascade', data: productType, formatter: (val, row, col, text) => {
+                        return '<a href="/editView.html">' + text + '</a>'
+                    }, disabled: false},
+                {field: 'area', title: 'stree', type: 'stree', url: '/test/stree', min: 2, editable: true,
+                    config: {
+                        showSearch: true,
+                        treeCheckable: true
+                    },
+                    event: {
+                        select: (val, model) => {
+                            console.log(val)
+                        },
+                        change: (val, model) => {
+                            console.log(val)
+                        }
+                    }
+                },
+                {field: 'tree', title: 'tree', type: 'tree', url: '/test/stree', config: {
+                        defaultExpandAll: true, checkedKeys: [1], showLine: true, expandedAll: true
+                    }, event: {change: (val, model, meta)=>{
+
+                        }}}
+            ]
+        },
+        {title: '其他组件', metas: [
+                {field: 'obj.desc', title: '对象'},
+                {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
+                {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}},
+                {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
+                {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}},
+                {field: 'productPic', title: 'upload', type: 'upload'
+                    , config: {action: 'http://loacalhost:8088/pay/upload/vsp'}},
+            ]},
+        {field: 'editor', title: 'editor', type: 'editor', span: [3, 21, 23], default: '这是富文本编辑器', isTable: false},
         {field: 'action', title: '操作', type: 'action', width: 260, fixed: 'right'}
     ],
     searchMates: searchMetas,

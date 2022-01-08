@@ -6,7 +6,6 @@ import moment from 'moment'
 
 export const MixBasicForm = {
     props: {
-        metas: {type: Array, required: true},
         bindType: {type: String, default: 'both'}, // 默认双向绑定
         formConfig: {type: Object, required: true}, // 配置
     },
@@ -18,9 +17,7 @@ export const MixBasicForm = {
         }
     },
     created () {
-        this.metas.forEach(meta=>{
-            this.fieldMetaMap[meta.field] = meta;
-        });
+        this.handleFieldMetaMap();
 
         this.form = this.$form.createForm(this, {
             // name: 'IvzForm',
@@ -50,6 +47,7 @@ export const MixBasicForm = {
         getOriFormModel () {
             return this.$utils.clone(this.oriModel);
         },
+        handleFieldMetaMap() {},
         disabledHandle (col) {
             if (!col.disabled) {
                 return false
@@ -94,7 +92,8 @@ export const MixBasicForm = {
         doSyncModelToForm (newModel, formValues) {
             if (this.$utils.isBlank(newModel)) return null;
 
-            this.metas.forEach(meta=>{
+            let metas = Object.values(this.fieldMetaMap);
+            metas.forEach(meta=>{
                 let value = this.$utils.getDeepValue(meta.field, newModel);
                 if(this.$utils.isDate(meta.type) && typeof value === 'string') {
                     formValues[meta.field] = this.$form.createFormField({value: moment(value)});
