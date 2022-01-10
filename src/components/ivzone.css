@@ -69,8 +69,10 @@ html, body {
     margin-top: 3px;
 }
 .ivz-form .ivz-group-head {
-    margin: 3px 8px;
+    margin: 0px 8px;
+    padding: 6px 0px;
     border-bottom: 1px solid #eaedf1;
+    background:linear-gradient(to left, #fdfdfd, #fefefe, #fdfdfd);
 }
 .ivz-form .ivz-group-body {
     margin: 8px 16px 0px 28px;
@@ -126,8 +128,8 @@ html, body {
 .ivz-drawer-form-wrap.ant-drawer-left .ant-drawer-body,
 .ivz-drawer-form-wrap.ant-drawer-right .ant-drawer-body {
     margin-top: 38px;
-    margin-bottom: 32px;
-    padding: 16px 24px 16px 8px;
+    margin-bottom: 30px;
+    padding: 10px 24px 16px 8px;
 }
 
 .ivz-drawer-form-wrap.ant-drawer-top .ant-drawer-header,
@@ -221,7 +223,7 @@ html, body {
     z-index: 1;
     height: 40px;
     min-width: 146px;
-    padding-left: 6px;
+    padding-left: 8px;
     line-height: 40px;
     box-shadow: 4px 0px 8px -7px #c9c4c4;
 }

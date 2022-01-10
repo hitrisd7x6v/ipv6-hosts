@@ -365,7 +365,7 @@ export default {
         }
     },
     excludeSlots(name) {
-        return name == 'table' || name == 'search' || name == 'action';
+        return name == 'table' || name == 'search' || name == 'action' || name == 'detail';
     },
     resolverSlots(scopedSlots) {
         let noMatcher = false;
@@ -373,6 +373,7 @@ export default {
         Object.keys(scopedSlots).forEach(name => {
             if(name.startsWith("$")) return;
             if(this.excludeSlots(name)) return;
+
             let field = Utils.toHump(name.substring(0, name.length-2));
             let meta = this.editFieldMetaMap[field];
             if(!meta) {
@@ -380,6 +381,7 @@ export default {
                     , "slot名称必须遵循：如果是驼峰式的字段则必须用'_'隔开，且以_t(表格)、_d(详情)、_f(表单)结尾");
                 return;
             }
+
             if(name.endsWith('_t')) {
                 meta['tableSlot'] = name;
                 this.tableSlotMetas.push(meta);

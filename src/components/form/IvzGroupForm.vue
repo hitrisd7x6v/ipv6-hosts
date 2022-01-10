@@ -4,7 +4,7 @@
         <div v-for="group in formGroup" v-if="groupView(group)"
              :key="group.name" class="ivz-group" :style="group.style">
             <div v-if="group.name" class="ivz-group-head">
-                <label style="color: #6eb5ff; font-size: 14px; padding-left: 12px;">{{group.name}}</label>
+                <label style="color: #6eb5ff; font-size: 16px; padding-left: 8px;">{{group.name}}</label>
             </div>
             <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter"
                    type="flex" class="ivz-group-body">

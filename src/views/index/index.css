@@ -82,13 +82,14 @@
     z-index: 0;
     height: 32px;
     margin-top: 3px;
+    padding: 0px 5px;
     position: relative;
 }
 .ivz-task-opera {
-    width: 18px;
+    width: 20px;
     position: absolute;
     top: 0px;
-    left: 23px;
+    left: 24px;
     cursor: pointer;
     height: 32px;
     line-height: 35px;
@@ -132,6 +133,12 @@
     border-radius: 0px!important;
     transform: skewX(-28deg);
     line-height: 33px!important;
+}
+.ant-tabs-tab .anticon-close {
+    display: none;
+}
+.ant-tabs-tab:hover .anticon-close{
+    display: inline;
 }
 .ant-tabs-tab>div{
     transform: skewX(28deg);

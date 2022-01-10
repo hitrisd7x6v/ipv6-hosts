@@ -101,14 +101,15 @@
                 <div class="ivz-task-bar">
                     <a-tabs :active-key="activityMenu.url" @change="switchTask" :hide-add="true"
                             @edit="closeTask" type="editable-card" size="small">
-                        <a-tab-pane v-for="menu in taskBarData" :key="menu.url"
-                                    :closable="menu.closable != false">
-                        <span slot="tab">
-                            <span class="circle">
-                                <ivz-icon :type="menu.icon" :style="{fontSize: '16px'}"></ivz-icon>
-                            </span>
-                            <span style="margin-left: 2px">{{menu.name}}</span>
-                        </span>
+                        <a-tab-pane v-for="menu in taskBarData" :key="menu.url" :closable="menu.closable != false">
+                            <div slot="tab" style="display: inline-block">
+                                <span>
+                                    <span class="circle">
+                                        <ivz-icon :type="menu.icon" :style="{fontSize: '16px'}"></ivz-icon>
+                                    </span>
+                                    <span style="margin-left: 2px">{{menu.name}}</span>
+                                </span>
+                            </div>
                         </a-tab-pane>
                     </a-tabs>
                     <div class="ivz-task-opera right">
