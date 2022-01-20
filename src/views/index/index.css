@@ -66,6 +66,16 @@
 .iz-menu-item-title {
     margin-left: 8px;
 }
+/*通知抽屉*/
+#slider-drawer .ant-drawer {
+    top: 46px;
+}
+#slider-drawer .ant-drawer-content {
+    background-color: #fdfdfd;
+}
+#slider-drawer .ant-drawer-mask {
+    background-color: rgba(0, 0, 0, 0.08);
+}
 /*任务栏样式*/
 .iz-main-container {
     width: 100%;

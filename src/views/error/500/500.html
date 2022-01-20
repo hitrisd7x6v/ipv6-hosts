@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh">
 <head>
-    <th:block th:include="libs :: error('500')"></th:block>
+    <title><%=htmlWebpackPlugin.options.title%></title>
+    <%=require('html-loader!../../head.html')%>
 </head>
 <body>
     <div id="index"></div>
+    <%=require('html-loader!../../footer.html')%>
 </body>
 </html>

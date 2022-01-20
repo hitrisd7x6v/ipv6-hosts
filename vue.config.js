@@ -35,32 +35,37 @@ module.exports = {
     pages: {
         ...demoViews,
         index: { // 系统首页
-            inlineSource: '.(css)$',
+            title: '系统首页',
+            // inlineSource: '.(css)$',
             filename: 'views/index.html',
             entry: 'src/views/index/index.js',
             template: 'src/views/index/index.html',
         },
-        login: { // 系统首页
-            inlineSource: '.(css)$',
+        login: { // 系统登录页
+            title: '系统登录',
+            // inlineSource: '.(css)$',
             filename: 'views/login.html',
             entry: 'src/views/login/login.js',
             template: 'src/views/login/login.html',
         },
-        403: { // 无权限页面
+        403: { // 未授权页面
+            title: '无权限',
             inlineSource: '.(css)$',
-            filename: 'views/error/403.html',
+            filename: 'views/403.html',
             entry: 'src/views/error/403/403.js',
             template: 'src/views/error/403/403.html',
         },
         404: { // 404页面
+            title: '无资源',
             inlineSource: '.(css)$',
-            filename: 'views/error/404.html',
+            filename: 'views/404.html',
             entry: 'src/views/error/404/404.js',
             template: 'src/views/error/404/404.html',
         },
         500: { // 异常页面
+            title: '异常错误',
             inlineSource: '.(css)$',
-            filename: 'views/error/500.html',
+            filename: 'views/500.html',
             entry: 'src/views/error/500/500.js',
             template: 'src/views/error/500/500.html',
         },
@@ -82,51 +87,51 @@ module.exports = {
                     "ant-design-vue": 'antd', // antd类库
                     // "ant-design-vue/lib/style": 'ants'
                 },
-                plugins: [
-                    new scriptExtHtmlWebpackPlugin({
-                        inline: ['403.min.js'],
-                        custom: [
-                            {
-                                test: /.*/,
-                                attribute: "type",
-                                value: "text/javascript"
-                            }, {
-                                test: /.*/,
-                                attribute: "th:inline",
-                                value: "none"
-                            }
-                        ]
-                    }),
-                    new scriptExtHtmlWebpackPlugin({
-                        inline: ['404.min.js'],
-                        custom: [
-                            {
-                                test: /.*/,
-                                attribute: "type",
-                                value: "text/javascript"
-                            }, {
-                                test: /.*/,
-                                attribute: "th:inline",
-                                value: "none"
-                            }
-                        ]
-                    }),
-                    new scriptExtHtmlWebpackPlugin({
-                        inline: ['500.min.js'],
-                        custom: [
-                            {
-                                test: /.*/,
-                                attribute: "type",
-                                value: "text/javascript"
-                            }, {
-                                test: /.*/,
-                                attribute: "th:inline",
-                                value: "none"
-                            }
-                        ]
-                    }),
-                    new HtmlWebpackInlineSourcePlugin()
-                ]
+                // plugins: [
+                    // new scriptExtHtmlWebpackPlugin({
+                    //     inline: ['403.min.js'],
+                    //     custom: [
+                    //         {
+                    //             test: /.*/,
+                    //             attribute: "type",
+                    //             value: "text/javascript"
+                    //         }, {
+                    //             test: /.*/,
+                    //             attribute: "th:inline",
+                    //             value: "none"
+                    //         }
+                    //     ]
+                    // }),
+                    // new scriptExtHtmlWebpackPlugin({
+                    //     inline: ['404.min.js'],
+                    //     custom: [
+                    //         {
+                    //             test: /.*/,
+                    //             attribute: "type",
+                    //             value: "text/javascript"
+                    //         }, {
+                    //             test: /.*/,
+                    //             attribute: "th:inline",
+                    //             value: "none"
+                    //         }
+                    //     ]
+                    // }),
+                    // new scriptExtHtmlWebpackPlugin({
+                    //     inline: ['500.min.js'],
+                    //     custom: [
+                    //         {
+                    //             test: /.*/,
+                    //             attribute: "type",
+                    //             value: "text/javascript"
+                    //         }, {
+                    //             test: /.*/,
+                    //             attribute: "th:inline",
+                    //             value: "none"
+                    //         }
+                    //     ]
+                    // }),
+                    // new HtmlWebpackInlineSourcePlugin()
+                // ]
             }
         }
         return {
@@ -145,17 +150,17 @@ module.exports = {
                 config.plugins.delete('prefetch-'+item);
             }
             config.plugins.delete('html-ivzone');
-            config.plugins.delete('html-index');
-            config.plugins.delete('html-login');
+            // config.plugins.delete('html-index');
+            // config.plugins.delete('html-login');
 
             config.optimization.delete('splitChunks');
             // 清除css，js版本号
-            config.output.filename('umd/[name].min.js').end();
-            config.output.chunkFilename('umd/[name].min.js').end();
-            // 为生产环境修改配置...
+            config.output.filename('libs/[name].min.js').end();
+            config.output.chunkFilename('libs/[name].min.js').end();
+
             config.plugin('extract-css').tap(args => [{
-                filename: `umd/[name].min.css`,
-                chunkFilename: `umd/[name].min.css`
+                filename: `libs/[name].min.css`,
+                chunkFilename: `libs/[name].min.css`
             }])
             config.plugin("ignore").use(
                     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn$/)

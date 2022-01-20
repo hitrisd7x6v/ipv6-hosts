@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh">
 <head>
-    <th:block th:include="libs :: index('管理登录')"></th:block>
+    <title><%=htmlWebpackPlugin.options.title%></title>
+    <%=require('html-loader!../head.html')%>
 </head>
 <body>
     <div id="login"></div>
-<!-- built files will be auto injected -->
+    <%=require('html-loader!../footer.html')%>
 </body>
 </html>

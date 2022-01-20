@@ -68,7 +68,7 @@
                                     </a-menu>
                                 </a-dropdown>
                             </li>
-                            <li class="ivz-opera-col">
+                            <li class="ivz-opera-col" @click="handleNotify">
                                 <a-tooltip title="系统通知">
                                     <div><ivz-icon type="iz-icon-notify" size="18px"></ivz-icon></div>
                                 </a-tooltip>
@@ -131,6 +131,9 @@
                     </div>
                 </div>
             </a-layout-header>
+            <div id="slider-drawer">
+                <ivz-notify-drawer ref="notifyDrawer"></ivz-notify-drawer>
+            </div>
             <a-layout-content ref="layoutContent" class="iz-main-container">
                 <div class="ivz-content-iframe">
                     <transition-group name="list">
@@ -147,9 +150,10 @@
 import CacheApi from '@/utils/cache.utils'
 import Global from "@/components/global.config"
 import IvzSubMenu from '@/components/basic/IvzSubMenu'
+import IvzNotifyDrawer from "@/components/basic/IvzNotifyDrawer";
 export default {
     name: 'index',
-    components: {IvzSubMenu},
+    components: {IvzNotifyDrawer, IvzSubMenu},
     data () {
         return {
             menus: [],
@@ -160,6 +164,7 @@ export default {
             openKeys: [],
             theme: 'dark', // 主题 dark or light
             avatarUrl: null,
+            notifyVisible: false,
             expandMode: 'single', // 菜单展开模式 (single || multi)
             searchValue: null,
             searchSource: [
@@ -328,6 +333,9 @@ export default {
         },
         completeFilter(value, option) {
             return true;
+        },
+        handleNotify() {
+            this.$refs['notifyDrawer'].toggle();
         }
     }
 }
