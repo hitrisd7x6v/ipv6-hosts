@@ -335,7 +335,7 @@ export default {
             return true;
         },
         handleNotify() {
-            this.$refs['notifyDrawer'].toggle();
+            // this.$refs['notifyDrawer'].toggle();
         }
     }
 }
