@@ -7,6 +7,7 @@
                     &nbsp;<em style="vertical-align: bottom; font-size: 16px">{{resource.name}}</em>
                 </div>
             </li>
+<!--            <li class="ivz-opera-desc"></li>-->
             <li class="ivz-opera-right">
                 <a-button-group>
                     <template v-if="searchMainMetas">

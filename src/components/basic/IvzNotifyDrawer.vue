@@ -35,7 +35,7 @@
         data() {
             return  {
                 activityItem: 1,
-                notifyVisible: true
+                notifyVisible: false
             }
         },
         methods: {

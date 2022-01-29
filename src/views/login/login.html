@@ -2,10 +2,14 @@
 <html lang="zh">
 <head>
     <title><%=htmlWebpackPlugin.options.title%></title>
-    <%=require('html-loader!../head.html')%>
+    <% if (process.env.NODE_ENV === 'production') { %>
+        <%=require('html-loader!../head.html')%>
+    <% }%>
 </head>
 <body>
     <div id="login"></div>
-    <%=require('html-loader!../footer.html')%>
+    <% if (process.env.NODE_ENV === 'production') { %>
+        <%=require('html-loader!../footer.html')%>
+    <% }%>
 </body>
 </html>
