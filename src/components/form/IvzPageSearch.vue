@@ -7,7 +7,10 @@
                     &nbsp;<em style="vertical-align: bottom; font-size: 16px">{{resource.name}}</em>
                 </div>
             </li>
-<!--            <li class="ivz-opera-desc"></li>-->
+            <li class="ivz-opera-desc">
+                <label style="display: inline-block; padding: 0px 3px">{{searchConfig.title}}</label>
+                <label style="display: inline-block">{{searchConfig.content}}</label>
+            </li>
             <li class="ivz-opera-right">
                 <a-button-group>
                     <template v-if="searchMainMetas">

@@ -182,6 +182,8 @@ export default {
             mountedFinished: (formVue) => {} // 表组件更新完成
         }, // 编辑表单配置
         search: { // 搜索表单配置
+            title: '',
+            content: '',
             gutter: 2,
             column: 4, // 搜索栏表单列
             viewTop: null, // 搜索框显示在顶栏

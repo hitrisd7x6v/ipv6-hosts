@@ -262,9 +262,15 @@ html, body {
     float: left;
     min-width: 180px;
 }
-/*.ivz-basic-search .ivz-opera-desc {*/
-/*    float: left;*/
-/*}*/
+.ivz-basic-search .ivz-opera-desc {
+    float: left;
+    height: 40px;
+    color: #b7b7b7;
+    font-family: 楷体;
+    font-size: 16px;
+    line-height: 36px;
+    padding: 3px 16px;
+}
 .ivz-basic-search .ivz-opera-right {
     float: right;
     min-width: 320px;

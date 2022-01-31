@@ -1,6 +1,6 @@
 {
   "name": "ivzone",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "private": false,
   "license": "Apache 2.0",
   "author": {
@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://gitee.com/iteaj/ivzone"
   },
+  "main": "dist/libs/ivzone.min.js",
   "description": "使用vue、antdv开发的多页面组件, 一个视图组件即一个页面(html)；一个视图组件包含了增删改查常用功能的组件库",
   "scripts": {
     "serve": "vue-cli-service serve",
