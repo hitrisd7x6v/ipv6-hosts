@@ -4,12 +4,14 @@
     <title><%=htmlWebpackPlugin.options.title%></title>
     <% if (process.env.NODE_ENV === 'production') { %>
         <%=require('html-loader!../head.html')%>
+        <link href="https://cdn.jsdelivr.net/npm/ivzone@<%=htmlWebpackPlugin.options.version%>/dist/libs/login.min.css" rel="stylesheet">
     <% }%>
 </head>
 <body>
     <div id="login"></div>
     <% if (process.env.NODE_ENV === 'production') { %>
         <%=require('html-loader!../footer.html')%>
+        <script src="https://cdn.jsdelivr.net/npm/ivzone@<%=htmlWebpackPlugin.options.version%>/dist/libs/login.min.js"></script>
     <% }%>
 </body>
 </html>

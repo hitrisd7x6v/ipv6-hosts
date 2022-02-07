@@ -10,6 +10,7 @@
     <div id="index"></div>
     <% if (process.env.NODE_ENV === 'production') { %>
         <%=require('html-loader!../../footer.html')%>
+        <script src="https://cdn.jsdelivr.net/npm/ivzone@<%=htmlWebpackPlugin.options.version%>/dist/libs/403.min.js"></script>
     <% }%>
 </body>
 </html>

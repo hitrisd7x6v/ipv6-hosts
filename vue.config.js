@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const demoViews = {};
 const glob = require('glob');
 const path = require('path');
+const version = process.env.npm_package_version;
 const DEMO_PAGE_PATH = path.resolve(__dirname, 'src/views/demo');
 const entryFiles = glob.sync(DEMO_PAGE_PATH + '/*.js')
 // 页面js打包路口
@@ -36,6 +37,8 @@ module.exports = {
         ...demoViews,
         index: { // 系统首页
             title: '系统首页',
+            inject: false,
+            version: version,
             // inlineSource: '.(css)$',
             filename: 'views/index.html',
             entry: 'src/views/index/index.js',
@@ -43,6 +46,8 @@ module.exports = {
         },
         login: { // 系统登录页
             title: '系统登录',
+            inject: false,
+            version: version,
             // inlineSource: '.(css)$',
             filename: 'views/login.html',
             entry: 'src/views/login/login.js',
@@ -50,6 +55,8 @@ module.exports = {
         },
         403: { // 未授权页面
             title: '无权限',
+            inject: false,
+            version: version,
             inlineSource: '.(css)$',
             filename: 'views/403.html',
             entry: 'src/views/error/403/403.js',
@@ -57,6 +64,8 @@ module.exports = {
         },
         404: { // 404页面
             title: '无资源',
+            inject: false,
+            version: version,
             inlineSource: '.(css)$',
             filename: 'views/404.html',
             entry: 'src/views/error/404/404.js',
@@ -64,6 +73,8 @@ module.exports = {
         },
         500: { // 异常页面
             title: '异常错误',
+            inject: false,
+            version: version,
             inlineSource: '.(css)$',
             filename: 'views/500.html',
             entry: 'src/views/error/500/500.js',
