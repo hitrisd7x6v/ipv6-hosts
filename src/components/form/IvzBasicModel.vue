@@ -77,7 +77,7 @@
                                         :blur="col.event.blur" :focus="col.event.focus" @ok="col.event.ok(model)"
                                         @openChange="(status) => {col.event.openChange(status, model)}" :disabled="disabledHandle(col)"
                                         @panelChange="(val, mode) => {col.event.panelChange({value: val, mode: mode}, model)}"
-                                                @change="(val)=>changeHandle(val, col)"
+                                        @change="(val)=>changeHandle(val, col)" :valueFormat="col.config.format"
                                                 :getCalendarContainer="col.config.getCalendarContainer">
                                 </a-range-picker>
                                 <a-upload v-else-if="col.type=='upload'" v-model="model[col.field]" :action="col.config.action"

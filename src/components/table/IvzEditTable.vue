@@ -46,12 +46,7 @@
             <slot name="action_t" :row="row" :index="index">
                 <a-row align="middle" justify="center" type="flex">
                     <a-col v-for="mate in mainMetas" :key="mate.id" class="ivz-opera">
-                        <a-popconfirm v-if="mate.id=='del'" title="确认删除？" trigger="click"
-                              @confirm="actionHandle(mate, row, index)" :arrow-point-at-center="true"
-                              okText="确认" cancelText="取消">
-                            <a-tag :color="mate.color" :class="disabledClass(mate, row)">{{mate.label}}</a-tag>
-                        </a-popconfirm>
-                        <a-tag v-else :color="mate.color" :class="disabledClass(mate, row)"
+                        <a-tag :color="mate.color" :class="disabledClass(mate, row)"
                                @click="actionHandle(mate, row, index)">{{mate.label}}</a-tag>
                     </a-col>
                 </a-row>
@@ -119,27 +114,37 @@
                     this.$set(row, 'EditableFlag', true) // EditableFlag说明可编辑
                 })
             },
-            delActionHandle (meta, row, submit) {
-                if(this.$utils.isBlank(row))
+            delActionHandle (meta, selectionRows, submit) {
+                if(this.$utils.isBlank(selectionRows))
                     return this.$msg.warningMessage("请选择要删除的记录");
 
-                meta.callBack(row).then(param => {
+                meta.callBack(selectionRows).then(param => {
                     let resolve = this.$utils.getPromiseResolve(param)
-                    if (row[this.tableConfig.rowKey]) {
-                        this.loading = true
-                        let delSubmit = [row[this.tableConfig.rowKey]]
-                        this.$http.post(meta['url'], delSubmit).then(resp => {
-                            this.$msg.delSuccessNotify(resolve, resp, this, row, () => {
+                    // 如果是数组, 说明打开了多选功能
+                    if(this.$utils.isArray(selectionRows)) {
+                        selectionRows.forEach(item => {
+                            // 如果是新增的行直接删除, 其他的到后台删除
+                            if(!item[this.tableConfig.submitField]) {
+                                this.$utils.delArrayEle(this.dataSource, item, null)
+                            }
+                        })
+                    }
+
+                    let tipTitle = resolve.tipTitle ? resolve.tipTitle : '数据删除操作!';
+                    let tipContent = resolve.tipContent ? resolve.tipContent : `确认删除选中的数据?`;
+                    this.$msg.confirm(tipTitle, tipContent).then(() => {
+                        this.loading = true;
+
+                        this.$http.post(meta.url, submit).then(data => {
+                            this.$msg.delSuccessNotify(resolve, data, this, submit, () => {
                                 this.query()
                             })
                         }).catch(reason => {
-                            this.$msg.delFailNotify(resolve, reason, this, row)
+                            this.$msg.delFailNotify(resolve, reason, this, submit)
                         }).finally(() => {
                             this.loading = false
                         })
-                    } else {
-                        this.$utils.delArrayEle(this.dataSource, row, null)
-                    }
+                    }).catch(reason => null)
                 })
             },
             saveActionHandle(meta, row) {

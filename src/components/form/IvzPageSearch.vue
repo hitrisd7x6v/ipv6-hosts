@@ -36,7 +36,7 @@
             <li style="clear: both"></li>
         </ul>
         <ivz-search-model class="ivz-search-bottom" :search-model="searchModel" ref="searchRef"
-             :metas="searchMetas" :form-config="searchConfig" @pressEnter="pressEnter">
+             v-if="isMetas" :metas="searchMetas" :form-config="searchConfig" @pressEnter="pressEnter">
         </ivz-search-model>
     </div>
 </template>
@@ -58,6 +58,7 @@
             return {
                 resource: {},
                 oriModel: {},
+                isMetas: false,
                 fieldMetaMap: {},
                 actionMetaKeys: [],
                 searchMainMetas: [],
@@ -69,6 +70,7 @@
             this.initActionMates(this.actionMetas);
             this.oriModel = this.$page.oriSearchModel;
             this.fieldMetaMap = this.$page.searchFieldMetaMap;
+            this.isMetas = this.searchMetas && this.searchMetas.length > 0;
         },
         methods: {
             actionEvent(meta) {

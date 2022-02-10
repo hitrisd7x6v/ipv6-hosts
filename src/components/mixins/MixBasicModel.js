@@ -14,7 +14,6 @@ export const MixBasicModel = {
             model: {}, // 当前编辑的表单对象
             oriModel: {}, // 原始表单model对象
             dateMetas: [], // 日期格式元数据
-            fieldMetaMap: {},
         }
     },
     created () {
@@ -24,8 +23,7 @@ export const MixBasicModel = {
                 this.dateMetas.push(meta);
             }
 
-            this.fieldMetaMap[meta.field] = meta;
-            this.oriModel[meta.field] = meta['decorate']['initialValue'];
+            this.$resolver.resolverMetaDefaultValue(meta, this.oriModel);
         });
     },
     mounted () {

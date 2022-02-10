@@ -301,7 +301,7 @@ const Utils = {
      * 合并默认的对象
      *  如果ori的值存在则不覆写
      *  如果ori值不存在则合并target的值
-     *  如果是嵌套对象, 则嵌套覆写
+     *  如果是嵌套对象, 则递归处理
      * @param ori
      * @param target
      * @param _this

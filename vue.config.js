@@ -37,7 +37,7 @@ module.exports = {
         ...demoViews,
         index: { // 系统首页
             title: '系统首页',
-            inject: false,
+            inject: true,
             version: version,
             // inlineSource: '.(css)$',
             filename: 'views/index.html',

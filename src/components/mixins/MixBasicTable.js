@@ -140,7 +140,8 @@ export const MixBasicTable = {
             })
         },
         actionHandle (mate, row, index) { //
-            if(!mate || !mate['id']) {
+            let metaId = mate['id'];
+            if(!mate || !metaId) {
                 return this.$log.errorLog("未指定动作, 或作元数据错误(需指定id)", "请指定要操作的元数据", mate);
             }
             let disabled = this.disabledClass(mate, row);
@@ -149,16 +150,21 @@ export const MixBasicTable = {
             let submit = row || this.getSelectionKeys();
             let selectionRows = row || this.getSelectionRows();
 
-            // 如果此动作在主栏和主表栏, 提交的必须是数组
-            if(mate['position'] == 'AM') {
+            let selection = this.tableConfig['selection'];
+            if(metaId == 'add' || metaId == 'edit' || metaId == 'view') {
+                /*新增和编辑, 查询不需要处理*/
+            } else if(selection && selection['type'] == 'checkbox'){ // 如果有多选按钮
+                // 操作数据将转换成数组
                 if(!this.$utils.isArray(submit)) {
                     let value = submit[this.tableConfig.submitField];
                     submit = [value];
                     selectionRows = [selectionRows];
                 }
+            } else {
+                submit = submit[this.tableConfig.submitField];
             }
 
-            switch(mate['id']) {
+            switch(metaId) {
                 case 'view': this.viewActionHandle(); break;
                 case 'add': this.addActionHandle(mate, row, index); break;
                 case 'del': this.delActionHandle(mate, selectionRows, submit); break;
@@ -169,6 +175,7 @@ export const MixBasicTable = {
                 default: this.otherActionHandle(mate, selectionRows, submit);
             }
         },
+
         viewActionHandle () {this.query();},
         addActionHandle (meta, row, index) { },
         editActionHandle (meta, row) { },

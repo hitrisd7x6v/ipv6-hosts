@@ -81,13 +81,6 @@ export default {
                 this.$msg.confirm(tipTitle, tipContent).then(() => {
                     this.loading = true;
 
-                    // 删除时提交的数据只能是数组类型
-                    if (!(this.isArray(selectionRows))) {
-                        submit = [selectionRows[this.tableConfig.submitField]]
-                    } else {
-                        submit = selectionRows.map(item=>item[this.tableConfig.submitField]);
-                    }
-
                     this.$http.post(mate.url, submit).then(data => {
                         this.$msg.delSuccessNotify(resolve, data, this, submit, () => {
                             this.query()

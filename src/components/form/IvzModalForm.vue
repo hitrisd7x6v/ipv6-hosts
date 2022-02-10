@@ -44,7 +44,6 @@
         data () {
             return {
                 zhCN,
-                oriModel: {},
                 submitTip: '',
                 editModel: {},
                 modalWidth: 0,
@@ -63,7 +62,7 @@
             if (!this.saveMeta) return this.$log.errorLog('没有指定操作元数据', '传入(props)saveMeta')
 
             this.formConfig = this.config.form || {}
-            this.$utils.assignVueProperty(this.config, this.$resolver.modalOptions, this)
+            this.$resolver.mergeDefaultObject(this.config, this.$resolver.modalOptions, this)
 
             this.submitTip = this.formConfig.submitTip
             this.$resolver.initDefaultFormConfig(this.formConfig, this);
@@ -82,8 +81,6 @@
                 if(meta.type == 'select' || meta.type == 'stree' || meta.type == 'cascade') {
                     meta.config.getPopupContainer = this.$getModalContainer;
                 }
-
-                this.$resolver.resolverMetaDefaultValue(meta, this.oriModel);
             })
         },
         mounted () {
@@ -101,14 +98,14 @@
                 this.visible = false
             },
             getOriModel() {
-                return this.$utils.clone(this.oriModel);
+                return this.$basicForm.getOriModel();
             },
             getEditModel () {
                 return this.$basicForm.getEditModel()
             },
             mountedFinished(basicFormRef) {
                 this.$basicForm = basicFormRef;
-                this.editModel = this.editModel || this.$basicForm.getOriFormModel();
+                this.editModel = this.editModel || this.$basicForm.getOriModel();
                 this.$basicForm.setEditModel(this.editModel);
             },
             submit () {
@@ -150,7 +147,5 @@
 </script>
 
 <style>
-    .ivz-modal-form .ant-modal-body {
-        overflow-y: auto;
-    }
+
 </style>

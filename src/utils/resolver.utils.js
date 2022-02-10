@@ -32,7 +32,7 @@ export default {
         closable: false, // 是否显示关闭按钮
         maskClosable: false, // 点击蒙层是否允许关闭
         maskStyle: {backgroundColor: 'rgba(0, 0, 0, 0.31)'}, // 遮罩层样式
-        bodyStyle: {height: '256px', overflowY: 'auto'} // 内容样式
+        bodyStyle: {height: '320px', overflowY: 'auto'} // 内容样式
     },
     quickDate () { // 快捷时间选项
         return {
@@ -417,15 +417,11 @@ export default {
         let decorate = mate['decorate'];
         let metaDefault = mate['default'];
         // 日期类型的默认值, 必须转成moment格式
+        // antdv 1.5.4版本后支持日期字符串绑定
         if (metaDefault && Utils.isDate(mate['type'])) {
-            if(mate['type'] == 'dateRange') {
-                if(!Utils.isArray(metaDefault)) {
-                    metaDefault = [metaDefault];
-                }
-                metaDefault = metaDefault.map(item=>moment.isMoment(item) ? item : moment(item));
-            } else {
-                metaDefault = moment.isMoment(metaDefault)
-                    ? metaDefault : moment(metaDefault);
+            // 时间范围的日期必须是数组格式
+            if(mate['type'] == 'dateRange' && typeof metaDefault == 'string') {
+                metaDefault = [metaDefault];
             }
         }
         if (decorate) {

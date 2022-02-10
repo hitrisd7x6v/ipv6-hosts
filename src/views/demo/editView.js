@@ -14,12 +14,11 @@ new Vue({
         editMetas: {},
         editConfig: {
             table: {
-                scroll: {y: 160}
-            }
+                selection: {}
+            },
         },
         editActionMetas: {},
         groupMetas: Data.groupMetas,
-        actionMetas: Data.actionMetas,
         searchMetas: Data.searchMates
     },
     created () {
