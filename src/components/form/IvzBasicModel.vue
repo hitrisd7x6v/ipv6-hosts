@@ -1,13 +1,15 @@
 <template>
     <a-form-model ref="formModelRef" :model="model" :label-col="formConfig.labelCol"
           :layout="formConfig.layout" :wrapper-col="formConfig.wrapperCol" :colon="izColon"
-          :labelAlign="formConfig.labelAlign" :validateOnRuleChange="formConfig.validateOnRuleChange">
+          :labelAlign="formConfig.labelAlign" :validateOnRuleChange="formConfig.validateOnRuleChange"
+          :hide-required-mark="formConfig.hideRequiredMark">
         <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter" type="flex">
             <template v-for="col in metas">
                 <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
                         <a-form-model-item :label="col.title" :prop="col.field" :ref="col.field"
-                               :labelCol="col.config.labelCol" :wrapperCol="col.config.wrapperCol"
-                                :rules="col['decorate'].rules">
+                           :labelCol="col.config.labelCol" :wrapperCol="col.config.wrapperCol"
+                            :rules="col['decorate'].rules" :extra="col.config.extra"
+                           :has-feedback="col.config.hasFeedback">
                             <slot v-if="col.formSlot" :name="col.formSlot"></slot>
                             <template v-else>
                                 <a-select v-if="col.type=='select'" v-model="model[col.field]" :tokenSeparators="col.config.tokenSeparators"

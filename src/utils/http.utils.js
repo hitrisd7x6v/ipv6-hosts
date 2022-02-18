@@ -4,9 +4,10 @@ import Logger from './logger.utils'
 import Global from '../components/global.config' // 全局配置
 
 const $http = axios.create({
-    timeout: 20000,
+    timeout: Global.timeout,
     baseURL: Global.izCtx,
     headers: {
+        ApiForm: 'Ivzone',
         Authorization: 'session', // 授权类型为 session
         'x-requested-with': 'XMLHttpRequest' // 是否是ajax请求
     },
@@ -52,9 +53,12 @@ $http.interceptors.response.use(
                 let loginUrl = data.message;
                 window.parent.location.href = loginUrl;
             } else if (response.status === 404) {
-                errMsg = '您请求的功能不存在或没有权限!';
+                errMsg = '您请求的功能不存在!';
+            } else if(response.status === 403) {
+                errMsg = '您没有权限访问此功能!';
             }
         }
+
         return Promise.reject(errMsg)
     }
 )

@@ -5,8 +5,8 @@
             <template v-for="col in metas">
                 <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
                     <a-form-item :label-col="col.config.labelCol" :wrapper-col="col.config.wrapperCol"
-                             :colon="izColon" :has-feedback="col.config.hasFeedback" :label="col.title"
-                                 :extra="col.config.extra" :self-update="col.config.selfUpdate">
+                         :colon="izColon" :has-feedback="col.config.hasFeedback" :label="col.title"
+                         :extra="col.config.extra" :self-update="col.config.selfUpdate">
                         <slot v-if="col.formSlot" :name="col.formSlot" :model="model"></slot>
                         <template v-else>
                             <a-select v-if="col.type=='select'" v-decorator="[col.field, col['decorate']]" :size="formSize"
@@ -21,7 +21,7 @@
                                   @deselect="(val, option) => col.event.deselect({value: val, option: option}, model, col)"
                                   @inputKeydown="col.event.inputKeydown(model)" @change="(val)=>changeHandle(val, col)">
                                 <a-select-option v-for="option in col.data" :key="option.value"
-                                                 :disabled="option.disabled" class="ivz-option-class">
+                                         :disabled="option.disabled" class="ivz-option-class">
                                     {{option.label}}
                                 </a-select-option>
                             </a-select>

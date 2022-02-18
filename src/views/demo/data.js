@@ -279,6 +279,15 @@ Mock.mock(RegExp('/test/stree.*'), 'get', (options) => {
             ]
         }
     })
+});
+Mock.mock(RegExp('/core/admin/avatar'), 'post', () => {
+    return Mock.mock({
+        code: 200,
+        message: '获取成功',
+        data: {
+            url: '/img/aa.png'
+        }
+    });
 })
 /* 测试数据 */
 export default {

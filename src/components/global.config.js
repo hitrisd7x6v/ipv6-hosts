@@ -4,6 +4,7 @@ import Utils from '../utils/basic.utils'
 let defaultGlobalConfig = {
     izCtx: '',
     izStx: '',
+    timeout: 20000, // 接口超时时间
     envUrl: '/env', // 获取环境配置Url
     loginUrl: '/login', // 登录地址
     logoutUrl: '/logout', // 注销系统
@@ -12,7 +13,9 @@ let defaultGlobalConfig = {
     resourcesUrl: '/resources', // 获取菜单资源Url
     dictLabelField: 'label', // 字典名称字段
     dictValueField: 'value', // 字典值字段
-    iconUrl: '//at.alicdn.com/t/font_1174643_k7u490ljfw9.js' // 图标链接
+    avatarUrl: '/core/admin/avatar', // 头像上传路径
+    modUserUrl: '/core/admin/userInfo', // 修改用户信息url
+    iconUrl: '//at.alicdn.com/t/font_1174643_ifznepa5q6b.js' // 图标链接
 }
 
 let ivzGlobalConfig = window.ivzGlobalConfig || window.parent.ivzGlobalConfig

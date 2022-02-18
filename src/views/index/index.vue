@@ -56,9 +56,9 @@
                                         <span style="font-size: 14px;"> 欢迎, {{user.name}}</span>
                                     </div>
                                     <a-menu slot="overlay" @click="moreOpera">
-                                        <a-menu-item key="password">
-                                            <ivz-icon type="iz-icon-password"></ivz-icon>
-                                            <span>修改密码</span>
+                                        <a-menu-item key="info">
+                                            <ivz-icon type="iz-icon-user-info"></ivz-icon>
+                                            <span>个人信息</span>
                                         </a-menu-item>
                                         <a-menu-divider />
                                         <a-menu-item key="logout">
@@ -133,6 +133,7 @@
             </a-layout-header>
             <div id="slider-drawer">
                 <ivz-notify-drawer ref="notifyDrawer"></ivz-notify-drawer>
+                <ivz-setting-drawer ref="settingDrawer" :model="user" :config="config"></ivz-setting-drawer>
             </div>
             <a-layout-content ref="layoutContent" class="iz-main-container">
                 <div class="ivz-content-iframe">
@@ -151,15 +152,17 @@ import CacheApi from '@/utils/cache.utils'
 import Global from "@/components/global.config"
 import IvzSubMenu from '@/components/basic/IvzSubMenu'
 import IvzNotifyDrawer from "@/components/basic/IvzNotifyDrawer";
+import IvzSettingDrawer from "@/components/basic/IvzSettingDrawer";
 export default {
     name: 'index',
-    components: {IvzNotifyDrawer, IvzSubMenu},
+    components: {IvzSettingDrawer, IvzNotifyDrawer, IvzSubMenu},
     data () {
         return {
             menus: [],
             height: '100%',
             viewMenu: [],
             user: {},
+            config: null,
             sysName: '',
             openKeys: [],
             theme: 'dark', // 主题 dark or light
@@ -188,19 +191,20 @@ export default {
             this.menus = this.activityView['children'] || []
         });
         CacheApi.getConfig().then(env => {
-            this.user = env.user;
-            let envConfig = env['config'];
+            this.user = env['user'];
+            this.config = env['config'];
             this.avatarUrl = this.user['avatar'];
-            this.sysName = envConfig['sys_name'] ? envConfig['sys_name']['value'] : '参数异常';
-            let mainUrl = envConfig['main_url'];
+            this.sysName = this.config['sys_name'] ? this.config['sys_name']['value'] : '参数异常';
+            let mainUrl = this.config['main_url'];
+            this.$refs['settingDrawer'].init(this.user);
             if(mainUrl.value && mainUrl.value.trim().length>0) {
-                this.workMenu = {name: envConfig['main_name'].value
-                    , url: envConfig['main_url'].value, id: 0, closable: false, icon: 'iz-icon-work'};
+                this.workMenu = {name: this.config['main_name'].value
+                    , url: this.config['main_url'].value, id: 0, closable: false, icon: 'iz-icon-work'};
                 this.activityMenu = this.workMenu;
                 this.taskBarData.splice(0, 0, this.workMenu);
             }
 
-            this.expandMode = envConfig['expand_mode'] ? envConfig['expand_mode']['value'] : 'single'
+            this.expandMode = this.config['expand_mode'] ? this.config['expand_mode']['value'] : 'single'
         });
     },
     mounted () {
@@ -263,6 +267,9 @@ export default {
                 this.$http.get(Global.logoutUrl).then(()=>{
                     location.href = this.izCtx + Global.loginUrl;
                 });
+            } else if(item.key === 'info') {
+                this.$refs['notifyDrawer'].close();
+                this.$refs['settingDrawer'].toggle();
             }
         },
         viewHandler (view) {
@@ -336,6 +343,7 @@ export default {
         },
         handleNotify() {
             // this.$refs['notifyDrawer'].toggle();
+            // this.$refs['settingDrawer'].close();
         }
     }
 }

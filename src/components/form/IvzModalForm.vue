@@ -108,6 +108,9 @@
                 this.editModel = this.editModel || this.$basicForm.getOriModel();
                 this.$basicForm.setEditModel(this.editModel);
             },
+            getMeta(field) {
+                return this.fieldMetaMap[field];
+            },
             submit () {
                 this.$basicForm.validate().then(resp => {
                     if (!this.saveMeta['url']) {
