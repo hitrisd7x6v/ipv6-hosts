@@ -47,8 +47,8 @@
         },
         watch: {
             visible(newVal) {
-                if(!newVal) {
-                    this.destroyPageForm();
+                if(newVal) {
+                    // this.initEditModel();
                 }
             }
         },

@@ -292,3 +292,26 @@ html, body {
 .ivz-icon-back:hover {
     color: dodgerblue;
 }
+
+/*过渡动画*/
+.slide-fade-enter-active {
+    transition: all .3s ease;
+}
+/*.slide-fade-leave-active {*/
+/*    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);*/
+/*}*/
+.slide-fade-enter, .slide-fade-leave-to
+    /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateX(24px);
+    opacity: 0;
+}
+
+.slide-fade-list-enter-active {
+    transition: all .3s ease;
+}
+
+.slide-fade-list-enter, .slide-fade-list-leave-to
+    /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateX(-24px);
+    opacity: 0;
+}

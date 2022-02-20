@@ -21,7 +21,6 @@ export const MixPageForm = {
             spinning: false,
             basicFormRef: null,
             fieldMetaMap: {},
-            identifying: false // 读取详情数据http请求
         }
     },
     created () {
@@ -39,9 +38,12 @@ export const MixPageForm = {
         getFormType() { return 'Default' },
         mountedFinished (formRef) {
             this.basicFormRef = formRef;
-            this.initEditModel(formRef);
+            this.initEditModel(true)
         },
-        initEditModel (formRef) {
+        initEditModel (bool) {
+            // 解决DrawerView组件在抽屉初始化的时候, this.basicFormRef为null问题
+            if(!bool && !this.basicFormRef) return;
+
             let actionMeta = this.$page.getStore("actionMeta");
             if(null == actionMeta) { // 默认情况使用新增操作的数据信息
                 this.operaMeta = this.actionMetas['Add'] || {};
@@ -53,11 +55,9 @@ export const MixPageForm = {
                     ? this.formConfig.editTitle : this.operaMeta['label'];
 
                 if (this.formConfig.editSource === 'local') { // 编辑数据来源于本地从缓存获取
-                    formRef.setEditModel(this.getEditModel())
+                    this.basicFormRef.setEditModel(this.getEditModel())
                 } else { // 新增的数据从表单对象获取
-                    if(!this.identifying) {
-                        this.getDetail()
-                    }
+                    this.getDetail()
                 }
             } else if(actionMeta.id == 'add') {
                 this.operaMeta = this.actionMetas['Add'];
@@ -65,7 +65,7 @@ export const MixPageForm = {
                 this.title = this.formConfig.addTitle
                     ? this.formConfig.addTitle : this.operaMeta['label'];
 
-                formRef.setEditModel(this.getEditModel())
+                this.basicFormRef.setEditModel(this.getEditModel())
             } else {
 
             }
@@ -84,18 +84,13 @@ export const MixPageForm = {
             return this.$page.getOriModel();
         },
         getEditModel() {
-            if(this.$utils.isNotBlank(this.editModel)) {
-                return this.editModel;
-            } else {
-                return this.editModel = this.$page.getEditModel();
-            }
+            return this.editModel = this.$page.getEditModel();
         },
         setEditModel(editModel) {
             this.basicFormRef.setEditModel(editModel)
         },
         destroyPageForm() {
             this.editModel = {};
-            this.identifying = false;
             this.$page.removePageStore();
             this.$router.push("/IvzSys/void");
             this.$page.registerVueRef(null, 'form');
@@ -109,7 +104,6 @@ export const MixPageForm = {
                 , '新增编辑功能点：Edit', this.actionMetas);
 
             let params = {};
-            this.identifying = true;
             let izField = this.$page.izField;
             let editModel = this.getEditModel();
             params[izField] = editModel[izField];

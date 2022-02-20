@@ -76,16 +76,13 @@
             actionEvent(meta) {
                 switch (meta['id']) {
                     case 'add':
-                        let oriModel = this.$page.getOriModel(this);
-                        this.$page.putStore("actionMeta", meta);
-                        this.$page.putStore("editModel", oriModel);
-                        this.$page.add(oriModel, meta, 0);
+                        this.$page.add();
                         break;
                     case 'view':
                         this.$page.query();
                     default:
                         this.$page.putStore('actionMeta', meta);
-                        this.$page.action(null, meta); break;
+                        this.$page.action(meta, null); break;
                 }
             },
             pressEnter (model, col) {

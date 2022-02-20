@@ -40,6 +40,8 @@ export const MixPageList = {
         actionHandleWrapper(meta, row, index) {
             if(meta.id == 'view') {
                 this.query();
+            } else if(meta.id == 'edit' || meta.id == 'add') {
+                /*新增和编辑无动作*/
             } else {
                 this.$refs['tableRef'].actionHandle(meta, row, index);
             }

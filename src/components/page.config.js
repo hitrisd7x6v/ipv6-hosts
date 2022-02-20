@@ -68,20 +68,27 @@ export default {
      * @param row
      * @param meta
      */
-    action(row, meta) {
+    action(meta, row) {
         this.getListRef().actionHandleWrapper(meta, row);
+        if(meta.id == 'add') {
+            this.add();
+        } else if(meta.id == 'edit') {
+            this.edit(row);
+        }
     },
     /**
      * 新增数据
      * @param meta
      */
-    add(row, meta, index) {
-        this.putStore("editModel", row);
-        let operaMeta = meta || this.pageActionMetas.Add;
-        operaMeta.callBack(row).then(()=>{
-            this.getViewRef().viewEditPage();
+    add() {
+        let operaMeta = this.pageActionMetas.Add;
+        let oriModel = this.getOriModel();
+        this.putStore("editModel", oriModel);
+        this.putStore("actionMeta", operaMeta);
+        operaMeta.callBack(oriModel).then(()=>{
             router.push("/IvzSys/add");
-            this.getListRef().actionHandleWrapper(operaMeta, row, index)
+            this.getViewRef().viewEditPage();
+            this.getFormRef().initEditModel();
         });
     },
     /**
@@ -96,13 +103,14 @@ export default {
     /**
      * 编辑数据
      */
-    edit(row, meta) {
-        let operaMeta = meta || this.pageActionMetas.Edit;
+    edit(row) {
+        let operaMeta = this.pageActionMetas.Edit;
         this.putStore("editModel", row);
         this.putStore("actionMeta", operaMeta);
         operaMeta.callBack(row).then(()=>{
-            this.getViewRef().viewEditPage();
             router.push("/IvzSys/edit");
+            this.getViewRef().viewEditPage();
+            this.getFormRef().initEditModel();
         });
     },
     /**
@@ -123,14 +131,17 @@ export default {
      * 返回列表页
      */
     list() {
-        this.query();
         this.cancel();
+        this.getViewRef().$nextTick(()=>{
+            this.query();
+        });
     },
     /**
      * 取消编辑
      */
     cancel() {
         this.getViewRef().viewListPage();
+        this.router.push("/IvzSys/void");
     },
     /**
      * 刷新页面数据
@@ -242,6 +253,7 @@ export default {
             case 'list': this.vueRef['listRef'] = ref; break;
             case 'form': this.vueRef['formRef'] = ref; break;
             case 'detail': this.vueRef['detailRef'] = ref; break;
+            default: throw new Error("不能注册此类型:" + type);
         }
     },
     /**

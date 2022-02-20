@@ -160,7 +160,9 @@ export const MixBasicForm = {
         // 重置表单值对象
         setEditModel (newModel) {
             this.model = newModel;
-            this.form.updateFields()
+            this.$nextTick(()=>{
+                this.form.updateFields()
+            });
         }
     }
 };

@@ -329,7 +329,7 @@ export default {
                 }}},
         {field: 'obj.desc', title: '对象'},
         {field: 'list[0].gg', title: '数组', isTable: false, default: 3},
-        {field: 'markSale', title: '表单slot', type: 'number', max: 4, config: {extra: '注：市场价不能小于0'}},
+        {field: 'markSale', title: '表单slot', type: 'number', config: {extra: '注：市场价不能小于0'}},
         {field: 'rate', title: 'rate', type: 'rate', config: {count: 8, tootips: ['低评分']}},
         {field: 'range', title: 'slider', type: 'slider', config: {step: 3, max: 120}},
         {field: 'createTime', title: 'data', type: 'date'},

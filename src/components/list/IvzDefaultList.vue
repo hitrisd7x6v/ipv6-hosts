@@ -10,7 +10,7 @@
             <slot name="table">
                 <ivz-basic-table ref="tableRef" :table-metas="tableMetas" :table-config="tableConfig"
                         :data="data" :search-model="searchModel" :action-metas="actionMetas"
-                        @heightChange="setTableHeight">
+                        @heightChange="setTableHeight" @onEdit="editHandle">
                     <template #action="{row, index}">
                         <slot name="action" :row="row" :index="index"></slot>
                     </template>
@@ -40,7 +40,15 @@
         },
         created () { },
         mounted () { },
-        methods: { }
+        methods: {
+            editHandle(meta, row, tabRef) {
+                if(meta.id == 'add') {
+                    this.$page.add(row);
+                } else {
+                    this.$page.edit(row);
+                }
+            }
+        }
     }
 </script>
 

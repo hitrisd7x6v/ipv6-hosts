@@ -68,7 +68,10 @@ export default {
             return this
         },
         editActionHandle (meta, row) {
-            this.$page.edit(row, meta);
+            this.$emit("onEdit", meta, row, this);
+        },
+        addActionHandle (meta, row, index) {
+            this.$emit("onEdit", meta, row, this);
         },
         delActionHandle(mate, selectionRows, submit) {
             if(this.$utils.isBlank(selectionRows))
