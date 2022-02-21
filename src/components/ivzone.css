@@ -4,6 +4,7 @@ html, body {
 /*容器样式*/
 .ivz-container {
     height: 100%;
+    min-width: 800px;
     padding: 4px 6px;
     position: relative;
 }
@@ -295,23 +296,23 @@ html, body {
 
 /*过渡动画*/
 .slide-fade-enter-active {
-    transition: all .3s ease;
+    transition: all .6s ease;
 }
 /*.slide-fade-leave-active {*/
 /*    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);*/
 /*}*/
 .slide-fade-enter, .slide-fade-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateX(24px);
+    transform: translateY(18px);
     opacity: 0;
 }
 
 .slide-fade-list-enter-active {
-    transition: all .3s ease;
+    transition: all .6s ease;
 }
 
 .slide-fade-list-enter, .slide-fade-list-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateX(-24px);
+    transform: translateY(-18px);
     opacity: 0;
 }

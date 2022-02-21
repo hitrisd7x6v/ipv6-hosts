@@ -21,7 +21,9 @@ export const MixBasicTable = {
     },
     watch: {
         outHeight: function (newVal) {
-            this.$emit("heightChange", newVal);
+            if(this.tableConfig.fixedHeight) {
+                this.$emit("heightChange", newVal);
+            }
         }
     },
     created () {
@@ -47,7 +49,9 @@ export const MixBasicTable = {
         this.tableConfig.mountedFinished(this);
     },
     beforeUpdate() {
-        this.handleTableHeight();
+        if(this.tableConfig.fixedHeight) {
+            this.handleTableHeight();
+        }
 
         // 解析元数据, 获取需要slot的字段
         this.slotMetas.length = 0;

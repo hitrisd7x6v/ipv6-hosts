@@ -35,7 +35,8 @@ const config = {
         editSource: 'local'
     },
     table: {
-        pagination: {}
+        pagination: {},
+        fixedHeight: true
     },
     search: {}
 }
