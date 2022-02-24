@@ -61,7 +61,8 @@ export default {
             if (!actionMate) throw new Error('未指定元对象');
             let key = this.$utils.firstUpperCase(actionMate.id);
 
-            if (this.actionMetaKeys.includes(key)) return;
+            if (actionMate.status == 'hide') return; // 隐藏的功能点不注册
+            if (this.actionMetaKeys.includes(key)) return; // 已经包含的不注册
 
             this.actionMetaKeys.push(key);
             Resolver.registerPosition('table', actionMate, this.mainMetas, this.moreMetas);
@@ -83,6 +84,10 @@ export default {
                 let tipContent = resolve.tipContent ? resolve.tipContent : `确认删除选中的数据?`;
                 this.$msg.confirm(tipTitle, tipContent).then(() => {
                     this.loading = true;
+                    // 提交数据实体
+                    if(resolve.submitType == 'entity') {
+                        submit = selectionRows;
+                    }
 
                     this.$http.post(mate.url, submit).then(data => {
                         this.$msg.delSuccessNotify(resolve, data, this, submit, () => {

@@ -323,7 +323,9 @@ export default {
             }
 
             let operaMate = this.getActionMeta(action, {
-                url: item['url'], label: item['name'], position: item['position']
+                url: item['url'], label: item['name']
+                , position: item['position'], status: item['status']
+                // , sort: item['sort']
             });
 
             if (Utils.isNotBlank(operaMate)) {

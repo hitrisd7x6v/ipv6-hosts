@@ -28,6 +28,7 @@ new Vue({
     created () {
         this.$page.addActionMeta("Modal", {
             id: 'modal',
+            status: 'hide',
             position: 'T',
             label: '模态框',
             callBack: (model) => {

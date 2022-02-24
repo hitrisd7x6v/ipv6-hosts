@@ -36,7 +36,6 @@ const config = {
     },
     table: {
         pagination: {},
-        fixedHeight: true
     },
     search: {}
 }

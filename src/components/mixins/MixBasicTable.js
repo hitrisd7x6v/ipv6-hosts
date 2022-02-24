@@ -197,8 +197,9 @@ export const MixBasicTable = {
                 let tipTitle = resolve.tipTitle;
                 let tipContent = resolve.tipContent;
                 // 提交数据实体
-                if(this.tableConfig.submitType == 'entity')
+                if(!resolve.submitType || resolve.submitType == 'entity') {
                     submit = selectionRows;
+                }
 
                 if (tipTitle && tipContent) { // 需要提交确认
                     this.$msg.confirm(tipTitle, tipContent).then(() => {

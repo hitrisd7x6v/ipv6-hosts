@@ -180,6 +180,9 @@ export default {
     getActionMeta(action, options) {
         return cacheApi.getActionMeta(action, options);
     },
+    getActionMetaById(id) {
+        return this.pageActionMetas[id];
+    },
     getActionMetas() {
         if(!this.pageActionMetas) {
             this.pageActionMetas = cacheApi.getActionMates();

@@ -157,8 +157,18 @@ const Utils = {
         }
     },
     getPromiseResolve (resp) {
-        return resp ? {success: resp.success, fail: resp.fail, tipTitle: resp.tipTitle, tipContent: resp.tipContent}
-            : {success: null, fail: null, tipTitle: null, tipContent: null}
+        return resp ? {
+            fail: resp.fail,
+            success: resp.success,
+            tipTitle: resp.tipTitle,
+            submitType: resp.submitType,
+            tipContent: resp.tipContent
+        } : {
+            fail: null,
+            success: null,
+            tipTitle: null,
+            tipContent: null
+        }
     },
     /**
      * 删除数组元数

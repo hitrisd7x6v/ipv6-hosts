@@ -395,7 +395,7 @@ export default {
         })
     },
     izOptionType (type) {
-        return type === 'select' || type === 'radio' ||
+        return type === 'select' || type === 'radio' || type === 'cascade' ||
             type === 'checkbox' || type === 'stree' || type === 'tree'
     },
     initFormMate (mate, config, _this) {
@@ -526,7 +526,7 @@ export default {
 
             mate['DataMap'] = {};
             if (Utils.isNotBlank(mate.data)) { // 自带的options
-                if (mate.type === 'stree' || mate.type === 'tree') {
+                if (mate.type === 'stree' || mate.type === 'tree' || mate.type == 'cascade') {
                     this.resolverTree(mate.data, (item) => {
                         mate['DataMap'][item['value']] = item
                     })
