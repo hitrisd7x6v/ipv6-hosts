@@ -1,0 +1,45 @@
+.ivz-online-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    display: -ms-flex;
+    display: -webkit-flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ivz-online-header {
+    height: 68px;
+    line-height: 68px;
+    text-align: center;
+}
+.ivz-online-body {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    flex-grow: 1;
+    display: flex;
+    display: -ms-flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+}
+.ivz-online-body .ivz-ol-item {
+    height: 100%;
+    /*margin: 0px 3px;*/
+    border: 1px solid #d7dde4;
+}
+.ivz-oli-left {
+    width: 220px;
+}
+.ivz-oli-right {
+    width: 297px;
+}
+.ivz-oli-content {
+    flex-grow: 1;
+    margin: 0px 0px;
+    position: relative;
+    border: 0px solid !important;
+    background: linear-gradient(-90deg, rgba(0, 0, 0, 0.1) 1px
+    , transparent 1px) 0% 0% / 20px 20px
+    , linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px) 0% 0% / 20px 20px;
+}

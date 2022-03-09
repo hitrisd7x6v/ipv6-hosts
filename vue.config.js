@@ -46,12 +46,20 @@ module.exports = {
         },
         login: { // 系统登录页
             title: '系统登录',
-            inject: false,
+            inject: true,
             version: version,
             // inlineSource: '.(css)$',
             filename: 'views/login.html',
             entry: 'src/views/login/login.js',
             template: 'src/views/login/login.html',
+        },
+        online: {
+            title: '在线生成器',
+            inject: true,
+            version: version,
+            filename: 'views/online.html',
+            entry: 'src/views/online/online.js',
+            template: 'src/views/online/online.html'
         },
         403: { // 未授权页面
             title: '无权限',
@@ -156,7 +164,7 @@ module.exports = {
     // webpack配置
     chainWebpack: config => {
         if (process.env.NODE_ENV === 'production') {
-            for(let item of [403, 404, 500, 'index', 'login', 'ivzone']) {
+            for(let item of [403, 404, 500, 'index', 'login', 'ivzone', 'online']) {
                 config.plugins.delete('preload-'+item);
                 config.plugins.delete('prefetch-'+item);
             }
