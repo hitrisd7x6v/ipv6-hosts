@@ -8,7 +8,7 @@ import Resolver from '@/utils/resolver.utils'
 
 Vue.use(VueRouter);
 // 获取父框架的缓存api对象
-let cacheApi = window.parent.CacheApi || {};
+let cacheApi = window.parent.CacheApi || window.CacheApi;
 
 /**
  * 重写路由的push方法
@@ -205,7 +205,13 @@ export default {
         if(actionMate) {
             Object.assign(actionMate, options);
         } else {
-            Logger.debugLog("设置actionMeta options", `${action} 不存在`, options);
+            Logger.debugLog("请指定动作id", `${action} 不存在`, options);
+        }
+    },
+    delActionMeta(action) {
+        let actionMetas = this.getActionMetas();
+        if(actionMetas && actionMetas[action]) {
+            delete actionMetas[action];
         }
     },
     /**
@@ -218,7 +224,8 @@ export default {
         return this.menu['IvzMetas'];
     },
     getQueryParams() {
-        return this.getIvzMetas()['QueryParams'];
+        let ivzMetas = this.getIvzMetas();
+        return ivzMetas ? ivzMetas['QueryParams'] : {};
     },
     getEditModel() { // 克隆一份
         let editModel = this.getStore("editModel");

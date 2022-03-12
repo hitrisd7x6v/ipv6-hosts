@@ -37,11 +37,13 @@
 
 <script>
     import {MixPageForm} from '../mixins/MixPageForm'
+    import IvzGroupForm from "@/components/form/IvzGroupForm";
     import zhCN from 'ant-design-vue/es/locale-provider/zh_CN'
     export default {
         mixins: [MixPageForm],
         name: 'IvzDefaultForm',
         props: {},
+        components: {IvzGroupForm},
         data () {
             return {
                 zhCN

@@ -1,20 +1,34 @@
 <template>
     <div class="ivz-online-layout">
         <div class="ivz-online-header">
-            <h2>ivzone 在线页面设计</h2>
+            <span style="font-size: 18px; color: #000000;">ivzone 在线页面设计</span>
+            <span style="margin-left: 12px; float: right; padding-right: 32px">
+                <label class="ivz-ohl-item" @click="previewHandle('preview')">
+                    <ivz-icon type="iz-icon-preview" title="预览"/>
+                </label>
+                <label class="ivz-ohl-item" @click="previewHandle('html')">
+                    <ivz-icon type="iz-icon-code" title="html预览"/>
+                </label>
+                <label class="ivz-ohl-item" @click="previewHandle('meta')">
+                    <ivz-icon type="iz-icon-json" title="json元数据" />
+                </label>
+                <label class="ivz-ohl-item" @click="previewHandle('sql')">
+                    <ivz-icon type="iz-icon-sql" title="sql预览" />
+                </label>
+            </span>
         </div>
         <div class="ivz-online-body">
             <div class="ivz-ol-item ivz-oli-left">
-
+                <!--在线生成器 - 左侧-->
+                <ivz-online-left></ivz-online-left>
             </div>
-            <div class="ivz-ol-item ivz-oli-content">
-                <vdr v-on:dragging="onDrag" v-on:resizing="onResize" :parent="true"
-                     :onDragStart="onDragStartCallback"  :grid=[10,10] @ondrop="drop" @dragstop="onDragstop">
-                    <p>ksdjf</p>
-                </vdr>
+            <div class="ivz-ol-item ivz-oli-body">
+                <!--在线生成器 - 页面布局-->
+                <ivz-online-body ref="onlineRef" :metas="metas" :root="root" :global="global"></ivz-online-body>
             </div>
             <div class="ivz-ol-item ivz-oli-right">
-
+                <!--在线生成器 - 右侧-->
+                <ivz-online-right :global="global" :metas="global.editMetas" :model="global.editModel"></ivz-online-right>
             </div>
         </div>
     </div>
@@ -22,47 +36,66 @@
 
 <script>
 
+    import draggable from "vuedraggable";
+    import IvzOnlineLeft from "@/components/online/IvzOnlineLeft";
+    import IvzOnlineBody from "@/components/online/IvzOnlineBody";
+    import IvzOnlineRight from "@/components/online/IvzOnlineRight";
+
     export default {
         name: "Online",
+        components: {IvzOnlineRight, IvzOnlineBody, IvzOnlineLeft, draggable},
         data: function () {
+            let vue = this;
             return {
-                width: 0,
-                height: 0,
-                x: 0,
-                y: 0
+                root: {
+                    type: '', // 组件类型
+                    isDetail: true, // 是否显示详情
+                    addTitle: '',
+                    editTitle: '',
+                    hasFeedback: true, // 是否显示校验图标
+                    hideRequiredMark: false, // 是否隐藏必填标志
+                },
+                global: {
+                    span: 24,
+                    gutter: 6,
+                    active: null, // 当前激活的项
+                    editModel: {},
+                    editMetas: [],
+                    animation: 200,
+                    delItem: (item) => {
+                        vue.delItem(vue.metas, item);
+                    }
+                },
+                metas: []
             }
         },
-        methods: {
-            onResize: function (x, y, width, height) {
-                this.x = x
-                this.y = y
-                this.width = width
-                this.height = height
-            },
-            onDrag: function (x, y) {
-                this.x = x
-                this.y = y
-            },
-            onDragStartCallback(ev) {
-                console.log(ev)
-            },
-            onDragCallback(x, y) {
+        updated() {
 
+        },
+        methods: {
+            delItem(metas, meta) {
+                if(metas && meta) {
+                    metas.forEach((item, index)=>{
+                        if(item==meta) {
+                            return metas.splice(index, 1);
+                        } else if(item.children && item.children.length>0) {
+                            this.delItem(item.children, meta);
+                        }
+                    })
+                }
             },
-            drop() {
-                alert(3);
-            },
-            allowDrop(ev) {
-                alert(4)
-                ev.preventDefault();
-            },
-            onDragstop(x, y, z) {
-                console.log(`${x} : ${y} : ${z}`)
+            previewHandle(type) {
+                let onlineRef = this.$refs['onlineRef'];
+                onlineRef.onlinePreviewHandle(type);
             }
         }
     }
 </script>
 
 <style scoped>
-
+    .ivz-ohl-item {
+        cursor: pointer;
+        padding: 0px 6px;
+        display: inline-block;
+    }
 </style>

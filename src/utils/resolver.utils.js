@@ -3,6 +3,7 @@ import '@/utils' // 导入基础类库
 import moment from 'moment'
 import Http from '@/utils/http.utils'
 import Utils from '@/utils/basic.utils'
+import Validate from '@/utils/validate.utils'
 import Logger from "@/utils/logger.utils";
 import Global from '@/components/global.config'
 
@@ -53,16 +54,70 @@ export default {
     },
     validate: {
         message: {
-            enum: (name, val) => { return `${name}(必须是某一项：${val})` },
-            len: (name, val, arg) => { return `${name}(${arg}必须=${val})` },
-            min: (name, val, arg) => { return `${name}(${arg}必须>=${val})` },
-            max: (name, val, arg) => { return `${name}(${arg}必须<=${val})` },
+            enum: (mate) => { return `${mate.title}(必须是某一项：${mate['enum']})` },
+            len: (mate, arg) => { return `${mate.title}(${arg}必须=${mate['len']})` },
+            min: (mate, arg) => { return `${mate.title}(${arg}必须>=${mate['min']})` },
+            max: (mate, arg) => { return `${mate.title}(${arg}必须<=${mate['max']})` },
+            url: (mate, arg) => { return `请输入正确的Url地址` },
+            date: (mate, arg) => { return `日期格式有误` },
+            email: (mate, arg) => { return `请输入正确的邮箱地址` },
+            range: (meta, arg) => {return `输入的范围必须在${meta.range}`},
+            boolean: (mate, arg) => { return `${mate.title}(必须是布尔类型)` },
             // https://github.com/yiminghe/async-validator#type
             // 参数类型：string、number、boolean、method、regexp、integer、float、array、object、enum、date、url、hex、email
-            fieldType: (name, val) => { return `${name}(必须是${val}类型)` },
-            pattern: (name, val) => { return `${name}(不匹配规则${val})` },
-            required: (name, val) => { return `${name}(必填)` },
-            validator: () => { return null }
+            fieldType: (mate) => { return `${mate.title}(必须是${mate['fieldType']}类型)` },
+            regexp: (mate) => { return `${mate.title}(请输入正确的格式)` },
+            required: (mate) => { return `${mate.title}(必填)` },
+            validator: (mate) => {
+                return function (rule, value, callback) {
+
+                }
+            },
+            idCard: (mate) => {
+                return function (rule, value, callback) {
+                    if(!Validate.isIdCard(value)) {
+                        callback(new Error("请输入正确省份证号"));
+                    } else {
+                        callback()
+                    }
+                }
+            },
+            bank: (mate) => {
+                return function (rule, value, callback) {
+                    if(!Validate.isBank(value)) {
+                        callback(new Error("请输入正确的银行卡号"));
+                    } else {
+                        callback()
+                    }
+                }
+            },
+            ip: (mate) => {
+                return function (rule, value, callback) {
+                    if(!Validate.isIp(value)) {
+                        callback(new Error("请输入正确的ip地址"));
+                    } else {
+                        callback()
+                    }
+                }
+            },
+            phone: (mate) => {
+                return function (rule, value, callback) {
+                    if(!Validate.isPhone(value)) {
+                        callback(new Error("请输入正确手机号码"));
+                    } else {
+                        callback()
+                    }
+                }
+            },
+            chinese: (mate) => {
+                return function (rule, value, callback) {
+                    if(!Validate.isChinese(value)) {
+                        callback(new Error(`${mate.title}(必须为汉字)`));
+                    } else {
+                        callback()
+                    }
+                }
+            },
         },
 
         whitespace: false // 必选时，空格是否会被视为错误
@@ -394,10 +449,6 @@ export default {
             return a.sort - b.sort
         })
     },
-    izOptionType (type) {
-        return type === 'select' || type === 'radio' || type === 'cascade' ||
-            type === 'checkbox' || type === 'stree' || type === 'tree'
-    },
     initFormMate (mate, config, _this) {
         // 已经解析过, 无需再次解析
         if (Utils.isResolveForm(mate)) return
@@ -414,7 +465,6 @@ export default {
         if (!mate.type) _this.$set(mate, 'type', 'text'); // 默认类型为：text
         if (mate.isForm === undefined)_this.$set(mate, 'isForm', true);
 
-        let decorate = mate['decorate'];
         let metaDefault = mate['default'];
         // 日期类型的默认值, 必须转成moment格式
         // antdv 1.5.4版本后支持日期字符串绑定
@@ -424,64 +474,87 @@ export default {
                 metaDefault = [metaDefault];
             }
         }
+
+        let decorate = mate['decorate'];
         if (decorate) {
-            _this.$set(decorate, 'initialValue', metaDefault)
-            if (!decorate['rules']) _this.$set(decorate, 'rules', [])
+            _this.$set(decorate, 'initialValue', metaDefault);
         } else {
             _this.$set(mate, 'decorate', {
-                initialValue: metaDefault, validateFirst: true, rules: []
-            }) // 初始化：decorate
+                initialValue: metaDefault, validateFirst: true
+            }); // 初始化：decorate
+            decorate = mate['decorate'];
         }
 
+        if (!decorate['rules']) {
+            _this.$set(decorate, 'rules', []);
+            let validate = this.validate;
+            let message = validate['message'];
+            Object.keys(message).forEach(item => {
+                let ruleValue = mate[item];
+                if (ruleValue != undefined) { // 动态生成校验规则
+                    let type = mate['type'];
+                    let fieldType = mate['fieldType'];
+                    let arg = type === 'number' ? '值' : '长度';
+                    let msgVal = message[item](mate, arg);
+                    // 自定义校验
+                    if(typeof msgVal == 'function') {
+                        return mate['decorate'].rules.push({validator: msgVal});
+                    }
+
+                    let rule = {message: msgVal};
+                    if (item === 'len' || item === 'min' || item === 'max') {
+                        if (type === 'number') { // 不同的表单类型的处理
+                            fieldType = 'number';
+                            _this.$set(rule, 'range', JSON.parse(ruleValue));
+                        } else if (type === 'checkbox') {
+                            fieldType = 'array'
+                        } else if (type === 'select' && mate['config']['mode'] === 'multiple') {
+                            fieldType = 'array'
+                        } else if (type === 'stree' && (mate['config']['multiple'] || mate['config']['treeCheckable'])) {
+                            fieldType = 'array'
+                        }
+                        _this.$set(rule, 'type', fieldType)
+
+                    } else if(item == 'boolean' || item == 'url' || item == 'date' || item == 'email') {
+                        _this.$set(rule, 'type', item);
+                    } else if(item == 'regexp') {
+                        _this.$set(rule, 'pattern', ruleValue)
+                    } else {
+                        _this.$set(rule, item, ruleValue);
+                    }
+
+                    mate['decorate'].rules.push(rule)
+                }
+            });
+        }
         // 初始化每個表单需要占据几个span
         let formSpan = mate['span'];
         let spanNum = parseInt((24 / config.column)+'');
         if (!formSpan) {
-            _this.$set(metaConfig, 'span', spanNum);
-            if(!metaConfig.labelCol) _this.$set(metaConfig, 'labelCol', this.labelCol);
-            if(!metaConfig.wrapperCol) _this.$set(metaConfig, 'wrapperCol', this.wrapperCol);
+            if(!metaConfig.labelCol && !config.labelCol) {
+                _this.$set(metaConfig, 'labelCol', this.labelCol);
+            }
+            if(!metaConfig.wrapperCol && !config.wrapperCol) {
+                _this.$set(metaConfig, 'wrapperCol', this.wrapperCol);
+            }
+
+            _this.$set(metaConfig, 'span',  metaConfig.span || spanNum);
         } else {
             let labelSpan = 0, wrapperSpan = 0, span = spanNum;
             if(!Utils.isArray(formSpan)) {
                 Logger.warningLog("span属性必须是数组格式: [labelCol, wrapperCol, span(可选)], 且labelCol+wrapperCol必须<=24, span必须<=24"
                     , `请按正确格式设置${mate.field}字段的span属性`, mate);
             } else {
-                labelSpan = formSpan[0]; wrapperSpan = formSpan[1]; span = formSpan[2] || span;
+                labelSpan = formSpan[0]; wrapperSpan = formSpan[1]; span = formSpan[2] || metaConfig.span || span;
             }
 
             _this.$set(metaConfig, 'span', span);
-            _this.$set(metaConfig, 'labelCol', {span: labelSpan});
-            _this.$set(metaConfig, 'wrapperCol', {span: wrapperSpan});
+            _this.$set(metaConfig, 'labelCol', metaConfig['labelSpan'] || {span: labelSpan});
+            _this.$set(metaConfig, 'wrapperCol', metaConfig['wrapperSpan'] || {span: wrapperSpan});
         }
+        _this.$set(mate['config'], 'hasFeedback'
+            , metaConfig.hasFeedback != undefined || config['hasFeedback'])
 
-        let validate = this.validate
-        let message = validate['message']
-        Object.keys(message).forEach(item => {
-            let ruleName = mate[item]
-            if (ruleName) { // 动态生成校验规则
-                let type = mate['type']
-                let fieldType = mate['fieldType']
-                let arg = type === 'number' ? '值' : '长度'
-                let rule = {message: message[item](mate['title'], mate[item], arg)}
-                if (item === 'len' || item === 'min' || item === 'max') {
-                    if (type === 'number') { // 不同的表单类型的处理
-                        fieldType = 'number'
-                    } else if (type === 'checkbox') {
-                        fieldType = 'array'
-                    } else if (type === 'select' && mate['config']['mode'] === 'multiple') {
-                        fieldType = 'array'
-                    } else if (type === 'stree' && (mate['config']['multiple'] || mate['config']['treeCheckable'])) {
-                        fieldType = 'array'
-                    }
-                    _this.$set(rule, 'type', fieldType)
-                }
-                if (config['hasFeedback']) { // 全局开启了校验回馈图标
-                    _this.$set(mate['config'], 'hasFeedback', true)
-                }
-                _this.$set(rule, item, mate[item]);
-                mate['decorate'].rules.push(rule)
-            }
-        });
         // 说明此字段已经完成form解析
         mate['resolveType'] = mate['resolveType'] ? mate['resolveType'] + '2' : '2'
     },
@@ -519,7 +592,7 @@ export default {
         this.mergeDefaultObject(mate.event, cacheApi.izMetaDefaultEvent(mate.type), _this)
 
         let metaConfig = mate['config'];
-        if (this.izOptionType(mate.type)) {
+        if (Utils.isOptionType(mate.type)) {
             let valueField = metaConfig['valueField'];
             let labelField = metaConfig['labelField'];
             let queryField = metaConfig['queryField'];

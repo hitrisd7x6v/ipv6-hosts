@@ -2,6 +2,7 @@
     width: 100%;
     height: 100%;
     display: flex;
+    overflow: hidden;
     display: -ms-flex;
     display: -webkit-flex;
     flex-direction: column;
@@ -9,8 +10,8 @@
 }
 
 .ivz-online-header {
-    height: 68px;
-    line-height: 68px;
+    height: 52px;
+    line-height: 52px;
     text-align: center;
 }
 .ivz-online-body {
@@ -19,27 +20,79 @@
     padding: 0px;
     flex-grow: 1;
     display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
     display: -ms-flex;
     display: -webkit-flex;
     justify-content: space-between;
 }
 .ivz-online-body .ivz-ol-item {
     height: 100%;
-    /*margin: 0px 3px;*/
-    border: 1px solid #d7dde4;
+    border-top: 1px solid #d7dde4;
 }
 .ivz-oli-left {
-    width: 220px;
+    width: 218px;
+    overflow-y: auto;
+    min-width: 218px;
 }
 .ivz-oli-right {
-    width: 297px;
+    width: 328px;
+    overflow-y: auto;
+    min-width: 296px;
 }
-.ivz-oli-content {
+.ivz-oli-body {
     flex-grow: 1;
     margin: 0px 0px;
     position: relative;
-    border: 0px solid !important;
-    background: linear-gradient(-90deg, rgba(0, 0, 0, 0.1) 1px
-    , transparent 1px) 0% 0% / 20px 20px
-    , linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px) 0% 0% / 20px 20px;
+    border-right: 1px solid #d7dde4;
+    /*background: linear-gradient(-90deg, rgba(0, 0, 0, 0.1) 1px*/
+    /*, transparent 1px) 0% 0% / 20px 20px*/
+    /*, linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px) 0% 0% / 20px 20px;*/
+}
+.ivz-vd-body {
+    padding: 3px;
+}
+.ivz-item-active {
+    cursor: move;
+}
+.ivz-form-item .ant-form-item {
+    margin-bottom: 0px;
+}
+.ivz-form-item,.ivz-group-item {
+    margin: 3px 0px;
+    background: #fefefe;
+    border: 1px dashed #e0e0e0;
+    -webkit-border-radius: 5px;
+}
+.ivz-form-item:hover {
+    border: 1px dashed #1296ff!important;
+}
+.ivz-group-item:hover {
+    border: 1px dashed darkorange!important;
+}
+.ivz-group-item.ivz-item-active {
+    box-shadow: 0px 0px 5px 0px darkorange;
+    border: 1px dashed darkorange!important;
+}
+.ivz-form-item.ivz-item-active {
+    box-shadow: 0px 0px 5px 0px #1296ff;
+    border: 1px dashed #1296ff!important;
+}
+.ivz-form-item .ant-upload.ant-upload-select-picture-card {
+    width: 70px;
+    height: 70px;
+}
+.ivz-item-active .ivz-item-opera {
+    display: block;
+}
+.ant-divider-horizontal.ant-divider-with-text-center {
+    margin: 8px 0px;
+}
+.ant-divider-inner-text {
+    color: darkorange;
+    font-size: 14px;
+}
+.ivz-preview .ant-drawer-body {
+    height: calc(100% - 56px);
+    padding: 0px!important;
 }

@@ -26,10 +26,11 @@
 <script>
     import {MixPageList} from '../mixins/MixPageList'
     import zhCN from 'ant-design-vue/es/locale-provider/zh_CN'
+    import IvzBasicTable from "@/components/table/IvzBasicTable";
     import IvzPageSearch from "@/components/form/IvzPageSearch";
 
     export default {
-        components: {IvzPageSearch},
+        components: {IvzPageSearch, IvzBasicTable},
         mixins: [MixPageList],
         name: 'IvzDefaultList',
         props: {},

@@ -2,16 +2,17 @@
     <a-locale-provider :locale="zhCN">
     <a-modal class="ivz-modal-container ivz-modal-form" :getContainer="$getModalContainer"
          :closable="config.closable" :centered="config.centered" :width="modalWidth"
-         :mask-closable="config.maskClosable" ok-text="提交" cancel-text="取消" :visible="visible"
-         :keyboard="config.keyboard" :destroyOnClose="true" :maskStyle="config.maskStyle"
-         :bodyStyle="config.bodyStyle">
+         :mask-closable="config.maskClosable" :mask="config.mask" ok-text="提交" cancel-text="取消"
+         :visible="visible" :keyboard="config.keyboard" :destroyOnClose="true"
+         :maskStyle="config.maskStyle" :bodyStyle="config.bodyStyle" @cancel="cancel">
         <div slot="title" style="text-align: center;">
             <slot name="title">
                 <i class="izc iz-icon-edit"></i> {{title}}
             </slot>
         </div>
         <a-spin :tip="submitTip" :spinning="spinning">
-            <ivz-basic-model ref="basicFormRef" @mountedFinished="mountedFinished" :metas="metas" :form-config="formConfig">
+            <ivz-basic-model ref="basicFormRef" @mountedFinished="mountedFinished"
+                             :metas="metas" :form-config="formConfig">
                 <template v-for="meta in slotsMetas" #[meta.formSlot]>
                     <slot :name="meta.formSlot"></slot>
                 </template>
@@ -61,10 +62,10 @@
             if (!this.config) return this.$log.errorLog('没有指定配置对象', '指定配置对象：config')
             if (!this.saveMeta) return this.$log.errorLog('没有指定操作元数据', '传入(props)saveMeta')
 
-            this.formConfig = this.config.form || {}
+            this.formConfig = this.config.form || {};
             this.$resolver.mergeDefaultObject(this.config, this.$resolver.modalOptions, this)
 
-            this.submitTip = this.formConfig.submitTip
+            this.submitTip = this.formConfig.submitTip;
             this.$resolver.initDefaultFormConfig(this.formConfig, this);
             if(this.formConfig.column > 1) {
                 this.modalWidth = this.width || 320 * this.formConfig.column;

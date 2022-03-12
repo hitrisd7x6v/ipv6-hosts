@@ -11,6 +11,10 @@ const Utils = {
     isArray (val) {
         return Array.isArray(val)
     },
+    isOptionType (type) {
+        return type === 'select' || type === 'radio' || type === 'cascade' ||
+            type === 'checkbox' || type === 'stree' || type === 'tree'
+    },
     /**
      * resolveType 字符串类型：元数据解析标记可选值：1(common) 2(form) 3(table) 12(form 和 common) 13(common和table) 23(table和form) 123(所有都初始化)
      */

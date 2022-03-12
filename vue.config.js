@@ -102,9 +102,10 @@ module.exports = {
                     'mockjs': 'Mock',
                     'axios': 'axios',
                     'moment': 'moment',
-                    'tinymce/tinymce': 'tinymce',
                     "ant-design-vue": 'antd', // antd类库
                     // "ant-design-vue/lib/style": 'ants'
+                    // 'vuedraggable': 'draggable',
+                    'tinymce/tinymce': 'tinymce',
                 },
                 // plugins: [
                     // new scriptExtHtmlWebpackPlugin({

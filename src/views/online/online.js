@@ -1,15 +1,14 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import '@/utils' // 基础类库
+import '@/components/online/preview.data'
 import Vue from 'vue'
 import './online.css'
+import Ivzone from '@/components/ivzone'
 import '@/utils/icon.utils'
 import Online from './online.vue'
-import vdr from 'vue-draggable-resizable-gorkys'
 
-// 导入默认样式
-import 'vue-draggable-resizable-gorkys/dist/VueDraggableResizable.css'
-Vue.component('vdr', vdr)
+Vue.use(Ivzone);
 
 new Vue({
     render: h => h(Online)
