@@ -3,7 +3,7 @@
 2. 一个组件一个页面, 一个组件包含增删改查功能, 将增删改查的功能封装在一个组件里面, 将以前增删改查四个html页面变为一个html页面， 且共用一套元数据描述， **_此项目最大的特点就是代码极度简洁干净, 一个简单的增删改查不超过80行的代码(一个html页面)_** . 此项目只包含前端组件库, 不包含后台管理模块, 如果需要使用完整的后台管理(包含前后端, 后端使用spring boot2)请移步[izone-sboot管理后台](https://gitee.com/iteaj/izone-sboot)。
 #### [项目文档教程](https://gitee.com/iteaj/ivzone/wikis/pages) 不断更新中
 #### [项目预览链接](http://izone.iteaj.com/) 用户名：admin 密码：admin123456
-#### [ivzone设计器](http://izone.iteaj.com/dev/online#/) 一款可以在线学习ivzone和在线生成代码的可拖拽的生成器(不断完善中 2020.08.16)
+#### [ivzone设计器](http://izone.iteaj.com/dev/online#/) 一款可以在线学习ivzone和在线生成代码的可拖拽生成器(不断完善中 2020.08.16)
 #### [适用的开发者](https://gitee.com/iteaj/ivzone/wikis/%E5%85%B3%E4%BA%8Eivzone?sort_id=2409097) 列举了以下几种类型：
 1. 喜欢vue的开发方式, 又不需要编译的开发者(或者不熟悉node, webpack等)
 2. 对项目的界面设计没有特殊的要求, 且需要快速开发, 迭代，上线的开发者
