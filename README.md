@@ -4,6 +4,9 @@
 #### [项目文档教程](https://gitee.com/iteaj/ivzone/wikis/pages) 不断更新中
 #### [项目预览链接](http://izone.iteaj.com/) 用户名：admin 密码：admin123456
 #### [ivzone设计器](http://izone.iteaj.com/dev/online#/) 一款可以在线学习ivzone和在线生成代码的可拖拽生成器(不断完善中 2020.08.16)
+- 目前只完成默认视图, 接下去会不断更新、完善
+- 这是一个初略版本, 很多功能还存在bug, 有问题可以qq联系我们
+- 劳烦朋友们能积极 提供意见、帮忙测试
 #### [适用的开发者](https://gitee.com/iteaj/ivzone/wikis/%E5%85%B3%E4%BA%8Eivzone?sort_id=2409097) 列举了以下几种类型：
 1. 喜欢vue的开发方式, 又不需要编译的开发者(或者不熟悉node, webpack等)
 2. 对项目的界面设计没有特殊的要求, 且需要快速开发, 迭代，上线的开发者
