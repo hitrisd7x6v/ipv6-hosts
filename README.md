@@ -3,7 +3,7 @@
 2. 一个组件一个页面, 一个组件包含增删改查功能, 将增删改查的功能封装在一个组件里面, 将以前增删改查四个html页面变为一个html页面， 且共用一套元数据描述， **_此项目最大的特点就是代码极度简洁干净, 一个简单的增删改查不超过80行的代码(一个html页面)_** . 此项目只包含前端组件库, 不包含后台管理模块, 如果需要使用完整的后台管理(包含前后端, 后端使用spring boot2)请移步[izone-sboot管理后台](https://gitee.com/iteaj/izone-sboot)。
 #### [项目文档教程](https://gitee.com/iteaj/ivzone/wikis/pages) 不断更新中
 #### [项目预览链接](http://izone.iteaj.com/) 用户名：admin 密码：admin123456
-#### [ivzone可视化生成器](http://izone.iteaj.com/dev/online#/) 一款可以在线学习ivzone和在线生成代码的可视化生成器(不断完善中 2020.08.16)
+#### [online可视化生成器](http://izone.iteaj.com/dev/online#/) 一款可以在线学习ivzone框架和在线生成代码的可视化生成器(不断完善中 2020.08.16)
 - 首先他是一款可视化的在线表单设计组件
 - 支持ivzone框架的在线学习、设计、预览
 - 所见即所得, 支持直接预览生成的页面(包括搜索框, 表格, 表单), 你预览到的样子就是页面真实的样子
