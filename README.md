@@ -32,8 +32,13 @@
 4. 支持通过元数据url声明, 直接获取后台的数据(1. 在表单下拉框直接展示 2. 在表格直接显示) {url: '/user/list'}
 5. 基于3和4的基础上， 支持在table里面直接显示以下组件对应的字段值：radio、checkbox、select、date、stree、tree
 #### 在线表单设计界面预览
-![主界面](https://images.gitee.com/uploads/images/2020/0821/152041_deb79857_1230742.png "截图录屏_选择区域_20200821150928.png")
-![自定义功能](https://images.gitee.com/uploads/images/2020/0821/152115_6205967d_1230742.png "截图录屏_选择区域_20200821151222.png")
+![主界面](https://images.gitee.com/uploads/images/2020/0821/152041_deb79857_1230742.png "设计主界面")
+![多列设计](https://images.gitee.com/uploads/images/2020/0821/152858_6795cb7a_1230742.png "多列设计")
+![自定义功能](https://images.gitee.com/uploads/images/2020/0821/152115_6205967d_1230742.png "自定义弹框功能")
+![功能预览](https://images.gitee.com/uploads/images/2020/0821/152949_9d0bf275_1230742.png "设计后的列表页预览")
+![编辑页预览](https://images.gitee.com/uploads/images/2020/0821/153220_08bc2f2b_1230742.png "设计后的编辑页预览")
+![sql语句预览](https://images.gitee.com/uploads/images/2020/0821/153041_83c091c9_1230742.png "设计后的sql语句预览")
+![详情页预览](https://images.gitee.com/uploads/images/2020/0821/153139_1085d653_1230742.png "详情页预览")
 #### 项目由来和介绍
 1. 项目的由来：提炼于开发过程中常用功能点的简化以及开发时碰到的一些痛点(繁琐、麻烦、通用)
 2. 项目的目标：希望以最简单的方式, 最少的代码实现一个页面最基础的增删改查功能, 且提供灵活、强大的可扩展性
