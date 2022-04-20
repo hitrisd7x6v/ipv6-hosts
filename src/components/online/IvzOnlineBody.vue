@@ -2,10 +2,10 @@
     <draggable :list="list" :options="options" group="view" style="width: 100%; height: 100%">
         <ivz-basic-view-container v-if="view.type=='IvzBasicView'" :metas="metas"
               :global="global" :view="view" :class="activeClassHandle()" ref="containerRef" />
-        <ivz-edit-view-container v-if="view.type=='IvzEditView'" :metas="metas"
-                :global="global" :class="activeClassHandle()" ref="containerRef" />
         <ivz-drawer-view-container v-if="view.type=='IvzDrawerView'" :metas="metas"
-               :global="global" :class="activeClassHandle()" ref="containerRef" />
+               :global="global" :view="view" :class="activeClassHandle()" ref="containerRef" />
+        <ivz-edit-view-container v-if="view.type=='IvzEditView'" :metas="metas"
+                :global="global" :view="view" :class="activeClassHandle()" ref="containerRef" />
     </draggable>
 </template>
 

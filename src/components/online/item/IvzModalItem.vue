@@ -1,15 +1,18 @@
 <template>
-    <div class="ivz-modal-item" @click="visibleHandle">
+    <div class="ivz-modal-item" @click.stop="visibleHandle">
         <div class="ivz-mi-title">
             <a-button :type="visible ? 'primary' : 'dashed'" size="small">
                 {{model.permTitle ? model.permTitle : '功能点'}}
                 <label @click="removeHandle">&nbsp;<a-icon type="close-circle" /></label>
             </a-button>
         </div>
-        <a-modal :title="model.title" :mask="model.mask" :centered="model.centered" :bodyStyle="{height: model.length[0]+'px'}"
+        <a-modal :mask="model.mask" :centered="model.centered" :bodyStyle="{height: model.length[0]+'px'}"
                  :visible="visible" @cancel="cancelHandle" :getContainer="getModalContainer"
                  :closable="model.closable" :maskClosable="model.maskClosable" :width="model.length[1]">
-            <div style="width: 100%; height: 100%;"  @click="visibleHandle">
+            <div slot="title"  @click.stop="visibleHandle">
+                {{model.title}}
+            </div>
+            <div style="width: 100%; height: 100%;"  @click.stop="visibleHandle">
                 <a-form-model style="width: 100%; height: 100%" :layout="model.layout"
                               :labelCol="model.labelCol" :wrapperCol="model.wrapperCol" :labelAlign="model.align">
                     <draggable :list="metas" :options="options" group="item" @add="onAddHandle"
@@ -98,33 +101,29 @@
                 return this.model['permId'] || this.model['id'];
             },
             resolverModalConfig() {
-                if(this.metas && this.metas.length > 0) {
-                    this.modalConfig = {
-                        metas: [],
-                        id: this.model.id,
-                        title: this.model.title,
-                        width: this.model.length[1],
-                        config: {
-                            form: {
-                                column: 1,
-                                labelCol: this.model['labelCol'],
-                                wrapperCol: this.model['wrapperCol']
-                            },
-                            keyboard: this.model.keyboard,
-                            centered: this.model.centered,
-                            closable: this.model.closable,
-                            maskClosable: this.model.maskClosable,
-                            bodyStyle: {height: this.model.length[0]+'px'}
-                        }
-                    };
-                    this.metas.forEach((item, index) => {
-                        let meta = EditMetas.resolverCommonItemToMeta(item.model, this.global);
-                        this.modalConfig.metas.push(meta);
-                    })
-                    return this.modalConfig;
-                } else {
-                    return null;
-                }
+                this.modalConfig = {
+                    metas: [],
+                    id: this.model.id,
+                    title: this.model.title,
+                    width: this.model.length[1],
+                    config: {
+                        form: {
+                            column: 1,
+                            labelCol: this.model['labelCol'],
+                            wrapperCol: this.model['wrapperCol']
+                        },
+                        keyboard: this.model.keyboard,
+                        centered: this.model.centered,
+                        closable: this.model.closable,
+                        maskClosable: this.model.maskClosable,
+                        bodyStyle: {height: this.model.length[0]+'px'}
+                    }
+                };
+                this.metas.forEach((item, index) => {
+                    let meta = EditMetas.resolverCommonItemToMeta(item.model, this.global);
+                    this.modalConfig.metas.push(meta);
+                })
+                return this.modalConfig;
             },
             resolverHtmlTemplate() {
                 let objName = this.model['permId'] || this.model.id;

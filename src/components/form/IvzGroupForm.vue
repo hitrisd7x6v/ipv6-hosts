@@ -6,8 +6,7 @@
             <div v-if="group.name" class="ivz-group-head">
                 <label style="color: #6eb5ff; font-size: 16px; padding-left: 8px;">{{group.name}}</label>
             </div>
-            <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter"
-                   type="flex" class="ivz-group-body">
+            <a-row :align="formConfig.align" :justify="formConfig.justify" :gutter="formConfig.gutter" type="flex" class="ivz-group-body">
                 <template v-for="col in group.metas">
                     <a-col v-if="viewForm(col)" :span="col.config.span" :key="col.field">
                         <a-form-item :label-col="col.config.labelCol" :wrapper-col="col.config.wrapperCol"

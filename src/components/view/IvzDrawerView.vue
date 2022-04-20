@@ -15,9 +15,8 @@
                       :row="params.row" :index="params.index"></slot>
             </template>
         </ivz-default-list>
-        <ivz-drawer-form ref="formRef" :form-group="formGroup" :visible="!listView"
-             :height="height" :width="width" :placement="placement" :action-metas="actionMetas"
-             :form-alias-metas="formAliasMetas" :form-config="formConfig" :mask-closable="maskClosable">
+        <ivz-drawer-form ref="formRef" :form-group="formGroup" :visible="!listView" @close="handleClose"
+             :action-metas="actionMetas" :form-alias-metas="formAliasMetas" :form-config="formConfig">
             <template #default>
                 <slot name="submit"></slot>
             </template>
@@ -48,12 +47,7 @@
         name: 'IvzDrawerView',
         mixins: [MixPageView],
         components: {IvzDefaultList, IvzDrawerForm, IvzDrawerDetail},
-        props: {
-            width: {type: String},
-            height: {type: String},
-            placement: {type: String, default: 'right'},
-            maskClosable: {type: Boolean, default: false}
-        },
+        props: { },
         data () {
             return {
                 zhCN,
@@ -62,11 +56,16 @@
             }
         },
         created () {
-
+            if(!this.formConfig.container)
+                this.formConfig.container = ".ivz-drawer-view";
+            if(!this.detailConfig.container)
+                this.detailConfig.container = ".ivz-drawer-view";
         },
         mounted () {},
         methods: {
-
+            handleClose() {
+                this.listView = true;
+            }
         }
     }
 </script>

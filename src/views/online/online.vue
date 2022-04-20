@@ -61,6 +61,8 @@
                     active: null, // 当前激活的项
                     editModel: {},
                     editMetas: [],
+                    modalMetas: [],
+                    drawerMetas: [],
                     animation: 200,
                     delItem: (item) => {
                         vue.delItem(vue.metas, item);

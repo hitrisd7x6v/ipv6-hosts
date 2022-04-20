@@ -1,6 +1,6 @@
 <template>
     <a-drawer placement="left" width="calc(100% - 28px)" @close="onClose" class="ivz-preview"
-            :closable="false" :visible="visible" :afterVisibleChange="afterVisible">
+            :closable="false" :visible="visible" :afterVisibleChange="afterVisible" :zIndex="1050">
         <a-row slot="title" class="ivz-preview-header" ref="row">
             <a-col span="18"></a-col>
             <a-col span="6">
@@ -10,10 +10,10 @@
             </a-col>
         </a-row>
         <div class="ivz-preview-body">
-            <div style="width: 256px; height: 100%">
-                <a-menu style="width: 256px; height: 100%;" :selectedKeys="selectedKey"
+            <div style="width: 198px; height: 100%">
+                <a-menu style="width: 198px; height: 100%;" :selectedKeys="selectedKey"
                         mode="inline" @click="keyChangeHandle">
-                    <a-menu-item key="preview"><ivz-icon type="iz-icon-preview"/>页面预览</a-menu-item>
+                    <a-menu-item key="preview"><ivz-icon type="iz-icon-preview"/>模拟预览</a-menu-item>
                     <a-menu-item key="html"><ivz-icon type="iz-icon-code"/>html代码</a-menu-item>
                     <a-menu-item key="meta"><ivz-icon type="iz-icon-json"/>json元数据</a-menu-item>
                     <a-menu-item key="sql"><ivz-icon type="iz-icon-sql"/>sql预览</a-menu-item>
@@ -169,6 +169,12 @@
 </script>
 
 <style>
+    .ivz-preview {
+        transform: translateX(0px)!important;
+    }
+    .ivz-preview .ivz-drawer-form-wrap {
+        height: calc(100% - 52px)
+    }
     .ivz-preview-body {
         height: 100%;
         display: flex;

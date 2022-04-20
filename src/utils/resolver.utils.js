@@ -449,6 +449,10 @@ export default {
             return a.sort - b.sort
         })
     },
+    setHasFeedback(type, metaConfig, config) {
+        if(type == 'text' || type == 'number' || type == 'select' || type == 'stree' || type == 'cascade' || Utils.isDate(type))
+            metaConfig['hasFeedback'] = metaConfig.hasFeedback != undefined || config['hasFeedback'];
+    },
     initFormMate (mate, config, _this) {
         // 已经解析过, 无需再次解析
         if (Utils.isResolveForm(mate)) return
@@ -464,6 +468,8 @@ export default {
 
         if (!mate.type) _this.$set(mate, 'type', 'text'); // 默认类型为：text
         if (mate.isForm === undefined)_this.$set(mate, 'isForm', true);
+
+
 
         let metaDefault = mate['default'];
         // 日期类型的默认值, 必须转成moment格式
@@ -512,6 +518,8 @@ export default {
                             fieldType = 'array'
                         } else if (type === 'stree' && (mate['config']['multiple'] || mate['config']['treeCheckable'])) {
                             fieldType = 'array'
+                        } else if(type == 'text') {
+
                         }
                         _this.$set(rule, 'type', fieldType)
 
@@ -523,37 +531,26 @@ export default {
                         _this.$set(rule, item, ruleValue);
                     }
 
+                    this.setHasFeedback(type, metaConfig, config);
                     mate['decorate'].rules.push(rule)
                 }
             });
         }
         // 初始化每個表单需要占据几个span
-        let formSpan = mate['span'];
-        let spanNum = parseInt((24 / config.column)+'');
-        if (!formSpan) {
+        let spanNum = 24 / config.column;
+        if(!metaConfig.span) metaConfig.span = spanNum;
+
+        if(config.layout == 'horizontal') {
             if(!metaConfig.labelCol && !config.labelCol) {
                 _this.$set(metaConfig, 'labelCol', this.labelCol);
             }
             if(!metaConfig.wrapperCol && !config.wrapperCol) {
                 _this.$set(metaConfig, 'wrapperCol', this.wrapperCol);
             }
-
-            _this.$set(metaConfig, 'span',  metaConfig.span || spanNum);
         } else {
-            let labelSpan = 0, wrapperSpan = 0, span = spanNum;
-            if(!Utils.isArray(formSpan)) {
-                Logger.warningLog("span属性必须是数组格式: [labelCol, wrapperCol, span(可选)], 且labelCol+wrapperCol必须<=24, span必须<=24"
-                    , `请按正确格式设置${mate.field}字段的span属性`, mate);
-            } else {
-                labelSpan = formSpan[0]; wrapperSpan = formSpan[1]; span = formSpan[2] || metaConfig.span || span;
-            }
-
-            _this.$set(metaConfig, 'span', span);
-            _this.$set(metaConfig, 'labelCol', metaConfig['labelSpan'] || {span: labelSpan});
-            _this.$set(metaConfig, 'wrapperCol', metaConfig['wrapperSpan'] || {span: wrapperSpan});
+            config.labelCol = metaConfig.labelCol = null;
+            config.wrapperCol = metaConfig.wrapperCol = null;
         }
-        _this.$set(mate['config'], 'hasFeedback'
-            , metaConfig.hasFeedback != undefined || config['hasFeedback'])
 
         // 说明此字段已经完成form解析
         mate['resolveType'] = mate['resolveType'] ? mate['resolveType'] + '2' : '2'

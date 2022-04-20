@@ -1,6 +1,7 @@
 <template>
-    <a-col :span="model.span || global.span" class="ivz-form-item"
-           @click.stop="activeHandle" :class="model.id == global.active ? 'ivz-item-active' : null">
+    <a-col :span="model.span || global.span" @click.stop="activeHandle"
+           :class="model.id == global.active ? 'ivz-item-active' : null">
+        <div class="ivz-form-item">
         <a-form-model-item :label="model.label" :prop="model.id" :rules="model.rules"
                 :extra="model.extra" :label-col="model.labelCol" :wrapper-col="model.wrapperCol">
             <a-tree v-if="meta.type == 'tree'" :disabled="model.disabled" :replaceFields="{title: 'label', key: 'value'}"
@@ -47,6 +48,7 @@
             <span class="ivz-io-icon" @click.stop="delItem">
                 <ivz-icon type="iz-icon-delete" :style="{color: '#ffffff', fontSize: '18px'}"></ivz-icon>
             </span>
+        </div>
         </div>
     </a-col>
 </template>
@@ -139,20 +141,22 @@
 
 <style scoped>
     .ivz-form-item {
-        height: 72px;
-        min-height: 72px;
-        overflow-y: auto;
+        max-height: 86px;
         position: relative;
     }
     .ivz-item-opera {
         right: 0px;
         bottom: 0px;
         height: 30px;
+        display: none;
         line-height: 30px;
         border-radius: 3px;
         position: absolute;
         background: #efefef;
         padding: 0px 0px 0px 3px;
+    }
+    .ivz-item-active .ivz-item-opera {
+        display: block;
     }
     .ivz-io-icon {
         height: 100%;

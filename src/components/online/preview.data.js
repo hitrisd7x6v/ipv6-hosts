@@ -8,6 +8,7 @@ import Global from "@/components/global.config"
 let DictTypeList = null;
 let DictTypeDataMap = {};
 let ParentMenus = Global['menus'];
+
 window.CacheApi = require("@/utils/cache.utils").default;
 window.CacheApi.currentMenu = { // 模拟当前菜单
     id: 'preview', name: '', type: 'V',

@@ -42,7 +42,7 @@
                 <li style="clear: both"></li>
             </div>
             <div class="ivz-ouc-item">
-                <div style="font-size: 13px; padding: 5px 0px">自定义功能组件</div>
+                <div style="font-size: 13px; padding: 5px 0px">功能组件</div>
                 <draggable v-model="cus" :group="{name: 'item', put: false, pull: 'clone'}"
                            tag="ul" class="ivz-olu" :clone="clone" :move="onMove" :options="options">
                     <li v-for="item in cus" :key="item.id" class="ivz-olu-label">

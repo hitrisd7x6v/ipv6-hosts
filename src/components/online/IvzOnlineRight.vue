@@ -22,7 +22,8 @@
                                :allowClear="true" v-model="model[item.field]" :disabled="item.disabled"
                                :treeData="item.data" showSearch :searchPlaceholder="item.searchPlaceholder"/>
                         <a-radio-group v-else-if="item.type=='radio'" v-model="model[item.field]" button-style="solid"
-                               :options="item.radioStyle != 'button' ? item.data : null" @change="(val)=> changeHandle(val, item)">
+                               :options="item.radioStyle != 'button' ? item.data : null"
+                                       @change="(val)=> changeHandle(val.target.value, item)">
                             <template v-if="item.radioStyle == 'button'" v-for="option in item.data">
                                 <a-radio-button :key="option.label" :value="option.value">
                                     {{option.label}}
@@ -67,6 +68,9 @@
         updated() { },
         methods: {
             changeHandle(val, meta) {
+                if(val instanceof Event) {
+                    val = val.target.value;
+                }
                 if(meta.change) {
                     meta.change(val, meta, this.model, this.global);
                 }

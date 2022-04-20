@@ -26,9 +26,13 @@ let AllFieldType = [
 ];
 // 'horizontal'|'vertical'|'inline'
 let ViewLayout = [
-    {label: 'inline', value: 'inline'},
+    // {label: 'inline', value: 'inline'},
     {label: 'vertical', value: 'vertical'},
     {label: 'horizontal', value: 'horizontal'},
+];
+let Placement = [
+    {label: '左', value: 'right'},
+    {label: '上', value: 'top'},
 ];
 let tableView = [
     {label: '分页', value: 'pagination'},
@@ -62,9 +66,9 @@ let Primary = [
     {label: '唯一', value: 'unique'},
 ];
 let Selection = [
+    {label: '无', value: 'none'},
     {label: '单选', value: 'radio'},
     {label: '多选', value: 'checkbox'},
-    {label: '不显示', value: 'none'},
 ];
 let Position = [
     {label: '表栏', value: 'T'},
@@ -223,6 +227,21 @@ let OtherMetas = [
     {field: 'extra', title: 'extra', type: 'text', placeholder: 'antdv表单的extra属性'},
     {field: 'placeholder', title: '占位内容', type: 'text', placeholder: '表单说明（请输入用户名）'},
 ];
+let DrawerMetas = [
+    {title: '抽屉方向', type: 'radio', field: 'placement', data: Placement
+        , change: (val, meta, model)=> {
+            if(val == 'right') model.drawerRate = 360;
+            else model.drawerRate = 280;
+        }},
+    {title: '展示遮罩', type: 'radio', field: 'mask', data: BooleanOptions},
+    {title: '蒙层关闭', type: 'radio', field: 'maskClosable', data: BooleanOptions},
+];
+let DrawerModel = {
+    mask: true,
+    drawerRate: 420,
+    maskClosable: true,
+    placement: 'right',
+};
 let Perms = [
     {label: '新增', value: 'Add'},
     {label: '删除', value: 'Del'},
@@ -257,11 +276,11 @@ export default {
                 {field: 'keyField', title: '主键字段', type: 'text', required: true},
                 {field: 'keyType', title: '主键自增', type: 'radio', data: isAuto, radioStyle: 'button'},
             ]},
-        {title: '表单配置', field: 'formConfig', metas: [
-
-                // {field: 'align', title: '标签对齐', type: 'radio', data: LabelAlign},
-                // {field: 'layout', title: '布局方式', type: 'select', data: ViewLayout}
-            ]},
+        // {title: '视图配置', field: 'formConfig', metas: [
+        //
+        //         // {field: 'align', title: '标签对齐', type: 'radio', data: LabelAlign},
+        //         // {field: 'layout', title: '布局方式', type: 'select', data: ViewLayout}
+        //     ]},
         {title: '表格配置', field: 'listConfig', metas: [
                 {field: 'selection', title: '选择功能', type: 'radio', data: Selection},
                 {field: 'tableView', title: '表格显示', type: 'checkbox', data: tableView, change: (val, meta, model)=>{
@@ -295,6 +314,71 @@ export default {
         layout: 'horizontal',
         labelCol: {span: 4},
         wrapperCol: {span: 18},
+        activeKey: ['tableConfig', 'formConfig'],
+        tableView: ['bordered', 'pagination', 'fixedHeight'],
+    },
+    IvzDrawerView: [
+        {title: '数据表配置', field: 'tableConfig', metas: [
+                {field: 'tableName', title: '表名', type: 'text', required: true, placeholder: '数据库表名（t_user）'},
+                {field: 'comment', title: '表说明', type: 'text', change: (val, meta, model)=>{
+                        model.addTitle = "新增"+val;
+                        model.editTitle = "修改"+val;
+                    }, placeholder: '数据库表说明（会员表）'},
+                {field: 'menuId', title: '父菜单', type: 'treeSelect', data: ParentMenus},
+                {field: 'keyField', title: '主键字段', type: 'text', required: true},
+                {field: 'keyType', title: '主键自增', type: 'radio', data: isAuto, radioStyle: 'button'},
+            ]},
+        {title: '视图配置', field: 'formConfig', metas: [
+                {field: 'layout', title: '布局方式', type: 'radio', data: ViewLayout},
+                {title: '列数', field: 'column', type: 'slider', change: (val, meta, model, global) => {
+                        model.column=val;
+                        global.span = 24 / val;
+                        model.drawerRate = (val * 360) - (val-1) * 38;
+                    }, min: 1, max: 3, step: 1, marks: {1: '1列', 2: '2', 3: '3列'}
+                },
+                {title: '列布局', field: 'formCol', type: 'slider', change: (val, meta, model) => {
+                    if(val[0] + val[1] > 24) return;
+                    model.labelCol = {span: val[0]};
+                    model.wrapperCol = {span: val[1]};
+                }, range: true, min: 3, max: 21, step: 1, marks: {3: '3', 6: '标签', 12: '12', 18: '表单', 21: '21'}},
+                ...DrawerMetas,
+            ]
+        },
+        {title: '表格配置', field: 'listConfig', metas: [
+                {field: 'selection', title: '选择功能', type: 'radio', data: Selection},
+                {field: 'tableView', title: '表格显示', type: 'checkbox', data: tableView, change: (val, meta, model)=>{
+                        model['isBorder'] = val.includes('bordered');
+                        model['isPage'] = val.includes('pagination');
+                        model['fixedHeight'] = val.includes('fixedHeight');
+                    }}
+            ]},
+        {
+            title: '其他配置', field: 'otherConfig', metas: [
+                {field: 'addTitle', title: '新增标题', type: 'text'},
+                {field: 'editTitle', title: '修改标题', type: 'text'},
+            ]
+        }
+    ],
+    IvzDrawerModel: {
+        column: 1,
+        perms: [],
+        width: 920,
+        tableName: null,
+        addTitle: null,
+        editTitle: null,
+        keyType: 'int',
+        align: 'right',
+        keyField: 'id',
+        formCol: [6, 18],
+        isBorder: true,
+        isPage: true,
+        comment: '',
+        selection: 'none',
+        fixedHeight: true,
+        layout: 'horizontal',
+        labelCol: {span: 6},
+        wrapperCol: {span: 16},
+        ...DrawerModel,
         activeKey: ['tableConfig', 'formConfig'],
         tableView: ['bordered', 'pagination', 'fixedHeight'],
     },

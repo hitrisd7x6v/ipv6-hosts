@@ -1,6 +1,13 @@
 export default {
+    UmdJs: `
+    <script src="https://cdn.jsdelivr.net/npm/vue"><\/script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"><\/script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/min/moment.min.js"><\/script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/locale/zh-cn.js"><\/script>
+    <script src="https://cdn.jsdelivr.net/npm/ant-design-vue@1.6.3/dist/antd.min.js"><\/script>`,
+    UmdCss: `<link href="https://cdn.jsdelivr.net/npm/ant-design-vue@1.6.3/dist/antd.min.css" rel="stylesheet">`,
     resolverPageConfigTemplate(config) {
-        return this.resolverObjectTemplate(config, 6);
+        return this.resolverObjectTemplate(config, 5);
     },
     resolverPageMetasTemplate(metas) {
         let metasTemp = "[\r\n";
@@ -55,7 +62,7 @@ export default {
         return searchMetasTemp + "\t\t\t\t\t\t]";
     },
     resolverPermConfigTemplate(config) {
-        let metas = config.metas;
+        let metas = config.metas || [];
         let metasTemp = "";
         metas.forEach(meta => {
             if(meta.type == 'action') return;
@@ -63,26 +70,27 @@ export default {
             let defaultValue = meta['default'] ? `, default: ${meta.default}` : '';
             metasTemp += `{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}, clear: ${meta.clear}, config: {}},\r\n\t\t\t\t\t\t\t`
         });
-        let configStr = this.resolverObjectTemplate(config.config, 7);
-                        return `{
-                            width: ${config.width},
-                            title: '${config.title}',
-                            metas: [
-                                ${metasTemp}
-                            ],
-                            config:  ${configStr}
-                        }`;
+        let configStr = this.resolverObjectTemplate(config.config, 6);
+                    return `{
+                        width: ${config.width},
+                        title: '${config.title}',
+                        metas: [
+                            ${metasTemp}
+                        ],
+                        config:  ${configStr}
+                    }`;
     },
     resolverPermCallbackTemplate(permId) {
         return `this.$page.setActionMeta('${permId}', {
-                        callBack: function (row) {
-                            return new Promise(function (resolve, reject) {
-                                vue.$refs['${permId}Ref'].open(row);
-                            })
-                        }
-                    });\r\n\t\t\t\t\t`
+                    callBack: function (row) {
+                        return new Promise(function (resolve, reject) {
+                            vue.$refs['${permId}Ref'].open(row);
+                        })
+                    }
+                });\r\n\t\t\t\t`
     },
     resolverObjectTemplate(obj, space) {
+        if(!obj) return '{}';
         let tabs = this.getTabNum(space);
         let template = `{`;
         let _this = this;

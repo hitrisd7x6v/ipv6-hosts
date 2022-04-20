@@ -3,7 +3,8 @@
               :wrapStyle="{overflow: 'auto'}" :placement="detailConfig.placement"
               :closable="detailConfig.closable" :maskClosable="detailConfig.maskClosable"
               wrap-class-name="ivz-drawer-detail-wrap" :height="detailConfig.height"
-              :destroyOnClose="detailConfig.destroyOnClose" :visible="visible">
+              :destroyOnClose="detailConfig.destroyOnClose" :visible="visible"
+              :getContainer="detailConfig.container">
         <slot name="detail" :model="detailModel">
             <a-spin tip="正在加载详情..." :spinning="spinning">
                 <a-descriptions :title="detailConfig.title" :bordered="detailConfig.bordered"
