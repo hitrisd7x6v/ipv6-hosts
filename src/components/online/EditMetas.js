@@ -40,8 +40,8 @@ let tableView = [
     {label: '固定高度', value: 'fixedHeight'},
 ];
 let FormOther = [
+    {label: '必填', value: 'required'},
     {label: '清空', value: 'clear'},
-    {label: '只读', value: 'readonly'},
     {label: '禁用', value: 'disabled'},
 ];
 let FieldView = [
@@ -56,7 +56,6 @@ let KeyType = [
     {label: 'varchar', value: 'varchar'},
 ];
 let OtherType = [
-    {label: '必填', value: 'required'},
     {label: '唯一', value: 'unique'},
     {label: '索引', value: 'index'},
 ];
@@ -123,8 +122,13 @@ let OperaMetas = [
     {field: 'otherForm', title: '操作属性', type: 'checkbox', data: FormOther
         , change: (val, meta, model)=>{
             model['clear'] = val.includes('clear');
-            model['readonly'] = val.includes('readonly') ? 'read-only' : null;
             model['disabled'] = val.includes('disabled');
+            if(val.includes('required')) {
+                model.required = true;
+                model.rules.push({required: true, message: '必填'});
+            } else {
+                model.required = false;
+            }
         }
     },
 ];
@@ -135,6 +139,7 @@ let TableMetas = [
             model['comment'] = val;
         }
     },
+    {field: 'comment', title: '字段注释', type: 'text', placeholder: '表字段注释（会员名称）'},
     {field: 'fieldType', title: '字段类型', type: 'fieldType', data: AllFieldType
         , lengthField: 'typeLength', lengthDisabled: false, required: true
         , change: (val, meta, model)=>{
@@ -142,12 +147,6 @@ let TableMetas = [
         }},
     {field: 'otherType', title: '字段配置', type: 'checkbox', data: OtherType
         , change: (val, meta, model)=>{
-            if(val.includes('required')) {
-                model.required = true;
-                model.rules.push({required: true, message: '必填'});
-            } else {
-                model.required = false;
-            }
             if(val.includes('unique')) {
                 model['unique'] = true;
             } else {
@@ -166,7 +165,6 @@ let TableMetas = [
             model['isDetail'] = val.includes('detail');
             model['isSearch'] = val.includes('search');
         }},
-    {field: 'comment', title: '字段注释', type: 'text', placeholder: '表字段注释（会员名称）'},
 ];
 let TableModel = {
     name: '',
@@ -328,7 +326,7 @@ export default {
                 {field: 'keyField', title: '主键字段', type: 'text', required: true},
                 {field: 'keyType', title: '主键自增', type: 'radio', data: isAuto, radioStyle: 'button'},
             ]},
-        {title: '视图配置', field: 'formConfig', metas: [
+        {title: '表单配置', field: 'formConfig', metas: [
                 {field: 'layout', title: '布局方式', type: 'radio', data: ViewLayout},
                 {title: '列数', field: 'column', type: 'slider', change: (val, meta, model, global) => {
                         model.column=val;
@@ -359,7 +357,7 @@ export default {
             ]
         }
     ],
-    IvzDrawerModel: {
+    IvzViewModel: {
         column: 1,
         perms: [],
         width: 920,
@@ -382,14 +380,6 @@ export default {
         activeKey: ['tableConfig', 'formConfig'],
         tableView: ['bordered', 'pagination', 'fixedHeight'],
     },
-    group: [
-        {title: '基础配置', field: 'basicConfig', metas: [
-                {field: 'name', title: '组标题', type: 'text', required: true},
-                {field: 'tableSpan', title: '合并表格', type: 'radio', data: BooleanOptions},
-                {field: 'desc', title: '组说明', type: 'text'}
-            ]
-        }
-    ],
     modal: [
         {
             title: '自定义功能配置', field: 'basicConfig', metas: [
@@ -427,9 +417,20 @@ export default {
         wrapperCol: {span: 15},
         maskClosable: true,
     },
+    group: [
+        {title: '基础配置', field: 'basicConfig', metas: [
+                {field: 'name', title: '组标题', type: 'text'},
+                {field: 'field', title: '字段名', type: 'text', required: true},
+                {field: 'desc', title: '组说明', type: 'text'},
+                {field: 'tableSpan', title: '表头分组', type: 'radio', data: BooleanOptions}
+            ]
+        }
+    ],
     groupModel: {
         name: '',
         desc: '',
+        field: '',
+        tableSpan: false,
         activeKey: ['basicConfig'],
     },
     text: [
@@ -694,7 +695,7 @@ export default {
                 ...OtherMetas
             ]},
     ],
-    dataForm: [
+    dateForm: [
         {title: '表单配置', field: 'formConfig', metas: [
                 ...FormMetas,
                 {title: '日期格式', field: 'format', type: 'text'},
@@ -954,7 +955,7 @@ export default {
         return sql += indexs;
     },
     resolverGroupToMeta(model, global) {
-        let meta = {title: model['name'], field: ''};
+        let meta = {title: model['name'], field: '', type: 'group'};
         if(model['tableSpan']) {
             meta.children = [];
         } else {

@@ -24,10 +24,6 @@ export const MixinViewConfig = {
         this.modalMetas = this.global.modalMetas;
     },
     methods: {
-        getSpan(meta) {
-            if(meta.model) return meta.model.span || this.global.span;
-            else return this.global.span;
-        },
         onMove(evt) {
             let form = evt['draggedContext']['element'];
             let to = evt['relatedContext']['component'];
@@ -41,6 +37,13 @@ export const MixinViewConfig = {
 
                 }
             }
+        },
+        activeHandle() {
+            this.global.active = this.view.id;
+            this.model = EditMetas.IvzViewModel;
+
+            this.global.editModel = this.model;
+            this.global.editMetas = EditMetas[this.view.type];
         },
         onAddHandle(e) {
             if(this.metas) {

@@ -738,6 +738,9 @@ export default {
         _this.$set(item, 'key', item.field);
         _this.$set(item, 'dataIndex', item.field);
 
+        //设置 column.ellipsis 可以让单元格内容根据宽度自动省略。
+        item['ellipsis'] = item.ellipsis !== false && config['ellipsis'] !==false;
+
         // 表格操作元数据
         if (item['type'] === 'action') { // action列的宽度必须手动指定, 否则不指定
             _this.$set(item, 'scopedSlots', {customRender: item.field + '_t'})

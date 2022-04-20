@@ -52,6 +52,7 @@
             if(!this.meta['model']) {
                 this.model = EditMetas.getItemModel(this.meta.type);
                 this.meta['model'] = this.model;
+                this.meta['metas'] = this.metas;
 
                 this.model['id'] = this.meta.id;
                 this.model['permId'] = this.meta.id;
@@ -59,6 +60,7 @@
                 this.model['label'] = this.meta.name;
             } else {
                 this.model = this.meta['model'];
+                this.metas = this.meta['metas'];
             }
 
             this.activeHandle();

@@ -6,17 +6,17 @@
                 <a-radio-button value="dict">字典</a-radio-button>
                 <a-radio-button value="url">url地址</a-radio-button>
             </a-radio-group>
-            <span style="position: absolute; right: 30px; top: 2px; cursor: pointer;">
+            <span style="position: absolute; left: 165px; top: 2px; cursor: pointer;">
                 <ivz-icon type="iz-icon-jia" @click="addHandle" v-show="value == 'cus'"/>
             </span>
         </div>
         <draggable v-if="value == 'cus'" :list="cusOptions" group="options" :animation='200'>
             <div class="ivz-of-item" v-for="(option, index) in cusOptions" :key="index">
-                <a-input-group compact size="small">
-                    <a-input style=" width: 95px; text-align: center;" v-model="option.label" placeholder="输入标签" />
-                    <a-input style="width: 95px; text-align: center;" v-model="option.value" placeholder="输入标签值" />
+                <a-input-group compact>
+                    <a-input style=" width: 80px; text-align: center;" v-model="option.label" placeholder="输入标签" />
+                    <a-input style="width: 80px; text-align: center;" v-model="option.value" placeholder="输入标签值" />
                 </a-input-group>
-                <span style="position: absolute; right: 8px; top: 3px; cursor: pointer;">
+                <span style="position: absolute; left: 165px; top: 3px; cursor: pointer;">
                     <ivz-icon type="iz-icon-jian" :style="{color: 'red'}" @click="jianHandle(option)"></ivz-icon>
                 </span>
             </div>

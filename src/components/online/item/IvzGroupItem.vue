@@ -1,16 +1,22 @@
 <template>
-    <div class="ivz-group-item" :class="model.id == global.active ? 'ivz-item-active' : null">
-        <div class="ivz-gi-header" @click="activeHandle">
-            {{model.name}}
+    <a-col span="24" class="ivz-group-item" @click.stop="activeHandle"
+           :class="model.id == global.active ? 'ivz-group-active' : null">
+        <div class="ivz-gi-header" v-show="model.name">
+            <div style="float: left">{{model.name}}</div>
         </div>
         <draggable :list="meta.children" :options="options" group="item"
                    :animation='global.animation' class="ivz-gi-drag">
-            <a-col :span="global.span" v-for="item in meta.children" :key="item.id">
+            <template :span="global.span" v-for="item in meta.children">
                 <ivz-form-item :global="global" :meta="item" type="table"
-                    :data-id="item.id"  @delMetaItem="delMetaItem" />
-            </a-col>
+                    :data-id="item.id" :key="item.id"  @delMetaItem="delMetaItem" />
+            </template>
         </draggable>
-    </div>
+        <div class="ivz-group-del" @click.stop="delMetaItem(meta)">
+            <span style="width: 36px; text-align: center; display: inline-block; cursor: pointer">
+                <ivz-icon type="iz-icon-delete" :style="{fontSize: '18px'}"></ivz-icon>
+            </span>
+        </div>
+    </a-col>
 </template>
 
 <script>
@@ -64,12 +70,26 @@
 <style scoped>
     .ivz-group-item {
         display: flex;
-        min-height: 112px;
+        min-height: 102px;
         display: -ms-flex;
         display: -webkit-flex;
         flex-direction: column;
         justify-content: space-between;
         border: 1px dashed darkorange!important;
+    }
+    .ivz-group-del {
+        right: 0px;
+        bottom: 0px;
+        height: 30px;
+        display: none;
+        line-height: 30px;
+        border-radius: 3px;
+        position: absolute;
+        background: #efefef;
+        padding: 0px 0px 0px 3px;
+    }
+    .ivz-group-active .ivz-group-del {
+        display: block!important;
     }
     .ivz-gi-drag {
         flex-grow: 1;

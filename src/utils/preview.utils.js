@@ -11,36 +11,46 @@ export default {
     },
     resolverPageMetasTemplate(metas) {
         let metasTemp = "[\r\n";
-        metas.forEach(meta => {
-            if(meta.type == 'action') return;
 
-            let defaultValue = meta['default'] ? `, default: ${meta.default}` : '';
-            let rule = "", dataSource = "", clear = "", view = "", required = '', config = '';
-            if(meta['rule']) {
-                let value = meta[meta['rule']];
-                rule = `, ${meta['rule'] +': ' + (value ? value : '\"\"')}`;
-                delete meta['rule'];
-            }
-            if(meta['isForm'] === false) view += ", isForm: false";
-            if(meta['isTable'] === false) view = `, isTable: false`;
-            if(meta['isDetail'] === false) view += ", isDetail: false";
-            if(meta['required']) required = ', required: true';
-            if(meta['clear']) clear = `, clear: true`;
-            if(meta['dictType']) {
-                dataSource = `, dictType: "${meta['dictType']}"`;
-            } else if(meta['url']) {
-                dataSource = `, url: "${meta['url']}"`;
-            } else if(meta['data']) {
-                dataSource = `, data: ${meta['data']}`;
-            }
-            config = Object.keys(meta.config).length > 0 ? `, config: ` + this.resolverObjectTemplate(meta.config, 7) : "";
-            metasTemp += `\t\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}${required}${rule}${dataSource}${clear}${view}${config}},\r\n`
-        });
+        function doResolverPageMetasTemplate(metas) {
+            metas.forEach(meta => {
+                if(meta.type == 'action') return;
+                if(meta.type == 'group') {
+                    let metasField = meta.children ? 'children' : 'metas';
+                    metasTemp += `\t\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", ${metasField}: [\r\t`
+                    doResolverPageMetasTemplate(meta.metas || meta.children);
+                    return metasTemp += '\t\t\t\t\t\t\t]},\r'
+                }
 
-        return metasTemp + "\t\t\t\t\t\t]";
+                let defaultValue = meta['default'] ? `, default: ${meta.default}` : '';
+                let rule = "", dataSource = "", clear = "", view = "", required = '', config = '';
+                if(meta['rule']) {
+                    let value = meta[meta['rule']];
+                    rule = `, ${meta['rule'] +': ' + (value ? value : '\"\"')}`;
+                    delete meta['rule'];
+                }
+                if(meta['isForm'] === false) view += ", isForm: false";
+                if(meta['isTable'] === false) view = `, isTable: false`;
+                if(meta['isDetail'] === false) view += ", isDetail: false";
+                if(meta['required']) required = ', required: true';
+                if(meta['clear']) clear = `, clear: true`;
+                if(meta['dictType']) {
+                    dataSource = `, dictType: "${meta['dictType']}"`;
+                } else if(meta['url']) {
+                    dataSource = `, url: "${meta['url']}"`;
+                } else if(meta['data']) {
+                    dataSource = `, data: ${meta['data']}`;
+                }
+                config = Object.keys(meta.config).length > 0 ? `, config: ` + this.resolverObjectTemplate(meta.config, 7) : "";
+                metasTemp += `\t\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}${required}${rule}${dataSource}${clear}${view}${config}},\r`
+            });
+        }
+
+        doResolverPageMetasTemplate(metas);
+        return metasTemp + "\t\t\t\t\t]";
     },
     resolverPageSearchMetasTemplate(searchMetas) {
-        let searchMetasTemp = "[\r\n";
+        let searchMetasTemp = "[\r";
         searchMetas.forEach(meta => {
             if(meta.type == 'action') return;
 

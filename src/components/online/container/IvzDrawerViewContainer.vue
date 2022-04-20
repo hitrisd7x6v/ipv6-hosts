@@ -89,13 +89,6 @@
                     if(val < 280) this.model['drawerRate'] = 280
                 }
             },
-            activeHandle() {
-                this.global.active = this.view.id;
-                this.model = EditMetas.IvzDrawerModel;
-
-                this.global.editModel = this.model;
-                this.global.editMetas = EditMetas[this.view.type];
-            },
             getPageConfig() {
                 return {
                     form: {
@@ -182,8 +175,10 @@
         height: 100%;
     }
     .ivz-oc-drawer .ant-modal-wrap, .ivz-oc-drawer .ant-modal-mask {
+        z-index: 1150;
         position: absolute;
     }
+
     .ivz-drawer-view .ant-drawer {
         position: absolute;
     }
