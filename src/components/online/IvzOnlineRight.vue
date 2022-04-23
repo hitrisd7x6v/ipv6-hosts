@@ -31,16 +31,16 @@
                             </template>
                         </a-radio-group>
                         <a-input-group v-else-if="item.type == 'fieldType'" compact>
-                            <a-select style="width: 60%" :options="item.data" :allowClear="true"
+                            <a-select style="width: 57%" :options="item.data" :allowClear="true"
                                       v-model="model[item.field]" @change="(val)=>changeHandle(val, item)"/>
-                            <a-input style="width: 40%" v-model="model[item.lengthField]" :allowClear="true"
-                                @change="(val)=>changeHandle(val, item)" placeholder="数据长度"/>
+                            <a-input style="width: 43%" v-model="model[item.lengthField]" :allowClear="true"
+                                @change="(val)=>changeHandle(val, item)" placeholder="长度"/>
                         </a-input-group>
                         <a-input-group v-else-if="item.type == 'validate'" compact>
                             <a-select style="width: 40%" :options="item.data" :allowClear="true"
                                       v-model="model[item.field]" @change="(val)=>changeHandle(val, item)"/>
                             <a-input style="width: 60%" v-model="model['validateValue']" :allowClear="true"
-                                     @change="(val)=>changeHandle(val, item)" placeholder="类型值"/>
+                                     @change="(val)=>changeHandle(val, item)" placeholder="校验值"/>
                         </a-input-group>
                         <ivz-options-form v-else-if="item.type == 'options'" :meta="item" :model="model" />
                         <ivz-perm-form v-else-if="item.type == 'perms'" :meta="item" :model="model" />

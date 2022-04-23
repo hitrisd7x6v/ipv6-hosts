@@ -2,7 +2,7 @@
     <a-col :span="model.span || global.span" @click.stop="activeHandle"
            :class="model.id == global.active ? 'ivz-item-active' : null">
         <div class="ivz-form-item">
-            <a-form-model-item :label="model.label" :prop="model.id" :rules="model.rules"
+            <a-form-model-item :label="model.label" :prop="meta.id" :required="model.required"
                     :extra="model.extra" :label-col="model.labelCol" :wrapper-col="model.wrapperCol">
                 <a-tree v-if="meta.type == 'tree'" :disabled="model.disabled" :replaceFields="{title: 'label', key: 'value'}"
                         :treeData="model.options" :checkable="model.checkable" v-model="model[meta.id]"></a-tree>
@@ -10,7 +10,8 @@
                         :allowHalf="model.allowHalf" :count="model.count" v-model="model[meta.id]" />
                 <a-slider v-else-if="meta.type == 'slider'" :disabled="model.disabled" v-model="model[meta.id]"
                         :min="model.min" :max="model.max" :step="model.step"></a-slider>
-                <a-switch v-else-if="meta.type == 'switch'" :disabled="model.disabled" v-model="model[meta.id]" />
+                <a-switch v-else-if="meta.type == 'switch'" :checkedChildren="model['checkedChildren']"
+                          :disabled="model.disabled" v-model="model[meta.id]" :unCheckedChildren="model['unCheckedChildren']"/>
                 <a-upload v-else-if="meta.type == 'upload'" :disabled="model.disabled">
                     <a-button><a-icon type="upload" /> 点击上传 </a-button>
                 </a-upload>

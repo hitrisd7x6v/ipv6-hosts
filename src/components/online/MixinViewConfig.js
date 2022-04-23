@@ -44,6 +44,9 @@ export const MixinViewConfig = {
 
             this.global.editModel = this.model;
             this.global.editMetas = EditMetas[this.view.type];
+
+            if(this.$refs['viewModelRef'])
+                this.$refs['viewModelRef'].validate();
         },
         onAddHandle(e) {
             if(this.metas) {
@@ -108,7 +111,9 @@ export const MixinViewConfig = {
                     layout: this.model.layout,
                     column: this.model.column,
                     addTitle: this.model.addTitle,
-                    editTitle: this.model.editTitle
+                    editTitle: this.model.editTitle,
+                    labelCol: this.model['labelCol'],
+                    wrapperCol: this.model['wrapperCol']
                 },
                 table: {
                     rowKey: this.model['keyField']

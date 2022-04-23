@@ -12,7 +12,7 @@
         </div>
         <draggable v-if="value == 'cus'" :list="cusOptions" group="options" :animation='200'>
             <div class="ivz-of-item" v-for="(option, index) in cusOptions" :key="index">
-                <a-input-group compact>
+                <a-input-group compact size="small">
                     <a-input style=" width: 80px; text-align: center;" v-model="option.label" placeholder="输入标签" />
                     <a-input style="width: 80px; text-align: center;" v-model="option.value" placeholder="输入标签值" />
                 </a-input-group>
@@ -23,7 +23,7 @@
         </draggable>
         <div v-else-if="value == 'dict'">
             <a-select v-model="model['dictValue']" placeholder="请选择字典类型"
-                  @change="dictChange" :options="treeData" showSearch mode="tags" />
+                  @change="dictChange" :options="treeData"/>
         </div>
         <div v-else>
             <a-input v-model="model['urlValue']" placeholder="请输入地址, 以http(s)开头" />
@@ -93,11 +93,7 @@
                 this.cusOptions.push({label: '', value: ''});
             },
             dictChange(val) {
-                if(val.length == 2) {
-                    val.splice(0, 1);
-                }
-
-                this.dictOptions = PreviewData.getDictData(val[0]);
+                this.dictOptions = PreviewData.getDictData(val);
                 this.model['options'] = this.dictOptions;
             },
             jianHandle(option) {

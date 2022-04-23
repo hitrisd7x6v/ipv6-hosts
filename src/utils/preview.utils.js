@@ -10,25 +10,31 @@ export default {
         return this.resolverObjectTemplate(config, 5);
     },
     resolverPageMetasTemplate(metas) {
-        let metasTemp = "[\r\n";
+        let _this = this, metasTemp = "[\r";
 
         function doResolverPageMetasTemplate(metas) {
             metas.forEach(meta => {
                 if(meta.type == 'action') return;
                 if(meta.type == 'group') {
                     let metasField = meta.children ? 'children' : 'metas';
-                    metasTemp += `\t\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", ${metasField}: [\r\t`
+                    metasTemp += `\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", ${metasField}: [\r\t`
                     doResolverPageMetasTemplate(meta.metas || meta.children);
                     return metasTemp += '\t\t\t\t\t\t\t]},\r'
                 }
 
                 let defaultValue = meta['default'] ? `, default: ${meta.default}` : '';
-                let rule = "", dataSource = "", clear = "", view = "", required = '', config = '';
+                let switchLabel = "";
+                let rule = "", dataSource = "", clear = "", view = "", required = '', config = '', width = '';
                 if(meta['rule']) {
                     let value = meta[meta['rule']];
-                    rule = `, ${meta['rule'] +': ' + (value ? value : '\"\"')}`;
+                    if(meta['rule'] != 'range' && meta['rule'] != 'len') {
+                        value = `'${value}'`;
+                    }
+
+                    rule = `, ${meta['rule'] +': ' + (value ? value : true)}`;
                     delete meta['rule'];
                 }
+                if(meta['width']) width += `, width: ${meta['width']}`;
                 if(meta['isForm'] === false) view += ", isForm: false";
                 if(meta['isTable'] === false) view = `, isTable: false`;
                 if(meta['isDetail'] === false) view += ", isDetail: false";
@@ -39,10 +45,14 @@ export default {
                 } else if(meta['url']) {
                     dataSource = `, url: "${meta['url']}"`;
                 } else if(meta['data']) {
-                    dataSource = `, data: ${meta['data']}`;
+                    let parse = JSON.stringify(meta['data']);
+                    dataSource = `, data: ${parse}`;
                 }
-                config = Object.keys(meta.config).length > 0 ? `, config: ` + this.resolverObjectTemplate(meta.config, 7) : "";
-                metasTemp += `\t\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}${required}${rule}${dataSource}${clear}${view}${config}},\r`
+                if(meta['checkedChildren'] || meta['unCheckedChildren']) {
+                    switchLabel = `, checkedChildren='${meta['checkedChildren']}', unCheckedChildren='${meta['unCheckedChildren']}'`
+                }
+                config = Object.keys(meta.config).length > 0 ? `, config: ` + _this.resolverObjectTemplate(meta.config, 7) : "";
+                metasTemp += `\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}${width}${clear}${switchLabel}${required}${rule}${dataSource}${view}${config}},\r`
             });
         }
 
@@ -54,7 +64,7 @@ export default {
         searchMetas.forEach(meta => {
             if(meta.type == 'action') return;
 
-            let dataSource = "", clear = "";
+            let dataSource = "", clear = "", switchLabel = "", config = "";
             let defaultValue = meta['default'] ? `, default: ${meta.default}` : '';
             if(meta['clear']) {
                 clear = `, clear: ${meta.clear}`;
@@ -63,13 +73,18 @@ export default {
                 dataSource = `, dictType: "${meta['dictType']}"`;
             } else if(meta['url']) {
                 dataSource = `, url: "${meta['url']}"`;
-            } else if(meta['data']) {
-                dataSource = `, data: ${meta['data']}`;
+            } else if(meta['data'] && meta['data'].length > 0) {
+                let parse = JSON.stringify(meta['data']);
+                dataSource = `, data: ${parse}`;
             }
-            searchMetasTemp += `\t\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}${clear}${dataSource}, config: {}},\r\n`
+            config = Object.keys(meta.config).length > 0 ? `, config: ` + this.resolverObjectTemplate(meta.config, 7) : "";
+            if(meta['checkedChildren'] || meta['unCheckedChildren']) {
+                switchLabel = `, checkedChildren='${meta['checkedChildren']}', unCheckedChildren='${meta['unCheckedChildren']}'`
+            }
+            searchMetasTemp += `\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}${clear}${switchLabel}${dataSource}${config}},\r`
         });
 
-        return searchMetasTemp + "\t\t\t\t\t\t]";
+        return searchMetasTemp + "\t\t\t\t\t]";
     },
     resolverPermConfigTemplate(config) {
         let metas = config.metas || [];

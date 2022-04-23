@@ -25,6 +25,7 @@
     "axios": "^0.19.2",
     "codemirror": "^5.56.0",
     "core-js": "^3.6.4",
+    "path": "^0.12.7",
     "qs": "^6.9.3",
     "sql-formatter": "^2.3.3",
     "tinymce": "^5.2.2",

@@ -37,7 +37,7 @@
                                :disabled="disabledHandle(col)" @change="(val)=>changeHandle(val, col)">
                         </a-radio-group>
                         <a-switch v-else-if="col.type=='switch'" v-model="model[col.field]" :size="formSize"
-                              :checkedChildren="col.config.checkedChildren" :unCheckedChildren="col.config.unCheckedChildren"
+                              :checkedChildren="col.checkedChildren" :unCheckedChildren="col.unCheckedChildren"
                               :loading="col.config.loading" style="margin-bottom:5px" :disabled="disabledHandle(col)"
                               :blur="col.event.blur" :focus="col.event.focus" @click="col.event.click"
                                   @change="(val)=>changeHandle(val, col)">

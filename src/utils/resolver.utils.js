@@ -16,7 +16,7 @@ export default {
     viewFormat: 'YYYY-MM-DD', // 表格显示日期格式
     dateFormat: 'YYYY-MM-DD HH:mm:ss', // 表单默认时间格式
     gutter: {xs: 0, sm: 10, md: 20, lg: 40, xl: 60, xxl: 80},
-    labelCol: {span: 8}, // offset: 0, pull: 0, push: 0, order: 0
+    labelCol: {span: 6}, // offset: 0, pull: 0, push: 0, order: 0
     wrapperCol: {span: 14}, // offset: 0, pull: 0, push: 0, order: 0
     dateFormatter (val, row, col) {
         let metaConfig = col['config'];
@@ -499,7 +499,6 @@ export default {
                 let ruleValue = mate[item];
                 if (ruleValue != undefined) { // 动态生成校验规则
                     let type = mate['type'];
-                    let fieldType = mate['fieldType'];
                     let arg = type === 'number' ? '值' : '长度';
                     let msgVal = message[item](mate, arg);
                     // 自定义校验
@@ -508,25 +507,21 @@ export default {
                     }
 
                     let rule = {message: msgVal};
-                    if (item === 'len' || item === 'min' || item === 'max') {
-                        if (type === 'number') { // 不同的表单类型的处理
-                            fieldType = 'number';
-                            _this.$set(rule, 'range', JSON.parse(ruleValue));
-                        } else if (type === 'checkbox') {
-                            fieldType = 'array'
-                        } else if (type === 'select' && mate['config']['mode'] === 'multiple') {
-                            fieldType = 'array'
-                        } else if (type === 'stree' && (mate['config']['multiple'] || mate['config']['treeCheckable'])) {
-                            fieldType = 'array'
-                        } else if(type == 'text') {
-
-                        }
-                        _this.$set(rule, 'type', fieldType)
-
+                    if (item === 'len') {
+                        _this.$set(rule, 'type', 'number')
                     } else if(item == 'boolean' || item == 'url' || item == 'date' || item == 'email') {
                         _this.$set(rule, 'type', item);
                     } else if(item == 'regexp') {
                         _this.$set(rule, 'pattern', ruleValue)
+                    } else if(item == 'range') {
+                        ruleValue = JSON.parse(ruleValue);
+                        if(ruleValue[0] != undefined) {
+                            mate['decorate'].rules.push({min: ruleValue[0], message: `${mate['title']}(${arg}不能小于${ruleValue[0]})`});
+                        }
+                        if(ruleValue[1] != undefined) {
+                            mate['decorate'].rules.push({max: ruleValue[1], message: `${mate['title']}(${arg}不能大于${ruleValue[1]})`});
+                        }
+                        return;
                     } else {
                         _this.$set(rule, item, ruleValue);
                     }
@@ -559,6 +554,9 @@ export default {
         if(meta['isDetail'] == null) {
             meta['isDetail'] = true;
         }
+    },
+    switchLabelFormatter(val, model, meta) {
+        return val ? meta['checkedChildren'] : meta['unCheckedChildren'];
     },
     optionsLabelFormatter(val, model, meta) {
         if(val == null) return '';
@@ -691,6 +689,11 @@ export default {
                 if (!mate.formatter) {
                     _this.$set(mate, 'formatter', this.optionsLabelFormatter)
                 }
+            }
+        }
+        if (mate.type == 'switch') {
+            if (!mate.formatter) {
+                _this.$set(mate, 'formatter', this.switchLabelFormatter)
             }
         }
         // 日期类型

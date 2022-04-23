@@ -32,7 +32,7 @@
                         <a-radio-group v-else-if="col.type=='radio'" :options="col.data" :name="col.field" :blur="col.event.blur" :focus="col.event.focus"
                                :disabled="disabledHandle(col)" v-decorator="[col.field, col['decorate']]"></a-radio-group>
                         <a-switch v-else-if="col.type=='switch'" v-decorator="[col.field, col['decorate']]"
-                              :checkedChildren="col.config.checkedChildren" :unCheckedChildren="col.config.unCheckedChildren"
+                              :checkedChildren="col.checkedChildren" :unCheckedChildren="col.unCheckedChildren"
                               :loading="col.config.loading" :size="formSize" style="margin-bottom:5px" :disabled="disabledHandle(col)"
                               :blur="col.event.blur" :focus="col.event.focus"
                               @click="col.event.click"></a-switch>

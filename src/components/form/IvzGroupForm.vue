@@ -1,6 +1,7 @@
 <template>
-    <a-form class="ivz-form" :form="form" :hide-required-mark="formConfig.hideRequiredMark"
-            :layout="formConfig.layout" :self-update="formConfig.selfUpdate">
+    <a-form class="ivz-form" :hide-required-mark="formConfig.hideRequiredMark"
+            :layout="formConfig.layout" :self-update="formConfig.selfUpdate"
+            :labelCol="formConfig.labelCol" :wrapperCol="formConfig.wrapperCol" :form="form">
         <div v-for="group in formGroup" v-if="groupView(group)"
              :key="group.name" class="ivz-group" :style="group.style">
             <div v-if="group.name" class="ivz-group-head">

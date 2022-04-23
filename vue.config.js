@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const demoViews = {};
 const glob = require('glob');
 const path = require('path');
+
 const version = process.env.npm_package_version;
 const DEMO_PAGE_PATH = path.resolve(__dirname, 'src/views/demo');
 const entryFiles = glob.sync(DEMO_PAGE_PATH + '/*.js')

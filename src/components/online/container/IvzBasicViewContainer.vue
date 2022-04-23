@@ -28,7 +28,7 @@
             </div>
         </div>
         <a-row class="ivz-vd-body ivz-vbd-body" style="width: 100%; height: 100%" :gutter="global.gutter">
-            <a-form-model style="width: 100%; height: 100%" :layout="model.layout"
+            <a-form-model style="width: 100%; height: 100%" :layout="model.layout" :model="model" ref="viewModelRef"
                 :labelCol="model.labelCol" :wrapperCol="model.wrapperCol" :labelAlign="model.align">
                 <draggable :list="metas" :options="options" group="item" @add="onAddHandle"
                            :animation='200' :move="onMove" style="width: 100%; height: 100%; overflow-y: auto;">
@@ -63,8 +63,8 @@
     import {MixinViewConfig} from "@/components/online/MixinViewConfig";
     import IvzPreviewView from "@/components/online/preview/IvzPreviewView";
     import IvzModalItem from "@/components/online/item/IvzModalItem";
-    import EditMetas from "@/components/online/EditMetas";
     import PreviewUtils from "@/utils/preview.utils";
+
     export default {
         name: "IvzBasicViewContainer",
         mixins: [MixinViewConfig],
@@ -97,7 +97,6 @@
                 let htmlCode = `<html lang="zh-CN">
     <head>
         <title></title>
-        ${PreviewUtils.UmdCss}
     </head>
     <body>
         <div id="app">
@@ -105,7 +104,6 @@
             ${modalTemplates}
         </div>
     </body>
-    ${PreviewUtils.UmdJs}
     <script type="text/javascript">
         let vue = new Vue({
             el: "#app",

@@ -106,6 +106,7 @@ let TextValidate = [
     {label: '邮箱', value: 'email'},
     {label: '日期', value: 'date'},
     {label: '长度', value: 'len'},
+    {label: '范围', value: 'range'},
     {label: '身份证', value: 'idCard'},
     {label: '银行卡', value: 'bank'},
     {label: '正则表达式', value: 'regexp'},
@@ -121,25 +122,26 @@ let ItemRequiredMetas = [
 let OperaMetas = [
     {field: 'otherForm', title: '操作属性', type: 'checkbox', data: FormOther
         , change: (val, meta, model)=>{
-            model['clear'] = val.includes('clear');
-            model['disabled'] = val.includes('disabled');
+            model['clear'] = val.includes('clear') || false;
+            model['disabled'] = val.includes('disabled') || false;
             if(val.includes('required')) {
                 model.required = true;
                 model.rules.push({required: true, message: '必填'});
             } else {
                 model.required = false;
+                model.rules.push({required: false});
             }
         }
     },
+    {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
 ];
 let TableMetas = [
-    {field: 'name', title: '表字段', type: 'text', required: true, placeholder: '表字段名（user_name）'},
+    {field: 'name', title: '字段名', type: 'text', required: true, placeholder: '表字段名（user_name）'},
     {field: 'label', title: '字段标题', type: 'text', required: true, placeholder: '字段标题（用户名）'
         , change: (val, meta, model)=>{
             model['comment'] = val;
         }
     },
-    {field: 'comment', title: '字段注释', type: 'text', placeholder: '表字段注释（会员名称）'},
     {field: 'fieldType', title: '字段类型', type: 'fieldType', data: AllFieldType
         , lengthField: 'typeLength', lengthDisabled: false, required: true
         , change: (val, meta, model)=>{
@@ -169,6 +171,7 @@ let TableMetas = [
 let TableModel = {
     name: '',
     label: '',
+    width: null,
     isForm: true,
     isTable: true,
     isDetail: true,
@@ -207,13 +210,16 @@ let OptionsMetas = [
 ];
 let OptionsModel = {
     options: [],
+    dictValue: [],
     urlValue: null,
-    dictValue: null,
     dataType: 'cus',
     valueField: 'value',
     labelField: 'label',
 }
 let OtherMetas = [
+    {field: 'width', title: '表格列宽', type: 'number', step: 1, placeholder: '表格当前列占的宽度'},
+    {field: 'placeholder', title: '占位内容', type: 'text', placeholder: '表单说明（请输入用户名）'},
+    {field: 'extra', title: 'extra', type: 'text', placeholder: 'antdv表单的extra属性'},
     {title: '列占比', field: 'span', type: 'slider', change: (val, meta, model) => {
             model.span = val;
         }, min: 0, max: 24, step: 1, marks: {0: '0', 6: '6', 12: '12', 18: '18', 24: '24'}},
@@ -222,8 +228,6 @@ let OtherMetas = [
             model.labelCol = val[0] ? {span: val[0]} : null;
             model.wrapperCol = val[1] ? {span: val[1]} : null;
         }, range: true, min: 0, max: 24, step: 1, marks: {0: '0', 6: '标签', 12: '12', 18: '表单', 24: '24'}},
-    {field: 'extra', title: 'extra', type: 'text', placeholder: 'antdv表单的extra属性'},
-    {field: 'placeholder', title: '占位内容', type: 'text', placeholder: '表单说明（请输入用户名）'},
 ];
 let DrawerMetas = [
     {title: '抽屉方向', type: 'radio', field: 'placement', data: Placement
@@ -367,7 +371,7 @@ export default {
         keyType: 'int',
         align: 'right',
         keyField: 'id',
-        formCol: [6, 18],
+        formCol: [6, 14],
         isBorder: true,
         isPage: true,
         comment: '',
@@ -375,7 +379,7 @@ export default {
         fixedHeight: true,
         layout: 'horizontal',
         labelCol: {span: 6},
-        wrapperCol: {span: 16},
+        wrapperCol: {span: 14},
         ...DrawerModel,
         activeKey: ['tableConfig', 'formConfig'],
         tableView: ['bordered', 'pagination', 'fixedHeight'],
@@ -437,7 +441,6 @@ export default {
         {title: '基础配置', field: 'tableConfig', metas: TableMetas},
         {title: '表单配置', field: 'formConfig', metas: [
                 ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -447,7 +450,6 @@ export default {
         // {title: '基础配置', field: 'tableConfig', metas: TableMetas},
         {title: '表单配置', field: 'formConfig', metas: [
                 ...FormMetas, ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -464,7 +466,6 @@ export default {
         {title: '表单配置', field: 'formConfig', metas: [
                 ...OperaMetas,
                 {title: '显示密码', field: 'visibility', type: 'radio', data: BooleanOptions},
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate},
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -474,7 +475,6 @@ export default {
         {title: '表单配置', field: 'formConfig', metas: [
                 ...FormMetas, ...OperaMetas,
                 {title: '显示密码', field: 'visibility', type: 'radio', data: BooleanOptions},
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -524,7 +524,6 @@ export default {
         {title: '表单配置', field: 'formConfig', metas: [
                 ...FormMetas, ...OptionsMetas, ...OperaMetas,
                 {title: '是否多选', field: 'mode', type: 'radio', data: ModeOptions},
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -555,7 +554,6 @@ export default {
                 {title: '最大值', field: 'max', type: 'number'},
                 {title: '步长', field: 'step', type: 'number'},
                 ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -580,7 +578,6 @@ export default {
     checkboxForm: [
         {title: '表单配置', field: 'formConfig', metas: [
                 ...FormMetas, ...OptionsMetas, ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -610,7 +607,6 @@ export default {
                 {title: '最大值', field: 'max', type: 'number'},
                 {title: '步长', field: 'step', type: 'number'},
                 ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -636,7 +632,6 @@ export default {
     rateForm: [
         {title: '表单配置', field: 'formConfig', metas: [
                 ...FormMetas, ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -666,7 +661,6 @@ export default {
                 {title: '日期格式', field: 'format', type: 'text'},
                 {title: '表显示格式', field: 'viewFormat', type: 'text'},
                 ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -706,7 +700,6 @@ export default {
                         model['showToday'] = val.includes('showToday');
                     }},
                 ...OperaMetas,
-                {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
             ]},
         {title: '其他配置', field: 'otherConfig', metas: [
                 ...OtherMetas
@@ -870,7 +863,9 @@ export default {
     switch: [
         {title: '基础配置', field: 'tableConfig', metas: TableMetas},
         {title: '表单配置', field: 'formConfig', metas: [
-                ...OperaMetas
+                ...OperaMetas,
+                {field: 'checkedChildren', title: '选中标签', type: 'text', placeholder: '比如：开'},
+                {field: 'unCheckedChildren', title: '未选中标签', type: 'text', placeholder: '比如：关'},
             ]
         },
         {title: '其他配置', field: 'otherConfig', metas: [
@@ -880,7 +875,9 @@ export default {
     ],
     switchForm: [
         {title: '表单配置', field: 'formConfig', metas: [
-                ...FormMetas, ...OperaMetas
+                ...FormMetas, ...OperaMetas,
+                {field: '选中标签', title: 'checkedChildren', type: 'text', placeholder: '比如：开'},
+                {field: '未选中标签', title: 'unCheckedChildren', type: 'text', placeholder: '比如：关'},
             ]
         },
         {title: '其他配置', field: 'otherConfig', metas: [
@@ -890,6 +887,7 @@ export default {
     ],
     switchModel: {
         ...FormModel, ...TableModel,
+        checkLabel: null, unCheckLabel: null,
         activeKey: ['tableConfig', 'formConfig'],
     },
     getItemMetas(type) {
@@ -986,8 +984,9 @@ export default {
                 extra: model['extra']
             }
         };
-
         if(model['extra']) meta.config.extra = model['extra'];
+        if(model['checkedChildren']) meta['checkedChildren'] = model['checkedChildren'];
+        if(model['unCheckedChildren']) meta['unCheckedChildren'] = model['unCheckedChildren'];
         return this.handleForm(model, meta);
     },
     /**
@@ -999,6 +998,7 @@ export default {
     resolverItemToMeta(model, global) {
         let meta = {
             type: model['type'],
+            width: model['width'],
             field: model['name'] || model['id'],
             clear: model['clear'],
             title: model['label'],
@@ -1029,7 +1029,8 @@ export default {
         if(model['labelCol']) meta.config.labelCol = model['labelCol'];
         if(model['wrapperCol']) meta.config.wrapperCol = model['wrapperCol'];
         if(model['hasFeedback']) meta.config.hasFeedback = model['hasFeedback'];
-
+        if(model['checkedChildren']) meta['checkedChildren'] = model['checkedChildren'];
+        if(model['unCheckedChildren']) meta['unCheckedChildren'] = model['unCheckedChildren'];
         return this.handleForm(model, meta);
     },
     handleForm(model, meta) {
@@ -1067,7 +1068,9 @@ export default {
     },
 
     handleRate(model, meta) {
-
+        if(model['allowHalf']) {
+            meta.config.allowHalf = true
+        }
     },
 
     handleRadio(model, meta) {

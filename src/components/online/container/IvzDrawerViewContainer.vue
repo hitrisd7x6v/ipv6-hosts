@@ -18,9 +18,9 @@
                 </ul>
             </div>
             <a-row class="ivz-vd-body ivz-od-body" style="width: 100%; height: 100%" :gutter="8">
-                <a-form-model style="width: 100%; height: 100%" :layout="model.layout" :labelAlign="model.align"
-                              :labelCol="model.layout == 'horizontal' ? model.labelCol : null"
-                              :wrapperCol="model.layout == 'horizontal' ? model.wrapperCol : null">
+                <a-form-model style="width: 100%; height: 100%" :labelAlign="model.align"
+                      :labelCol="model.layout == 'horizontal' ? model.labelCol : null" :layout="model.layout"
+                      :wrapperCol="model.layout == 'horizontal' ? model.wrapperCol : null" ref="viewModelRef">
                     <draggable :list="metas" :options="options" group="item" @add="onAddHandle"
                                :animation='200' :move="onMove" style="width: 100%; height: 100%; overflow-y: auto;">
                         <template v-for="meta in metas">
@@ -57,8 +57,8 @@
     import IvzGroupItem from "@/components/online/item/IvzGroupItem";
     import IvzPreviewView from "@/components/online/preview/IvzPreviewView";
     import IvzModalItem from "@/components/online/item/IvzModalItem";
-    import EditMetas from "@/components/online/EditMetas";
     import PreviewUtils from "@/utils/preview.utils";
+
     export default {
         name: "IvzDrawerViewContainer",
         mixins: [MixinViewConfig],
@@ -90,6 +90,7 @@
                 }
             },
             getPageConfig() {
+                let labelCol = this.model['labelCol']
                 return {
                     form: {
                         column: this.model.column,
@@ -98,6 +99,8 @@
                         addTitle: this.model.addTitle,
                         placement: this.model.placement,
                         editTitle: this.model.editTitle,
+                        labelCol: this.model['labelCol'],
+                        wrapperCol: this.model['wrapperCol'],
                         maskClosable: this.model.maskClosable
                     },
                     table: {
@@ -127,7 +130,6 @@
                 let htmlCode = `<html lang="zh-CN">
     <head>
         <title>${model.comment}</title>
-        ${PreviewUtils.UmdCss}
     </head>
     <body>
         <div id="app">
@@ -135,7 +137,6 @@
             ${modalTemplates}
         </div>
     </body>
-    ${PreviewUtils.UmdJs}
     <script type="text/javascript">
         let vue = new Vue({
             el: "#app",
