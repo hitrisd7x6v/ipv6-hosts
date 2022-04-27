@@ -3,8 +3,8 @@
         <ul class="ivz-basic-opera ivz-border-radius">
             <li class="ivz-opera-left">
                 <div style="color: #606266;">
-                    <ivz-icon type="iz-icon-chaxun" :style="{fontSize: '22px', verticalAlign: 'text-top'}"></ivz-icon>
-                    &nbsp;<em style="vertical-align: bottom; font-size: 16px">{{resource.name}}</em>
+                    <ivz-icon type="iz-icon-chaxun" :style="{fontSize: '20px', verticalAlign: 'text-top'}"></ivz-icon>
+                    &nbsp;<em style="vertical-align: -1px; font-size: 15px">{{resource.name}}</em>
                 </div>
             </li>
             <li class="ivz-opera-desc">

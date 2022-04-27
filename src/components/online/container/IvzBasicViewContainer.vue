@@ -50,7 +50,7 @@
                 :search-metas="viewConfig.searchMetas"></ivz-basic-view>
             <template v-if="modalConfigs && modalConfigs.length > 0">
                 <ivz-modal-form v-for="meta in modalConfigs" :metas="meta.metas" :ref="meta.id"
-                    :save-meta="{}" :title="meta.title" :width="meta.width" :config="meta.config" />
+                    :save-meta="{}" :key="meta.id" :title="meta.title" :width="meta.width" :config="meta.config" />
             </template>
         </ivz-preview-view>
     </div>

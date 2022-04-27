@@ -71,8 +71,8 @@
     .ivz-default-form .form-header {
         height: 48px;
         margin: 0px 0px 10px;
-        border: 5px solid #ffffff;
-        background-color: #fafafa;
+        background-color: #ffffff;
+        border-bottom: 1px solid #efefef;
     }
     .form-header-left {
         width: 240px;

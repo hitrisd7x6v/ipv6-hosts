@@ -5,7 +5,7 @@
 .layout-header-bar{
     z-index: 0;
     padding: 0px!important;
-    height: 81px!important;
+    height: 78px!important;
     background-color: #ffffff!important;
 }
 .iz-header-col {
@@ -95,6 +95,13 @@
     padding: 0px 5px;
     position: relative;
 }
+.ivz-task-bar .ant-tabs-tab-active {
+    border-top: 0.1em solid #343434!important;
+}
+.ivz-task-bar .ant-tabs-tab-active>div {
+    height: 30px;
+    line-height: 30px;
+}
 .ivz-task-opera {
     width: 20px;
     position: absolute;
@@ -113,7 +120,7 @@
     border-radius: 16px;
     height: 32px!important;
     border: 0px!important;
-    background: rgba(86, 86, 86, 0.06);
+    background: rgba(225,225,225,0.08);
 }
 .ant-tabs-nav-container,iz-task-more-opera {
     line-height: 32px;

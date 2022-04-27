@@ -45,10 +45,6 @@
 </script>
 
 <style>
-    .ivz-basic-search {
-        margin-bottom: 12px;
-        background-color: #ffffff;
-    }
     .ivz-basic-search .ivz-search-bottom {
         padding: 6px 18px 2px 30px;
     }

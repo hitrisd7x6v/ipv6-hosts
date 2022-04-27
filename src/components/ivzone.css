@@ -7,9 +7,10 @@ html, body {
     min-width: 800px;
     padding: 4px 6px;
     position: relative;
+    background: #ffffff;
 }
 .ivz-block-outer {
-    box-shadow: 0px 0px 6px -3px #fafafa;
+
 }
 .ivz-block-inter {
 
@@ -162,7 +163,7 @@ html, body {
 .ivz-default-form .ant-affix .form-header {
     border: 0px;
     border-radius: 0px;
-    box-shadow: rgba(126, 126, 126, 0.69) 0px 4px 6px -3px;
+    box-shadow: rgba(126, 126, 126, 0.11) 0px 4px 6px -3px;
 }
 /*树组件样式*/
 .ivz-tree-node {
@@ -241,7 +242,7 @@ html, body {
     box-shadow: -4px 0px 8px -7px #c9c4c4;
 }
 .ivz-view .ivz-basic-opera {
-    background-color: #f9f9f99c;
+    background-color: #f9f9f961;
     /*border-left: 5px solid #868686;*/
     /*border-right: 5px solid #868686;*/
 }
@@ -279,6 +280,7 @@ html, body {
 }
 .ivz-basic-search .ivz-search-bottom {
     padding: 3px 18px 2px 30px;
+    background: #f9f9f99c;
 }
 .ivz-basic-search .ant-form.ant-form-horivzontal {
     padding: 3px 8px 3px 12px;
