@@ -17,6 +17,7 @@
 2. 修改rate组件的半选配置 
 3. 新增表格列宽设置 
 4. 新增data数据对象展示
+5. 调整ivzone整体样式
 
 #### [适用的开发者](https://gitee.com/iteaj/ivzone/wikis/%E5%85%B3%E4%BA%8Eivzone?sort_id=2409097) 列举了以下几种类型：
 1. 喜欢vue的开发方式, 又不需要编译的开发者(或者不熟悉node, webpack等)
