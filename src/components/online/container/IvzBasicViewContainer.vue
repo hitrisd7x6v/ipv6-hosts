@@ -40,6 +40,7 @@
                     </template>
                 </draggable>
             </a-form-model>
+
         </a-row>
         <div class="ivz-vd-footer">
             <ivz-modal-item v-for="meta in modalMetas" class="ivz-vdf-item" ref="modalItem"

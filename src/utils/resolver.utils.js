@@ -12,7 +12,7 @@ let cacheApi = window.parent.CacheApi;
 
 export default {
     izField: 'id', // 唯一字段, 默认值
-    queryField: 'rows', // 数据列表字段
+    queryField: 'data', // 数据列表字段
     viewFormat: 'YYYY-MM-DD', // 表格显示日期格式
     dateFormat: 'YYYY-MM-DD HH:mm:ss', // 表单默认时间格式
     gutter: {xs: 0, sm: 10, md: 20, lg: 40, xl: 60, xxl: 80},
@@ -58,7 +58,7 @@ export default {
             len: (mate, arg) => { return `${mate.title}(${arg}必须=${mate['len']})` },
             min: (mate, arg) => { return `${mate.title}(${arg}必须>=${mate['min']})` },
             max: (mate, arg) => { return `${mate.title}(${arg}必须<=${mate['max']})` },
-            url: (mate, arg) => { return `请输入正确的Url地址` },
+            Url: (mate, arg) => { return `请输入正确的Url地址` },
             date: (mate, arg) => { return `日期格式有误` },
             email: (mate, arg) => { return `请输入正确的邮箱地址` },
             range: (meta, arg) => {return `输入的范围必须在${meta.range}`},
@@ -509,8 +509,8 @@ export default {
                     let rule = {message: msgVal};
                     if (item === 'len') {
                         _this.$set(rule, 'type', 'number')
-                    } else if(item == 'boolean' || item == 'url' || item == 'date' || item == 'email') {
-                        _this.$set(rule, 'type', item);
+                    } else if(item == 'boolean' || item == 'Url' || item == 'date' || item == 'email') {
+                        _this.$set(rule, 'type', item.toLowerCase());
                     } else if(item == 'regexp') {
                         _this.$set(rule, 'pattern', ruleValue)
                     } else if(item == 'range') {
@@ -590,7 +590,6 @@ export default {
         if (Utils.isOptionType(mate.type)) {
             let valueField = metaConfig['valueField'];
             let labelField = metaConfig['labelField'];
-            let queryField = metaConfig['queryField'];
 
             mate['DataMap'] = {};
             if (Utils.isNotBlank(mate.data)) { // 自带的options
@@ -634,7 +633,7 @@ export default {
                     let options = []
                     _this.$set(mate, 'data', options)
                     Http.get(mate.url).then(resp => {
-                        let data = resp[queryField];
+                        let data = resp['data'];
                         if (_this.$utils.isNotBlank(data)) {
                             this.resolverTree(data, (obj) => {
                                 _this.$set(obj, 'label', obj[labelField]);
@@ -645,7 +644,7 @@ export default {
                             data.forEach(item=>options.push(item));
                         } else {
                             _this.$log.warningLog(`解析字段(${mate.field})获取url:(${mate.url})数据失败`
-                                , `请检查服务端返回或者queryField(${queryField})`, mate)
+                                , `请检查服务端`, mate)
                         }
 
                         // 数据加载完成之后, 触发完成事件
@@ -666,7 +665,7 @@ export default {
                 let selectOptions = [];
                 _this.$set(mate, 'data', selectOptions)
                 Http.get(mate.url).then(resp => {
-                    let rows = resp[queryField];
+                    let rows = resp['data'];
                     if (rows) {
                         rows.forEach(item => {
                             let option = {disabled: false, dataRef: item
@@ -682,7 +681,7 @@ export default {
                         }
                     } else {
                         _this.$log.warningLog(`解析字段(${mate.field})获取url:(${mate.url})数据失败`
-                            , `请检查服务端返回或者queryField(${queryField})`, mate)
+                            , `请检查服务端`, mate)
                     }
                 });
 

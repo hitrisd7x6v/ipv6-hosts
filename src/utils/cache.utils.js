@@ -55,7 +55,7 @@ export default {
     pageActionMates: {}, // 所有页面的动作功能点缓存 菜单id和与之对应的功能点
     DictDataMapCache: {}, // {dictType -> dictValue -> dictLabel}
     MetaConfigCache: { // 其他的配置参考antd-vue https://www.antdv.com/docs/vue/introduce-cn/
-        stree: {valueField: 'id', labelField: 'name', queryField: 'rows',
+        stree: {valueField: 'id', labelField: 'name', queryField: 'data',
             treeNodeFilterProp: 'label',
             treeExpandedKeys: [],
             dropdownStyle: {maxHeight: '320px'},
@@ -63,12 +63,12 @@ export default {
                     return node['data']['props']['title'].includes(value)
                 }
             },
-        select: {valueField: 'id', labelField: 'name', queryField: 'rows',
+        select: {valueField: 'id', labelField: 'name', queryField: 'data',
             maxTagCount: 2, // 在tags或者multiple 模式下最大能选择多少个
             tokenSeparators: [','] // 自动分词分隔符
         },
-        radio: {valueField: 'id', labelField: 'name', queryField: 'rows'},
-        checkbox: {valueField: 'id', labelField: 'name', queryField: 'rows'},
+        radio: {valueField: 'id', labelField: 'name', queryField: 'data'},
+        checkbox: {valueField: 'id', labelField: 'name', queryField: 'data'},
         text: {
             enterSearch: true // 搜索框text表单, 按下enter键是否搜索
         },
@@ -103,7 +103,7 @@ export default {
             }
         },
         tree: {checkable: true, checkedKeys: [], expandedKeys: [], selectedKeys: []
-            , valueField: 'id', labelField: 'name', queryField: 'rows'
+            , valueField: 'id', labelField: 'name', queryField: 'data'
             , replaceFields: {title: 'label', key: 'value', children: 'children'}},
         switch: {checkedChildren: '', unCheckedChildren: ''},
         number: {},
@@ -241,7 +241,7 @@ export default {
     /* 获取菜单 */
     getResources () {
         return Http.get(Global.resourcesUrl).then((resp) => {
-            let menus = resp['resources'];
+            let menus = resp['data'];
             this.resolverMenuMap(menus);
             return menus
         }).catch(reason => {
@@ -250,7 +250,7 @@ export default {
     },
     getConfig () {
         return Http.get(Global.envUrl).then(resp => {
-            return resp['env']
+            return resp['data']
         }).catch(reason => {
             Logger.warningLog('获取项目环境配置失败：', reason, Global.envUrl)
         })
@@ -455,7 +455,7 @@ export default {
                     }
 
                     dictMapElement = []
-                    resp['rows'].forEach(item => {
+                    resp['data'].forEach(item => {
                         dictMapElement.push(item)
                         let dictDataMap = this.DictDataMapCache[dictType]
                         if (dictDataMap) {

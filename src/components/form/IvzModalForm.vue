@@ -129,7 +129,7 @@
                                 resolve.success(data, this)
                             } else {
                                 this.visible = false
-                                this.$msg.successNotify('提交操作!', data['IzMsg'])
+                                this.$msg.successNotify('提交操作!', data['message'])
                             }
                         }).catch(reason => {
                             if (typeof resolve.fail === 'function') {

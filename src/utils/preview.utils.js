@@ -28,10 +28,12 @@ export default {
                 if(meta['rule']) {
                     let value = meta[meta['rule']];
                     if(meta['rule'] != 'range' && meta['rule'] != 'len') {
+                        rule = `, ${meta['rule'] +': ' + (value ? value : true)}`;
+                    } else {
                         value = `'${value}'`;
                     }
 
-                    rule = `, ${meta['rule'] +': ' + (value ? value : true)}`;
+
                     delete meta['rule'];
                 }
                 if(meta['width']) width += `, width: ${meta['width']}`;
@@ -52,7 +54,7 @@ export default {
                     switchLabel = `, checkedChildren='${meta['checkedChildren']}', unCheckedChildren='${meta['unCheckedChildren']}'`
                 }
                 config = Object.keys(meta.config).length > 0 ? `, config: ` + _this.resolverObjectTemplate(meta.config, 7) : "";
-                metasTemp += `\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: '${meta.type}'${defaultValue}${width}${clear}${switchLabel}${required}${rule}${dataSource}${view}${config}},\r`
+                metasTemp += `\t\t\t\t\t\t{field: "${meta.field}", title: "${meta.title}", type: "${meta.type}"${defaultValue}${width}${clear}${switchLabel}${required}${rule}${dataSource}${view}${config}},\r`
             });
         }
 

@@ -119,9 +119,7 @@ Mock.mock(RegExp('/core/dictData/listByType.*'), 'get', (options) => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            rows: spec
-        }
+        data: spec
     })
 })
 /* 注销登录 */
@@ -139,15 +137,14 @@ Mock.mock(RegExp('/env'), 'get', (options) => {
         code: 200,
         message: '获取成功',
         data: {
-            env: {
-                user: {avatar: '#'},
-                config: {
-                    main_url: {name: '主页名称', value: '/main'},
-                    main_name: {name: '主页名称', value: '主页'},
-                    work_name: {name: '首页名称', value: '工作台'},
-                    sys_name: {name: '系统名称', value: '厦门由创源科技'}
-                },
-                profiles: ['dev']}
+            user: {avatar: '#'},
+            config: {
+                main_url: {name: '主页名称', value: '/main'},
+                main_name: {name: '主页名称', value: '主页'},
+                work_name: {name: '首页名称', value: '工作台'},
+                sys_name: {name: '系统名称', value: '厦门由创源科技'}
+            },
+            profiles: ['dev']
         }
     })
 })
@@ -157,40 +154,38 @@ Mock.mock(RegExp('/resources'), 'get', (options) => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            resources: [
-                {id: 1, name: '组件管理', type: 'M', children: [
-                        {id: 11, name: '页级组件', type: 'M', icon: 'iz-icon-page', children: [
-                                {id: 111, name: '基础视图页', icon: 'iz-icon-default', type: 'V'
-                                    , url: '/demo/basicView.html?id=3', children: getChildrenMenus()},
-                                {id: 112, name: '抽屉视图页', icon: 'iz-icon-drawer', type: 'V'
-                                    , url: '/demo/drawerView.html?type=aa', children: getChildrenMenus()},
-                                // {id: 113, name: 'ModalView', icon: '', type: 'V', url: '/demo/modalView.html'},
-                                {id: 114, name: '可编辑表页', icon: 'iz-icon-page-edit', type: 'V'
-                                    , url: '/demo/editView.html', children: getChildrenMenus()},
-                                {id: 116, name: 'diy视图页', type: 'V', url: '/demo/diyView.html'
-                                    , children: getChildrenMenus(), status: 'hide'},
-                                // {id: 117, name: 'slot表单视图页', type: 'V', url: '/demo/diyFormView.html'},
-                                // {id: 118, name: 'slot表格视图页', type: 'V', url: '/demo/diyTableView.html'},
-                            ]
-                        },
-                        {id: 22, name: '功能组件', type: 'M', icon: '', children: [
-                                {id: 221, name: 'ModalView组件', icon: '', type: 'V', url: '/demo/modalView.html'},
-                                {id: 222, name: '表格分组', icon: 'iz-icon-default', type: 'V'
-                                    , url: '/demo/tableGroup.html?id=3', children: getChildrenMenus()},
-                            ]},
+        data: [
+            {id: 1, name: '组件管理', type: 'M', children: [
+                {id: 11, name: '页级组件', type: 'M', icon: 'iz-icon-page', children: [
+                        {id: 111, name: '基础视图页', icon: 'iz-icon-default', type: 'V'
+                            , url: '/demo/basicView.html?id=3', children: getChildrenMenus()},
+                        {id: 112, name: '抽屉视图页', icon: 'iz-icon-drawer', type: 'V'
+                            , url: '/demo/drawerView.html?type=aa', children: getChildrenMenus()},
+                        // {id: 113, name: 'ModalView', icon: '', type: 'V', url: '/demo/modalView.html'},
+                        {id: 114, name: '可编辑表页', icon: 'iz-icon-page-edit', type: 'V'
+                            , url: '/demo/editView.html', children: getChildrenMenus()},
+                        {id: 116, name: 'diy视图页', type: 'V', url: '/demo/diyView.html'
+                            , children: getChildrenMenus(), status: 'hide'},
+                        // {id: 117, name: 'slot表单视图页', type: 'V', url: '/demo/diyFormView.html'},
+                        // {id: 118, name: 'slot表格视图页', type: 'V', url: '/demo/diyTableView.html'},
                     ]
-                }, {
-                    id: 2, name: '菜单组', type: 'G', children: [
-                        {id: 22, name: '聊天交友工具', icon: 'iz-icon-page', children: [
-                                {id: 222, name: 'qq聊天', type: 'V', icon: 'iz-icon-page', url: '/demo/qq', children: getChildrenMenus()},
-                                {id: 223, name: '微信聊天', type: 'V', url: '/demo/wechat', children: getChildrenMenus()},
-                                {id: 224, name: '陌陌交友', type: 'V', url: '/demo/mm', children: getChildrenMenus()},
-                            ]}
-                    ]
-                }
-            ]
-        }
+                },
+                {id: 22, name: '功能组件', type: 'M', icon: '', children: [
+                        {id: 221, name: 'ModalView组件', icon: '', type: 'V', url: '/demo/modalView.html'},
+                        {id: 222, name: '表格分组', icon: 'iz-icon-default', type: 'V'
+                            , url: '/demo/tableGroup.html?id=3', children: getChildrenMenus()},
+                    ]},
+                ]
+            }, {
+                id: 2, name: '菜单组', type: 'G', children: [
+                    {id: 22, name: '聊天交友工具', icon: 'iz-icon-page', children: [
+                            {id: 222, name: 'qq聊天', type: 'V', icon: 'iz-icon-page', url: '/demo/qq', children: getChildrenMenus()},
+                            {id: 223, name: '微信聊天', type: 'V', url: '/demo/wechat', children: getChildrenMenus()},
+                            {id: 224, name: '陌陌交友', type: 'V', url: '/demo/mm', children: getChildrenMenus()},
+                        ]}
+                ]
+            }
+        ]
     })
 })
 /* 新增数据方法模拟 */
@@ -232,7 +227,7 @@ Mock.mock(RegExp('/test/view.*'), 'get', (options) => {
         message: '获取成功',
         data: {
             total: 53,
-            rows: dataSource.slice(startNum, endNum)
+            records: dataSource.slice(startNum, endNum)
         }
     })
 })
@@ -243,9 +238,7 @@ Mock.mock(RegExp('/test/edit.*'), 'get', (options) => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            detail: dataSourceMap[id]
-        }
+        data: dataSourceMap[id]
     })
 })
 /* 保存编辑方法模拟 */
@@ -269,24 +262,20 @@ Mock.mock(RegExp('/test/stree.*'), 'get', (options) => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            rows: [
-                {id: 1, name: '福建', children: [
-                        {id: 11, name: '厦门市'},
-                        {id: 12, name: '泉州市'}
-                    ]
-                }
-            ]
-        }
+        data: [
+            {id: 1, name: '福建', children: [
+                    {id: 11, name: '厦门市'},
+                    {id: 12, name: '泉州市'}
+                ]
+            }
+        ]
     })
 });
 Mock.mock(RegExp('/core/admin/avatar'), 'post', () => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            url: '/img/aa.png'
-        }
+        data: '/img/aa.png'
     });
 })
 /* 测试数据 */

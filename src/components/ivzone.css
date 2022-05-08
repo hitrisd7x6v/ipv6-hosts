@@ -74,7 +74,7 @@ html, body {
     margin: 0px 8px;
     padding: 6px 0px;
     border-bottom: 1px solid #eaedf1;
-    background:linear-gradient(to left, #fdfdfd, #fefefe, #fdfdfd);
+    /*background:linear-gradient(to left, #fdfdfd, #fefefe, #fdfdfd);*/
 }
 .ivz-form .ivz-group-body {
     margin: 8px 16px 0px 28px;
@@ -242,7 +242,7 @@ html, body {
     box-shadow: -4px 0px 8px -7px #c9c4c4;
 }
 .ivz-view .ivz-basic-opera {
-    background-color: #f9f9f961;
+    background-color: rgba(249, 249, 249, 0.45);
     /*border-left: 5px solid #868686;*/
     /*border-right: 5px solid #868686;*/
 }

@@ -81,9 +81,7 @@ Mock.mock(RegExp('/ovt/dictList.*'), 'get', (options) => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            rows: DemoDictType
-        }
+        data: DemoDictType
     })
 });
 /* 获取字典数据 */
@@ -94,9 +92,7 @@ Mock.mock(RegExp('/ovt/listByType.*'), 'get', (options) => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            rows: dictData
-        }
+        data: dictData
     })
 });
 /* 查询方法模拟 */
@@ -112,7 +108,7 @@ Mock.mock(RegExp('/ovt/view.*'), 'get', (options) => {
         message: '获取成功',
         data: {
             total: dataSource.length,
-            rows: dataSource.slice(startNum, endNum)
+            records: dataSource.slice(startNum, endNum)
         }
     })
 });
@@ -161,9 +157,7 @@ Mock.mock(RegExp('/ovt/edit.*'), 'get', (options) => {
     return Mock.mock({
         code: 200,
         message: '获取成功',
-        data: {
-            detail: dataSourceMap[id]
-        }
+        data: dataSourceMap[id]
     })
 })
 /* 保存编辑方法模拟 */
@@ -243,7 +237,7 @@ export default {
         DictTypeList = [];
         // 使用者自定义了字典类型列表
         Http.get(Global.dictListUrl).then(resp=>{
-            resp.rows.forEach(item => {
+            resp.data.forEach(item => {
                 DictTypeList.push({label: item[Global.dictLabelField], value: item[Global.dictValueField]});
             })
         });
@@ -258,8 +252,8 @@ export default {
         let dictData = [];
         // 使用者自定义了字典类型列表
         Http.get(Global.dictUrl, {params: {type: dictType}}).then(resp=>{
-            if(resp.rows) {
-                resp.rows.forEach(item => {
+            if(resp.data) {
+                resp.data.forEach(item => {
                     dictData.push({label: item[Global.dictLabelField], value: item[Global.dictValueField]});
                 });
             } else {

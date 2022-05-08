@@ -73,18 +73,25 @@ export const MixBasicTable = {
                 let promiseResolve = this.$utils.getPromiseResolve(param);
 
                 this.$http.get(this.queryMate.url, {params: model}).then(resp => {
-                    let rows = resp[this.tableConfig.queryField];
-                    if(this.$utils.isBlank(this.dataSource)) { // 只在第一次加载
-                        this.tableConfig.loadFinished(rows); // 触发数据加载完成事件
+                    let data = resp['data'];
+                    if(data instanceof Array) { // 返回的数据是列表
+                        if(this.$utils.isBlank(this.dataSource)) { // 只在第一次加载
+                            this.tableConfig.loadFinished(data['records']); // 触发数据加载完成事件
+                        }
+
+                        this.dataSource = data;
+                    } else if(typeof data == 'object'){ // 分页数据
+                        this.dataSource = data.records;
+
+                        if (this.pagination) { // 设置总条数
+                            this.pagination['total'] = data.total
+                        }
+                    } else {
+                        this.$log.errorNELog("数据格式错误", "期待一个对象或者数组", data);
                     }
 
-                    this.dataSource = rows;
                     if (typeof promiseResolve.success === 'function') {
                         promiseResolve.success(resp)
-                    }
-
-                    if (this.pagination) { // 设置总条数
-                        this.pagination['total'] = resp.total
                     }
                 }).catch(reason => {
                     if (typeof promiseResolve.fail === 'function') {

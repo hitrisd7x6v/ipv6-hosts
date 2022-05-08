@@ -100,13 +100,13 @@ let DateOperaOptions = [
     {label: '今天', value: 'showToday'},
 ];
 let TextValidate = [
-    {label: 'ip', value: 'ip'},
-    {label: 'url', value: 'url'},
     {label: '手机', value: 'phone'},
     {label: '邮箱', value: 'email'},
     {label: '日期', value: 'date'},
-    {label: '长度', value: 'len'},
     {label: '范围', value: 'range'},
+    {label: 'Url', value: 'Url'},
+    {label: 'Ip', value: 'ip'},
+    {label: '长度', value: 'len'},
     {label: '身份证', value: 'idCard'},
     {label: '银行卡', value: 'bank'},
     {label: '正则表达式', value: 'regexp'},
