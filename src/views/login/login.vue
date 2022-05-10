@@ -91,7 +91,7 @@ export default {
           this.$http.post(Global.loginUrl, user)
             .then((resp) => {
               this.$nextTick(() => {
-                location.href = this.izCtx + resp['successUrl']
+                location.href = this.izCtx + resp.data['successUrl']
               })
             }).catch(reason => {
               this.clickImg()
