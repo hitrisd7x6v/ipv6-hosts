@@ -20,7 +20,7 @@
         <div class="ivz-online-body">
             <div class="ivz-ol-item ivz-oli-left">
                 <!--在线生成器 - 左侧-->
-                <ivz-online-left></ivz-online-left>
+                <ivz-online-left :global="global"></ivz-online-left>
             </div>
             <div class="ivz-ol-item ivz-oli-body">
                 <!--在线生成器 - 页面布局-->
@@ -64,11 +64,22 @@
                     modalMetas: [],
                     drawerMetas: [],
                     animation: 200,
+                    viewType: ['basic', 'drawer', 'list'], // 视图类型, 不能改变其顺序
                     delItem: (item) => {
                         vue.delItem(vue.metas, item);
+                    },
+                    publisherEvent(event, args) {
+                        vue.publisherEvent(event, args);
+                    },
+                    registerListener(listener) {
+                        vue.registerListener(listener);
+                    },
+                    onContainerCreate(type, containerRef) {
+
                     }
                 },
-                metas: []
+                metas: [],
+                listeners: {}, // 监听器列表
             }
         },
         updated() {
@@ -84,6 +95,29 @@
                             this.delItem(item.children, meta);
                         }
                     })
+                }
+            },
+            publisherEvent(event, args) {
+                if(!event) return this.$log.warningLog("无效的事件类型", '', event);
+
+                let listenerList = this.listeners[event];
+                if(!listenerList) return this.$log.warningLog("找不到和此事件类型对应的监听器", '', event);
+
+                // 调用监听此事件的监听器
+                listenerList.forEach(listener => listener.listen(args))
+            },
+            registerListener(listener) {
+                if(!listener) return this.$log.warningLog("无效的监听器 - 注册失败", '', listener);
+                let event = listener.event;
+                if(!event) return this.$log.warningLog("监听器未指定监听事件(event)", '', listener);
+                if(typeof listener.listen != 'function')
+                    return this.$log.warningLog("监听器未指定监听函数(listen)", '', listener);
+
+                // 事件不存在, 放入监听列表
+                if(!this.listeners[event]) {
+                    this.listeners[event] = [listener];
+                } else {
+                    this.listeners[event].push(listener);
                 }
             },
             previewHandle(type) {

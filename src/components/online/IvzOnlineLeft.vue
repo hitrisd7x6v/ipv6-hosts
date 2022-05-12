@@ -6,7 +6,7 @@
                 <draggable v-model="view" :group="{name: 'view', put: false, pull: 'clone'}"
                            tag="ul" class="ivz-olu" :clone="clone" :move="onMove" :options="options"
                            element="div">
-                    <li v-for="item in view" :key="item.id" class="ivz-olu-label">
+                    <li v-for="item in view" :key="item.id" class="ivz-olu-label" @drag="dragHandle">
                         <a class="ivz-olu-a">
                             <ivz-icon :style="{fontSize: '16px'}" :type="item.icon"></ivz-icon>
                             &nbsp; <span>{{item.name}}</span>
@@ -19,7 +19,7 @@
                 <div style="font-size: 13px; padding: 5px 0px">基础组件</div>
                 <draggable v-model="basic" :group="{name: 'item', put: false, pull: 'clone'}"
                            tag="ul" class="ivz-olu" :clone="clone" :move="onMove" :options="options">
-                    <li v-for="item in basic" :key="item.id" class="ivz-olu-label">
+                    <li v-for="item in basic" :key="item.id" class="ivz-olu-label" @dragstart="dragHandle($event, item)">
                         <a class="ivz-olu-a">
                             <ivz-icon :style="{fontSize: '16px'}" :type="item.icon"></ivz-icon>
                             &nbsp; <span>{{item.name}}</span>
@@ -28,7 +28,7 @@
                 </draggable>
                 <li style="clear: both"></li>
             </div>
-            <div class="ivz-ouc-item">
+            <div class="ivz-ouc-item" v-show="high">
                 <div style="font-size: 13px; padding: 5px 0px">高级组件</div>
                 <draggable v-model="high" :group="{name: 'item', put: false, pull: 'clone'}"
                            tag="ul" class="ivz-olu" :clone="clone" :move="onMove" :options="options">
@@ -41,7 +41,7 @@
                 </draggable>
                 <li style="clear: both"></li>
             </div>
-            <div class="ivz-ouc-item">
+            <div class="ivz-ouc-item" v-show="cus">
                 <div style="font-size: 13px; padding: 5px 0px">功能组件</div>
                 <draggable v-model="cus" :group="{name: 'item', put: false, pull: 'clone'}"
                            tag="ul" class="ivz-olu" :clone="clone" :move="onMove" :options="options">
@@ -58,7 +58,8 @@
                 <div style="font-size: 13px; padding: 5px 0px">布局组件</div>
                 <draggable v-model="layout" :group="{name: 'item', put: false, pull: 'clone'}"
                            tag="ul" class="ivz-olu" :clone="clone" :move="onMove" :options="options">
-                    <li v-for="item in layout" :key="item.id" class="ivz-olu-label">
+                    <li v-for="item in layout" :key="item.id" class="ivz-olu-label"
+                        @dragstart="dragHandle($event, item)">
                         <a class="ivz-olu-a">
                             <ivz-icon :style="{fontSize: '16px'}" :type="item.icon"></ivz-icon>
                             &nbsp; <span>{{item.name}}</span>
@@ -75,12 +76,17 @@
     import draggable from "vuedraggable";
     export default {
         name: "IvzOnlineLeft",
+        props: ['global'],
         components: {
             draggable
         },
         data() {
             return {
-                basic: [
+                high: null,
+                basic: null,
+                layout: null,
+                // 数据录入组件(表单)
+                form: [
                     {name: "单行文本", title: '', id: 1, icon: 'iz-icon-input', type: 'text'},
                     {name: "多行文本", title: '', id: 2, icon: 'iz-icon-area', type: 'textarea'},
                     {name: "单选框", title: '', id: 3, icon: 'iz-icon-radio', type: 'radio', data: [
@@ -98,7 +104,21 @@
                     {name: "滑块", title: '', id: 8, icon: 'iz-icon-slider', type: 'slider'},
                     {name: "开关", title: '', id: 9, icon: 'iz-icon-switch', type: 'switch'},
                 ],
-                high: [
+                // 数据显示组件
+                list: [
+                    {name: '列表', id: 80, icon: 'iz-icon-list', type: 'list', w: 680},
+                    {name: '表格', id: 85, icon: 'iz-icon-table', type: 'table', w: 680, handles: ['mr', 'ml']},
+                    {name: '卡片', id: 90, icon: 'iz-icon-card', type: 'card', handles: ['tl','tr','br','bl']},
+                    {name: '头像', id: 95, icon: 'iz-icon-avatar', type: 'avatar', h: 64
+                        , handles: ['tl','tr','br','bl'],  lockAspectRatio: true, w: 64},
+                    {name: '评论', id: 100, icon: 'iz-icon-comment', type: 'comment', w: 680},
+                    {name: '树形控件', id: 103, icon: 'iz-icon-tree', type: 'tree'},
+                    {name: '描述列表', id: 105, icon: 'iz-icon-desc', type: 'desc'},
+                    {name: '折叠面板', id: 110, icon: 'iz-icon-collapse', type: 'collapse'},
+                    {name: '数值统计', id: 115, icon: 'iz-icon-statistic', type: 'statistic'},
+                    {name: '时间轴', id: 120, icon: 'iz-icon-timeline', type: 'timeline'},
+                ],
+                highMeta: [
                     {name: "富文本", title: '', id: 50, icon: 'iz-icon-editor', type: 'editor', move: (target) => {
                             if(target.type == 'modal') {
                                 return false;
@@ -128,10 +148,10 @@
                 view: [
                     {name: "默认视图", title: '', id: 100, icon: 'iz-icon-container-default', type: 'IvzBasicView'},
                     {name: "抽屉视图", title: '', id: 101, icon: 'iz-icon-container-drawer', type: 'IvzDrawerView'},
-                    // {name: "模态框视图", title: '', id: 102, icon: 'iz-icon-container-modal', type: 'IvzModalView'},
+                    {name: "列表视图", title: '', id: 102, icon: 'iz-icon-list', type: 'IvzListView'},
                     // {name: "表编辑视图", title: '', id: 103, icon: 'iz-icon-container-edit', type: 'IvzEditView'},
                 ],
-                layout: [
+                layoutMeta: [
                     {name: "分组", title: '', id: 70, icon: 'iz-icon-group', type: 'group', move: (target) => {
                             if(target.type == 'modal') {
                                 return false;
@@ -141,21 +161,57 @@
                         }
                     },
                 ],
+                listLayoutMeta: [ // 列表视图的布局组件
+                    {name: "栅格布局", id: 100, icon: '', type: 'grid'}
+                ],
                 options: {
                     type: 'side', // 声明是左侧边栏可拖拽组件
                 }
             }
         },
+        created() {
+            let _this = this;
+            this.basic = _this.form;
+            this.layout = _this.layoutMeta;
+
+            // 监听视图创建事件
+            this.global.registerListener({event: 'viewCreate'
+                , listen: (args) => {
+                    let viewType = args.getViewType();
+                    if(viewType == _this.global.viewType[2]) { // 列表视图
+                        _this.high = null;
+                        _this.basic = _this.list;
+                        _this.layout = _this.listLayoutMeta;
+                    } else {
+                        _this.basic = _this.form;
+                        _this.high = _this.highMeta;
+                        _this.layout = _this.layoutMeta;
+                    }
+                }})
+        },
         methods: {
             clone(a) { // 拖拽时克隆一份对象, id用当前的时间戳
-                let date = new Date();
                 let clone = this.$utils.clone(a);
-                clone['id'] = "ivo"+date.getTime();
+
+                clone['id'] = this.getMetaId();
 
                 // 如果是分组组件, 添加 children
                 if(a.type == 'group') this.$set(clone, 'children', []);
 
                 return clone
+            },
+            dragHandle(e, item) {
+                if(!item) return;
+
+                let dataTransfer = e.dataTransfer;
+                let clone = this.$utils.clone(item);
+
+                clone['id'] = this.getMetaId();
+                dataTransfer.setData("application/json", JSON.stringify(clone));
+            },
+            getMetaId() {
+                let date = new Date();
+                return "ivo"+date.getTime();
             },
             onMove(evt) {
                 // 目标元素上下文

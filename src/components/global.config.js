@@ -16,7 +16,7 @@ let defaultGlobalConfig = {
     dictValueField: 'value', // 字典值字段
     avatarUrl: '/core/admin/avatar', // 头像上传路径
     modUserUrl: '/core/admin/userInfo', // 修改用户信息url
-    iconUrl: '//at.alicdn.com/t/font_1174643_vbjymjanyn.js' // 图标链接
+    iconUrl: '//at.alicdn.com/t/font_1174643_8jbxklmco3d.js' // 图标链接
 };
 
 let ivzGlobalConfig = window.ivzGlobalConfig || window.parent.ivzGlobalConfig;

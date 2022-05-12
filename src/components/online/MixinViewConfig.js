@@ -22,6 +22,7 @@ export const MixinViewConfig = {
     created() {
         this.activeHandle();
         this.modalMetas = this.global.modalMetas;
+        this.global.publisherEvent('viewCreate', this);
     },
     methods: {
         onMove(evt) {

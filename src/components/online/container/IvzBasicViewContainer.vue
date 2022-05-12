@@ -33,7 +33,8 @@
                 <draggable :list="metas" :options="options" group="item" @add="onAddHandle"
                            :animation='200' :move="onMove" style="width: 100%; height: 100%; overflow-y: auto;">
                     <template v-for="meta in metas">
-                        <ivz-group-item v-if="meta.type=='group'" :global="global" :key="meta.id" :meta="meta" :data-id="meta.id"/>
+                        <ivz-group-item v-if="meta.type=='group'" :global="global"
+                                    :key="meta.id" :meta="meta" :data-id="meta.id"/>
                         <template v-else-if="meta.type=='modal'" />
                         <ivz-form-item v-else :global="global" type="table" :key="meta.id"
                             :meta="meta" :data-id="meta.id" @delMetaItem="delMetaItem" />
@@ -77,9 +78,12 @@
             IvzFormItem
         },
         created() {
-            this.$page.menu.name="IvzBasicView预览"
+            this.$page.menu.name="IvzBasicView预览";
         },
         methods: {
+            getViewType() {
+                return this.global.viewType[0];
+            },
             resolverPageTemplate() {
                 let modalTemplates = this.resolverModalTemplates();
 

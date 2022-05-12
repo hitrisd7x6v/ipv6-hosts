@@ -44,7 +44,7 @@
     flex-grow: 1;
     margin: 0px 0px;
     position: relative;
-    border-right: 1px solid #d7dde4;
+    /*border-right: 1px solid #d7dde4;*/
     /*background: linear-gradient(-90deg, rgba(0, 0, 0, 0.1) 1px*/
     /*, transparent 1px) 0% 0% / 20px 20px*/
     /*, linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px) 0% 0% / 20px 20px;*/

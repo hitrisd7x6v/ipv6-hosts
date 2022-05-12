@@ -4,6 +4,8 @@
               :global="global" :view="view" :class="activeClassHandle()" ref="containerRef" />
         <ivz-drawer-view-container v-if="view.type=='IvzDrawerView'" :metas="metas"
                :global="global" :view="view" :class="activeClassHandle()" ref="containerRef" />
+        <ivz-list-view-container v-if="view.type=='IvzListView'" :metas="metas"
+               :global="global" :view="view" :class="activeClassHandle()" ref="containerRef" />
         <ivz-edit-view-container v-if="view.type=='IvzEditView'" :metas="metas"
                 :global="global" :view="view" :class="activeClassHandle()" ref="containerRef" />
     </draggable>
@@ -14,12 +16,14 @@
     import IvzBasicViewContainer from "@/components/online/container/IvzBasicViewContainer";
     import IvzDrawerViewContainer from "@/components/online/container/IvzDrawerViewContainer";
     import IvzEditViewContainer from "@/components/online/container/IvzEditViewContainer";
+    import IvzListViewContainer from "@/components/online/container/IvzListViewContainer";
     export default {
         name: "IvzOnlineBody",
         components: {
             draggable,
             IvzEditViewContainer,
             IvzBasicViewContainer,
+            IvzListViewContainer,
             IvzDrawerViewContainer,
         },
         props: ['metas', 'root', 'global'],

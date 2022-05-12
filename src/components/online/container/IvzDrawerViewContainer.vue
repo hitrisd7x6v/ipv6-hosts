@@ -81,6 +81,9 @@
         },
         updated() { },
         methods: {
+            getViewType() {
+                return this.global.viewType[1];
+            },
             rateHandle(val) {
                 let placement = this.model['placement'];
                 if(placement == 'right') {
