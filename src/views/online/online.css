@@ -55,6 +55,27 @@
 .ivz-item-active {
     cursor: move;
 }
+.ivz-item-opera {
+    right: 0px;
+    bottom: 0px;
+    height: 30px;
+    display: none;
+    line-height: 33px;
+    border-radius: 3px;
+    position: absolute;
+    background: #efefef;
+    padding: 0px 0px 0px 3px;
+}
+.ivz-item-active .ivz-item-opera,.active .ivz-item-opera {
+    display: block;
+}
+.ivz-io-icon {
+    height: 100%;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0px 5px;
+    /*display: inline-block;*/
+}
 .ivz-form-item .ant-form-item {
     /*margin-bottom: 0px;*/
 }

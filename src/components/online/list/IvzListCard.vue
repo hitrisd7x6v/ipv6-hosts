@@ -16,11 +16,11 @@
     import {mixListItem} from "@/components/online/list/MixinListItem";
 
     export default {
-        name: "IvzCard",
+        name: "IvzListCard",
         mixins: [mixListItem],
         methods: {
             getStyle() {
-                return {width: `${this.meta.w}px`, height: `${this.meta.h}px`}
+                return {width: `${this.meta.w - 2}px`, height: `${this.meta.h - 2}px`}
             }
         }
     }

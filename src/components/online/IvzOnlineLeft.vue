@@ -108,7 +108,8 @@
                 list: [
                     {name: '列表', id: 80, icon: 'iz-icon-list', type: 'list', w: 680},
                     {name: '表格', id: 85, icon: 'iz-icon-table', type: 'table', w: 680, handles: ['mr', 'ml']},
-                    {name: '卡片', id: 90, icon: 'iz-icon-card', type: 'card', handles: ['tl','tr','br','bl']},
+                    {name: '卡片', id: 90, icon: 'iz-icon-card', type: 'card', h: 320
+						, handles: ['tl','tr','br','bl'],  lockAspectRatio: true, w: 300},
                     {name: '头像', id: 95, icon: 'iz-icon-avatar', type: 'avatar', h: 64
                         , handles: ['tl','tr','br','bl'],  lockAspectRatio: true, w: 64},
                     {name: '评论', id: 100, icon: 'iz-icon-comment', type: 'comment', w: 680},

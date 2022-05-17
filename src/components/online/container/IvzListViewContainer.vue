@@ -1,12 +1,12 @@
 <template>
     <div class="ivz-oc-list" id="list-drop" @dragover="dragoverHandle">
         <div class="ivz-ocl-vdr" @drop="dropHandle">
-            <vdr v-for="meta in metas" :x="meta.x" :y="meta.y" :w="meta.w" :h="meta.h"
+            <vdr v-for="meta in metas" :key="meta.id" :x="meta.x" :y="meta.y" :w="meta.w" :h="meta.h"
                  :isConflictCheck="true" :snapTolerance="10" :grid="[5, 5]"
                  :lockAspectRatio="meta.lockAspectRatio" :handles="meta.handles"
                  @refLineParams="getRefLineParams" :snap="true"
                  v-on:dragging="onDrag" v-on:resizing="(x,y,w,h) => onResize(x,y,w,h,meta)">
-                <ivz-list-item :meta="meta"></ivz-list-item>
+                <ivz-list-item :meta="meta" @delMetaItem="delMetaItem"></ivz-list-item>
             </vdr>
         </div>
         <span class="ref-line v-line"
@@ -28,11 +28,10 @@
     import EditMetas from "@/components/online/list/PreviewListMeta";
     export default {
         name: "IvzListViewContainer",
-        props: ['view', 'global'],
+        props: ['view', 'global', 'metas'],
         components: {IvzListItem, vdr, draggable},
         data: function () {
             return {
-                metas: [],
                 vLine: 0,
                 hLine: 0,
                 options: {
@@ -52,6 +51,10 @@
                 this.global.editModel = this.model;
                 this.global.editMetas = EditMetas.IvzListMetas;
             },
+			delMetaItem(meta) {
+				this.activeHandle();
+				this.global.delItem(meta);
+			},
             onResize: function (x, y, width, height,meta) {
                 meta.x = x;
                 meta.y = y;
@@ -92,6 +95,10 @@
 </script>
 
 <style scoped>
+	.vdr.active {
+		border: 1px dashed #1296ff;
+		box-shadow: 0px 0px 3px 0px #6eb5ff;
+	}
     .ivz-oc-list {
         width: 100%;
         height: 100%;
