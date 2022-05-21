@@ -74,33 +74,6 @@ export default {
         addActionHandle (meta, row, index) {
             this.$emit("onEdit", meta, row, this);
         },
-        delActionHandle(mate, selectionRows, submit) {
-            if(this.$utils.isBlank(selectionRows))
-                return this.$msg.warningMessage("请选择要删除的记录");
-
-            mate.callBack(selectionRows, this).then((resp) => {
-                let resolve = this.$utils.getPromiseResolve(resp);
-                let tipTitle = resolve.tipTitle ? resolve.tipTitle : '数据删除操作!';
-                let tipContent = resolve.tipContent ? resolve.tipContent : `确认删除选中的数据?`;
-                this.$msg.confirm(tipTitle, tipContent).then(() => {
-                    this.loading = true;
-                    // 提交数据实体
-                    if(resolve.submitType == 'entity') {
-                        submit = selectionRows;
-                    }
-
-                    this.$http.post(mate.url, submit).then(data => {
-                        this.$msg.delSuccessNotify(resolve, data, this, submit, () => {
-                            this.query()
-                        })
-                    }).catch(reason => {
-                        this.$msg.delFailNotify(resolve, reason, this, submit)
-                    }).finally(() => {
-                        this.loading = false
-                    })
-                }).catch(reason => null)
-            }).catch(reason => {})
-        },
     }
 }
 </script>

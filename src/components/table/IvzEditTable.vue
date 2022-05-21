@@ -114,39 +114,6 @@
                     this.$set(row, 'EditableFlag', true) // EditableFlag说明可编辑
                 })
             },
-            delActionHandle (meta, selectionRows, submit) {
-                if(this.$utils.isBlank(selectionRows))
-                    return this.$msg.warningMessage("请选择要删除的记录");
-
-                meta.callBack(selectionRows).then(param => {
-                    let resolve = this.$utils.getPromiseResolve(param)
-                    // 如果是数组, 说明打开了多选功能
-                    if(this.$utils.isArray(selectionRows)) {
-                        selectionRows.forEach(item => {
-                            // 如果是新增的行直接删除, 其他的到后台删除
-                            if(!item[this.tableConfig.submitField]) {
-                                this.$utils.delArrayEle(this.dataSource, item, null)
-                            }
-                        })
-                    }
-
-                    let tipTitle = resolve.tipTitle ? resolve.tipTitle : '数据删除操作!';
-                    let tipContent = resolve.tipContent ? resolve.tipContent : `确认删除选中的数据?`;
-                    this.$msg.confirm(tipTitle, tipContent).then(() => {
-                        this.loading = true;
-
-                        this.$http.post(meta.url, submit).then(data => {
-                            this.$msg.delSuccessNotify(resolve, data, this, submit, () => {
-                                this.query()
-                            })
-                        }).catch(reason => {
-                            this.$msg.delFailNotify(resolve, reason, this, submit)
-                        }).finally(() => {
-                            this.loading = false
-                        })
-                    }).catch(reason => null)
-                })
-            },
             saveActionHandle(meta, row) {
                 if (!row['EditableFlag']) return;
                 meta.callBack(row).then(param => {
