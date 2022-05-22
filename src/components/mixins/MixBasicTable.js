@@ -161,20 +161,6 @@ export const MixBasicTable = {
             let submit = row || this.getSelectionKeys();
             let selectionRows = row || this.getSelectionRows();
 
-            let selection = this.tableConfig['selection'];
-            if(metaId == 'add' || metaId == 'edit' || metaId == 'view') {
-                /*新增和编辑, 查询不需要处理*/
-            } else if(selection && selection['type'] == 'checkbox'){ // 如果有多选按钮
-                // 操作数据将转换成数组
-                if(!this.$utils.isArray(submit)) {
-                    let value = submit[this.tableConfig.submitField];
-                    submit = [value];
-                    selectionRows = [selectionRows];
-                }
-            } else {
-                submit = submit[this.tableConfig.submitField];
-            }
-
             switch(metaId) {
                 case 'view': this.viewActionHandle(); break;
                 case 'add': this.addActionHandle(mate, row, index); break;
@@ -191,7 +177,39 @@ export const MixBasicTable = {
         addActionHandle (meta, row, index) { },
         editActionHandle (meta, row) { },
         saveActionHandle (meta, row) { },
-        delActionHandle (meta, row, submit) { },
+        delActionHandle(mate, selectionRows, selectionKeys) {
+            if(this.$utils.isBlank(selectionRows))
+                return this.$msg.warningMessage("请选择要删除的记录");
+
+            // 删除功能提交的数据都是数组类型
+            if(!this.$utils.isArray(selectionKeys)) {
+                selectionRows = [selectionRows];
+                selectionKeys = [selectionKeys[this.tableConfig.rowKey]];
+            }
+
+            mate.callBack(selectionRows, this).then((resp) => {
+                let resolve = this.$utils.getPromiseResolve(resp);
+                let tipTitle = resolve.tipTitle ? resolve.tipTitle : '数据删除操作!';
+                let tipContent = resolve.tipContent ? resolve.tipContent : `确认删除选中的数据?`;
+                this.$msg.confirm(tipTitle, tipContent).then(() => {
+                    this.loading = true;
+                    // 提交数据实体
+                    if(resolve.submitType == 'entity') {
+                        selectionKeys = selectionRows;
+                    }
+
+                    this.$http.post(mate.url, selectionKeys).then(data => {
+                        this.$msg.delSuccessNotify(resolve, data, this, selectionKeys, () => {
+                            this.query()
+                        })
+                    }).catch(reason => {
+                        this.$msg.delFailNotify(resolve, reason, this, selectionKeys)
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                }).catch(reason => null)
+            }).catch(reason => {})
+        },
         cancelActionHandle(meta, row) { },
         detailActionHandle(meta, row) { meta.callBack(row) },
         otherActionHandle(mate, selectionRows, submit) {
