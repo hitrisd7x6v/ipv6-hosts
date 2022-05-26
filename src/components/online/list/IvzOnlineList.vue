@@ -1,5 +1,5 @@
 <template>
-    <a-list item-layout="horizontal" :data-source="dataSource">
+    <a-list item-layout="horizontal" :data-source="dataSource" @click="activeHandle()">
         <a-list-item  slot="renderItem" slot-scope="item, index">
             <a-list-item-meta
                     description="Ant Design, a design language for background applications, is refined by Ant UED Team"
@@ -15,9 +15,10 @@
 </template>
 
 <script>
+    import {mixListItem} from "./MixinListItem"
     export default {
         name: "IvzOnlineList",
-        props: ['meta', 'model'],
+        mixins: [mixListItem],
         data() {
             return {
                 dataSource: [

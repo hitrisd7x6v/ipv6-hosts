@@ -1,5 +1,5 @@
 <template>
-    <a-card hoverable :style="getStyle()">
+    <a-card hoverable :style="getStyle()" @click="activeHandle()">
         <img slot="cover" alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>
         <template slot="actions" class="ant-card-actions">
             <a-icon key="setting" type="setting" />

@@ -1,5 +1,5 @@
 <template>
-    <a-table :columns="columns" :data-source="dataSource" />
+    <a-table :columns="columns" :data-source="dataSource"  @click="activeHandle()"/>
 </template>
 
 <script>

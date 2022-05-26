@@ -1,5 +1,5 @@
 <template>
-    <a-comment>
+    <a-comment @click="activeHandle()">
         <span slot="actions" key="comment-nested-reply-to">Reply to</span>
         <a slot="author">Han Solo</a>
         <a-avatar

@@ -106,16 +106,18 @@
                 ],
                 // 数据显示组件
                 list: [
-                    {name: '列表', id: 80, icon: 'iz-icon-list', type: 'list', w: 680},
-                    {name: '表格', id: 85, icon: 'iz-icon-table', type: 'table', w: 680, handles: ['mr', 'ml']},
+                    {name: '文本', id: 125, icon: 'iz-icon-label', type: 'label', w: 180, h: 36},
+                    {name: '图片', id: 130, icon: 'iz-icon-img', type: 'img', w: 120, h: 120},
                     {name: '卡片', id: 90, icon: 'iz-icon-card', type: 'card', h: 320
-						, handles: ['tl','tr','br','bl'],  lockAspectRatio: true, w: 300},
+                        , handles: ['tl','tr','br','bl'],  lockAspectRatio: true, w: 300},
                     {name: '头像', id: 95, icon: 'iz-icon-avatar', type: 'avatar', h: 64
                         , handles: ['tl','tr','br','bl'],  lockAspectRatio: true, w: 64},
+                    {name: '列表', id: 80, icon: 'iz-icon-list', type: 'list', w: 680},
+                    {name: '表格', id: 85, icon: 'iz-icon-table', type: 'table', w: 680, handles: ['mr', 'ml']},
                     {name: '评论', id: 100, icon: 'iz-icon-comment', type: 'comment', w: 680},
-                    {name: '树形控件', id: 103, icon: 'iz-icon-tree', type: 'tree'},
                     {name: '描述列表', id: 105, icon: 'iz-icon-desc', type: 'desc'},
                     {name: '折叠面板', id: 110, icon: 'iz-icon-collapse', type: 'collapse'},
+                    {name: '树形控件', id: 103, icon: 'iz-icon-tree', type: 'tree'},
                     {name: '数值统计', id: 115, icon: 'iz-icon-statistic', type: 'statistic'},
                     {name: '时间轴', id: 120, icon: 'iz-icon-timeline', type: 'timeline'},
                 ],
@@ -147,9 +149,9 @@
                         }},
                 ],
                 view: [
-                    {name: "默认视图", title: '', id: 100, icon: 'iz-icon-container-default', type: 'IvzBasicView'},
-                    {name: "抽屉视图", title: '', id: 101, icon: 'iz-icon-container-drawer', type: 'IvzDrawerView'},
-                    {name: "列表视图", title: '', id: 102, icon: 'iz-icon-list', type: 'IvzListView'},
+                    {name: "默认视图", title: '', id: 900, icon: 'iz-icon-container-default', type: 'IvzBasicView'},
+                    {name: "抽屉视图", title: '', id: 905, icon: 'iz-icon-container-drawer', type: 'IvzDrawerView'},
+                    {name: "列表视图", title: '', id: 910, icon: 'iz-icon-list', type: 'IvzListView'},
                     // {name: "表编辑视图", title: '', id: 103, icon: 'iz-icon-container-edit', type: 'IvzEditView'},
                 ],
                 layoutMeta: [

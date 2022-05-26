@@ -231,6 +231,9 @@ export default {
         let editModel = this.getStore("editModel");
         return Utils.clone(editModel);
     },
+    getEditActionMeta() {
+        return this.getStore("actionMeta")
+    },
     getOriModel() {
         return Utils.clone(this.oriModel);
     },

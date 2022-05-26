@@ -1,5 +1,5 @@
 <template>
-    <a-avatar :size="meta.w" icon="user" />
+    <a-avatar :size="meta.w" icon="user" @click="activeHandle()" />
 </template>
 
 <script>

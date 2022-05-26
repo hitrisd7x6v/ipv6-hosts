@@ -4,9 +4,9 @@
             <vdr v-for="meta in metas" :key="meta.id" :x="meta.x" :y="meta.y" :w="meta.w" :h="meta.h"
                  :isConflictCheck="true" :snapTolerance="10" :grid="[5, 5]"
                  :lockAspectRatio="meta.lockAspectRatio" :handles="meta.handles"
-                 @refLineParams="getRefLineParams" :snap="true"
+                 @refLineParams="getRefLineParams" :snap="true" :active="global.active==meta.id"
                  v-on:dragging="onDrag" v-on:resizing="(x,y,w,h) => onResize(x,y,w,h,meta)">
-                <ivz-list-item :meta="meta" @delMetaItem="delMetaItem"></ivz-list-item>
+                <ivz-list-item :meta="meta" :global="global" @delMetaItem="delMetaItem"></ivz-list-item>
             </vdr>
         </div>
         <span class="ref-line v-line"
@@ -61,9 +61,7 @@
                 meta.w = width;
                 meta.h = height;
             },
-            onDrag: function (x, y) {
-                console.log(`${x} - ${y}`)
-            },
+            onDrag: function (x, y) {},
             onListAddHandle() {
 
             },
@@ -102,7 +100,8 @@
     .ivz-oc-list {
         width: 100%;
         height: 100%;
-
+        position: relative;
+        background: linear-gradient(-90deg, rgba(0, 0, 0, 0.07) 1px, transparent 1px) 0% 0% / 20px 20px, linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px) 0% 0% / 20px 20px;
     }
     .ivz-ocl-vdr {
         width: 100%;

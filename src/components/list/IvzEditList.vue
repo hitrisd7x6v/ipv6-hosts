@@ -42,7 +42,18 @@ export default {
         }
     },
     created () { },
+    mounted() {
+        // 模拟form组件的引用, 必须包含有initEditModel方法
+        this.$page.registerVueRef(this, 'form');
+    },
     methods: {
+        initEditModel() {
+            // this.$page.getEditM
+            let editModel = this.$page.getEditModel();
+            let actionMeta = this.$page.getEditActionMeta();
+            this.$refs['tableRef'].actionHandle(actionMeta, editModel, 0);
+
+        },
         // 注册动作 action(String)
         register (actionMate) {
             if (!actionMate || !actionMate.id) {

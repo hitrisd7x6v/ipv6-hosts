@@ -1,5 +1,5 @@
 <template>
-    <a-descriptions title="User Info">
+    <a-descriptions title="User Info" @click="activeHandle()">
         <a-descriptions-item label="UserName">
             Zhou Maomao
         </a-descriptions-item>

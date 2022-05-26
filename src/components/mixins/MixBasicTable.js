@@ -76,11 +76,15 @@ export const MixBasicTable = {
                     let data = resp['data'];
                     if(data instanceof Array) { // 返回的数据是列表
                         if(this.$utils.isBlank(this.dataSource)) { // 只在第一次加载
-                            this.tableConfig.loadFinished(data['records']); // 触发数据加载完成事件
+                            this.tableConfig.loadFinished(data); // 触发数据加载完成事件
                         }
 
                         this.dataSource = data;
                     } else if(typeof data == 'object'){ // 分页数据
+                        if(this.$utils.isBlank(this.dataSource)) { // 只在第一次加载
+                            this.tableConfig.loadFinished(data.records); // 触发数据加载完成事件
+                        }
+
                         this.dataSource = data.records;
 
                         if (this.pagination) { // 设置总条数
@@ -160,6 +164,18 @@ export const MixBasicTable = {
 
             let submit = row || this.getSelectionKeys();
             let selectionRows = row || this.getSelectionRows();
+
+            let selection = this.tableConfig['selection'];
+            if(metaId == 'add' || metaId == 'edit' || metaId == 'view') {
+                /*新增和编辑, 查询不需要处理*/
+            } else if(selection && selection['type'] == 'checkbox'){ // 如果有多选按钮
+                // 操作数据将转换成数组
+                if(!this.$utils.isArray(submit)) {
+                    let value = submit[this.tableConfig.submitField];
+                    submit = [value];
+                    selectionRows = [selectionRows];
+                }
+            }
 
             switch(metaId) {
                 case 'view': this.viewActionHandle(); break;
