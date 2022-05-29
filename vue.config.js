@@ -18,6 +18,12 @@ if (process.env.NODE_ENV === 'development') {
             filename: 'demo/'+filename+".html",
             entry: 'src/views/demo/'+filename+".js",
             template: 'src/views/demo/'+filename+".html"
+        };
+        demoViews['online'] = {
+            title: '在线生成器',
+            filename: 'views/online.html',
+            entry: 'src/views/online/online.js',
+            template: 'src/views/online/online.html'
         }
     });
 }
@@ -54,14 +60,6 @@ module.exports = {
             entry: 'src/views/login/login.js',
             template: 'src/views/login/login.html',
         },
-        online: {
-            title: '在线生成器',
-            inject: true,
-            version: version,
-            filename: 'views/online.html',
-            entry: 'src/views/online/online.js',
-            template: 'src/views/online/online.html'
-        },
         403: { // 未授权页面
             title: '无权限',
             inject: false,
@@ -89,6 +87,9 @@ module.exports = {
             entry: 'src/views/error/500/500.js',
             template: 'src/views/error/500/500.html',
         },
+        ivonline: {
+            entry: 'src/components/ivonline.js'
+        },
         ivzone: {
             entry: 'src/components/ivzone.js'
         }
@@ -108,9 +109,9 @@ module.exports = {
                     // 'vuedraggable': 'draggable',
                     'tinymce/tinymce': 'tinymce',
                 },
-                // plugins: [
+                plugins: [
                     // new scriptExtHtmlWebpackPlugin({
-                    //     inline: ['403.min.js'],
+                    //     inline: ['online.min.js'],
                     //     custom: [
                     //         {
                     //             test: /.*/,
@@ -151,8 +152,8 @@ module.exports = {
                     //         }
                     //     ]
                     // }),
-                    // new HtmlWebpackInlineSourcePlugin()
-                // ]
+                    new HtmlWebpackInlineSourcePlugin()
+                ]
             }
         }
         return {
@@ -166,12 +167,13 @@ module.exports = {
     // webpack配置
     chainWebpack: config => {
         if (process.env.NODE_ENV === 'production') {
-            for(let item of [403, 404, 500, 'index', 'login', 'ivzone', 'online']) {
+            for(let item of [403, 404, 500, 'index', 'login']) {
                 config.plugins.delete('preload-'+item);
                 config.plugins.delete('prefetch-'+item);
             }
             config.plugins.delete('html-ivzone');
-            // config.plugins.delete('html-index');
+            config.plugins.delete('html-online');
+            config.plugins.delete('html-ivonline');
             // config.plugins.delete('html-login');
 
             config.optimization.delete('splitChunks');
@@ -205,7 +207,7 @@ module.exports = {
         disableHostCheck: true,
         // proxy: {
         //     '/': {
-        //         target: 'http://www.inebao.cn', //后台接口
+        //         target: '', //后台接口
         //         changeOrigin: true,
         //         ws: true,
         //         pathRewrite: {

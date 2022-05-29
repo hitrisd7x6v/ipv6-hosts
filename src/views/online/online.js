@@ -1,15 +1,24 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import '@/utils' // 基础类库
-import '@/components/online/preview.data'
-import Vue from 'vue'
-import './online.css'
-import Ivzone from '@/components/ivzone'
-import '@/utils/icon.utils'
-import Online from './online.vue'
+import '@/components/ivonline.css' // 导入全局样式
 
-Vue.use(Ivzone);
+import Vue from 'vue'
+import '@/components/online/preview.data'
+
+import IvzOnline from '@/components/online/IvzOnline.vue'
+
+// import Ivzone from "@/components/ivzone";
+// Vue.use(Ivzone);
 
 new Vue({
-    render: h => h(Online)
-}).$mount("#online");
+    el: '#online',
+    components: {IvzOnline},
+    data: {
+
+    },
+    methods: {
+        saveCallback(config) {
+            console.log(config)
+        }
+    }
+});

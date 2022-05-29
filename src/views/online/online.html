@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <title><%=htmlWebpackPlugin.options.title%></title>
-    <% if (process.env.NODE_ENV === 'production') { %>
-    <%=require('html-loader!../head.html')%>
-    <link href="https://cdn.jsdelivr.net/npm/ivzone@<%=htmlWebpackPlugin.options.version%>/dist/libs/login.min.css" rel="stylesheet">
-    <% }%>
+    <title>在线编辑器</title>
+    <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
 </head>
 <body>
-    <div id="online"></div>
-    <% if (process.env.NODE_ENV === 'production') { %>
-    <%=require('html-loader!../footer.html')%>
-    <script src="https://cdn.jsdelivr.net/npm/ivzone@<%=htmlWebpackPlugin.options.version%>/dist/libs/login.min.js"></script>
-    <% }%>
+    <div id="online" style="height: 100%;">
+        <ivz-online :saveCallback="saveCallback"></ivz-online>
+    </div>
 </body>
 </html>

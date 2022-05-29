@@ -3,6 +3,9 @@
         <div class="ivz-online-header">
             <span style="font-size: 18px; color: #000000;">ivzone 在线页面设计</span>
             <span style="margin-left: 12px; float: right; padding-right: 32px">
+                <label class="ivz-ohl-item" @click="previewHandle('save')">
+                    <ivz-icon type="iz-icon-tijiao" title="保存"/>
+                </label>
                 <label class="ivz-ohl-item" @click="previewHandle('preview')">
                     <ivz-icon type="iz-icon-preview" title="预览"/>
                 </label>
@@ -42,16 +45,17 @@
     import IvzOnlineRight from "@/components/online/IvzOnlineRight";
 
     export default {
-        name: "Online",
+        name: "IvzOnline",
+        props: ['saveCallback', 'initCallback'],
         components: {IvzOnlineRight, IvzOnlineBody, IvzOnlineLeft, draggable},
         data: function () {
             let vue = this;
             return {
                 root: {
                     type: '', // 组件类型
-                    isDetail: true, // 是否显示详情
                     addTitle: '',
                     editTitle: '',
+                    isDetail: true, // 是否显示详情
                     hasFeedback: true, // 是否显示校验图标
                     hideRequiredMark: false, // 是否隐藏必填标志
                 },
@@ -59,8 +63,9 @@
                     span: 24,
                     gutter: 6,
                     active: null, // 当前激活的项
-                    editModel: {},
-                    editMetas: [],
+                    editModel: {}, // 表单组件, 列表组件, 高级组件等编辑数据模型
+                    editMetas: [], // 表单组件, 列表组件, 高级组件等编辑元数据
+                    viewConfig: {}, // 整个视图容器的配置, 包含html代码, 组件元数据, 组件数据等
                     modalMetas: [],
                     drawerMetas: [],
                     animation: 200,
@@ -80,6 +85,20 @@
                 },
                 metas: [],
                 listeners: {}, // 监听器列表
+                voidCallback: (config) => {this.$log.infoLog("系统使用默认回调"
+                    , '如果需要自定义保存, 请传入回调函数(saveCallback)', config)},
+            }
+        },
+        mounted() {
+            this.global.saveCallback = this.saveCallback || this.voidCallback;
+            this.global.initCallback = this.initCallback || this.voidCallback;
+
+            // 组件初始化
+            let initCallback = this.global.initCallback(this.global);
+            if(initCallback instanceof Promise) {
+                initCallback.then(config => {
+                   this.initCallbackHandle(config);
+                });
             }
         },
         updated() {
@@ -119,6 +138,11 @@
                 } else {
                     this.listeners[event].push(listener);
                 }
+            },
+            initCallbackHandle(config) {
+                this.metas = config.metas;
+                this.modalMetas = config.modalMetas;
+                this.drawerMetas = config.drawerMetas;
             },
             previewHandle(type) {
                 let onlineRef = this.$refs['onlineRef'];

@@ -1,9 +1,38 @@
 import Vue from 'vue'
 import Mock from 'mockjs'
+import {Icon} from 'ant-design-vue'
 import Http from "@/utils/http.utils";
 import Utils from "@/utils/basic.utils";
 import Logger from "@/utils/logger.utils";
-import Global from "@/components/global.config"
+let defaultOnlineConfig = {
+    izCtx: '',
+    izStx: '',
+    timeout: 20000, // 接口超时时间
+    dictListUrl: '/core/dictType/list', // 获取字典列表
+    dictUrl: '/core/dictData/listByType', // 获取字典数据url
+    dictLabelField: 'label', // 字典名称字段
+    dictValueField: 'value', // 字典值字段
+    iconUrl: '//at.alicdn.com/t/font_1174643_8oqzyet5k3d.js', // 图标链接
+    saveCallback(config) {
+        console.log(config)
+        return new Promise((resolve, reject) => resolve());
+    },
+    editCallback() {
+        let config = {};
+        return new Promise((resolve, reject) => resolve(config));
+    }
+};
+let Global = window.ivzOnlineConfig || {};
+Utils.mergeObject(Global, defaultOnlineConfig);
+
+// 处理图标
+const IvzIcon = Icon.createFromIconfontCN({
+    scriptUrl: Global.iconUrl,
+    extraCommonProps: {
+        style: {fontSize: '17px'}
+    }
+});
+Vue.component('IvzIcon', IvzIcon)
 
 let DictTypeList = null;
 let DictTypeDataMap = {};
@@ -173,7 +202,9 @@ Mock.mock(RegExp('/ovt/edit.*'), 'post', (options) => {
 Vue.prototype.$page = require("@/components/page.config").default;
 
 export default {
-
+    getConfig(key) {
+        return Global[key];
+    },
     resolverMockMeta(metas, model) {
         let mockMeta = {};
         keyField = model['keyField'];

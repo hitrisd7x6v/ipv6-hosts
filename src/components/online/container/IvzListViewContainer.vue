@@ -51,6 +51,9 @@
                 this.global.editModel = this.model;
                 this.global.editMetas = EditMetas.IvzListMetas;
             },
+            viewPreview(type) {
+
+            },
 			delMetaItem(meta) {
 				this.activeHandle();
 				this.global.delItem(meta);

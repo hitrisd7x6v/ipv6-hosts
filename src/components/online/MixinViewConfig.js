@@ -103,8 +103,24 @@ export const MixinViewConfig = {
             this.viewConfig = this.resolverViewConfig();
             this.viewConfig.htmlCode = this.resolverPageTemplate();
             this.viewConfig.sqlScript = EditMetas.resolverSqlScript(this.metas, this.model);
+            if(type == 'save') {
+                let saveCallback = this.global.saveCallback;
+                if(typeof saveCallback == 'function') {
 
-            this.$refs['previewRef'].open(type, this.viewConfig);
+                    let saveMetaConfig = {html: this.viewConfig.htmlCode, metas: this.metas
+                        ,sql: this.viewConfig.sqlScript, permMetas: this.global.modalMetas, viewConfig: this.model};
+
+                    saveCallback(saveMetaConfig);
+                } else {
+
+                }
+            } else {
+                // 发布预览事件
+                this.global.publisherEvent("preview", this.viewConfig);
+
+                // 打开预览页面
+                this.$refs['previewRef'].open(type, this.viewConfig);
+            }
         },
         getPageConfig() {
             return {

@@ -20,8 +20,7 @@
                 <a-select v-else-if="meta.type == 'select'" :placeholder="model.placeholder" :options="model.options"
                           :allowClear="model.clear" :read-only="model.readonly" :disabled="model.disabled"
                           :mode="model.mode" v-model="model[meta.id]" />
-                <a-editor v-else-if="meta.type == 'editor'" :placeholder="model.placeholder" v-model="model[meta.id]"
-                          :allowClear="model.clear" :readonly="model.readonly" :disabled="model.disabled"></a-editor>
+                <ivz-editor v-else-if="meta.type == 'editor'" :meta="meta" :model="model" :disabled="model.disabled" />
                 <a-radio-group v-else-if="meta.type == 'radio'" :options="model.options"
                            :disabled="model.disabled" v-model="model[meta.id]" />
                 <a-cascader v-else-if="meta.type == 'cascade'" :placeholder="model.placeholder" :options="model.options"
@@ -56,9 +55,10 @@
 
 <script>
     import EditMetas from "@/components/online/EditMetas";
-
+    import IvzEditor from "@/components/basic/IvzEditor";
     export default {
         name: "IvzFormItem",
+        components: {IvzEditor},
         props: ["meta", "global", "type", "span"],
         data() {
             return {
