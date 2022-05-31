@@ -34,10 +34,10 @@
                            :animation='200' :move="onMove" style="width: 100%; height: 100%; overflow-y: auto;">
                     <template v-for="meta in metas">
                         <ivz-group-item v-if="meta.type=='group'" :global="global"
-                                    :key="meta.id" :meta="meta" :data-id="meta.id"/>
+                                    :key="meta.id" :meta="meta" :view="model" :data-id="meta.id"/>
                         <template v-else-if="meta.type=='modal'" />
                         <ivz-form-item v-else :global="global" type="table" :key="meta.id"
-                            :meta="meta" :data-id="meta.id" @delMetaItem="delMetaItem" />
+                            :meta="meta" :data-id="meta.id" :view="model" @delMetaItem="delMetaItem" />
                     </template>
                 </draggable>
             </a-form-model>

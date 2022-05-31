@@ -8,7 +8,7 @@
                    :animation='global.animation' class="ivz-gi-drag">
             <template :span="global.span" v-for="item in meta.children">
                 <ivz-form-item :global="global" :meta="item" type="table"
-                    :data-id="item.id" :key="item.id"  @delMetaItem="delMetaItem" />
+                    :data-id="item.id" :key="item.id" :view="view"  @delMetaItem="delMetaItem" />
             </template>
         </draggable>
         <div class="ivz-group-del" @click.stop="delMetaItem(meta)">
@@ -25,7 +25,7 @@
     import EditMetas from "@/components/online/EditMetas";
     export default {
         name: "IvzGroupItem",
-        props: ["meta", "global"],
+        props: ["meta", "global", "view"],
         components: {draggable, IvzFormItem},
         data() {
             return {

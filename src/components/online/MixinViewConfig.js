@@ -41,13 +41,27 @@ export const MixinViewConfig = {
         },
         activeHandle() {
             this.global.active = this.view.id;
-            this.model = EditMetas.IvzViewModel;
+            if(this.view.model) {
+                this.model = EditMetas.IvzViewModel = this.view.model;
+            } else {
+                this.view.model = this.model = EditMetas.IvzViewModel;
+            }
 
             this.global.editModel = this.model;
             this.global.editMetas = EditMetas[this.view.type];
 
-            if(this.$refs['viewModelRef'])
-                this.$refs['viewModelRef'].validate();
+        },
+        initViewConfig(config) {
+            if(config.permMetas) {
+                this.global.modalMetas = this.modalMetas = config.permMetas;
+            }
+            if(config.viewConfig) {
+                // this.view = config.viewConfig;
+                this.$utils.assignVueProperty(this.view, config.viewConfig, this);
+                console.log(this.view);
+            }
+
+            this.activeHandle();
         },
         onAddHandle(e) {
             if(this.metas) {
@@ -62,7 +76,7 @@ export const MixinViewConfig = {
         },
         columnHandle(val) {
             this.model.column=val;
-            this.global.span = 24 / val;
+            this.model.span = 24 / val;
         },
         formColHandle(val) {
             if(val[0] + val[1] > 24) return;
@@ -106,9 +120,8 @@ export const MixinViewConfig = {
             if(type == 'save') {
                 let saveCallback = this.global.saveCallback;
                 if(typeof saveCallback == 'function') {
-
                     let saveMetaConfig = {html: this.viewConfig.htmlCode, metas: this.metas
-                        ,sql: this.viewConfig.sqlScript, permMetas: this.global.modalMetas, viewConfig: this.model};
+                        ,sql: this.viewConfig.sqlScript, permMetas: this.global.modalMetas, viewConfig: this.view};
 
                     saveCallback(saveMetaConfig);
                 } else {

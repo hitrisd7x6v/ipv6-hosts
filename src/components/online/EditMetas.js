@@ -362,6 +362,7 @@ export default {
         }
     ],
     IvzViewModel: {
+        span: 24,
         column: 1,
         perms: [],
         width: 920,

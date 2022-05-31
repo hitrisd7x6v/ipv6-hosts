@@ -141,8 +141,12 @@
             },
             initCallbackHandle(config) {
                 this.metas = config.metas;
-                this.modalMetas = config.modalMetas;
                 this.drawerMetas = config.drawerMetas;
+				if(config.globalConfig) {
+					this.$utils.assignProperty(this.global, config.globalConfig);
+				}
+
+                this.$refs['onlineRef'].initContainerConfig(config);
             },
             previewHandle(type) {
                 let onlineRef = this.$refs['onlineRef'];

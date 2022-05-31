@@ -1,5 +1,5 @@
 <template>
-    <a-col :span="model.span || global.span" @click.stop="activeHandle"
+    <a-col :span="model.span || view.span" @click.stop="activeHandle"
            :class="model.id == global.active ? 'ivz-item-active' : null">
         <div class="ivz-form-item">
             <a-form-model-item :label="model.label" :prop="meta.id" :required="model.required"
@@ -59,7 +59,7 @@
     export default {
         name: "IvzFormItem",
         components: {IvzEditor},
-        props: ["meta", "global", "type", "span"],
+        props: ["meta", "global", "type", "span", "view"],
         data() {
             return {
                 isActive: false,

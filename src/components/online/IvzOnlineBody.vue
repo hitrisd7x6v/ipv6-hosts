@@ -79,7 +79,10 @@
             resolverOnlineConfig() {
                 let containerRef = this.$refs['containerRef'];
                 return containerRef.resolverViewConfig();
-            }
+            },
+			initContainerConfig(config) {
+            	this.$refs['containerRef'].initViewConfig(config);
+			}
         }
     }
 </script>
