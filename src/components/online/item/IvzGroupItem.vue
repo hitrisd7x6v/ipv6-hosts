@@ -7,7 +7,7 @@
         <draggable :list="meta.children" :options="options" group="item"
                    :animation='global.animation' class="ivz-gi-drag">
             <template :span="global.span" v-for="item in meta.children">
-                <ivz-form-item :global="global" :meta="item" type="table"
+                <ivz-form-item :global="global" :meta="item" type="table" :ref="item.id"
                     :data-id="item.id" :key="item.id" :view="view"  @delMetaItem="delMetaItem" />
             </template>
         </draggable>
@@ -41,15 +41,23 @@
             }
         },
         created() {
-            this.model = EditMetas.getItemModel(this.meta.type);
-
-            this.model['id'] = this.meta.id;
-            this.model['type'] = this.meta.type;
-
+            this.initItem();
             this.activeHandle(); // 刚拖拽的项默认激活
-            this.mountModelToMeta();
         },
         methods: {
+            initItem() {
+                let model = this.meta['model'];
+                if(model) {
+                    this.model = model;
+                } else {
+                    this.model = EditMetas.getItemModel(this.meta.type);
+
+                    this.model['id'] = this.meta.id;
+                    this.model['type'] = this.meta.type;
+                    this.meta['model'] = this.model;
+                }
+
+            },
             activeHandle() {
                 this.global.active = this.model.id;
 
@@ -60,8 +68,38 @@
                 this.activeHandle();
                 this.global.delItem(meta);
             },
-            mountModelToMeta() {
-                this.meta['model'] = this.model;
+            resolverGroupToMeta(valid) {
+                if(valid) {
+                    let itemMetas = EditMetas.getItemMetas(this.meta.type);
+                    for(let meta of itemMetas) {
+                        if(meta.metas && meta.metas.length > 0) {
+                            for(let item of meta.metas) {
+                                if(item.rules) {
+                                    if(!this.model[item.field]) {
+                                        this.activeHandle();
+                                        this.$msg.warningMessage(`${item.title}必填`);
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                let groupMeta = EditMetas.resolverGroupToMeta(this.model, this.global);
+                let formMetas = groupMeta.metas || groupMeta.children;
+
+                if(!this.$utils.isBlank(this.meta.children)) {
+                    for(let meta of this.meta.children) {
+                        let metaRef = this.$refs[meta.id][0];
+
+                        let viewMeta = metaRef.resolverItemToMeta(valid);
+                        if(viewMeta === false) return false;
+
+                        formMetas.push(viewMeta);
+                    }
+                }
+
+                return groupMeta
             }
         }
     }

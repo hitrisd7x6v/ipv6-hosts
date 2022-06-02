@@ -7,8 +7,8 @@ import '@/components/online/preview.data'
 
 import IvzOnline from '@/components/online/IvzOnline.vue'
 
-// import Ivzone from "@/components/ivzone";
-// Vue.use(Ivzone);
+import Ivzone from "@/components/ivzone";
+Vue.use(Ivzone);
 
 new Vue({
     el: '#online',

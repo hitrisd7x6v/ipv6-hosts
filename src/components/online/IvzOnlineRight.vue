@@ -1,5 +1,5 @@
 <template>
-    <a-form-model class="ivz-right-model" :model="model"
+    <a-form-model class="ivz-right-model" :model="model" ref="formModelRef"
             :label-col="labelCol" :wrapper-col="wrapperCol">
             <template v-for="meta in metas">
                 <a-divider orientation="center" dashed>
@@ -7,7 +7,7 @@
                 </a-divider>
                 <template v-for="item in meta.metas">
                     <a-form-model-item :key="item.field" :label="item.title"
-                                       :prop="item.field" :required="item.required">
+                            :prop="item.field" :required="item.required" :rules="item.rules">
                         <a-input v-if="item.type=='text'" v-model="model[item.field]" :allowClear="true"
                                  @change="(val)=>changeHandle(val.target.value, item)" :placeholder="item.placeholder"/>
                         <a-input-number v-else-if="item.type == 'number'" v-model="model[item.field]"
@@ -64,7 +64,10 @@
                 wrapperCol: {span: 16},
             }
         },
-        created() { },
+        created() {
+            // 注册到全局对象
+            this.global.rightFormRef = this;
+        },
         updated() { },
         methods: {
             changeHandle(val, meta) {
@@ -74,6 +77,9 @@
                 if(meta.change) {
                     meta.change(val, meta, this.model, this.global);
                 }
+            },
+            validateForm(prop) {
+                this.$refs['formModelRef'].validateField(prop)
             }
         }
     }

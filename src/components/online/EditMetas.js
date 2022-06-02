@@ -136,14 +136,14 @@ let OperaMetas = [
     {title: '校验', field: 'validate', type: 'validate', data: TextValidate}
 ];
 let TableMetas = [
-    {field: 'name', title: '字段名', type: 'text', required: true, placeholder: '表字段名（user_name）'},
-    {field: 'label', title: '字段标题', type: 'text', required: true, placeholder: '字段标题（用户名）'
+    {field: 'name', title: '字段名', type: 'text', rules: [{required: true, message: '字段名必填'}], placeholder: '表字段名（user_name）'},
+    {field: 'label', title: '字段标题', type: 'text', rules: [{required: true, message: '字段标题必填'}], placeholder: '字段标题（用户名）'
         , change: (val, meta, model)=>{
             model['comment'] = val;
         }
     },
     {field: 'fieldType', title: '字段类型', type: 'fieldType', data: AllFieldType
-        , lengthField: 'typeLength', lengthDisabled: false, required: true
+        , lengthField: 'typeLength', lengthDisabled: false, rules: [{required: true, message: '字段类型必填'}]
         , change: (val, meta, model)=>{
 
         }},
@@ -186,8 +186,8 @@ let TableModel = {
     // required: false,
 };
 let FormMetas = [
-    {title: '字段名', field: 'name', type: 'text', required: true},
-    {title: '字段标题', field: 'label', type: 'text', required: true},
+    {title: '字段名', field: 'name', type: 'text', rules: [{required: true, message: '字段名必填'}]},
+    {title: '字段标题', field: 'label', type: 'text', rules: [{required: true, message: '字段标题必填'}]},
 ];
 let FormModel = {
     name: '',
@@ -269,13 +269,13 @@ let DataMock = {};
 export default {
     IvzBasicView: [
         {title: '数据表配置', field: 'tableConfig', metas: [
-                {field: 'tableName', title: '表名', type: 'text', required: true, placeholder: '数据库表名（t_user）'},
+                {field: 'tableName', title: '表名', type: 'text', rules: [{required: true, message: '表名必填'}], placeholder: '数据库表名（t_user）'},
                 {field: 'comment', title: '表说明', type: 'text', change: (val, meta, model)=>{
                         model.addTitle = "新增"+val;
                         model.editTitle = "修改"+val;
                     }, placeholder: '数据库表说明（会员表）'},
                 {field: 'menuId', title: '父菜单', type: 'treeSelect', data: ParentMenus},
-                {field: 'keyField', title: '主键字段', type: 'text', required: true},
+                {field: 'keyField', title: '主键字段', type: 'text', rules: [{required: true, message: '主键字段必填'}]},
                 {field: 'keyType', title: '主键自增', type: 'radio', data: isAuto, radioStyle: 'button'},
             ]},
         // {title: '视图配置', field: 'formConfig', metas: [
@@ -321,13 +321,13 @@ export default {
     },
     IvzDrawerView: [
         {title: '数据表配置', field: 'tableConfig', metas: [
-                {field: 'tableName', title: '表名', type: 'text', required: true, placeholder: '数据库表名（t_user）'},
+                {field: 'tableName', title: '表名', type: 'text', rules: [{required: true, message: '表名必填'}], placeholder: '数据库表名（t_user）'},
                 {field: 'comment', title: '表说明', type: 'text', change: (val, meta, model)=>{
                         model.addTitle = "新增"+val;
                         model.editTitle = "修改"+val;
                     }, placeholder: '数据库表说明（会员表）'},
                 {field: 'menuId', title: '父菜单', type: 'treeSelect', data: ParentMenus},
-                {field: 'keyField', title: '主键字段', type: 'text', required: true},
+                {field: 'keyField', title: '主键字段', type: 'text', rules: [{required: true, message: '主键字段必填'}]},
                 {field: 'keyType', title: '主键自增', type: 'radio', data: isAuto, radioStyle: 'button'},
             ]},
         {title: '表单配置', field: 'formConfig', metas: [
@@ -388,9 +388,9 @@ export default {
     modal: [
         {
             title: '自定义功能配置', field: 'basicConfig', metas: [
-                {title: '模态框标题', field: 'title', type: 'text', required: true},
-                {title: '功能标识', field: 'permId', type: 'text', required: true, placeholder: '比如： password'},
-                {title: '功能名称', field: 'permTitle', type: 'text', required: true, placeholder: '比如： 修改密码'},
+                {title: '模态框标题', field: 'title', type: 'text', rules: [{required: true, message: '模态框标题必填'}]},
+                {title: '功能标识', field: 'permId', type: 'text', rules: [{required: true, message: '功能标识必填'}], placeholder: '比如： password'},
+                {title: '功能名称', field: 'permTitle', type: 'text', rules: [{required: true, message: '功能名称必填'}], placeholder: '比如： 修改密码'},
                 {title: '功能位置', field: 'position', type: 'select'
                     , required: true, placeholder: '选择功能点放置位置', data: Position},
                 {title: '功能地址(url)', field: 'url', type: 'text', placeholder: '比如： /core/user/pwd'},
@@ -424,8 +424,8 @@ export default {
     },
     group: [
         {title: '基础配置', field: 'basicConfig', metas: [
-                {field: 'name', title: '组标题', type: 'text'},
-                {field: 'field', title: '字段名', type: 'text', required: true},
+                {field: 'name', title: '组标题', type: 'text', rules: [{required: true, message: '组标题必填'}]},
+                {field: 'field', title: '字段名', type: 'text', rules: [{required: true, message: '字段名必填'}]},
                 {field: 'desc', title: '组说明', type: 'text'},
                 {field: 'tableSpan', title: '表头分组', type: 'radio', data: BooleanOptions}
             ]

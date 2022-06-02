@@ -114,10 +114,10 @@ export const MixinViewConfig = {
             searchMetas.push(meta);
         },
         viewPreview(type) {
-            this.viewConfig = this.resolverViewConfig();
-            this.viewConfig.htmlCode = this.resolverPageTemplate();
-            this.viewConfig.sqlScript = EditMetas.resolverSqlScript(this.metas, this.model);
             if(type == 'save') {
+                this.viewConfig = this.resolverViewConfig(true);
+                if(this.viewConfig === false) return false;
+
                 let saveCallback = this.global.saveCallback;
                 if(typeof saveCallback == 'function') {
                     let saveMetaConfig = {html: this.viewConfig.htmlCode, metas: this.metas
@@ -125,9 +125,11 @@ export const MixinViewConfig = {
 
                     saveCallback(saveMetaConfig);
                 } else {
-
+                    this.$log.warningLog("保存回调函数错误", '期待一个函数', saveCallback);
                 }
             } else {
+                this.viewConfig = this.resolverViewConfig(false);
+
                 // 发布预览事件
                 this.global.publisherEvent("preview", this.viewConfig);
 
@@ -152,8 +154,8 @@ export const MixinViewConfig = {
                 search: {}
             }
         },
-        resolverViewConfig() {
-            let viewConfig = {
+        resolverViewConfig(valid) {
+            let viewConfig = this.viewConfig = {
                 metas: [], searchMetas: [],
                 config: this.getPageConfig(),
                 data: [],
@@ -163,17 +165,27 @@ export const MixinViewConfig = {
             };
             let vue = this;
             let model = this.model;
+
+            // 校验视图配置
+            let validStatus = this.validViewConfig(valid);
+            if(validStatus === false) return validStatus;
+
             function doResolverItems(metas, viewMetas) {
-                metas.forEach(meta => {
+                for(let meta of metas) {
                     if(meta.type == 'modal') return;
 
+                    let metaRef = vue.$refs[meta.id][0];
                     if(meta.type == 'group') {
-                        let groupMetas = EditMetas.resolverGroupToMeta(meta.model, vue.global);
+                        let groupMetas = metaRef.resolverGroupToMeta(valid);
+                        if(groupMetas === false) return false;
 
                         viewMetas.push(groupMetas);
-                        doResolverItems(meta.children, groupMetas.metas || groupMetas.children);
+                        // doResolverItems(meta.children, groupMetas.metas || groupMetas.children);
                     } else {
-                        let viewMeta = EditMetas.resolverItemToMeta(meta.model, vue.global);
+
+                        let viewMeta = metaRef.resolverItemToMeta(valid);
+                        if(viewMeta === false) return false;
+
                         viewMetas.push(viewMeta);
 
                         if(meta.model.isSearch) {
@@ -181,23 +193,26 @@ export const MixinViewConfig = {
                             viewConfig.searchMetas.push(searchMeta);
                         }
 
-                        viewMeta['labelCol'] = model.labelCol;
-                        viewMeta['wrapperCol'] = model.wrapperCol;
-
+                        // viewMeta['labelCol'] = model.labelCol;
+                        // viewMeta['wrapperCol'] = model.wrapperCol;
                     }
-                });
+                }
 
                 return viewConfig;
             }
 
             // 解析模态框配置
             this.handleModalConfig();
+
             // 处理表格配置
             this.handleTableConfig(viewConfig.config.table, this.model);
 
             // 解析元数据
             doResolverItems(this.metas, viewConfig.metas);
             viewConfig.metas.push({title: '操作', field: 'action', type: 'action'}); // 增加操作元数据
+
+            viewConfig.htmlCode = this.resolverPageTemplate();
+            viewConfig.sqlScript = EditMetas.resolverSqlScript(this.metas, this.model);
 
             // 创建需要模拟的数据
             PreviewView.createMockData(this.metas, this.model);
@@ -266,6 +281,26 @@ export const MixinViewConfig = {
             }
 
             return pageConfig;
+        },
+        validViewConfig(valid) {
+            if(valid) {
+                let metas = EditMetas[this.view.type];
+                for(let meta of metas) {
+                    if(meta.metas && meta.metas.length > 0) {
+                        for(let item of meta.metas) {
+                            if(item.rules) {
+                                if(!this.model[item.field]) {
+                                    this.activeHandle();
+                                    this.$msg.warningMessage(`${item.title}必填`);
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                return true;
+            }
         }
     }
 }

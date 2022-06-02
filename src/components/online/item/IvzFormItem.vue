@@ -133,7 +133,22 @@
             delItem() {
                 this.$emit("delMetaItem", this.meta);
             },
-            resolverItemToMeta() {
+            resolverItemToMeta(valid) {
+                let itemMetas = EditMetas.getItemMetas(this.meta.type);
+                for(let meta of itemMetas) {
+                    if(meta.metas && meta.metas.length > 0) {
+                        for(let item of meta.metas) {
+                            if(item.rules) {
+                                if(!this.model[item.field]) {
+                                    this.activeHandle();
+                                    this.$msg.warningMessage(`${item.title}必填`);
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 return EditMetas.resolverItemToMeta(this.model, this.global)
             }
         }
