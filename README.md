@@ -1,6 +1,6 @@
 ###  _新版本已经在开发(基于vue3,antdv2,vite),敬请期待, 主要变动如下_ 
 1. 框架方面升级到vue3, ui框架升级到antdv2
-2. 独立出[online(未完成版预览)](http://online.iteaj.com/#/)表单设计器
+2. 独立出在线表单设计器[(gitee地址)](https://gitee.com/iteaj/online) [(初步版预览)](http://online.iteaj.com/#/)
 3.  **新版本将支持单页面(spa)和传统的多页面** 
 4. 将会重新设计组件
 ### ivzone 一个更适合个人开发者、专业后端使用的前端框架(无需编译、可通过在线设计器直接生成页面、非前后端分离(支持), 基于Vue的传统多页面开发方式)
