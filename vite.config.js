@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src'),
-      name: 'Ivz',
+      name: 'ivz',
       formats: ['umd']
     },
     rollupOptions: {
