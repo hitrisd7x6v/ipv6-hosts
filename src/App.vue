@@ -13,11 +13,17 @@ export default {
     let meta={label: '测试', field: 'test', data:[
         {label: 'aa', value: 1},
         {label: 'bb', value: 2},
-      ], event: {
+      ],
+      event: {
         change(val) {
           console.log(val)
+        },
+        select(val, model, meta) {
+
         }
-      }};
+      },
+      inner: {sub: 'select'},
+      config: {}};
     let model = {test: 1}
     return {meta, model};
   }
