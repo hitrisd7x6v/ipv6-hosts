@@ -1,32 +1,11 @@
 <template>
-  <a-form :model="model" :label-col="{ span: 4 }" :wrapper-col="{ span: 14 }">
-    <ivz-option-form :meta="meta"></ivz-option-form>
-  </a-form>
+  <router-view />
 </template>
 
 <script>
-import IvzOptionForm from "./form/dataForm/IvzOptionForm.vue";
-import HelloWorld from "./components/HelloWorld.vue";
-export default {
-  components: {HelloWorld, IvzOptionForm},
-  setup() {
-    let meta={label: '测试', field: 'test', data:[
-        {label: 'aa', value: 1},
-        {label: 'bb', value: 2},
-      ],
-      event: {
-        change(val) {
-          console.log(val)
-        },
-        select(val, model, meta) {
 
-        }
-      },
-      inner: {sub: 'select'},
-      config: {}};
-    let model = {test: 1}
-    return {meta, model};
-  }
+export default {
+  name: 'App'
 }
 // This starter template is using Vue 3 experimental <script setup> SFCs
 // Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
