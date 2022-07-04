@@ -1,10 +1,16 @@
-import qs from 'qs'
+import Qs from 'qs';
 import axios from 'axios'
 import router from '@/router'
 import {msgError} from "@/utils/message";
-let loadingInstance
+let baseURL = "";
+if(import.meta.env.PROD) {
+    baseURL = ""
+} else {
+    baseURL = 'http://localhost:3000/api';
+}
+
 let baseConfig = {
-    baseURL: 'http://localhost',
+    baseURL: baseURL,
     contentType: 'application/json;charset=UTF-8',
     //消息框消失时间
     duration: 3000,
@@ -12,32 +18,39 @@ let baseConfig = {
     timeout: 5000,
     // 成功响应码
     success: 200,
-    //登录失效code
-    invalidCode: 402,
-    //无权限
+    // 未授权
     unauthorized: 401,
+    // 无权限
+    notAccess: 403,
+    // 找不到页面
+    notPage: 404,
+    // 服务端异常
+    error: 500
 }
 
 /**
- * @author chuzhixin 1204505056@qq.com （不想保留author可删除）
  * @description 处理code异常
  * @param {*} code
  * @param {*} msg
  */
 const handleResponse = (code, msg) => {
     switch (code) {
-        case invalidCode:
-            Vue.prototype.$baseMessage(msg || `后端接口${code}异常`, 'error')
-            store.dispatch('user/resetAccessToken').catch(() => {})
-            if (loginInterception) {
-                location.reload()
-            }
+        case baseConfig.unauthorized: // 未授权
+            router.push({ path: '/login' }).catch(() => {});
             break
-        case baseConfig.unauthorized:
-            router.push({ path: '/401' }).catch(() => {})
+        case baseConfig.notAccess: // 无权限访问
+            router.push({path: '/403'}).catch(()=>{});
             break
+        case baseConfig.notPage:
+            router.push({path: '/404'}).catch(()=>{})
+            break
+        case baseConfig.error:
+            msgError(msg || `接口异常`)
+            console.error(`后端异常：${msg}`)
+            break;
         default:
-            Vue.prototype.$baseMessage(msg || `后端接口${code}异常`, 'error')
+            msgError(`未知错误`)
+            console.error(`未知错误：${msg}`)
             break
     }
 }
@@ -46,16 +59,17 @@ const instance = axios.create({
     baseURL: baseConfig.baseURL,
     timeout: baseConfig.timeout,
     headers: {
+        Authorization: 'session', // 授权类型为 session
+        'x-requested-with': 'XMLHttpRequest', // 是否是ajax请求
         'Content-Type': baseConfig.contentType,
     },
+    paramsSerializer: (params) => {
+        return Qs.stringify(params, {arrayFormat: 'indices', allowDots: true})
+    }
 })
 
 instance.interceptors.request.use(
     (config) => {
-        if (store.getters['user/accessToken']) {
-            config.headers[tokenName] = store.getters['user/accessToken']
-        }
-
         return config
     },
     (error) => {
@@ -99,5 +113,9 @@ instance.interceptors.response.use(
         }
     }
 )
+
+let GET = instance.get;
+let POST = instance.post;
+export {GET, POST}
 
 export default instance

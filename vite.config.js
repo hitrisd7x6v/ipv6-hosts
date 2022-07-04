@@ -25,7 +25,11 @@ export default defineConfig((env)=>{
     },
     server: {
       proxy: {
-
+        '^/api/.*': {
+          changeOrigin: true,
+          target: 'http://www.iteaj.com',
+          rewrite: (path) => path.replace(/^\/api/, '')
+        },
       }
     },
     optimizeDeps: {

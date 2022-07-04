@@ -12,9 +12,9 @@
               v-model:selected-keys="selectedKeys" v-model:collapsed="collapsed" collapsible>
         <template v-for="menu in menus">
           <a-menu-item v-if="!menu.children" :key="menu.url">
-                            <span>
-                                <ivz-icon :type="menu.icon"></ivz-icon>
-                            </span>
+              <span>
+                  <ivz-icon :type="menu.icon"></ivz-icon>
+              </span>
             <span class="ivz-level-o">{{menu.name}}</span>
           </a-menu-item>
           <template v-else>
@@ -115,6 +115,7 @@
 </template>
 
 <script>
+import {getMenus} from '@/api/index'
 export default {
   name: "index",
   setup() {
@@ -148,7 +149,7 @@ export default {
     }
   },
   created() {
-    this.$http.get("/resources").then(resp=>{
+    getMenus().then(resp=>{
       this.views=resp['data'];
       this.resolverMenuMap(this.views);
       this.activityView = this.views[0];
