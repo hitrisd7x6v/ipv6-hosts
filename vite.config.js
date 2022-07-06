@@ -21,6 +21,7 @@ export default defineConfig((env)=>{
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@msn': path.resolve(__dirname, './src/views')
       }
     },
     server: {

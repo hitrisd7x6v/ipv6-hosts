@@ -2,30 +2,22 @@ import Qs from 'qs';
 import axios from 'axios'
 import router from '@/router'
 import {msgError} from "@/utils/message";
-let baseURL = "";
+
+let baseURL = "http://localhost:3000/api";
+// 以下是生产环境配置
 if(import.meta.env.PROD) {
-    baseURL = ""
-} else {
-    baseURL = 'http://localhost:3000/api';
+    baseURL = "";
 }
 
 let baseConfig = {
     baseURL: baseURL,
     contentType: 'application/json;charset=UTF-8',
+    // 成功响应码
+    success: 200,
     //消息框消失时间
     duration: 3000,
     //超时时间
-    timeout: 5000,
-    // 成功响应码
-    success: 200,
-    // 未授权
-    unauthorized: 401,
-    // 无权限
-    notAccess: 403,
-    // 找不到页面
-    notPage: 404,
-    // 服务端异常
-    error: 500
+    timeout: 20000,
 }
 
 /**
@@ -35,21 +27,17 @@ let baseConfig = {
  */
 const handleResponse = (code, msg) => {
     switch (code) {
-        case baseConfig.unauthorized: // 未授权
+        case 401: // 未授权
             router.push({ path: '/login' }).catch(() => {});
-            break
-        case baseConfig.notAccess: // 无权限访问
-            router.push({path: '/403'}).catch(()=>{});
-            break
-        case baseConfig.notPage:
-            router.push({path: '/404'}).catch(()=>{})
-            break
-        case baseConfig.error:
-            msgError(msg || `接口异常`)
-            console.error(`后端异常：${msg}`)
+            break;
+        case 500:
+            msgError(msg)
+            break;
+        case 404:
+            msgError("资源没找到(404)")
             break;
         default:
-            msgError(`未知错误`)
+            msgError(msg);
             console.error(`未知错误：${msg}`)
             break
     }
@@ -70,6 +58,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
     (config) => {
+        config['autoMsg'] = true; // 自动提示消息
         return config
     },
     (error) => {
@@ -81,23 +70,29 @@ instance.interceptors.response.use(
     (response) => {
 
         const { data, config } = response
-        const { code, msg } = data
+        const { code, message } = data
 
         // 是否操作正常
         if (code == baseConfig.success) {
             return data
         } else {
-            handleResponse(code, msg)
-            return Promise.reject(`请求异常: ${JSON.stringify({ url: config.url, code, msg })}`)
+            if(config['autoMsg']) {
+                handleResponse(code, message)
+            }
+
+            return Promise.reject(`请求失败: ${JSON.stringify({ url: config.url, code, message })}`)
         }
     },
     (error) => {
         const { response, message } = error
 
         if (response && response.data) {
-            const { status, data } = response
-            handleResponse(status, data.msg || message)
-            return Promise.reject(error)
+            const { status, data, config } = response
+            if(config['autoMsg']) {
+                handleResponse(status, data.message || message)
+            }
+
+            return Promise.reject(data.message || message)
         } else {
             let { message } = error
             if(message === 'Network Error') {
@@ -108,6 +103,7 @@ instance.interceptors.response.use(
                 const code = message.substr(message.length - 3)
                 message = `后端接口[${code}]异常`
             }
+
             msgError(message || `后端接口异常`)
             return Promise.reject(error)
         }
@@ -116,6 +112,6 @@ instance.interceptors.response.use(
 
 let GET = instance.get;
 let POST = instance.post;
-export {GET, POST}
+export {GET, POST, baseURL, instance as http}
 
 export default instance
