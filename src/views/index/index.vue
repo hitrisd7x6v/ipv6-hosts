@@ -77,12 +77,12 @@
           <a-tabs :active-key="activityMenu.url" @change="switchTask" :hide-add="true"
                   @edit="closeTask" type="editable-card" size="small">
             <template v-for="menu in taskBarData" :key="menu.url">
-            <a-tab-pane :closable="menu.closable != false">
-              <template #tab>
-                <ivz-icon :type="menu.icon" class="icon"></ivz-icon>
-                <span style="margin-left: 5px">{{menu.name}}</span>
-              </template>
-            </a-tab-pane>
+              <a-tab-pane :closable="menu.closable != false">
+                <template #tab>
+                  <ivz-icon :type="menu.icon" class="icon"></ivz-icon>
+                  <span style="margin-left: 5px">{{menu.name}}</span>
+                </template>
+              </a-tab-pane>
             </template>
           </a-tabs>
           <div class="ivz-task-opera right">
@@ -106,8 +106,10 @@
       </a-layout-header>
       <a-layout-content class="iz-main-container" id="container">
         <router-view v-slot="{ Component }">
-          <transition name="fade">
-            <component :is="Component" />
+          <transition name="list">
+            <keep-alive :include="cacheViews">
+              <component :is="Component" />
+            </keep-alive>
           </transition>
         </router-view>
         <ivz-user-info ref="userInfo"/>
@@ -117,17 +119,17 @@
 </template>
 
 <script>
-import {getMenus} from '@/api/index'
 import IvzUserInfo from '@msn/index/UserInfo.vue'
 import IvzSubMenu from '@/views/index/SubMenu.vue'
+import {mapActions, mapGetters, mapMutations} from "vuex";
+
 export default {
   name: "index",
   components:{IvzSubMenu, IvzUserInfo},
   setup() {
     return {
-      prevOpenKeys: [],
       avatarUrl: '',
-      urlMenuMap: {},
+      prevOpenKeys: [],
     }
   },
   data() {
@@ -138,37 +140,49 @@ export default {
       sysName: '',
       openKeys: [],
       viewMenu: [],
-      views: [],
-      menus: [],
+      test: {name: '5', amount: 3, model: {test: '3'}, type: 'tea'},
       collapsed: false,
       theme: 'dark', // 主题 dark or light
       notifyVisible: false,
       fixedSider: false, // 固定侧边栏
-      activityMenu: {}, // 激活的菜单
-      activityView: null,
       selectedKeys: [], // 当前选中的菜单
-      taskBarData: [], // 任务栏数据
       workMenu: null,
       expandMode: 'single', // 菜单展开模式 (single || multi)
     }
   },
+  computed: {
+    ...mapGetters({
+      menus: 'sys/menus',
+      views: 'sys/views',
+      taskBarData: 'sys/taskBarData',
+      urlMenuMaps: 'sys/urlMenuMaps',
+      activityMenu: 'sys/activityMenu',
+      activityView: 'sys/activityView',
+    }),
+    cacheViews() {
+      return this.taskBarData.map(menu => menu.component)
+    }
+  },
+
   created() {
-    getMenus().then(resp=>{
-      this.views=resp['data'];
-      this.resolverMenuMap(this.views);
-      this.activityView = this.views[0];
-      this.menus = this.activityView['children'] || []
-    })
+    this.initMenus();
   },
   mounted() { },
   methods: {
+    ...mapActions({
+      initMenus: 'sys/initMenus'
+    }),
+    ...mapMutations({
+      switchActiveMenuTo: 'sys/switchActiveMenuTo',
+      switchActiveViewTo: 'sys/switchActiveViewTo'
+    }),
     selectMenu(menu) {
       let menuByUrl = this.getMenuByUrl(menu.key);
       let containUrl = this.taskBarData.filter(item => item.url == menuByUrl.url).length > 0;
       if(!containUrl) {
         this.taskBarData.push(menuByUrl);
       }
-      this.activityMenu = menuByUrl;
+      this.switchActiveMenuTo(menuByUrl);
       this.selectedKeys = menu.selectedKeys;
       this.$router.push(menu.key);
     },
@@ -186,19 +200,17 @@ export default {
         this.openKeys = this.prevOpenKeys = openKeys;
       }
     },
-    loadError() {
-
-    },
     switchTask (url) { // 切换任务菜单处理
       if(this.isWorkMenu(url)) {
-        this.activityMenu = this.workMenu;
+        this.switchActiveMenuTo(this.workMenu);
         this.selectedKeys[0] = '';
       } else {
         let menuByUrl = this.getMenuByUrl(url);
-        this.activityMenu = menuByUrl;
+        this.switchActiveMenuTo(menuByUrl);
         this.$router.push(url);
       }
     },
+    loadError() {},
     closeTask (url, action) { // 关闭任务处理
       let prevTemp = null; // 用来保存当前关闭的上一个任务
       this.taskBarData.forEach((item, index, ori) => {
@@ -213,13 +225,14 @@ export default {
         this.switchTask(prevTemp['url']);
       } else {
         this.selectedKeys[0] = '';
+        this.$router.push('/');
       }
     },
     taskBarCloseMoreOpera (item) { // 任务栏菜单关闭处理
       let start = this.workMenu ? 1 : 0;
       if (item.key === 'all') {
         if(this.workMenu) {
-          this.activityMenu = this.workMenu;
+          this.switchActiveMenuTo(this.workMenu);
           this.selectedKeys[0] = this.activityMenu['url']
         }
 
@@ -251,26 +264,11 @@ export default {
 
     },
     getMenuByUrl(url) {
-      return this.urlMenuMap[url];
+      return this.urlMenuMaps[url];
     },
     isWorkMenu(url) {
       return this.workMenu && this.workMenu.url == url;
-    },
-    resolverMenuMap (menus) {
-      for(let i=0; i<menus.length; i++) {
-        let menu = menus[i];
-        if (menu['type'] === 'V') {
-
-          if(menu.status == 'hide') {
-            menus.splice(i, 1); i--;
-          }
-
-          this.urlMenuMap[menu.url] = menu;
-        } else if (menu['children']) {
-          this.resolverMenuMap(menu['children'])
-        }
-      }
-    },
+    }
   }
 }
 </script>

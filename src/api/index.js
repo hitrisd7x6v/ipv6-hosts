@@ -3,17 +3,25 @@ import router from '@/router'
 
 // 图像验证码url
 const captchaUri = `${baseURL}/captcha`
-export {captchaUri}
+const menuUri = "/core/menus"
+const loginUri = "/core/login"
 
-// 获取首页菜单
+export {captchaUri, menuUri, loginUri}
+
+// 获取侧边菜单栏数据
 export function getMenus() {
-    return GET("/core/menus")
+    return GET(menuUri)
+}
+
+// 获取字典数据
+export function getDict(dictType) {
+    return GET('/core/dict', {dictType})
 }
 
 // 提交登录接口
 export function login(user) {
-    return POST('/core/login', user).then(resp=>{
-        router.push("/");
+    return POST(loginUri, user).then(resp=>{
+        router.push("/").then(r => {});
     });
 }
 

@@ -110,8 +110,16 @@ instance.interceptors.response.use(
     }
 )
 
-let GET = instance.get;
 let POST = instance.post;
+let GET = (url, data, config) => {
+    if(config) {
+        config['params'] = data;
+    } else {
+        config = {params: data}
+    }
+
+    return instance.get(url, config);
+}
 export {GET, POST, baseURL, instance as http}
 
 export default instance
