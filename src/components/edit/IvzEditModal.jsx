@@ -11,6 +11,7 @@ export default defineComponent({
         centered: Boolean,
         destroyOnClose: Boolean,
         width: {default: 452},
+        getContainer: {type: Function},
         maskClosable: {default: false},
         closable: {type: Boolean, default: false},
         funMetas: {type: Array, default: () => []},
@@ -20,14 +21,22 @@ export default defineComponent({
         let refs = ref(null);
         let formRef = ref(null);
         let visible = ref(false);
-        let spinning = ref(true);
+        let spinning = ref(false);
+
         let initFunMetas = (formRef, funMetas) => {
             funMetas.forEach(meta => {
-                if(!meta.onClick) {
-                    meta.onClick = () => {
-                        let editModel = formRef.value.getEditModel();
-                        let formContext = formRef.value.getFormContext();
-                        meta.callback(editModel, meta, formContext);
+                let oriClickEvent = meta.props.onClick;
+                if(!oriClickEvent && import.meta.env.DEV) {
+                    console.warn(`组件[IvzEditModal]的功能[${meta.field}]没有监听点击事件`)
+                }
+
+                meta.props.onClick = () => {
+                    let editModel = formRef.value.getEditModel();
+                    let formContext = formRef.value.getFormContext();
+                    if(oriClickEvent) {
+                        oriClickEvent(editModel, meta, formContext);
+                    } else {
+                        console.error(`组件[IvzEditModal]的功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
                     }
                 }
             })
@@ -43,6 +52,7 @@ export default defineComponent({
                     this.formRef = this.$refs['iemFormRef'])
             }
         },
+
         'funMetas.length': function(newFunMetas) {
             this.initFunMetas(newFunMetas);
         }
@@ -59,13 +69,14 @@ export default defineComponent({
         }
 
         let slots = {
-            footer: () => this.$slots.fun ? this.$slots.fun({model, context}) : fun,
+            footer: () => this.$slots.fun ? this.$slots.fun({model, context})
+                : <div style="text-align: center">{() => fun}</div>,
             title: () => this.$slots.title ? this.$slots.title() : <span>{this.title}</span>
         }
 
         return <a-modal v-model={[this.visible, 'visible', ["modifier"]]}
                         {...this.$props} v-slots={slots} ref="iemRef">
-                <a-spin size="small" tip="数据加载中..." spinning={this.spinning}>
+                <a-spin size="small" tip="数据处理中..." spinning={this.spinning}>
                     <ivz-form {...this.$attrs} {...formProps} ref="iemFormRef">
                         {this.$slots.default({model, context})}
                     </ivz-form>
@@ -73,8 +84,17 @@ export default defineComponent({
             </a-modal>
     },
     methods: {
+        // 表单组件是否初始化
+        isInitForm() {
+          return this.formRef != null
+        },
+
         switchActive(visible) {
           this.visible = visible;
+        },
+
+        switchSpinning(spinning) {
+          this.spinning = spinning;
         },
 
         toggleActive() {
@@ -101,12 +121,14 @@ export default defineComponent({
             })
           })
         },
+
         getEditModel() {
             return this.formRef.getEditModel();
         },
 
         getEditContext() {
-            return this.formRef.getFormContext();
+            // 可能出现获取的时候form还未初始化, 自行判断
+            return this.formRef ? this.formRef.getFormContext() : {};
         }
     }
 })

@@ -8,6 +8,7 @@ export default defineComponent({
     props: {
         rules: Array,
         name: String,
+        span: Array, // labelCol wrapperCol eg: [3, 21]
         labelCol: Object,
         wrapperCol: Object,
         hideRequiredMark: Boolean,
@@ -20,7 +21,7 @@ export default defineComponent({
         metas: {type: Array, required: false, default: () => []},
     },
     setup({metas}) {
-        const defaultModel = {};
+        const resetModel = {}, initModel = {};
         const metasMap = createMetasMap(metas);
 
         let formRef;
@@ -30,9 +31,12 @@ export default defineComponent({
             resetFields: unMounted,
             getEditModel: unMounted,
             setEditModel: unMounted,
+            getInitModel: unMounted,
+            getResetModel: unMounted,
             scrollToField: unMounted,
             clearValidate: unMounted,
             validateFields: unMounted,
+            getDefaultModel: unMounted,
             getFieldValue: (namePath) => null,
             setFieldValue: (namePath, value) => null,
             getFormMeta: (props) => getMetaByProp(props, metasMap),
@@ -43,7 +47,7 @@ export default defineComponent({
         provide('formContext', formContext);
 
         let proxy = reactive({editModel});
-        return {defaultModel, metasMap, formContext, formRef, proxy}
+        return {resetModel, metasMap, formContext, formRef, proxy, initModel}
     },
     created() {
         this.formRef = this.$refs['formRef']
@@ -57,16 +61,25 @@ export default defineComponent({
         this.formContext.resetFields = this.resetFields;
         this.formContext.getEditModel = this.getEditModel;
         this.formContext.setEditModel = this.setEditModel;
+        this.formContext.getInitModel = this.getInitModel;
+        this.formContext.getResetModel = this.getResetModel;
         this.formContext.scrollToField = this.scrollToField;
         this.formContext.clearValidate = this.clearValidate;
         this.formContext.validateFields = this.validateFields;
     },
     mounted() {
-        this.defaultModel = cloneDeep(this.proxy.editModel);
+        this.initModel = cloneDeep(this.proxy.editModel);
+        this.resetModel = cloneDeep(this.proxy.editModel);
     },
     render() {
         let editModel = this.proxy.editModel;
-        let props = mergeProps(this.$attrs, {model: editModel});
+        let labelCol = this.labelCol, wrapperCol = this.wrapperCol;
+        if(this.span instanceof Array) {
+            labelCol = {span: this.span[0]};
+            wrapperCol = {span: this.span[1]}
+        }
+
+        let props = mergeProps(this.$props, {model: editModel, labelCol, wrapperCol});
         return (
             <a-form {...props} ref="formRef">
                 {this.$slots.default({model: editModel})}
@@ -78,7 +91,7 @@ export default defineComponent({
             return this.formRef;
         },
         validate() {
-            this.getFormRef().validate();
+            return this.getFormRef().validate();
         },
 
         getFormContext() {
@@ -86,7 +99,7 @@ export default defineComponent({
         },
         resetFields() {
             this.getFormRef().resetFields();
-            let model = this.getDefaultModel();
+            let model = this.getResetModel();
             this.proxy.editModel = reactive(model);
         },
         scrollToField() {
@@ -94,15 +107,18 @@ export default defineComponent({
         },
 
         validateFields() {
-            this.getFormRef().validateFields();
+            return this.getFormRef().validateFields();
         },
 
         clearValidate() {
             this.getFormRef().clearValidate();
         },
+        getInitModel() {
+            return cloneDeep(this.initModel);
+        },
 
-        getDefaultModel() {
-            return cloneDeep(this.defaultModel);
+        getResetModel() {
+            return cloneDeep(this.resetModel);
         },
 
         getEditModel() {
@@ -110,7 +126,7 @@ export default defineComponent({
         },
 
         setEditModel(editModel) {
-            this.defaultModel = cloneDeep(editModel);
+            this.resetModel = cloneDeep(editModel);
 
             if(!isProxy(editModel)) {
                 this.proxy.editModel = reactive(editModel);

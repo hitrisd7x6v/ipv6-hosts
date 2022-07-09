@@ -1,16 +1,16 @@
 <template>
-  <ivz-basic-list @submit="changeHandle" ref="ivzForm">
-    <template #search="{model}">
-      <ivz-input name="name" label="名称" defaultValue="8" @change="changeHandle"/>
-      <ivz-select name="sex" label="性别" :options="options"
-                  style="width: 158px;" :wrapper-col="{span: 18}"/>
-      <ivz-switch name="status" checkedChildren="开" label="状态"></ivz-switch>
-      <ivz-radio name="ko" :options="options" label="ko"/>
-      <ivz-mentions name="kk" :options="options" />
-      <ivz-date-time name="kl" picker="date" label="时间"
-         valueFormat="YYYY-MM-DD hh:mm:ss" defaultValue="2013-05-10"/>
-    </template>
-  </ivz-basic-list>
+  <ivz-menu-view>
+    <ivz-view-search @submit="changeHandle" ref="ivzForm">
+        <ivz-input name="name" label="名称" defaultValue="8" @change="changeHandle"/>
+        <ivz-select name="sex" label="性别" :options="options"
+                    style="width: 158px;" :wrapper-col="{span: 18}"/>
+        <ivz-switch name="status" checkedChildren="开" label="状态"></ivz-switch>
+        <ivz-radio name="ko" :options="options" label="ko"/>
+        <ivz-mentions name="kk" :options="options" />
+        <ivz-date-time name="kl" picker="date" label="时间"
+           valueFormat="YYYY-MM-DD hh:mm:ss" defaultValue="2013-05-10"/>
+    </ivz-view-search>
+  </ivz-menu-view>
 </template>
 
 <script>
@@ -19,9 +19,13 @@ import IvzForm from "@/components/form/basic/IvzForm";
 import {IvzDateTime, IvzMentions, IvzInput, IvzSelect, IvzSwitch, IvzRadio} from "@/components/form/basic";
 import IvzBasicList from "@/components/list/IvzBasicList.vue";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
+import IvzMenuView from "@/components/view/IvzMenuView.vue";
+import {IvzViewSearch} from "@/components/view";
 export default {
-  name: "role",
+  name: "Role",
   components: {
+    IvzViewSearch,
+    IvzMenuView,
     IvzBasicSearch,
     IvzDateTime, IvzMentions, IvzRadio, IvzSwitch, IvzSelect, IvzForm, IvzInput, IvzBasicList},
   setup() {

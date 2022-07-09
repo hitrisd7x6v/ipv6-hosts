@@ -1,18 +1,25 @@
 <template>
-  <router-view />
+  <a-config-provider :locale="zhCN">
+    <router-view />
+  </a-config-provider>
 </template>
 
 <script>
+import 'moment/dist/locale/zh-cn';
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
 export default {
-  name: 'App'
+  name: 'App',
+  setup() {
+    return {zhCN}
+  }
 }
-// This starter template is using Vue 3 experimental <script setup> SFCs
-// Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
 </script>
 
 <style>
 #app {
+  height: 100%;
+  position: relative;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -1,10 +1,10 @@
 <template>
-  <a-sub-menu v-bind="$attrs" :key="menuInfo.url">
+  <a-sub-menu>
     <template #title>
-      <ivz-icon :type="menuInfo.icon"></ivz-icon>
-      <span class="ivz-level-o" v-text="menuInfo.name"></span>
+      <ivz-icon :type="menu.icon"></ivz-icon>
+      <span class="ivz-level-o">{{menu.name}}</span>
     </template>
-    <template v-for="item in menuInfo.children">
+    <template v-for="item in menu.children" :key="item.url">
       <template v-if="item.type=='V'">
         <a-menu-item :key="item.url">
           <ivz-icon :type="item.icon"></ivz-icon>
@@ -12,7 +12,7 @@
         </a-menu-item>
       </template>
       <template v-else>
-        <ivz-sub-menu :menu-info="item"/>
+        <ivz-sub-menu :menu="item" :key="item.id"/>
       </template>
     </template>
   </a-sub-menu>
@@ -22,7 +22,7 @@
 export default {
   name: "IvzSubMenu",
   props: {
-    menuInfo: {
+    menu: {
       type: Object,
       default: () => ({}),
     },

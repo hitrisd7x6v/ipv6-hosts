@@ -1,5 +1,4 @@
 import {createStore} from "vuex";
-import {IvzOnlineStore} from "ivz-online";
 import registerSysModule from "@/store/module/core";
 import registerViewModule from "@/store/module/view";
 let store = createStore({
@@ -9,9 +8,7 @@ let store = createStore({
     mutations: {
 
     },
-    modules: {
-        IvzOnlineStore
-    }
+    modules: {}
 });
 
 /*注册系统核心模块*/

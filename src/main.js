@@ -4,9 +4,9 @@ import store from "@/store";
 import Router from './router'
 import {http} from '@/utils'
 import '@/api/mock' // 数据模拟, 正式环境请注释掉
-import IvzOnline from 'ivz-online'
+// import IvzOnline from 'ivz-online'
 import IvzComponents from '@/components'
-import Antd, {message, notification} from 'ant-design-vue'
+import Antd,{message, notification} from 'ant-design-vue'
 import {createFromIconfontCN} from '@ant-design/icons-vue';
 
 // 项目中使用到的图标
@@ -22,8 +22,7 @@ if(import.meta.env.DEV) {
 }
 
 let app = createApp(App).use(Router).use(Antd).use(store)
-.use(IvzOnline).use(IvzComponents)
-.component("ivz-icon", IvzIcon);
+.use(IvzComponents).component("ivz-icon", IvzIcon);
 
 
 app.config.globalProperties.ivzStx=''

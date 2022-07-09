@@ -1,16 +1,31 @@
-import {defineComponent, h, mergeProps, reactive, ref, resolveComponent} from "vue";
+import moment from 'moment'
 import {mapGetters, useStore} from "vuex";
-
+import {defineComponent, h, mergeProps, reactive, ref, resolveComponent} from "vue";
+function getSlotName(dataIndex) {
+    let fieldPath = dataIndex.split('.');
+    fieldPath.splice(0, 0, 'c');
+    return fieldPath.join('_');
+}
 function initColumnActionSlot(column, slotName, slots) {
     let funMetas = column['funMetas'];
     if(funMetas instanceof Array) {
         funMetas.forEach(meta => {
-            meta['key'] = meta.field;
+            let oriClickEvent = meta.props.onClick;
+            if(!oriClickEvent && import.meta.env.DEV) {
+                console.warn(`组件[IvzBasicTable]的操作功能[${meta.field}]没有监听点击事件`)
+            }
+
             if(!meta.render) {
-                meta.render = (row) => {
-                    let props = {onClick: () => meta.callback(row, meta)
-                        , key: meta.field, style: meta.style}
-                    return h('a', props, [meta.name]);
+                delete meta.props.onClick; // 删除原先的事件
+                meta.render = (row, meta) => {
+                    let onClick = () => {
+                        if(oriClickEvent) {
+                            oriClickEvent(row, meta);
+                        } else {
+                            console.error(`组件[IvzBasicTable]的操作功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
+                        }
+                    }
+                    return <a {...meta.props} onClick={onClick} class="ivz-ibt-fun">{meta.name}</a>
                 }
             }
         })
@@ -27,25 +42,64 @@ function initColumnActionSlot(column, slotName, slots) {
         }
     }
 }
+
+function initOptionsLabel(column) {
+    if(column.options instanceof Array) {
+        column['__valueLabelMap'] = {}
+        column.options.forEach(item => {
+            column['__valueLabelMap'][item.value] = item.label;
+        })
+    } else if(column.dict){
+        useStore().getters['sys/getOptionsByDictType'](column.dict);
+        let valueLabelMap = useStore().getters['sys/getValueLabelMap'](column.dict);
+        column['__valueLabelMap'] = valueLabelMap
+    } else if(column.url) {
+        useStore().getters['sys/getOptionsByUrl'](column.url);
+        let valueLabelMap = useStore().getters['sys/getValueLabelMap'](column.url);
+        column['__valueLabelMap'] = valueLabelMap
+    }
+}
+
 function initColumnFormatterSlot(column, slotName, slots) {
-    let getOptionsLabel = useStore().getters['sys/optionsLabel'];
-    let key = column.dict || column.url;
-    if(!column.formatter) {
-        column.formatter = ({value, row, column}) => {
-            return getOptionsLabel(key, value)
+    initOptionsLabel(column);
+
+    let formatter = column.formatter;
+    if(formatter instanceof Function) {
+        // 对formatter创建代理, 新增返回label值
+        column.formatter = ({value, record, column}) => {
+            let label = column['__valueLabelMap'][value];
+            return formatter({value, record, column, label})
         }
     } else {
-        let formatter = column.formatter;
-        column.formatter = ({value, row, column}) => {
-            let label = getOptionsLabel(key, value);
-            return formatter({value, row, column, label})
+        column.formatter = ({value, record, column}) => {
+            return column['__valueLabelMap'][value];
         }
     }
 
-    slots[slotName] = ({text, row}) => {
-        return column.formatter({value: text, row, column})
+    slots[slotName] = ({text, record}) => {
+        return column.formatter({value: text, record, column})
     }
 }
+
+const typeFormatMaps = {date: 'YYYY-MM-DD HH:mm:ss', month: 'MM', week: 'E', time: 'HH:mm:ss'}
+function initDatetimeColumnSlot(column, slotName, slots) {
+    let formatter = column.formatter;
+    if(!(formatter instanceof Function)) {
+        column.formatter = ({value, row, column}) => {
+            if(value) {
+                let picker = column.picker || 'date';
+                return moment(value, column.format || typeFormatMaps[picker])
+            } else {
+                return '';
+            }
+        }
+    }
+
+    slots[slotName] = ({text, record}) => {
+        return column.formatter({value: text, record, column})
+    }
+}
+
 function initTableColumns(columns, slots) {
     let slotNameMaps = {}, returnSlots = {...slots};
 
@@ -61,34 +115,34 @@ function initTableColumns(columns, slots) {
     if(columns instanceof Array) {
         columns.forEach(column => {
             let columnSlot = {}
+
             // 声明此列已经初始化
-            if(column['_init']) return;
+            if(column['__init']) return;
 
+            column.dataIndex = column.dataIndex || column.field;
             let dataIndex = column.dataIndex;
-            if(!dataIndex) {
 
-            }
             let slotName = slotNameMaps[dataIndex];
             if(slotName) {
                 columnSlot['customRender'] = slotName
             } else {
                 if(column.type == 'action') {
-                    let fieldPath = dataIndex.split('.');
-                    fieldPath.splice(0, 0, 'c');
-                    columnSlot['customRender'] = fieldPath.join('_');
-                    initColumnActionSlot(column, columnSlot['customRender'], returnSlots)
-                }
+                    // 操作列的默认对齐方式为居中对齐
+                    column['align'] = column['align'] || 'center';
 
-                if(column.dict || column.url) {
-                    let fieldPath = dataIndex.split('.');
-                    fieldPath.splice(0, 0, 'c');
-                    columnSlot['customRender'] = fieldPath.join('_');
+                    columnSlot['customRender'] = getSlotName(dataIndex);
+                    initColumnActionSlot(column, columnSlot['customRender'], returnSlots)
+                } else if(column.dict || column.url || column.options) {
+                    columnSlot['customRender'] = getSlotName(dataIndex);
                     initColumnFormatterSlot(column, columnSlot['customRender'], returnSlots);
+                } else if(column.type == 'datetime') {
+                    columnSlot['customRender'] = getSlotName(dataIndex);
+                    initDatetimeColumnSlot(column, columnSlot['customRender'], returnSlots);
                 }
             }
 
             column['slots'] = columnSlot
-            column['_init'] = true;
+            column['__init'] = true;
         })
     }
 
@@ -104,12 +158,12 @@ function getTableRowSelection(columns) {
                 let {width, title, fixed, hideDefaultSelections, selections, selectionType} = column;
                 selectionColumn = {columnWidth: width, columnTitle: title
                     , fixed, hideDefaultSelections, type: selectionType || 'checkbox', selections};
-                columns.splice(index, 1);
+                columns.splice(parseInt(index), 1);
                 return selectionColumn;
             }
         }
 
-        return selectionColumn;
+        return null;
     } else {
         return null;
     }
@@ -142,6 +196,7 @@ export default defineComponent({
                 emit('selectInvert', selectedRows)
             }
         }
+
         let columnSlots = initTableColumns(columns, slots);
 
         let tableProps = mergeProps(attrs, {rowSelection})

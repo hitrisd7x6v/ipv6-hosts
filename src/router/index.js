@@ -1,18 +1,17 @@
 import {computed, watch} from 'vue'
 import store from "@/store";
-import {createRouter, createWebHashHistory, useRouter} from 'vue-router'
-import Index from '@msn/index/index.vue'
+import {createRouter, createWebHashHistory} from 'vue-router'
+import Main from '@msn/main/index.vue'
 import Login from '@msn/login/login.vue'
 import NotFound from '@msn/error/404.vue'
-import {IvzOnline, IvzBasicContainer} from "ivz-online";
+import Index from '@msn/core/index/index.vue'
 
 let routes = [
-    {path: '/', component: Index, name: 'index'},
-    {path: '/login', component: Login, name: 'login'},
-    {path: '/online', component: IvzOnline, children: [
-            {path: "", component: IvzBasicContainer}
+    {path: '/', component: Main, name: 'main', children: [
+            {path: '', component: Index, name: 'index'}
         ]
-    }
+    },
+    {path: '/login', component: Login, name: 'login'},
 ]
 
 const router = createRouter({
@@ -34,7 +33,7 @@ router.addRoute({path:'/:chapters+', name: '404', component: NotFound,
                 let menu = urlMenuMaps[path];
                 if(menu) { // 当前url对应的菜单, 如果存在激活
                     store.commit('sys/putMenuToTaskBars', menu)
-                    store.commit('sys/switchActiveMenuTo', menu)
+                    store.commit('sys/switchActiveMenuTo', path)
                 }
 
                 router.push(path).then()
@@ -55,11 +54,11 @@ router.beforeEach((to, form, next) => {
 
 /**
  * 注册系统菜单路由信息
- * @see /src/vuex/sys.js
+ * @see /src/store/core.js
  */
 const registerMenusRoutes = (routes) => {
     // 注册到index下面
-    routes.forEach(route => router.addRoute('index', route))
+    routes.forEach(route => router.addRoute('main', route))
 }
 
 export {registerMenusRoutes}

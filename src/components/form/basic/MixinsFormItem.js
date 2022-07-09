@@ -1,5 +1,5 @@
 import {defineComponent, inject, mergeProps, reactive, computed} from "vue";
-
+const defOptions = {};
 export default defineComponent({
     props: ['name', 'label', 'labelCol', 'wrapperCol', 'colon', 'extra', 'hasFeedback'
         , 'help', 'labelAlign', 'validateStatus', 'validateFirst', 'validateTrigger'
@@ -20,7 +20,6 @@ export default defineComponent({
             }
         } else {
             this.namePath = this.field.split('.');
-            this.$props.name = this.namePath;
         }
 
         if(this.formContext) {
@@ -34,8 +33,9 @@ export default defineComponent({
         getDefaultValue(defaultValue) {
             return defaultValue || null;
         },
-        getFormItemProps() {
-            return mergeProps(this.$props, {name: this.namePath})
+        getFormItemProps(options) {
+            options = options ? options : defOptions;
+            return mergeProps(this.$props, {name: this.namePath, ...options})
         },
         getFormAttrs(options) {
             if(this.attrs) {
@@ -60,11 +60,11 @@ export default defineComponent({
             }
 
             this.attrs = this.$attrs;
-            let value = computed(() => this.formContext.getMetaValue(this.name));
+            let value = computed(() => this.formContext.getFieldValue(this.namePath));
             if(this.formContext && !this.attrs['onUpdate:checked']) {
                 this.attrs = reactive(mergeProps(this.$attrs, {
                     checked: value, 'onUpdate:checked': (val) => {
-                        this.formContext.setMetaValue(this.name, val);
+                        this.formContext.setFieldValue(this.namePath, val);
                     }
                 }));
             }

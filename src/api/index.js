@@ -14,8 +14,15 @@ export function getMenus() {
 }
 
 // 获取字典数据
-export function getDict(dictType) {
-    return GET('/core/dict', {dictType})
+export function getDict(type) {
+    return GET('/core/dictData/listByType', {type}).then(({data}) => {
+        let options;
+        if(data instanceof Array) {
+            options = data.map(item => {return {label: item.label, value: item.value}})
+        }
+
+        return options;
+    })
 }
 
 // 提交登录接口

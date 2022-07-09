@@ -1,5 +1,5 @@
 /*视图组件相关的数据存储*/
-import {FunMetaMaps} from "@/utils/SysUtils";
+import {FunMetaMaps, getMetaConfig} from "@/utils/SysUtils";
 
 /**
  *  此按钮的状态
@@ -14,20 +14,25 @@ function view(editModel, meta) {
 function unMounded() {
     console.warn('获取数据失败, 组件还未挂载完成');
 }
+function unMoundedEdit() {
+    console.warn('组件未挂载完成或者缺少编辑视图组件 IvzViewModal, IvzViewDrawer等');
+}
 // 解析视图菜单下面的功能点
 function resolverFunMetas(menu) {
     let children = menu.children;
     let searchFunMetas= [], tableFunMetas = [], editFunMetas = [];
     if(children) {
-        let saveMeta = {field: FunMetaMaps.Submit, name: '提交', type: 'primary'
-            , addUrl: null, editUrl: null, sort: 10, view};
+        let props = getMetaConfig(FunMetaMaps.Submit);
+        let saveMeta = {field: FunMetaMaps.Submit, name: '提交'
+            , addUrl: null, editUrl: null, sort: 30, view, props};
         children.forEach(item => {
             if(item.type != 'A') {
                 return console.log(`错误的功能点[${item.name}][${item.type} != 'A']`)
             }
 
             let {position, permType, type, url, name, sort} = item;
-            let meta = {field: permType, name, url, sort, view};
+            let props = getMetaConfig(permType);
+            let meta = {field: permType, name, url, sort, view, props};
 
             // 需要保存按钮
             if(meta.field == FunMetaMaps.Add) {
@@ -48,7 +53,8 @@ function resolverFunMetas(menu) {
             }
         })
         if(saveMeta.editUrl || saveMeta.addUrl) {
-            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', sort: 20, view}
+            let props = getMetaConfig(FunMetaMaps.Cancel);
+            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', sort: 50, view, props}
 
             editFunMetas.push(cancelMeta)
             editFunMetas.push(saveMeta);
@@ -86,25 +92,32 @@ export default function registerViewModule(store) {
                     tableFunMetas, // 表格功能按钮
                     searchFunMetas, // 搜索栏功能按钮
                     selectedRows: unMounded, // 当前视图选中的行信息(function)
+                    loadingTableData: unMounded, // 加载表数据源
 
-                    editModel: unMounded, // 获取编辑视图组件数据
-                    editFormContext: unMounded, // 获取编辑表单上下文
-                    editSwitchActive: unMounded, // 当前视图编辑组件的激活状态
-                    editLoadingActive: unMounded,
+                    editModel: unMoundedEdit, // 获取编辑视图组件数据
+                    editFormContext: unMoundedEdit, // 获取编辑表单上下文
+                    editSwitchActive: unMoundedEdit, // 当前视图编辑组件的激活状态
+                    editLoadingActive: unMoundedEdit,
+                    editSwitchSpinning: unMoundedEdit, // 切换提交状态
 
                     searchModel: unMounded, // 获取搜索视图组件数据
                     searchFormContext: unMounded, // 获取搜索表单上下文
+
+                    getEditFunMeta: (field) => editFunMetas.find(item => item.field == field),
+                    getTableFunMeta: (field) => tableFunMetas.find(item => item.field == field),
+                    getSearchFunMeta: (field) => searchFunMetas.find(item => item.field == field)
                 }
             },
 
             setEditViewContext: (state, {url, formContext
-                , model, loadingActive, switchActive}) => {
+                , model, loadingActive, switchActive, switchSpinning}) => {
                 let pageViewInfo = state.pageViewInfoMaps[url];
 
                 pageViewInfo.editModel = model;
                 pageViewInfo.editFormContext = formContext;
                 pageViewInfo.editSwitchActive = switchActive;
                 pageViewInfo.editLoadingActive = loadingActive;
+                pageViewInfo.editSwitchSpinning = switchSpinning;
             },
 
             setSearchViewContext: (state, {url, formContext, model}) => {
@@ -114,16 +127,18 @@ export default function registerViewModule(store) {
                 pageViewInfo.searchFormContext = formContext;
             },
 
-            setTableViewContext: (state, {url, selectedRows}) => {
+            setTableViewContext: (state, {url, selectedRows, loadingTableData}) => {
                 let pageViewInfo = state.pageViewInfoMaps[url];
 
                 pageViewInfo.selectedRows = selectedRows;
+                pageViewInfo.loadingTableData = loadingTableData;
             },
 
             // 移除页视图数据, 在页视图组件卸载的时候调用
             removePageViewData: (state, viewMenu) => {
               delete state.pageViewInfoMaps[viewMenu.url]
             },
+
             switchEditVisibleTo: (state, {visible, url}) => {
                 let viewInfo = state.pageViewInfoMaps[url];
                 if(visible === undefined) {
