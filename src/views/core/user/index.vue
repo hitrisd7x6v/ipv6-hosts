@@ -11,8 +11,8 @@
     </ivz-view-modal>
     <ivz-view-table :columns="columns" @selectAll="select"
          :dataSource="data" :bordered="true" rowKey="id" size="small">
-      <template #c_phone="{record, text}">{{text}}</template>
-      <template #c_account_name>sdf</template>
+<!--      <template #c_phone="{record, text}">{{text}}</template>-->
+<!--      <template #c_account_name>sdf</template>-->
     </ivz-view-table>
   </ivz-menu-view>
 </template>

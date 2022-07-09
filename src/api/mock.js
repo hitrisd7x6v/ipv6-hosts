@@ -52,9 +52,32 @@ Mock.mock(RegExp(`${menuUri}.*`), 'get', (args) => {
         data: Mock.mock(menus)
     }
 })
+// 模拟用户中心详情
+Mock.mock(RegExp(`/core/user/detail.*`), 'get', () => {
+    return {
+        code: 200, message: '成功',
+        data: {nickName:'iteaj', phone: '13123456028', email: 'iteaj@outlook.com', account: 'admin',
+            deptName: '技术部 > 技术总监', roleName: '超级管理员',
+            avatar: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'}
+    }
+})
+// 模拟通知列表
+Mock.mock(RegExp(`/core/notify/view.*`), 'get', (args) => {
+    return {
+        code: 200,
+        message: '成功',
+        data: [
+            {msg: 'klsdfjksdf', title: '测试'}
+        ]
+    }
+})
 // 模拟字典数据
-Mock.mock(RegExp('/core/dict'), 'get', args => {
-
+Mock.mock(RegExp('/core/dictData/listByType'), 'get', args => {
+    return {
+        code: 200,
+        message: 'OK',
+        data: [{label: '男', value: 'man'},{label: '女', value: 'woman'}]
+    }
 })
 // 用户接口信息
 let userMock = {

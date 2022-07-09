@@ -69,8 +69,8 @@ export default {
 }
 </script>
 
-<style scoped>
-.logo {
+<style>
+.ivz-sider-menu .logo {
   height: 68px;
   padding: 12px;
   color: #ffffff;
@@ -82,12 +82,12 @@ export default {
   vertical-align: middle;
 }
 /*侧边栏*/
-.ant-layout-sider {
-  background: #001529;
-}
+/*.ant-layout-sider {*/
+/*  background: #001529;*/
+/*}*/
 .ivz-ism-menu {
+  flex: 1 1 0%;
   overflow: hidden auto;
-  height: calc(100% - 68px);
 }
 .ivz-sider-menu .ant-layout-sider-children {
   height: 100%;
@@ -95,24 +95,21 @@ export default {
   flex-direction: column;
 }
 /*侧边菜单栏滚动条样式*/
-/*.ivz-sider-menu {*/
-/*  overflow: hidden;*/
-/*}*/
 .ivz-sider-menu.ant-layout-sider-collapsed .ant-menu-inline-collapsed {
   width: 72px;
 }
-.ivz-ism-menu .ant-layout-sider-children ::-webkit-scrollbar {
+.ivz-sider-menu .ant-layout-sider-children ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-.ivz-ism-menu .ant-layout-sider-children ::-webkit-scrollbar-thumb {
+.ivz-sider-menu .ant-layout-sider-children ::-webkit-scrollbar-thumb {
   background: hsla(0,0%,100%,.2);
   border-radius: 3px;
   -webkit-box-shadow: inset 0 0 5px hsl(0deg 0% 100% / 5%);
 }
 
-.ivz-ism-menu .ant-layout-sider-children ::-webkit-scrollbar-track {
+.ivz-sider-menu .ant-layout-sider-children ::-webkit-scrollbar-track {
   background: hsla(0,0%,100%,.15);
   border-radius: 3px;
   -webkit-box-shadow: inset 0 0 5px rgb(37 37 37 / 5%);

@@ -1,47 +1,39 @@
-const htmlCdnPlugin = (env) => {
-    let cdnLib =
-        `
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ant-design-vue@2.1.6/dist/antd.min.css">
-    
-    <script src="https://cdn.bootcdn.net/ajax/libs/require.js/2.3.6/require.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.runtime.global.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vuex@4.0.0/dist/vuex.global.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-router@4.0.8/dist/vue-router.global.prod.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/zh-cn.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ant-design-vue@2.1.6/dist/antd.min.js"></script>
-    `
-    return {
-        name: 'html-transform',
-        transformIndexHtml(html) {
-            // 如果是生产环境使用cdn或者本地库
-            if(env.mode == 'production') {
-                return html.replace('<meta cdn/>', cdnLib);
-            } else {
-                return html;
+const vitePluginChunk = {
+    name: 'vite-plugin-chunk',
+    outputOptions: (options) => {
+        options.manualChunks = (id, {getModuleInfo, getModuleIds}) => {
+            if(id.includes('node_modules/ant-design-vue')) {
+                return 'antd.min.esm'
+            } else if(id.includes('node_modules/moment')) {
+                return 'moment.min.esm'
+            } else if(id.includes('node_modules/@vue/')) {
+                return 'vue.runtime.esm'
+            } else if(id.includes('node_modules/vue-router/')) {
+                return 'vue-router.esm'
+            } else if(id.includes('node_modules/vuex/')) {
+                return 'vuex.esm'
+            } else if(id.includes('node_modules')) {
+                return 'vendor' // 其他第三方库
             }
         }
-    }
+
+        options.assetFileNames = (chunk) => {
+            if(chunk.name.includes('antd')) {
+                return `lib/antd.min.css`
+            }
+            return 'assets/[name].[hash].[ext]';
+        }
+
+        options.chunkFileNames = (chunk) => {
+            if(chunk.name.includes('esm')) {
+                return 'lib/[name].js'
+            }
+
+            return 'assets/[name].[hash].js';
+        }
+
+        return options;
+    },
 }
 
-const replaceImporter = {
-    name: 'replace-importer',
-    augmentChunkHash: (a, b) => {
-        // console.log(a);
-      return ""
-    },
-    renderDynamicImport: (a, b) => {
-        console.log(a);
-    },
-    outputOptions: (options) => {
-        Object.assign(options, {format: 'amd'
-        })
-        return options
-    },
-    renderChunk(code) {
-        return { code, map: null }
-    }
-}
-
-export {htmlCdnPlugin, replaceImporter}
+export {vitePluginChunk}

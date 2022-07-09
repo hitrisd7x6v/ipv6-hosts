@@ -1,11 +1,14 @@
 <template>
   <a-layout style="width: 100%; height: 100%;" class="ant-layout-has-sider">
-    <!--侧边栏-->
+    <!--侧边菜单栏-->
     <LayoutSider></LayoutSider>
-    <a-layout>
+
+    <a-layout class="ivz-layout-view">
       <!--右侧头-->
       <LayoutHeader></LayoutHeader>
-      <a-layout-content class="iz-main-container">
+
+      <!--右侧视图页-->
+      <a-layout-content class="ivz-main-container">
         <router-view v-slot="{ Component }">
           <transition name="slide-fade" mode="out-in">
             <keep-alive :include="cacheViews">
@@ -13,24 +16,28 @@
             </keep-alive>
           </transition>
         </router-view>
+
+        <!-- 用户中心 -->
+        <UserInfo></UserInfo>
       </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
 
 <script>
+import {ref} from "vue";
+import {mapGetters, useStore} from "vuex";
 import LayoutSider from "@msn/main/LayoutSider.vue";
 import LayoutHeader from "@msn/main/LayoutHeader.vue";
-import {mapGetters, useStore} from "vuex";
-import {ref} from "vue";
+import UserInfo from "@msn/main/UserInfo.vue";
 
 export default {
-  name: "main",
-  components:{LayoutSider, LayoutHeader},
+  name: "index",
+  components:{UserInfo, LayoutSider, LayoutHeader},
   setup() {
     let mounted = ref(false);
     useStore().dispatch('sys/initMenus')
-
+    useStore().dispatch('sys/initUser')
     return {mounted}
   },
   computed: {
@@ -38,7 +45,9 @@ export default {
       taskBarData: 'sys/taskBarData',
     }),
     cacheViews() {
-      return this.taskBarData.map(menu => menu.component)
+      return this.taskBarData
+          .filter(menu => menu.component != null)
+          .map(menu => menu.component)
     }
   }
 }
@@ -65,27 +74,42 @@ export default {
   background-color: rgba(0, 0, 0, 0.08);
 }
 /*任务栏样式*/
-.iz-main-container {
+.ivz-main-container {
   width: 100%;
   height: 100%;
   display: flex;
   display: -ms-flex;
   overflow: hidden;
+  position: relative;
   background: #ffffff;
   flex-direction: column;
   display: -webkit-flex; /* Safari */
   justify-content: flex-start;
 }
+.ivz-main-container ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-.ivz-content-iframe {
-  z-index: 0;
+.ivz-main-container ::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: hsl(0deg 0% 0% / 22%);
+  -webkit-box-shadow: inset 0 0 5px hsl(0deg 0% 100% / 5%);
+}
+
+.ivz-main-container ::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background: hsl(0deg 0% 83%);
+  -webkit-box-shadow: inset 0 0 5px rgb(37 37 37 / 5%);
+}
+.ivz-ilv-user {
+  /*height: 200px;*/
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #ebedf0;
+  padding: 48px;
+  background: #fafafa;
   width: 100%;
-  flex-grow: 1;
-  height: 100%;
-  /*border-radius: 8px;*/
-  /*border: 2px solid #ffffff;*/
-  border-bottom: 0px solid #ffffff;
-  background-color: rgba(243, 243, 243, 0.93);
 }
 
 .ivz-theme-dark .ivz-avatar{
@@ -114,7 +138,7 @@ export default {
 
 /*动画*/
 .slide-fade-enter-active {
-  transition: all .6s ease-out;
+  transition: all .5s ease-out;
 }
 
 .slide-fade-leave-active {

@@ -17,27 +17,29 @@
           <li class="ivz-opera-col">
             <a-dropdown placement="bottomCenter" class="ivz-opera-more">
               <div>
-<!--                <a-avatar :src="avatarUrl" :size="32" :load-error="loadError"></a-avatar>-->
+                <a-avatar :src="avatarUrl" :size="32" :load-error="loadError"></a-avatar>
                 <span style="font-size: 14px;"> 欢迎, {{user.name}}</span>
               </div>
               <template #overlay>
-                <a-menu>
-                  <a-menu-item key="info">
-                    <ivz-icon type="iz-icon-user-info"></ivz-icon>
-                    <span>个人信息</span>
+                <a-menu @click="quickOpera">
+                  <a-menu-item key="user">
+                    <ivz-icon type="iz-icon-user-info" style="font-size: 15px"/>
+                    <span> 个人资料</span>
+                  </a-menu-item>
+                  <a-menu-item key="pwd">
+                    <LockFilled style="font-size: 15px"/><span> 修改密码</span>
                   </a-menu-item>
                   <a-menu-divider />
                   <a-menu-item key="logout">
-                    <ivz-icon type="iz-icon-logout"></ivz-icon>
-                    <span>退出登录</span>
+                    <LogoutOutlined style="font-size: 15px" /><span> 退出登录</span>
                   </a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
           </li>
-          <li class="ivz-opera-col">
-            <a-tooltip title="系统通知">
-              <ivz-icon type="iz-icon-notify" style="font-size: 18px" />
+          <li class="ivz-opera-col" @click="() => quickOpera({key: 'msg'})">
+            <a-tooltip title="消息通知">
+              <NotificationFilled style="font-size: 16px"/>
             </a-tooltip>
           </li>
           <li style="clear: both"></li>
@@ -82,7 +84,7 @@
 
 <script>
 import {mapGetters, mapMutations} from "vuex";
-import {ReloadOutlined} from '@ant-design/icons-vue'
+import {ReloadOutlined, LockFilled, LogoutOutlined, NotificationFilled} from '@ant-design/icons-vue'
 export default {
   name: "LayoutHeader",
   computed: {
@@ -95,7 +97,7 @@ export default {
       activityView: 'sys/activityView',
     }),
   },
-  components: {ReloadOutlined},
+  components: {ReloadOutlined, LockFilled, LogoutOutlined, NotificationFilled},
   setup() {
     let avatarUrl = '/src/assets/logo.png';
     let workMenu = {}
@@ -103,6 +105,7 @@ export default {
   },
   methods: {
     ...mapMutations({
+      toggleUserVisible: 'sys/toggleUserVisible',
       switchActiveViewTo: 'sys/switchActiveViewTo',
       switchActiveMenuTo: 'sys/switchActiveMenuTo',
     }),
@@ -153,6 +156,11 @@ export default {
       }
 
       this.switchActiveViewTo(view)
+    },
+    quickOpera({key}) {
+      if(key != 'logout') {
+        this.toggleUserVisible({visible: true, key});
+      }
     },
     loadError() {},
   }
@@ -251,7 +259,7 @@ export default {
   border: 0px!important;
 
 }
-.ant-tabs-nav-container,iz-task-more-opera,.ivz-task-bar .ant-tabs-tab {
+.ivz-task-bar .ant-tabs-nav-container,iz-task-more-opera,.ivz-task-bar .ant-tabs-tab {
   height: 35px!important;
   line-height: 36px!important;
 }
@@ -259,7 +267,7 @@ export default {
   margin-top: 0px;
   padding-left: 52px;
 }
-.ant-tabs-tab-prev,.ant-tabs-tab-next {
+.ivz-task-bar .ant-tabs-tab-prev,.ivz-task-bar .ant-tabs-tab-next {
   height: 100%;
   width: 22px!important;
   padding-bottom: 2px;

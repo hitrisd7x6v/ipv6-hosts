@@ -13,6 +13,25 @@ export function getMenus() {
     return GET(menuUri)
 }
 
+// 获取用户中心详情
+export function getUser() {
+    return GET('/core/user/detail')
+}
+
+// 修改用户密码
+export function editPwd(model) {
+    return POST('', model)
+}
+
+// 修改当前用户信息
+export function editUser(user) {
+    return POST('', user);
+}
+
+export function getNotifyList() {
+    return GET('/core/notify/view')
+}
+
 // 获取字典数据
 export function getDict(type) {
     return GET('/core/dictData/listByType', {type}).then(({data}) => {

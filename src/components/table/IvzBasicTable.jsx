@@ -202,13 +202,7 @@ export default defineComponent({
         let tableProps = mergeProps(attrs, {rowSelection})
         return {slots: columnSlots, props: tableProps, selectedRows, rowSelection}
     },
-    computed: {
-      ...mapGetters({
-          getOptionsLabel: 'sys/optionsLabel'
-      })
-    },
     render() {
-
         return (
             <a-table {...this.props} customRow={(row) => {
                 return {

@@ -7,11 +7,11 @@ import NotFound from '@msn/error/404.vue'
 import Index from '@msn/core/index/index.vue'
 
 let routes = [
-    {path: '/', component: Main, name: 'main', children: [
-            {path: '', component: Index, name: 'index'}
+    {path: '/', component: Main, name: '主页', children: [
+            {path: '', component: Index, name: '首页'}
         ]
     },
-    {path: '/login', component: Login, name: 'login'},
+    {path: '/login', component: Login, name: '登录'},
 ]
 
 const router = createRouter({
@@ -58,7 +58,7 @@ router.beforeEach((to, form, next) => {
  */
 const registerMenusRoutes = (routes) => {
     // 注册到index下面
-    routes.forEach(route => router.addRoute('main', route))
+    routes.forEach(route => router.addRoute('主页', route))
 }
 
 export {registerMenusRoutes}
