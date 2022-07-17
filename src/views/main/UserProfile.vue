@@ -15,23 +15,30 @@
     <a-form>
       <ul class="ivz-uid-ul">
         <li class="ivz-uid-li">
-          <user-profile-item v-model="user.account" :blur="submit" :editable="true">
+          <user-profile-item v-model="user.account">
             <template #label>
-              <UserOutlined style="vertical-align: text-top"/> 用户账号
+              <ivz-icon type="iz-icon-sys-user" /> 用户账号
             </template>
           </user-profile-item>
         </li>
         <li class="ivz-uid-li">
-          <user-profile-item v-model="user.phone" :blur="submit" :editable="true">
+          <user-profile-item v-model="user.phone">
             <template #label>
-              <PhoneFilled style="vertical-align: text-top"/> 手机号码
+              <PhoneFilled /> 手机号码
             </template>
           </user-profile-item>
         </li>
         <li class="ivz-uid-li">
           <user-profile-item v-model="user.deptName">
             <template #label>
-              <DeploymentUnitOutlined style="vertical-align: text-top"/> 所属部门
+              <ivz-icon type="iz-icon-dept"/> 所属部门
+            </template>
+          </user-profile-item>
+        </li>
+        <li class="ivz-uid-li">
+          <user-profile-item v-model="user.roleName">
+            <template #label>
+              <ivz-icon type="iz-icon-sys-role"/> 所属角色
             </template>
           </user-profile-item>
         </li>
@@ -103,6 +110,10 @@ export default {
   margin: 3px 0px;
   line-height: 35px;
   border-bottom: 1px solid #e9e9e9;
+}
+.ivz-uid-li .anticon {
+  font-size: 16px;
+  vertical-align: text-top;
 }
 .ivz-uid-item.editable {
   flex-grow: 1;

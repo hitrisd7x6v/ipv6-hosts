@@ -73,7 +73,7 @@ const registerSysModule = function (store) {
             user: {}, // 当前登录的用户
             views: [], // 视图信息
             init: false, // 系统是否已经初始化(菜单初始化, 用于动态路由404问题)
-            userKey: 'pwd',
+            userKey: null,
             userVisible: false, // 用户中心
 
             openKeys: [], // 当前展开的子菜单key
@@ -218,7 +218,8 @@ const registerSysModule = function (store) {
             },
             toggleUserVisible: (state, {visible, key}) => {
                 state.userKey = key || state.userKey;
-                state.userVisible = visible || state.userVisible
+                state.userVisible = visible != null
+                    ? visible : state.userVisible;
             }
         },
         actions: {

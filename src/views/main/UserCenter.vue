@@ -11,25 +11,25 @@
         <a-tabs :activeKey="activeKey" @change="tabChange">
           <a-tab-pane key="msg">
             <template #tab>
-              <span>消息通知</span>
+              <span><ivz-icon type="iz-icon-notify" />消息通知</span>
             </template>
             <UserNotifyList />
           </a-tab-pane>
           <a-tab-pane key="wait">
             <template #tab>
-              <span>代办事项</span>
+              <span><ivz-icon type="iz-icon-daiban" />代办事项</span>
             </template>
             <UserOperaHistory />
           </a-tab-pane>
           <a-tab-pane key="user">
             <template #tab>
-              <span>个人资料</span>
+              <span><ivz-icon type="iz-icon-profile" />个人资料</span>
             </template>
             <UserDetail />
           </a-tab-pane>
           <a-tab-pane key="pwd">
             <template #tab>
-              <span>修改密码</span>
+              <span><ivz-icon type="iz-icon-password" />修改密码</span>
             </template>
             <UserEditPwd />
           </a-tab-pane>
@@ -38,7 +38,7 @@
     </div>
   </a-drawer>
 </template>
-
+<!--用户中心-->
 <script>
 import {mapGetters, mapMutations} from "vuex";
 import UserDetail from "@msn/main/UserDetail.vue";
@@ -48,7 +48,7 @@ import UserNotifyList from "@msn/main/UserNotifyList.vue";
 import UserOperaHistory from "@msn/main/UserOperaHistory.vue";
 
 export default {
-  name: "UserInfo",
+  name: "UserCenter",
   components: {
     UserDetail,
     UserProfile,
@@ -107,6 +107,9 @@ export default {
   flex-grow: 1;
   margin: 0px 6px;
 }
+.ivz-uic-info .anticon {
+  font-size: 16px;
+}
 .ivz-uic-info .ant-tabs-tab {
   padding: 6px 16px!important;
 }
@@ -114,4 +117,5 @@ export default {
 .ivz-uic-item .paragraph {
   padding-left: 24px;
 }
+
 </style>

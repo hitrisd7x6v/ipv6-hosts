@@ -12,7 +12,7 @@ import {createFromIconfontCN} from '@ant-design/icons-vue';
 // 项目中使用到的图标
 const IvzIcon = createFromIconfontCN({
     extraCommonProps: {},
-    scriptUrl: '//at.alicdn.com/t/font_1174643_8oqzyet5k3d.js', // 在 iconfont.cn 上生成
+    scriptUrl: '//at.alicdn.com/t/font_1174643_3ph28jkvzy5.js', // 在 iconfont.cn 上生成
 });
 
 

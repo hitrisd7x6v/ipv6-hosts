@@ -1,11 +1,11 @@
 <template>
   <a-layout style="width: 100%; height: 100%;" class="ant-layout-has-sider">
     <!--侧边菜单栏-->
-    <LayoutSider></LayoutSider>
+    <LayoutSider />
 
     <a-layout class="ivz-layout-view">
       <!--右侧头-->
-      <LayoutHeader></LayoutHeader>
+      <LayoutHeader />
 
       <!--右侧视图页-->
       <a-layout-content class="ivz-main-container">
@@ -18,7 +18,7 @@
         </router-view>
 
         <!-- 用户中心 -->
-        <UserInfo></UserInfo>
+        <UserCenter />
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -29,11 +29,11 @@ import {ref} from "vue";
 import {mapGetters, useStore} from "vuex";
 import LayoutSider from "@msn/main/LayoutSider.vue";
 import LayoutHeader from "@msn/main/LayoutHeader.vue";
-import UserInfo from "@msn/main/UserInfo.vue";
+import UserCenter from "@msn/main/UserCenter.vue";
 
 export default {
   name: "index",
-  components:{UserInfo, LayoutSider, LayoutHeader},
+  components:{UserCenter, LayoutSider, LayoutHeader},
   setup() {
     let mounted = ref(false);
     useStore().dispatch('sys/initMenus')

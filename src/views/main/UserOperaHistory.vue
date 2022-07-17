@@ -3,9 +3,8 @@
     <template #dateCellRender="{ current: value }">
         <template v-for="(item, index) in getListData(value)" :key="index">
           <a-tooltip title="prompt text">
-            <a-button>{{ color }}</a-button>
+            <a-badge :status="item.type" :text="item.content" />
           </a-tooltip>
-          <a-badge :status="item.type" :text="item.content" />
         </template>
     </template>
 <!--    <template #monthCellRender="{ current: value }">-->

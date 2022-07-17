@@ -17,29 +17,42 @@
           <li class="ivz-opera-col">
             <a-dropdown placement="bottomCenter" class="ivz-opera-more">
               <div>
-                <a-avatar :src="avatarUrl" :size="32" :load-error="loadError"></a-avatar>
-                <span style="font-size: 14px;"> 欢迎, {{user.name}}</span>
+                <a-avatar :src="user.avatar" :size="32" :load-error="loadError"></a-avatar>
               </div>
               <template #overlay>
                 <a-menu @click="quickOpera">
                   <a-menu-item key="user">
-                    <ivz-icon type="iz-icon-user-info" style="font-size: 15px"/>
-                    <span> 个人资料</span>
+                    <ivz-icon type="iz-icon-profile" style="font-size: 16px"/>
+                    <span>个人资料</span>
                   </a-menu-item>
                   <a-menu-item key="pwd">
-                    <LockFilled style="font-size: 15px"/><span> 修改密码</span>
+                    <LockFilled style="font-size: 16px"/><span>修改密码</span>
                   </a-menu-item>
                   <a-menu-divider />
                   <a-menu-item key="logout">
-                    <LogoutOutlined style="font-size: 15px" /><span> 退出登录</span>
+                    <LogoutOutlined style="font-size: 16px" /><span>退出登录</span>
                   </a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>
           </li>
+          <li class="ivz-opera-col">
+            <a href="https://gitee.com/iteaj/ivzone" target="_blank">
+              <ivz-icon type="iz-icon-gitee" style="font-size: 22px"></ivz-icon>
+            </a>
+          </li>
           <li class="ivz-opera-col" @click="() => quickOpera({key: 'msg'})">
             <a-tooltip title="消息通知">
-              <NotificationFilled style="font-size: 16px"/>
+              <a-badge count="5">
+                <ivz-icon type="iz-icon-notify" style="font-size: 22px"/>
+              </a-badge>
+            </a-tooltip>
+          </li>
+          <li class="ivz-opera-col" @click="() => quickOpera({key: 'wait'})">
+            <a-tooltip title="代办事项">
+              <a-badge count="5">
+                <ivz-icon type="iz-icon-daiban" style="font-size: 22px"/>
+              </a-badge>
             </a-tooltip>
           </li>
           <li style="clear: both"></li>
@@ -61,23 +74,6 @@
           </a-tab-pane>
         </template>
       </a-tabs>
-      <div class="ivz-task-opera right">
-        <a-dropdown placement="bottomLeft">
-          <span>
-            <ivz-icon type="iz-icon-more" size="18px"></ivz-icon>
-          </span>
-          <a-menu slot="overlay" @click="taskBarCloseMoreOpera">
-            <a-menu-item key="other">
-              <ivz-icon type="iz-icon-close-other"></ivz-icon>
-              <span>关闭其他</span>
-            </a-menu-item>
-            <a-menu-item key="all">
-              <ivz-icon type="iz-icon-close-all"></ivz-icon>
-              <span>关闭所有</span>
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
-      </div>
     </div>
   </a-layout-header>
 </template>
@@ -99,9 +95,8 @@ export default {
   },
   components: {ReloadOutlined, LockFilled, LogoutOutlined, NotificationFilled},
   setup() {
-    let avatarUrl = '/src/assets/logo.png';
     let workMenu = {}
-    return {workMenu, avatarUrl}
+    return {workMenu}
   },
   methods: {
     ...mapMutations({
@@ -162,7 +157,9 @@ export default {
         this.toggleUserVisible({visible: true, key});
       }
     },
-    loadError() {},
+    loadError() {
+      this.user.avatar = '/img/logo.png';
+    },
   }
 }
 </script>
@@ -188,7 +185,13 @@ export default {
   border-bottom: 2px solid dodgerblue;
 }
 .ivz-opera-col {
-  padding: 0px 8px;
+  height: 45px;
+  padding: 0px 12px;
+  line-height: 52px;
+}
+.ivz-opera-col:hover {
+  cursor: pointer;
+  background-color: #fafafa;
 }
 .ivz-header-col {
   position: absolute;
@@ -208,8 +211,7 @@ export default {
   z-index: 0;
   padding: 0px;
   position: relative;
-  /*background: rgba(243, 243, 243, 0.68);*/
-  box-shadow: 0px 3px 4px -1px #e0e0e0;
+  box-shadow: 0px 2px 4px -2px #e0e0e0;
 }
 .ivz-task-bar .ant-tabs-tab-active {
   box-shadow: 0px 0px 6px 0px #cbcbcb;
@@ -239,17 +241,6 @@ export default {
 .ant-tabs-tab-active .ivz-tba-reload {
   display: inline-block;
 }
-.ivz-task-opera {
-  width: 20px;
-  position: absolute;
-  top: 0px;
-  left: 24px;
-  cursor: pointer;
-  height: 35px;
-  line-height: 35px;
-  text-align: center;
-  display: inline-block;
-}
 .ivz-task-bar .ant-tabs {
   width: 100%;
 }
@@ -265,7 +256,7 @@ export default {
 }
 .ivz-task-bar .ant-tabs-nav-container .ant-tabs-nav-wrap {
   margin-top: 0px;
-  padding-left: 52px;
+  padding-left: 32px;
 }
 .ivz-task-bar .ant-tabs-tab-prev,.ivz-task-bar .ant-tabs-tab-next {
   height: 100%;
