@@ -93,14 +93,13 @@ export default {
 .ivz-uic-profile {
   width: 288px;
   min-width: 288px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 1px #fafafa;
 }
 
 .ivz-uic-avatar .ant-upload-list-picture-card-container {
   width: 132px;
   height: 132px;
-}
-.ivz-uic-avatar .ant-upload-picture-card-wrapper {
-  width: auto;
 }
 
 .ivz-uic-info {

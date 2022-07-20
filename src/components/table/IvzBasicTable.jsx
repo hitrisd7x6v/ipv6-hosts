@@ -141,7 +141,9 @@ function initTableColumns(columns, slots) {
                 }
             }
 
-            column['slots'] = columnSlot
+            // 合并slots信息
+            column['slots'] = column['slots'] == null ? columnSlot
+                : {...column['slots'], ...columnSlot}
             column['__init'] = true;
         })
     }
@@ -172,11 +174,18 @@ export default defineComponent({
     name: 'IvzBasicTable',
     props: {
         rowSelection: {type: null}, // 不支持此选项
+        showTotal: {type: Function},
+        total: {type: Number, default: 0}, // 总条数
+        pagination: {type: Boolean, default: true}, // 是否分页, 不支持使用对象
+        showSizeChanger: {type: Boolean, default: true},
+        showQuickJumper: {type: Boolean, default: true},
+        pageSizeOptions: {type: Array, default: () => ['10', '30', '50', '80', '100']},
     },
     setup(props, {attrs, slots, emit}) {
         let {columns} = attrs;
-        let selectedRows = ref([]);
         let selectedRowKeys = [];
+        let page = reactive({});
+        let selectedRows = ref([]);
         let rowSelection = getTableRowSelection(columns);
         if(rowSelection) {
             rowSelection = reactive(rowSelection);
@@ -197,23 +206,51 @@ export default defineComponent({
             }
         }
 
-        let columnSlots = initTableColumns(columns, slots);
+        // 分页触发事件
+        page.onChange = (current, pageSize) => {
+            emit('pageChange', current, pageSize);
+        }
 
-        let tableProps = mergeProps(attrs, {rowSelection})
-        return {slots: columnSlots, props: tableProps, selectedRows, rowSelection}
+        page.onShowSizeChange = (current, pageSize) => {
+            emit('sizeChange', current, pageSize);
+        }
+
+        let mergePagination = ({pagination, total, showTotal, showSizeChanger, showQuickJumper, pageSizeOptions}) => {
+            if(pagination) {
+                page.total = total;
+                page.showQuickJumper = showQuickJumper;
+                page.showSizeChanger = showSizeChanger;
+                page.pageSizeOptions = pageSizeOptions;
+                page.showTotal = showTotal ? showTotal : (total, range) => `共 ${total} 条`
+
+                return page;
+            } else {
+                return false;
+            }
+        }
+
+        let columnSlots = initTableColumns(columns, slots);
+        return {slots: columnSlots, selectedRows, rowSelection, mergePagination}
     },
     render() {
+        let rowSelection = this.rowSelection;
+        let pagination = this.mergePagination(this.$props);
+        let props = mergeProps(this.$attrs, {rowSelection, pagination})
+
         return (
-            <a-table {...this.props} customRow={(row) => {
+            <a-table {...props} customRow={(row) => {
                 return {
                     onClick: (event) => 3,       // 点击行
                     onDblclick: (event) => 6,
                 }
             }} v-slots={this.slots}>
-
         </a-table>)
     },
     methods: {
+        getPagination() {
+          return this.$props.pagination ? this.page : false;
+        },
+
         getSelectedRows() {
             return this.selectedRows;
         },

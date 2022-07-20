@@ -28,8 +28,8 @@ import {IvzViewTable, IvzMenuView, IvzViewModal, IvzViewSearch} from "@/componen
 export default {
   name: "User",
   components: {
-    IvzViewTable, IvzDateTime,
-    IvzBasicTable, IvzBasicList, IvzBasicSearch, IvzViewModal, IvzInput, IvzViewSearch, IvzMenuView},
+    IvzViewTable, IvzDateTime, IvzViewModal, IvzInput, IvzViewSearch,
+      IvzBasicTable, IvzBasicList, IvzBasicSearch, IvzMenuView},
   setup() {
     let model = reactive({user: null})
     let columns = [
@@ -44,7 +44,8 @@ export default {
     let data = [
 
     ]
-    return {model, columns, data}
+    let test = 'iteaj'
+    return {model, columns, data, test}
   },
   mounted() {
   },
@@ -57,7 +58,7 @@ export default {
       formRef.resetFields();
     },
     select(row, b, a) {
-
+      this.test = row;
     }
   }
 }

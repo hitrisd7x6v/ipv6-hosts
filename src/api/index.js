@@ -5,8 +5,9 @@ import router from '@/router'
 const captchaUri = `${baseURL}/captcha`
 const menuUri = "/core/menus"
 const loginUri = "/core/login"
+const avatarUploadUri = "/core/center/avatar"
 
-export {captchaUri, menuUri, loginUri}
+export {captchaUri, menuUri, loginUri, avatarUploadUri}
 
 // 获取侧边菜单栏数据
 export function getMenus() {

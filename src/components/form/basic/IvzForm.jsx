@@ -113,6 +113,7 @@ export default defineComponent({
         clearValidate() {
             this.getFormRef().clearValidate();
         },
+
         getInitModel() {
             return cloneDeep(this.initModel);
         },
@@ -126,13 +127,13 @@ export default defineComponent({
         },
 
         setEditModel(editModel) {
-            this.resetModel = cloneDeep(editModel);
-
             if(!isProxy(editModel)) {
                 this.proxy.editModel = reactive(editModel);
             }else {
                 this.proxy.editModel = editModel;
             }
+
+            this.resetModel = cloneDeep(editModel);
         }
     }
 })

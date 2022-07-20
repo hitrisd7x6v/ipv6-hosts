@@ -1,17 +1,14 @@
 <template>
   <div class="ivz-uic-avatar">
-    <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              :withCredentials="true" list-type="picture-card" v-model:file-list="fileList"
-              @preview="handlePreview" :show-upload-list="false">
-      <a-avatar :size="128" :src="user.avatar">
-        <template #icon>
-          <UserOutlined />
-        </template>
-      </a-avatar>
-    </a-upload>
+    <a-avatar :size="128" :src="user.avatar">
+      <template #icon>
+        <UserOutlined />
+      </template>
+    </a-avatar>
+    <h2 style="margin-top: 3px">{{user.nickName}}</h2>
   </div>
   <div class="ivz-uic-detail">
-    <h2 style="text-align: center">{{user.nickName}}</h2>
+    <p>{{user.profile}}</p>
     <a-form>
       <ul class="ivz-uid-ul">
         <li class="ivz-uid-li">
@@ -84,16 +81,15 @@ export default {
         editUser(this.user).then(resolve).catch(reject)
       }))
     },
-    handlePreview() {
-
-    },
   }
 }
 </script>
 
 <style scoped>
 .ivz-uic-avatar {
+  padding-top: 8px;
   text-align: center;
+  margin-bottom: 6px;
 }
 .ivz-uic-detail {
   padding: 0px 5px;

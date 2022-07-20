@@ -1,3 +1,5 @@
+import {cloneDeep} from "lodash-es";
+
 function buildModelFromMetas(metas) {
     let model = {};
     let doBuildModel = (model, items) => {
@@ -18,7 +20,6 @@ function createFormMetaInfo(editModel, metasMap) {
     return {
         editModel: editModel,
         getMetaValue: function (key) {
-            console.log(this)
             return getMetaValue(key, editModel);
         },
         getFormMeta: function (key) {
@@ -71,5 +72,9 @@ function cloneModel(model) {
     return JSON.parse(stringify);
 }
 
+function clone(target) {
+    return cloneDeep(target);
+}
+
 export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue
-    , setMetaValue, createFormMetaInfo, getMetaByProp}
+    , setMetaValue, createFormMetaInfo, getMetaByProp, clone}

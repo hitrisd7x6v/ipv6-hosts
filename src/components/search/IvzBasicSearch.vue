@@ -109,7 +109,9 @@ export default {
       this.openUrlTaskAndMenu(menu.key);
     },
     getSearchContext() {
-      return this.$refs['ivzBsForm'].getFormContext();
+      let formContext = this.$refs['ivzBsForm'].getFormContext();
+      formContext['type'] = 'search'; // 设置form上下文属于搜索类型
+      return formContext;
     },
 
     /**

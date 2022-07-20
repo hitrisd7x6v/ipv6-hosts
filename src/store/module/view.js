@@ -1,5 +1,6 @@
 /*视图组件相关的数据存储*/
 import {FunMetaMaps, getMetaConfig} from "@/utils/SysUtils";
+import {clone} from "@/utils/MetaUtils";
 
 /**
  *  此按钮的状态
@@ -19,8 +20,13 @@ function unMoundedEdit() {
 }
 // 解析视图菜单下面的功能点
 function resolverFunMetas(menu) {
-    let children = menu.children;
     let searchFunMetas= [], tableFunMetas = [], editFunMetas = [];
+    if(!menu) {
+        console.warn(`不能解析功能点, 菜单信息为[null], 将不包含任何功能`)
+        return {searchFunMetas, tableFunMetas, editFunMetas}
+    }
+
+    let children = menu.children;
     if(children) {
         let props = getMetaConfig(FunMetaMaps.Submit);
         let saveMeta = {field: FunMetaMaps.Submit, name: '提交'
@@ -43,7 +49,7 @@ function resolverFunMetas(menu) {
 
             if(position == 'AM') {
                 tableFunMetas.push(meta);
-                searchFunMetas.push(meta);
+                searchFunMetas.push(clone(meta));
             } else if(position == 'M') {
                 searchFunMetas.push(meta);
             } else if(position == 'T') {
@@ -52,6 +58,7 @@ function resolverFunMetas(menu) {
                 console.log(`错误的功能点position[${position}], 取值[M, T, AM]`)
             }
         })
+
         if(saveMeta.editUrl || saveMeta.addUrl) {
             let props = getMetaConfig(FunMetaMaps.Cancel);
             let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', sort: 50, view, props}

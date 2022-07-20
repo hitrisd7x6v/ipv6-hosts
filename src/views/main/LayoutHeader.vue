@@ -38,20 +38,20 @@
           </li>
           <li class="ivz-opera-col">
             <a href="https://gitee.com/iteaj/ivzone" target="_blank">
-              <ivz-icon type="iz-icon-gitee" style="font-size: 22px"></ivz-icon>
+              <ivz-icon type="iz-icon-gitee"></ivz-icon>
             </a>
           </li>
           <li class="ivz-opera-col" @click="() => quickOpera({key: 'msg'})">
             <a-tooltip title="消息通知">
               <a-badge count="5">
-                <ivz-icon type="iz-icon-notify" style="font-size: 22px"/>
+                <ivz-icon type="iz-icon-notify"/>
               </a-badge>
             </a-tooltip>
           </li>
           <li class="ivz-opera-col" @click="() => quickOpera({key: 'wait'})">
             <a-tooltip title="代办事项">
               <a-badge count="5">
-                <ivz-icon type="iz-icon-daiban" style="font-size: 22px"/>
+                <ivz-icon type="iz-icon-daiban"/>
               </a-badge>
             </a-tooltip>
           </li>
@@ -202,6 +202,9 @@ export default {
 }
 .ivz-header-col-right {
   right: 8px;
+}
+.ivz-header-col-right .anticon {
+  font-size: 18px;
 }
 .ivz-header-col-right .ivz-opera-col {
   float: right;

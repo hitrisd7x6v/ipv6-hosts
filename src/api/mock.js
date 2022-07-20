@@ -5,20 +5,23 @@ import {menuUri} from "@/api/index";
 Mock.setup({
     timeout: '20-800'
 })
+Mock.Random.extend({
+    phone: function () {
+        let phonePrefix = ['132', '135', '189', '180', '158']
+        return this.pick(phonePrefix) + Mock.mock(/\d{8}/) //Number()
+    }
+})
 
 const menus = [
     {
-        "id|+1": 1,
-        "pid": 0,
-        "url": "#1", // 访问地址
-        "type": "M", // 菜单类型
-        "name": "系统设置", // 菜单名称
-        "icon": "iz-icon-xitong",
-        "status": "view",
-        "remark": "显示位置",
-        "children": [
+        id: 1, pid: 0,
+        url: "#1", // 访问地址
+        type: "M", // 菜单类型
+        name: "系统设置", // 菜单名称
+        icon: "iz-icon-xitong",
+        children: [
             {
-                id: 11,
+                id: 11, pid: 1,
                 name: '系统管理',
                 url: '#1',
                 children: [
@@ -39,6 +42,13 @@ const menus = [
                         ]
                     },
                 ]
+            },{
+                id: 20, pid: 1,
+                name: '扩展组件', url: '#2',
+                children: [
+                    {id: 200, pid: 20, name: '增删改查', url: '200', type: 'V'},
+                    {id: 205, pid: 20, name: '表格组件', url: '205', type: 'V'},
+                ]
             }
         ],
     }
@@ -57,7 +67,7 @@ Mock.mock(RegExp(`/core/user/detail.*`), 'get', () => {
     return {
         code: 200, message: '成功',
         data: {nickName:'iteaj', phone: '13123456028', email: 'iteaj@outlook.com', account: 'admin',
-            deptName: '技术部 > 技术总监', roleName: '超级管理员',
+            deptName: '技术部 > 技术总监', roleName: '超级管理员', profile: '希望努力之后活的更像自己',
             avatar: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'}
     }
 })
@@ -81,15 +91,15 @@ Mock.mock(RegExp('/core/dictData/listByType'), 'get', args => {
 })
 // 用户接口信息
 let userMock = {
-
+    "id|+1": 1,
+    "phone": '@phone',
+    "realName": '@cname',
 }
-let userData = [
-    {id: 1, phone: '18059222381', sex: 'man', realName: '汪XX', userName: 'iteaj', account: null},
-    {id: 2, phone: '18059222382', sex: 'woman', realName: '汪XX', userName: 'iteaj', account: null}
-];
+let userData = Mock.mock({"data|8-18": [userMock]});
 Mock.mock(RegExp('/core/user/view'), 'get', args => {
+    let {size, current} = Utils.resolverQueryOfUrl(args.url);
     return {
-        code: 200, message: 'OK', data: userData
+        code: 200, message: 'OK', data: {size: size, records: userData.data, total: userData.data.length}
     }
 })
 
