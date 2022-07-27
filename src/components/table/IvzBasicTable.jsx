@@ -1,6 +1,6 @@
 import moment from 'moment'
 import {mapGetters, useStore} from "vuex";
-import {defineComponent, h, mergeProps, reactive, ref, resolveComponent} from "vue";
+import {defineComponent, h, mergeProps, reactive, ref, resolveComponent, watch} from "vue";
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
     fieldPath.splice(0, 0, 'c');
@@ -100,10 +100,10 @@ function initDatetimeColumnSlot(column, slotName, slots) {
     }
 }
 
-function initTableColumns(columns, slots) {
-    let slotNameMaps = {}, returnSlots = {...slots};
+function initTableColumns(oriColumns, oriSlots) {
+    let slotNameMaps = {}, slots = {...oriSlots}, columns = [];
 
-    Object.keys(slots).forEach(name => {
+    Object.keys(oriSlots).forEach(name => {
         if(name.startsWith('c_')) {
             let dataIndex = name.split('_')
                 .filter(key => key != 'c').join('.');
@@ -112,13 +112,17 @@ function initTableColumns(columns, slots) {
         }
     });
 
-    if(columns instanceof Array) {
-        columns.forEach(column => {
-            let columnSlot = {}
+    if(oriColumns instanceof Array) {
+        oriColumns.forEach(column => {
+
+            if(column.type != 'selection') {
+                columns.push(column);
+            }
 
             // 声明此列已经初始化
             if(column['__init']) return;
 
+            let columnSlot = {}
             column.dataIndex = column.dataIndex || column.field;
             let dataIndex = column.dataIndex;
 
@@ -131,13 +135,13 @@ function initTableColumns(columns, slots) {
                     column['align'] = column['align'] || 'center';
 
                     columnSlot['customRender'] = getSlotName(dataIndex);
-                    initColumnActionSlot(column, columnSlot['customRender'], returnSlots)
+                    initColumnActionSlot(column, columnSlot['customRender'], slots)
                 } else if(column.dict || column.url || column.options) {
                     columnSlot['customRender'] = getSlotName(dataIndex);
-                    initColumnFormatterSlot(column, columnSlot['customRender'], returnSlots);
+                    initColumnFormatterSlot(column, columnSlot['customRender'], slots);
                 } else if(column.type == 'datetime') {
                     columnSlot['customRender'] = getSlotName(dataIndex);
-                    initDatetimeColumnSlot(column, columnSlot['customRender'], returnSlots);
+                    initDatetimeColumnSlot(column, columnSlot['customRender'], slots);
                 }
             }
 
@@ -148,7 +152,7 @@ function initTableColumns(columns, slots) {
         })
     }
 
-    return returnSlots;
+    return {slots, columns};
 }
 
 function getTableRowSelection(columns) {
@@ -160,7 +164,6 @@ function getTableRowSelection(columns) {
                 let {width, title, fixed, hideDefaultSelections, selections, selectionType} = column;
                 selectionColumn = {columnWidth: width, columnTitle: title
                     , fixed, hideDefaultSelections, type: selectionType || 'checkbox', selections};
-                columns.splice(parseInt(index), 1);
                 return selectionColumn;
             }
         }
@@ -175,6 +178,7 @@ export default defineComponent({
     props: {
         rowSelection: {type: null}, // 不支持此选项
         showTotal: {type: Function},
+        columns: {type: Array, default: () => []},
         total: {type: Number, default: 0}, // 总条数
         pagination: {type: Boolean, default: true}, // 是否分页, 不支持使用对象
         showSizeChanger: {type: Boolean, default: true},
@@ -182,7 +186,6 @@ export default defineComponent({
         pageSizeOptions: {type: Array, default: () => ['10', '30', '50', '80', '100']},
     },
     setup(props, {attrs, slots, emit}) {
-        let {columns} = attrs;
         let selectedRowKeys = [];
         let page = reactive({});
         let selectedRows = ref([]);
@@ -229,7 +232,13 @@ export default defineComponent({
             }
         }
 
-        let columnSlots = initTableColumns(columns, slots);
+        let tableInfo = initTableColumns(props.columns, slots);
+        let columnSlots = ref(tableInfo.slots)
+
+        // 监听列的长度, 重新初始化
+        watch(props.columns, (newColumns) => {
+            let {columns, slots} = initTableColumns(newColumns, slots);
+        })
         return {slots: columnSlots, selectedRows, rowSelection, mergePagination}
     },
     render() {
