@@ -1,6 +1,17 @@
 import moment from 'moment'
 import {mapGetters, useStore} from "vuex";
-import {defineComponent, h, mergeProps, reactive, ref, resolveComponent, watch} from "vue";
+import {
+    defineComponent,
+    h,
+    mergeProps,
+    reactive,
+    ref,
+    resolveComponent,
+    watch,
+    toRefs,
+    isReactive,
+    computed
+} from "vue";
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
     fieldPath.splice(0, 0, 'c');
@@ -100,10 +111,10 @@ function initDatetimeColumnSlot(column, slotName, slots) {
     }
 }
 
-function initTableColumns(oriColumns, oriSlots) {
-    let slotNameMaps = {}, slots = {...oriSlots}, columns = [];
+function initTableColumns(oriColumns, slots) {
+    let slotNameMaps = {}, columns = [];
 
-    Object.keys(oriSlots).forEach(name => {
+    Object.keys(slots).forEach(name => {
         if(name.startsWith('c_')) {
             let dataIndex = name.split('_')
                 .filter(key => key != 'c').join('.');
@@ -115,12 +126,13 @@ function initTableColumns(oriColumns, oriSlots) {
     if(oriColumns instanceof Array) {
         oriColumns.forEach(column => {
 
-            if(column.type != 'selection') {
-                columns.push(column);
-            }
+            // 多选列无需处理
+            if(column.type == 'selection') return;
+            columns.push(column);
 
             // 声明此列已经初始化
             if(column['__init']) return;
+            else column['__init'] = true;
 
             let columnSlot = {}
             column.dataIndex = column.dataIndex || column.field;
@@ -146,9 +158,7 @@ function initTableColumns(oriColumns, oriSlots) {
             }
 
             // 合并slots信息
-            column['slots'] = column['slots'] == null ? columnSlot
-                : {...column['slots'], ...columnSlot}
-            column['__init'] = true;
+            column['slots'] = column['slots'] == null ? columnSlot : {...column['slots'], ...columnSlot}
         })
     }
 
@@ -157,15 +167,13 @@ function initTableColumns(oriColumns, oriSlots) {
 
 function getTableRowSelection(columns) {
     if(columns instanceof Array) {
-        let selectionColumn;
-        for(let index in columns) {
-            let column = columns[index];
-            if(column.type == 'selection') {
-                let {width, title, fixed, hideDefaultSelections, selections, selectionType} = column;
-                selectionColumn = {columnWidth: width, columnTitle: title
-                    , fixed, hideDefaultSelections, type: selectionType || 'checkbox', selections};
-                return selectionColumn;
-            }
+        let firstColumn = columns[0];
+        if(firstColumn.type == 'selection') {
+            let selectionRow = {...firstColumn};
+            selectionRow.type = 'checkbox';
+            selectionRow.columnWidth = firstColumn.columnWidth || firstColumn.width;
+            selectionRow.columnTitle = firstColumn.columnTitle || firstColumn.title;
+            return selectionRow;
         }
 
         return null;
@@ -185,7 +193,7 @@ export default defineComponent({
         showQuickJumper: {type: Boolean, default: true},
         pageSizeOptions: {type: Array, default: () => ['10', '30', '50', '80', '100']},
     },
-    setup(props, {attrs, slots, emit}) {
+    setup({columns}, {attrs, slots, emit}) {
         let selectedRowKeys = [];
         let page = reactive({});
         let selectedRows = ref([]);
@@ -194,18 +202,13 @@ export default defineComponent({
             rowSelection = reactive(rowSelection);
             rowSelection.selectedRowKeys = selectedRowKeys;
 
+            let onChange = rowSelection.onChange;
             rowSelection.onChange = (selectedRowKeys, rows) => {
                 selectedRows.value = rows;
                 rowSelection.selectedRowKeys = selectedRowKeys;
-            }
-            rowSelection.onSelect = (record, selected, selectedRows) => {
-                emit('select', record, selected, selectedRows)
-            }
-            rowSelection.onSelectAll = (selected, selectedRows, changeRows) => {
-                emit('selectAll', selected, selectedRows, changeRows)
-            }
-            rowSelection.onSelectInvert = (selectedRows) => {
-                emit('selectInvert', selectedRows)
+                if(onChange instanceof Function) {
+                    onChange(selectedRowKeys, rows)
+                }
             }
         }
 
@@ -232,27 +235,33 @@ export default defineComponent({
             }
         }
 
-        let tableInfo = initTableColumns(props.columns, slots);
-        let columnSlots = ref(tableInfo.slots)
+        let tableInfo = initTableColumns(columns, {...slots});
+        let slotsRef = ref(tableInfo.slots);
+        let columnsRef = ref(tableInfo.columns)
 
-        // 监听列的长度, 重新初始化
-        watch(props.columns, (newColumns) => {
-            let {columns, slots} = initTableColumns(newColumns, slots);
-        })
-        return {slots: columnSlots, selectedRows, rowSelection, mergePagination}
+        // 刷新列数据
+        let flushColumns = () => {
+            let tableInfo = initTableColumns(columns, slotsRef.value);
+            slotsRef.value = tableInfo.slots;
+            columnsRef.value = tableInfo.columns
+        }
+
+        return {slotsRef, columnsRef, selectedRows, rowSelection, mergePagination, flushColumns}
     },
+
     render() {
-        let rowSelection = this.rowSelection;
+        this.flushColumns();
         let pagination = this.mergePagination(this.$props);
-        let props = mergeProps(this.$attrs, {rowSelection, pagination})
+        let rowSelection = getTableRowSelection(this.$props['columns']);
 
         return (
-            <a-table {...props} customRow={(row) => {
-                return {
-                    onClick: (event) => 3,       // 点击行
-                    onDblclick: (event) => 6,
-                }
-            }} v-slots={this.slots}>
+            <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={rowSelection} pagination={pagination}  v-slots={this.slotsRef}
+                 customRow={(row) => {
+                    return {
+                        onClick: (event) => this.$emit('rowClick', row),       // 点击行
+                        onDblclick: (event) => this.$emit('rowDblclick', row), // 行双击
+                    }
+                 }}>
         </a-table>)
     },
     methods: {

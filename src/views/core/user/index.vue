@@ -11,7 +11,7 @@
     </ivz-view-modal>
     <ivz-view-table :columns="columns" @selectAll="select"
          :dataSource="data" :bordered="true" rowKey="id" size="small">
-<!--      <template #c_phone="{record, text}">{{text}}</template>-->
+<!--      <template #c_iteaj="{record, text}">sdf</template>-->
 <!--      <template #c_account_name>sdf</template>-->
     </ivz-view-table>
   </ivz-menu-view>
@@ -24,6 +24,7 @@ import {IvzInput, IvzDateTime} from "@/components/form/basic";
 import IvzBasicList from "@/components/list/IvzBasicList.vue";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import {IvzViewTable, IvzMenuView, IvzViewModal, IvzViewSearch} from "@/components/view";
+import {FunMetaMaps} from "@/utils/SysUtils";
 
 export default {
   name: "User",
@@ -44,10 +45,14 @@ export default {
     let data = [
 
     ]
-    let test = 'iteaj'
-    return {model, columns, data, test}
+    return {model, columns, data}
   },
   mounted() {
+    let viewMeta = this.getSearchFunMeta(FunMetaMaps.View);
+    let callback = viewMeta.callback;
+    viewMeta.callback = (model, meta, a) => {
+      callback(model, meta, a);
+    }
   },
   methods: {
     edit() {
@@ -58,7 +63,7 @@ export default {
       formRef.resetFields();
     },
     select(row, b, a) {
-      this.test = row;
+
     }
   }
 }
