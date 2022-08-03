@@ -89,11 +89,15 @@ Mock.mock(RegExp('/core/dictData/listByType'), 'get', args => {
         data: [{label: '男', value: 'man'},{label: '女', value: 'woman'}]
     }
 })
+
 // 用户接口信息
 let userMock = {
     "id|+1": 1,
-    "phone": '@phone',
-    "realName": '@cname',
+    "phone": '@phone', // 手机号
+    "name": '@cname', // 昵称
+    "account": '@name()', // 账号
+    "email": '@email', // 邮箱
+    "createTime": '@now', // 创建时间
 }
 let userData = Mock.mock({"data|8-18": [userMock]});
 Mock.mock(RegExp('/core/user/view'), 'get', args => {

@@ -1,17 +1,7 @@
 import moment from 'moment'
-import {mapGetters, useStore} from "vuex";
-import {
-    defineComponent,
-    h,
-    mergeProps,
-    reactive,
-    ref,
-    resolveComponent,
-    watch,
-    toRefs,
-    isReactive,
-    computed
-} from "vue";
+import {useStore} from "vuex";
+import {createVNode, defineComponent, h, reactive, ref, resolveComponent} from "vue";
+
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
     fieldPath.splice(0, 0, 'c');
@@ -36,20 +26,19 @@ function initColumnActionSlot(column, slotName, slots) {
                             console.error(`组件[IvzBasicTable]的操作功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
                         }
                     }
+
                     return <a {...meta.props} onClick={onClick} class="ivz-ibt-fun">{meta.name}</a>
                 }
             }
         })
 
         slots[slotName] = ({record}) => {
-            return h(resolveComponent('a-space'), () => {
-                let children = []
-                funMetas.forEach(meta => {
-                    children.push(meta.render(record, meta))
-                })
+            let children = []
+            funMetas.forEach(meta => {
+                children.push(meta.render(record, meta))
+            })
 
-                return children;
-            });
+            return <div>{children}</div>
         }
     }
 }
@@ -189,26 +178,36 @@ export default defineComponent({
         columns: {type: Array, default: () => []},
         total: {type: Number, default: 0}, // 总条数
         pagination: {type: Boolean, default: true}, // 是否分页, 不支持使用对象
+        defaultPageSize: {type: Number, default: 10},
         showSizeChanger: {type: Boolean, default: true},
         showQuickJumper: {type: Boolean, default: true},
         pageSizeOptions: {type: Array, default: () => ['10', '30', '50', '80', '100']},
     },
-    setup({columns}, {attrs, slots, emit}) {
-        let selectedRowKeys = [];
+    setup({columns}, {slots, emit}) {
         let page = reactive({});
         let selectedRows = ref([]);
+        let selectedRowKeys = ref([]);
         let rowSelection = getTableRowSelection(columns);
+
         if(rowSelection) {
             rowSelection = reactive(rowSelection);
-            rowSelection.selectedRowKeys = selectedRowKeys;
 
-            let onChange = rowSelection.onChange;
-            rowSelection.onChange = (selectedRowKeys, rows) => {
+            rowSelection.onChange = (selectedKeys, rows) => {
                 selectedRows.value = rows;
-                rowSelection.selectedRowKeys = selectedRowKeys;
-                if(onChange instanceof Function) {
-                    onChange(selectedRowKeys, rows)
-                }
+                selectedRowKeys.value = selectedKeys;
+                emit('selectChange', selectedKeys, rows);
+            }
+
+            rowSelection.onSelect = (record, selected, selectedRows) => {
+                emit('select', record, selected, selectedRows)
+            }
+
+            rowSelection.onSelectAll = (selected, selectedRows, changeRows) => {
+                emit('selectAll', selected, selectedRows, changeRows)
+            }
+
+            rowSelection.onSelectInvert = (selectedRows) => {
+                emit('selectInvert', selectedRows)
             }
         }
 
@@ -246,17 +245,16 @@ export default defineComponent({
             columnsRef.value = tableInfo.columns
         }
 
-        return {slotsRef, columnsRef, selectedRows, rowSelection, mergePagination, flushColumns}
+        return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys, mergePagination, flushColumns}
     },
 
     render() {
         this.flushColumns();
         let pagination = this.mergePagination(this.$props);
-        let rowSelection = getTableRowSelection(this.$props['columns']);
 
         return (
-            <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={rowSelection} pagination={pagination}  v-slots={this.slotsRef}
-                 customRow={(row) => {
+            <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
+                pagination={pagination} v-slots={this.slotsRef} customRow={(row) => {
                     return {
                         onClick: (event) => this.$emit('rowClick', row),       // 点击行
                         onDblclick: (event) => this.$emit('rowDblclick', row), // 行双击
@@ -274,11 +272,11 @@ export default defineComponent({
         },
 
         getSelectedRowKeys() {
-            return this.rowSelection.selectedRowKeys;
+            return this.selectedRowKeys;
         },
 
         setSelectedRowKeys(selectedRowKeys) {
-            this.rowSelection.selectedRowKeys = selectedRowKeys;
+            this.selectedRowKeys = selectedRowKeys;
         }
     }
 })

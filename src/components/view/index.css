@@ -7,4 +7,6 @@
 }
 .ivz-page-view .ivz-ibt-fun {
     font-size: 13px;
+    padding: 0px 5px;
+    display: inline-block;
 }

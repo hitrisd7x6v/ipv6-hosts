@@ -9,10 +9,8 @@
       <ivz-input field="sex" label="性别" />
       <ivz-input field="phone" label="手机" />
     </ivz-view-modal>
-    <ivz-view-table :columns="columns" @selectAll="select"
-         :dataSource="data" :bordered="true" rowKey="id" size="small">
-<!--      <template #c_iteaj="{record, text}">sdf</template>-->
-<!--      <template #c_account_name>sdf</template>-->
+    <ivz-view-table :columns="columns" :dataSource="data" :bordered="true" size="small">
+      <template #c_account_name>account</template>
     </ivz-view-table>
   </ivz-menu-view>
 </template>
@@ -33,13 +31,16 @@ export default {
       IvzBasicTable, IvzBasicList, IvzBasicSearch, IvzMenuView},
   setup() {
     let model = reactive({user: null})
+    let sex = [{label: '男', value: 'man'}, {label: '女', value: 'woman'}]
     let columns = [
       {type: 'selection', fixed: true},
-      {title: '性别', field: 'sex', dict: 'sex'},
+      {title: '用户昵称', field: 'name'},
+      {title: '用户账号', field: 'account'},
+      {title: '性别', field: 'sex', options: sex},
       {title: '手机', field: 'phone'},
-      {title: '姓名', field: 'realName'},
-      {title: '用户名', field: 'userName'},
-      {title: '账号', field: 'account.name'},
+      {title: '邮箱', field: 'email'},
+      {title: '状态', field: 'status'},
+      {title: '创建时间', field: 'createTime'},
       {title: '操作', field: 'action', type: 'action'},
     ]
     let data = [

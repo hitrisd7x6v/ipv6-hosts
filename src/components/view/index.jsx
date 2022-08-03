@@ -343,7 +343,8 @@ const IvzViewTable = defineComponent({
         )
     },
     mounted() {
-        this.loadTableData(1, 10);
+        let defaultPageSize = this.$attrs.defaultPageSize ? this.$attrs.defaultPageSize : 10;
+        this.loadTableData(1, defaultPageSize);
     },
     methods: {
         sizeChange(current, size) {
