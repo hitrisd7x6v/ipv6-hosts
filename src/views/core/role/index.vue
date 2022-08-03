@@ -16,18 +16,13 @@
 <script>
 import {reactive} from "vue";
 import IvzForm from "@/components/form/basic/IvzForm";
-import {IvzDateTime, IvzMentions, IvzInput, IvzSelect, IvzSwitch, IvzRadio} from "@/components/form/basic";
 import IvzBasicList from "@/components/list/IvzBasicList.vue";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
-import IvzMenuView from "@/components/view/IvzMenuView.vue";
-import {IvzViewSearch} from "@/components/view";
 export default {
   name: "Role",
   components: {
-    IvzViewSearch,
-    IvzMenuView,
     IvzBasicSearch,
-    IvzDateTime, IvzMentions, IvzRadio, IvzSwitch, IvzSelect, IvzForm, IvzInput, IvzBasicList},
+    IvzForm, IvzBasicList},
   setup() {
     let metas = reactive([
       {key: 'name', title: '名称'},

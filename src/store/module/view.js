@@ -92,7 +92,7 @@ export default function registerViewModule(store) {
             registerPageView: (state, viewMenu) => {
                 let {searchFunMetas, tableFunMetas, editFunMetas} = resolverFunMetas(viewMenu);
 
-                state.pageViewInfoMaps[viewMenu['url']] = {
+                let viewInfo = {
                     viewMenu, // 当前视图的菜单信息
                     config: {}, // 当前视图的配置信息
                     editFunMetas, // 编辑功能按钮
@@ -114,6 +114,12 @@ export default function registerViewModule(store) {
                     getTableFunMeta: (field) => tableFunMetas.find(item => item.field == field),
                     getSearchFunMeta: (field) => searchFunMetas.find(item => item.field == field)
                 }
+
+                viewInfo['getEditFunMeta'] = (field) => viewInfo.editFunMetas.find(item => item.field == field)
+                viewInfo['getTableFunMeta'] = (field) => viewInfo.tableFunMetas.find(item => item.field == field)
+                viewInfo['getSearchFunMeta'] = (field) => viewInfo.searchFunMetas.find(item => item.field == field)
+
+                state.pageViewInfoMaps[viewMenu['url']] = viewInfo;
             },
 
             setEditViewContext: (state, {url, formContext

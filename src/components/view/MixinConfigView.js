@@ -1,5 +1,4 @@
 import {mapMutations} from "vuex";
-import {mergeProps} from "vue";
 
 export default {
     props: {
@@ -50,10 +49,6 @@ export default {
         ...mapMutations({
             removePageViewData: 'view/removePageViewData',
         }),
-
-        fileUploadChange() {
-
-        }
     },
 
     unmounted() { // 在卸载的时候移除视图数据

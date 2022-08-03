@@ -23,7 +23,7 @@ import {mapMutations, useStore} from "vuex";
 import {FunMetaMaps} from "@/utils/SysUtils";
 import {CloudUploadOutlined} from '@ant-design/icons-vue'
 import MixinConfigView from "@/components/view/MixinConfigView";
-import IvzUploadModal from "@/components/modal/UploadModal.vue";
+import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
 
 /**
  * 视图组件必须作为其父组件的顶级组件 如以下：

@@ -18,7 +18,7 @@ export default defineComponent({
             if(!(this.name instanceof Array)) {
                 console.warn(`name属性必须是数组[${this.name}]或者用field替代name`)
             }
-        } else {
+        } else if(this.field){
             this.namePath = this.field.split('.');
         }
 
@@ -26,7 +26,6 @@ export default defineComponent({
             let initModel = inject('initModel');
             let defaultValue = this.$attrs.defaultValue;
             initModel(this.namePath, this.getDefaultValue(defaultValue));
-            // this.meta = this.formContext.getFormMeta(this.name) || this.meta;
         }
     },
     methods: {

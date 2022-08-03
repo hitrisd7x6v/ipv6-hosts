@@ -196,5 +196,13 @@ const IvzDateTime = defineComponent({
 
 })
 
-export {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch, IvzRate, IvzSlider
+const formComponent = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch, IvzRate, IvzSlider
     , IvzInputNumber, IvzCascader, IvzAutoComplete, IvzRadio, IvzMentions, IvzDateTime}
+
+export default {
+    install(app) {
+        Object.keys(formComponent).forEach(name => {
+            app.component(name, formComponent[name])
+        })
+    }
+}

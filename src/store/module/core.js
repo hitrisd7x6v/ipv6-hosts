@@ -170,16 +170,24 @@ const registerSysModule = function (store) {
                     store.commit('sys/switchActiveMenuTo', url);
                 }
             },
+
+            // 切换激活的菜单
             switchActiveMenuTo: (state, url) => {
                 let menu = state.urlMenuMaps[url];
-                if(menu) { // 说明是菜单, 选中对应的菜单
-                    state.activeMenu = menu;
+                state.activeMenu = menu;
+
+                // 说明是侧边栏的菜单, 选中
+                // 通过方法addNewTask新增非侧边栏菜单
+                if(menu.isMenu != false) {
                     state.selectedKeys.length = 0;
                     state.selectedKeys.push(url);
                 }
 
-                router.push(url).then(() => null);
+                router.push(url).catch((reason) => {
+                    console.error(`打开路由失败[${reason}]`)
+                });
             },
+
             // 在任务栏上面打开一个任务, 并展开此任务菜单的父菜单
             openUrlTaskAndMenu: (state, url) => {
                 let menu = state.urlMenuMaps[url];
@@ -190,20 +198,28 @@ const registerSysModule = function (store) {
                 }
             },
 
-            // 打开新的任务
-            openNewTask: (state, task) => {
+            // 往任务栏中增加新的任务
+            addNewTask: (state, task) => {
                 let taskUrl = task['url'];
                 if(!taskUrl) {
-                    return console.error(`未指定任务url`)
+                    return console.error(`未指定任务url[${task}]`)
+                }
+
+                if(!task['name'] && import.meta.env.DEV) {
+                    console.warn(`未指定任务name[${task}]`)
                 }
 
                 let taskMenu = state.urlMenuMaps[taskUrl];
                 if(!taskMenu) {
-                    state.taskBarData.push(task);
-                    state.urlMenuMaps[taskUrl] = task;
-                }
+                    // 是否是侧边栏菜单
+                    task['isMenu'] = task['isMenu'] || false;
 
-                store.commit('sys/switchActiveMenuTo', taskUrl);
+                    state.urlMenuMaps[taskUrl] = task;
+                } else {
+                    if(taskMenu.name == task.name) {
+                        console.warn(`此任务名[${task.name}]已经存在, 任务[${taskMenu}]`)
+                    }
+                }
             },
 
             putMenuToTaskBars: (state, menu) => {

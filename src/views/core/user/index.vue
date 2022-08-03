@@ -18,7 +18,6 @@
 <script>
 import {reactive} from "vue";
 import {IvzBasicTable} from '@/components'
-import {IvzInput, IvzDateTime} from "@/components/form/basic";
 import IvzBasicList from "@/components/list/IvzBasicList.vue";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import {IvzViewTable, IvzMenuView, IvzViewModal, IvzViewSearch} from "@/components/view";
@@ -27,7 +26,7 @@ import {FunMetaMaps} from "@/utils/SysUtils";
 export default {
   name: "User",
   components: {
-    IvzViewTable, IvzDateTime, IvzViewModal, IvzInput, IvzViewSearch,
+    IvzViewTable, IvzViewModal, IvzViewSearch,
       IvzBasicTable, IvzBasicList, IvzBasicSearch, IvzMenuView},
   setup() {
     let model = reactive({user: null})

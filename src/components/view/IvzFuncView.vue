@@ -21,12 +21,14 @@
 <script>
 import {provide} from "vue";
 import {useStore} from "vuex";
-import MixinConfigView from "@/components/view/MixinConfigView";
 import {FunMetaMaps} from "@/utils/SysUtils";
+import MixinConfigView from "@/components/view/MixinConfigView";
+import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
 
 export default {
   name: "IvzFuncView",
   mixins: [MixinConfigView],
+  components: {IvzUploadModal},
   props: {
     // 编辑组件功能点
     editFunMetas: {type: Array, default: () => []},
@@ -36,10 +38,13 @@ export default {
     searchFunMetas: {type: Array, default: () => []},
   },
   setup(props) {
-    let url = this.$route.path;
-
     // 获取当前激活的菜单
-    let viewMenu = {url}
+    let viewMenu = useStore().getters["sys/activityMenu"];
+    if(!viewMenu) {
+      throw new Error(`IvzFuncView组件必须依赖于当前激活的菜单[activityMenu=null]`);
+    }
+
+    let url = viewMenu['url'];
     // 注册当前菜单信息到视图列表
     useStore().commit('view/registerPageView', viewMenu);
     let viewInfo = useStore().getters['view/pageViewData'](url);

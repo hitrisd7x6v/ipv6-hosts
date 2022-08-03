@@ -1,6 +1,6 @@
 import moment from 'moment'
 import {useStore} from "vuex";
-import {createVNode, defineComponent, h, reactive, ref, resolveComponent} from "vue";
+import {defineComponent, reactive, ref, watch} from "vue";
 
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
@@ -124,7 +124,9 @@ function initTableColumns(oriColumns, slots) {
             else column['__init'] = true;
 
             let columnSlot = {}
+            column.align = column.align || 'center';
             column.dataIndex = column.dataIndex || column.field;
+
             let dataIndex = column.dataIndex;
 
             let slotName = slotNameMaps[dataIndex];
@@ -181,13 +183,22 @@ export default defineComponent({
         defaultPageSize: {type: Number, default: 10},
         showSizeChanger: {type: Boolean, default: true},
         showQuickJumper: {type: Boolean, default: true},
-        pageSizeOptions: {type: Array, default: () => ['10', '30', '50', '80', '100']},
+        expandedRowKeys: {type: Array, default: null}, // 展开的行
+        pageSizeOptions: {type: Array, default: () => ['10', '20', '30', '50', '80']},
     },
-    setup({columns}, {slots, emit}) {
+    setup(props, {slots, emit}) {
         let page = reactive({});
         let selectedRows = ref([]);
         let selectedRowKeys = ref([]);
+
+        let {columns, expandedRowKeys} = props;
+        let unfoldRowKeys = ref(expandedRowKeys);
         let rowSelection = getTableRowSelection(columns);
+
+        // 监控展开行数据变化
+        watch(() => props.expandedRowKeys, (newVal) => {
+            unfoldRowKeys.value = newVal;
+        })
 
         if(rowSelection) {
             rowSelection = reactive(rowSelection);
@@ -239,22 +250,24 @@ export default defineComponent({
         let columnsRef = ref(tableInfo.columns)
 
         // 刷新列数据
-        let flushColumns = () => {
+        let updateColumns = () => {
             let tableInfo = initTableColumns(columns, slotsRef.value);
             slotsRef.value = tableInfo.slots;
             columnsRef.value = tableInfo.columns
         }
 
-        return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys, mergePagination, flushColumns}
+        return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys
+            , mergePagination, updateColumns, unfoldRowKeys}
     },
 
     render() {
-        this.flushColumns();
+        this.updateColumns();
         let pagination = this.mergePagination(this.$props);
 
         return (
             <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
-                pagination={pagination} v-slots={this.slotsRef} customRow={(row) => {
+                pagination={pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
+                ref="ATableRef" onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {
                         onClick: (event) => this.$emit('rowClick', row),       // 点击行
                         onDblclick: (event) => this.$emit('rowDblclick', row), // 行双击
@@ -267,6 +280,50 @@ export default defineComponent({
           return this.$props.pagination ? this.page : false;
         },
 
+        /**
+         * 全部折叠
+         */
+        foldAll() {
+            this.unfoldRowKeys = [];
+        },
+
+        /**
+         * 全部展开
+         */
+        unfoldAll() {
+            this.unfoldRowKeys = this.getAllKeys();
+        },
+        /**
+         * 展开行改变
+         * @param expandedRows
+         */
+        expandedRowsChange(expandedRows) {
+            this.unfoldRowKeys = expandedRows;
+        },
+        /**
+         * 获取所有的可展开keys
+         * @return {null|[]}
+         */
+        getAllKeys() {
+            let dataSource = this.$attrs.dataSource;
+            if(dataSource instanceof Array) {
+                let keys = [];
+                let doGetAllKeys = (children) => {
+                    children.forEach(item => {
+                        if(item.children instanceof Array) {
+                            keys.push(item[this.$attrs.rowKey])
+                            doGetAllKeys(item.children)
+                        }
+                    })
+
+                    return keys;
+                }
+
+                return doGetAllKeys(dataSource);
+            }
+
+            return null;
+        },
         getSelectedRows() {
             return this.selectedRows;
         },

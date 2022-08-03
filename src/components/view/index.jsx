@@ -1,13 +1,14 @@
 import '@/components/view/index.css'
-import {defineComponent, h, inject, mergeProps, ref, nextTick, reactive} from "vue";
-import IvzEditModal from "@/components/edit/IvzEditModal.jsx";
-import IvzMenuView from "@/components/view/IvzMenuView.vue";
-import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import {mapGetters, useStore} from "vuex";
+import IvzMenuView from "@/components/view/IvzMenuView.vue";
+import IvzFuncView from "@/components/view/IvzFuncView.vue";
+import IvzEditModal from "@/components/edit/IvzEditModal.jsx";
+import IvzBasicTable from "@/components/table/IvzBasicTable.jsx";
+import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import {FunMetaMaps, getMetaConfig, TypeMethodMaps} from "@/utils/SysUtils";
-import {IvzBasicTable} from "@/components";
-import {confirm, msgInfo, msgSuccess} from "@/utils/message";
-import shortOut from "lodash-es/_shortOut";
+import {defineComponent, inject, mergeProps, nextTick, reactive, ref} from "vue";
+import {confirm, msgSuccess} from "@/utils/message";
+
 let callbackMaps = { }
 // 搜索按钮点击回调
 callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
@@ -150,7 +151,7 @@ const IvzViewSearch = defineComponent({
         let formRef = ref();
         let viewInfo = inject("IvzViewInfo");
         if(!viewInfo) {
-            throw new Error(`IvzViewSearch只能在IvzMenuView等视图组件中使用`);
+            throw new Error(`IvzViewSearch只能作为IvzXxxView等视图组件的子组件`);
         }
 
         let {searchFunMetas, config, viewMenu} = viewInfo;
@@ -171,6 +172,8 @@ const IvzViewSearch = defineComponent({
         }
 
         searchFunMetas.forEach(meta => {
+            meta.props = meta.props || {};
+
             // 点击新增和编辑按钮回调
             initCallback(meta, viewInfo);
         })
@@ -198,7 +201,7 @@ const IvzViewModal = defineComponent({
         let title = ref("");
         let viewInfo = inject("IvzViewInfo");
         if(!viewInfo) {
-            throw new Error(`IvzViewModal组件只能在IvzMenuView等视图组件中使用`);
+            throw new Error(`IvzViewModal组件只能作为IvzXxxView等视图组件的子组件`);
         }
 
         let {editFunMetas, config, viewMenu} = viewInfo
@@ -222,6 +225,7 @@ const IvzViewModal = defineComponent({
             }
 
             funMetas.forEach(meta => {
+                meta.props = meta.props || {};
                 initCallback(meta, viewInfo);
             })
         }
@@ -261,7 +265,7 @@ const IvzViewTable = defineComponent({
     setup(props, {attrs}) {
         let viewInfo = inject("IvzViewInfo");
         if(!viewInfo) {
-            throw new Error(`IvzViewTable组件只能在IvzMenuView等视图组件中使用`);
+            throw new Error(`IvzViewTable组件只能作为IvzXxxView等视图组件的子组件`);
         }
 
         let ibtRef = ref();
@@ -275,12 +279,12 @@ const IvzViewTable = defineComponent({
 
         if(tableFunMetas instanceof Array) {
             tableFunMetas.forEach(meta => {
-                let callback = callbackMaps[meta.field];
-                if(callback) callback(meta, viewInfo);
+                meta.props = meta.props || {};
+                initCallback(meta, viewInfo);
             })
         }
 
-        let {columns} = attrs;
+        let {columns, pagination} = attrs;
         if(columns instanceof Array) {
             columns.forEach(column => {
                 if(column.type == 'action' && !column.funMetas) {
@@ -293,8 +297,10 @@ const IvzViewTable = defineComponent({
         let loadTableData = (current, pageSize) => {
             if(viewFunMeta) {
                 let searchModel = viewInfo.searchModel();
-                searchModel.current = current;
-                searchModel.pageSize = pageSize;
+                if(pagination) { // 需要分页
+                    searchModel.current = current;
+                    searchModel.pageSize = pageSize;
+                }
 
                 viewFunMeta.props.onClick(searchModel, viewFunMeta);
             }
@@ -314,14 +320,22 @@ const IvzViewTable = defineComponent({
             // 对搜索功能回调进行代理
             let callback = viewFunMeta.callback;
             viewFunMeta.callback = (searchModel, meta) => {
+                if(!viewFunMeta.url) {
+                    return console.warn(`获取列表失败 功能点[${meta.name}]没有设置搜索地址[url][${JSON.stringify(meta)}]`)
+                }
+
                 loading.value = true;
                 TypeMethodMaps[FunMetaMaps.View](viewFunMeta.url
                     , searchModel, viewFunMeta.http).then(({data}) => {
 
-                    let {records, total} = data;
+                    if(data instanceof Array){
+                        dataRef.value = data;
+                    } else if(data instanceof Object) { // 需要分页
+                        let {records, total} = data;
+                        dataRef.value = records;
+                        totalRef.value = total
+                    }
 
-                    dataRef.value = records;
-                    totalRef.value = total
                 }).finally(() => loading.value = false)
 
                 if(callback instanceof Function) {
@@ -355,5 +369,15 @@ const IvzViewTable = defineComponent({
         }
     }
 })
+
+const IvzViewComponents = {IvzMenuView, IvzFuncView, IvzViewSearch, IvzViewModal, IvzViewTable}
+
+export default {
+    install(app) {
+        Object.keys(IvzViewComponents).forEach(name => {
+            app.component(name, IvzViewComponents[name]);
+        })
+    }
+}
 
 export {IvzMenuView, IvzViewSearch, IvzViewModal, IvzViewTable}

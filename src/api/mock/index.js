@@ -1,10 +1,12 @@
-import Utils from '@/utils/SysUtils'
 import Mock from 'mockjs'
+import '@/api/mock/user'
+import '@/api/mock/dept'
 import {menuUri} from "@/api/index";
 
 Mock.setup({
     timeout: '20-800'
 })
+
 Mock.Random.extend({
     phone: function () {
         let phonePrefix = ['132', '135', '189', '180', '158']
@@ -38,18 +40,22 @@ const menus = [
                         ]
                     },
                     {id: 120, name: '部门管理', url: '/core/dept', pid: 11,  type: 'V', children: [
-                            {id: 1200, name: '新增', url: '/core/dept/add'}
+                            {id: 1200, name: '新增', permType: 'Add', type: 'A', url: '/core/dept/add', position: 'M'},
+                            {id: 1210, name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/dept/view'},
+                            {id: 1220, name: '编辑', permType: 'Edit', type: 'A', sort: 10, position: 'T', url: '/core/dept/edit'},
+                            {id: 1230, name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/dept/del'},
                         ]
                     },
                 ]
-            },{
-                id: 20, pid: 1,
-                name: '扩展组件', url: '#2',
-                children: [
-                    {id: 200, pid: 20, name: '增删改查', url: '200', type: 'V'},
-                    {id: 205, pid: 20, name: '表格组件', url: '205', type: 'V'},
-                ]
-            }
+            },
+            // {
+            //     id: 20, pid: 1,
+            //     name: '扩展组件', url: '#2',
+            //     children: [
+            //         {id: 200, pid: 20, name: '增删改查', url: '200', type: 'V'},
+            //         {id: 205, pid: 20, name: '表格组件', url: '205', type: 'V'},
+            //     ]
+            // }
         ],
     }
 ]
@@ -62,6 +68,7 @@ Mock.mock(RegExp(`${menuUri}.*`), 'get', (args) => {
         data: Mock.mock(menus)
     }
 })
+
 // 模拟用户中心详情
 Mock.mock(RegExp(`/core/user/detail.*`), 'get', () => {
     return {
@@ -71,6 +78,7 @@ Mock.mock(RegExp(`/core/user/detail.*`), 'get', () => {
             avatar: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'}
     }
 })
+
 // 模拟通知列表
 Mock.mock(RegExp(`/core/notify/view.*`), 'get', (args) => {
     return {
@@ -81,56 +89,12 @@ Mock.mock(RegExp(`/core/notify/view.*`), 'get', (args) => {
         ]
     }
 })
-// 模拟字典数据
+
+// 模拟数据字典
 Mock.mock(RegExp('/core/dictData/listByType'), 'get', args => {
     return {
         code: 200,
         message: 'OK',
         data: [{label: '男', value: 'man'},{label: '女', value: 'woman'}]
-    }
-})
-
-// 用户接口信息
-let userMock = {
-    "id|+1": 1,
-    "phone": '@phone', // 手机号
-    "name": '@cname', // 昵称
-    "account": '@name()', // 账号
-    "email": '@email', // 邮箱
-    "createTime": '@now', // 创建时间
-}
-let userData = Mock.mock({"data|8-18": [userMock]});
-Mock.mock(RegExp('/core/user/view'), 'get', args => {
-    let {size, current} = Utils.resolverQueryOfUrl(args.url);
-    return {
-        code: 200, message: 'OK', data: {size: size, records: userData.data, total: userData.data.length}
-    }
-})
-
-Mock.mock(RegExp(`/core/user/edit`), 'get', (args) => {
-    let query = Utils.resolverQueryOfUrl(args.url);
-    return {
-        code: 200,
-        message: 'OK',
-        data: userData.filter(item => item['id'] == query['id'])[0]
-    }
-})
-Mock.mock(RegExp(`/core/user/edit`), 'post', (args) => {
-    let query = args.body
-
-    return {
-        code: 200,
-        message: 'OK',
-        data: userData.filter(item => item['id'] == query['id'])[0]
-    }
-})
-Mock.mock(RegExp(`/core/user/del`), 'post', (args) => {
-    let query = args.body;
-    userData.forEach((item, index) =>
-        item.id == query ? userData.splice(index, 1) : null);
-    return {
-        code: 200,
-        message: 'OK',
-        data: userData.filter(item => item['id'] == query['id'])[0]
     }
 })

@@ -1,9 +1,7 @@
 import {defineComponent, reactive, ref} from "vue";
-import {IvzForm} from "@/components/form/basic";
 const formProps = {labelCol: {span: 6}, wrapperCol: {span: 16}}
 export default defineComponent({
     name: 'IvzEditModal',
-    components: {IvzForm},
     props: {
         title: String,
         bodyStyle: Object,
