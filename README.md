@@ -20,17 +20,17 @@ ivzone2.0基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4, 此次更新不兼容1.
 ### antd2组件扩展
 #### 增强ATable组件
 #### 增强AForm组件
-#### 软件架构
+### 软件架构
 使用vue3+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库， 没有其余的强依赖
 
 
-#### 安装教程
+### 安装教程
 
 1.  xxxx
 2.  xxxx
 3.  xxxx
 
-#### 使用说明
+### 使用说明
 
 1.  如果使用过程有问题欢迎pr和提交bug
 2.  交流群：97235681
