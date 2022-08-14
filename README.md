@@ -12,7 +12,7 @@ ivzone2.0基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4, 此次更新不兼容1.
 9. 提供基于antd2ui库封装的其他业务组件库
 10. 使用Mock对所有视图组件进行数据模拟
 11. 不依赖于后台框架的使用语言(java, php, c#等)， 友好的声明api接口和字段，可以方便的对接任何后台
-### 视图组件
+### 增删改查视图组件
 #### IvzFuncView视图
 #### IvzMenuView视图
 ### 视图子组件
