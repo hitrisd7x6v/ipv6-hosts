@@ -133,6 +133,13 @@ callbackMaps[FunMetaMaps.Import] = (meta, viewInfo) => {
         meta.callback(model, meta, viewInfo);
     }
 }
+callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
+    meta.props.onClick = (model, meta) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo);
+        }
+    }
+}
 function initCallback(meta, viewInfo) {
     let callback = callbackMaps[meta.field];
     if(callback) {
@@ -169,6 +176,12 @@ const IvzViewSearch = defineComponent({
         if(viewFunMeta && !resetFunMeta && config.reset) {
             let props = getMetaConfig(FunMetaMaps.Reset);
             searchFunMetas.push({field: FunMetaMaps.Reset, sort: 80, name: '重置', props})
+        }
+
+        let expandFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Expanded);
+        if(config.isExpand && !expandFunMeta) {
+            let props = getMetaConfig(FunMetaMaps.Expanded);
+            searchFunMetas.push({field: FunMetaMaps.Expanded, sort: 200, name: '展开/折叠', props})
         }
 
         searchFunMetas.forEach(meta => {
@@ -275,7 +288,7 @@ const IvzViewTable = defineComponent({
         let page = reactive({});
         let loading = ref(false);
 
-        let {tableFunMetas, viewMenu, getSearchFunMeta} = viewInfo;
+        let {tableFunMetas, viewMenu, getSearchFunMeta, getTableFunMetas} = viewInfo;
 
         if(tableFunMetas instanceof Array) {
             tableFunMetas.forEach(meta => {
@@ -293,6 +306,7 @@ const IvzViewTable = defineComponent({
             })
         }
 
+        // 搜索功能
         let viewFunMeta = getSearchFunMeta(FunMetaMaps.View);
         let loadTableData = (current, pageSize) => {
             if(viewFunMeta) {
@@ -306,9 +320,27 @@ const IvzViewTable = defineComponent({
             }
         }
 
+        // 展开/折叠功能
+        let expandFunMeta = getSearchFunMeta(FunMetaMaps.Expanded)
+            || getTableFunMetas(FunMetaMaps.Expanded);
+        if(expandFunMeta) {
+            let callback = expandFunMeta.callback;
+            expandFunMeta.callback = (searchModel, meta) => {
+                if(callback instanceof Function) {
+                    callback(searchModel, meta, viewInfo);
+                } else {
+                    ibtRef.value.expanded();
+                }
+
+            }
+        }
+
+
         // 设置表视图的信息
         useStore().commit('view/setTableViewContext', {
             url: viewMenu.url,
+            expanded: () => ibtRef.value.expanded(),
+            dataSource: () => ibtRef.value.getDataSource(),
             selectedRows: () => ibtRef.value.getSelectedRows(),
             loadingTableData: () => {
                 let searchModel = viewInfo.searchModel();

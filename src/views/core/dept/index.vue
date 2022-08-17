@@ -1,9 +1,9 @@
 <template>
-  <ivz-func-view :searchFunMetas="searchFunMetas">
+  <ivz-func-view :searchFunMetas="searchFunMetas" :isExpand="true">
     <ivz-view-search>
       <ivz-input label="部门名称" field="name"/>
     </ivz-view-search>
-    <ivz-view-table :columns="columns" :pagination="false" size="small" :expandedRowKeys="expandedRowKeys"/>
+    <ivz-view-table :columns="columns" :pagination="false" size="small"/>
     <ivz-view-modal>
 
     </ivz-view-modal>

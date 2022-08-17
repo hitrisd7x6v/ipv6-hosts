@@ -8,6 +8,8 @@ export default {
         key: {type: String, default: 'id'},
         // 是否是编辑
         isEdit: {type: Function, default: null},
+        // 是否显示展开/缩收按钮
+        isExpand: {type: Boolean, default: false},
         // 文件上传<IvzUploadModal>组件配置
         importProps: {type: Object, default: function () {
                 return {
@@ -28,12 +30,14 @@ export default {
         $parent['getTableFunMeta'] = getTableFunMeta;
         $parent['getSearchFunMeta'] = getSearchFunMeta;
 
-        $parent['getViewMenu'] = () => this.viewMenu;
+        $parent['getViewMenu'] = () => this.viewMenu
         $parent['getEditModel'] = () => this.viewInfo.editModel()
         $parent['getSearchModel'] = () => this.viewInfo.searchModel()
-        $parent['getSelectedRows'] = () => this.viewInfo.selectedRows()
 
-        $parent['loadingTableData'] = (promise) => this.viewInfo.loadingTableData(promise);
+        $parent['getDataSource'] = () => this.viewInfo.dataSource()
+        $parent['getSelectedRows'] = () => this.viewInfo.selectedRows()
+        $parent['setExpandedRows'] = (expandedRows) => this.viewInfo.expanded(expandedRows)
+        $parent['loadingTableData'] = (promise) => this.viewInfo.loadingTableData(promise)
 
         $parent['getEditContext'] = () => this.viewInfo.editFormContext()
         $parent['getSearchContext'] = () => this.viewInfo.searchFormContext()

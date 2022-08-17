@@ -281,18 +281,22 @@ export default defineComponent({
         },
 
         /**
-         * 全部折叠
+         * 展开/折叠
          */
-        foldAll() {
-            this.unfoldRowKeys = [];
+        expanded(expandedRows) {
+            if(expandedRows) {
+                this.unfoldRowKeys = expandedRows;
+                return; // 展开传入的行
+            }
+
+            if(this.unfoldRowKeys && this
+                .unfoldRowKeys.length > 0) {
+                this.unfoldRowKeys = [];
+            } else {
+                this.unfoldRowKeys = this.getAllKeys();
+            }
         },
 
-        /**
-         * 全部展开
-         */
-        unfoldAll() {
-            this.unfoldRowKeys = this.getAllKeys();
-        },
         /**
          * 展开行改变
          * @param expandedRows
@@ -324,6 +328,11 @@ export default defineComponent({
 
             return null;
         },
+
+        getDataSource() {
+            return this.$refs['ATableRef'].dataSource;
+        },
+
         getSelectedRows() {
             return this.selectedRows;
         },

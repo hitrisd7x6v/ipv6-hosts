@@ -15,6 +15,9 @@ function view(editModel, meta) {
 function unMounded() {
     console.warn('获取数据失败, 组件还未挂载完成');
 }
+function  unMountedTable() {
+    console.warn('表格组件未挂载或不存在');
+}
 function unMoundedEdit() {
     console.warn('组件未挂载完成或者缺少编辑视图组件 IvzViewModal, IvzViewDrawer等');
 }
@@ -98,8 +101,11 @@ export default function registerViewModule(store) {
                     editFunMetas, // 编辑功能按钮
                     tableFunMetas, // 表格功能按钮
                     searchFunMetas, // 搜索栏功能按钮
-                    selectedRows: unMounded, // 当前视图选中的行信息(function)
-                    loadingTableData: unMounded, // 加载表数据源
+
+                    expanded: unMountedTable, // 表格展开/折叠
+                    dataSource: unMountedTable, // 表格当前数据源
+                    selectedRows: unMountedTable, // 当前视图选中的行信息(function)
+                    loadingTableData: unMountedTable, // 加载表数据源
 
                     editModel: unMoundedEdit, // 获取编辑视图组件数据
                     editFormContext: unMoundedEdit, // 获取编辑表单上下文
@@ -140,9 +146,11 @@ export default function registerViewModule(store) {
                 pageViewInfo.searchFormContext = formContext;
             },
 
-            setTableViewContext: (state, {url, selectedRows, loadingTableData}) => {
+            setTableViewContext: (state, {url, selectedRows, loadingTableData, dataSource, expanded}) => {
                 let pageViewInfo = state.pageViewInfoMaps[url];
 
+                pageViewInfo.expanded = expanded;
+                pageViewInfo.dataSource = dataSource;
                 pageViewInfo.selectedRows = selectedRows;
                 pageViewInfo.loadingTableData = loadingTableData;
             },
