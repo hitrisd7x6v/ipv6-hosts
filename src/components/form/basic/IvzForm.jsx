@@ -6,7 +6,7 @@ const unMounted = () => console.log('IvzForm组件未完成挂载')
 export default defineComponent({
     name: 'IvzForm',
     props: {
-        rules: Array,
+        rules: Object,
         name: String,
         span: Array, // labelCol wrapperCol eg: [3, 21]
         labelCol: Object,

@@ -49,10 +49,6 @@ export default {
   },
   mounted() {
     let viewMeta = this.getSearchFunMeta(FunMetaMaps.View);
-    let callback = viewMeta.callback;
-    viewMeta.callback = (model, meta, a) => {
-      callback(model, meta, a);
-    }
   },
   methods: {
     edit() {

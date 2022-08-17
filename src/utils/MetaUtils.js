@@ -76,5 +76,13 @@ function clone(target) {
     return cloneDeep(target);
 }
 
+const MetaConst = {
+    PageSize: 'pageSize',
+    PageCurrent: 'current',
+
+    EditFormType: 'edit',
+    SearchFormType: 'search',
+}
+
 export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue
-    , setMetaValue, createFormMetaInfo, getMetaByProp, clone}
+    , setMetaValue, createFormMetaInfo, getMetaByProp, clone, MetaConst}

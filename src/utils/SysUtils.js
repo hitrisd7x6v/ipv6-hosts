@@ -31,8 +31,7 @@ const FunBtnConfig = {
     Detail: {type: 'default', class: 'ivz-fm-detail'},
     Cancel: {type: 'link', class: 'ivz-fm-cancel'},
     Submit: {type: 'primary', class: 'ivz-fm-submit'},
-    Expanded: {type: 'default', class: 'ivz-fm-expanded', rotate: 90
-        , icon: () => h(DoubleLeftOutlined, {rotate: 90})},
+    Expanded: {type: 'default', class: 'ivz-fm-expanded'},
     __Default: {type: 'default', class: 'ivz-fm-default'},
 }
 
@@ -46,7 +45,12 @@ const getMetaConfig = function (field, props) {
     if(props) {
         return Object.assign(cloneConfig, props)
     }
-
+    if(FunMetaMaps.Expanded == field) {
+        // 旋转角度
+        cloneConfig['rotate'] = 90;
+        // 给展开增加操作图标
+        cloneConfig.icon = () => h(DoubleLeftOutlined, {rotate: cloneConfig.rotate})
+    }
     return cloneConfig;
 }
 

@@ -8,13 +8,18 @@ import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import {FunMetaMaps, getMetaConfig, TypeMethodMaps} from "@/utils/SysUtils";
 import {defineComponent, inject, mergeProps, nextTick, reactive, ref} from "vue";
 import {confirm, msgSuccess} from "@/utils/message";
+import {MetaConst} from "@/utils/MetaUtils";
 
 let callbackMaps = { }
+
 // 搜索按钮点击回调
 callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
     meta.props.onClick = (model, meta) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo);
+        } else {
+            let {loadingTableData} = viewInfo;
+            loadingTableData();
         }
     }
 }
@@ -92,11 +97,15 @@ callbackMaps[FunMetaMaps.Edit] = (meta, viewInfo) => {
 }
 // 重置按钮点击回调
 callbackMaps[FunMetaMaps.Reset] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta, {resetFields}) => {
+    meta.props.onClick = (model, meta, {resetFields, type}) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
             resetFields();
+            if(type == MetaConst.SearchFormType) {
+                let {loadingTableData} = viewInfo;
+                loadingTableData(1);
+            }
         }
     }
 }
@@ -137,9 +146,18 @@ callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
     meta.props.onClick = (model, meta) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo);
+        } else {
+            viewInfo.expanded();
+            // 图标旋转
+            if(meta.props.rotate == 90) {
+                meta.props.rotate = 270;
+            } else {
+                meta.props.rotate = 90;
+            }
         }
     }
 }
+
 function initCallback(meta, viewInfo) {
     let callback = callbackMaps[meta.field];
     if(callback) {
@@ -185,7 +203,8 @@ const IvzViewSearch = defineComponent({
 
         searchFunMetas.forEach(meta => {
             meta.props = getMetaConfig(meta.field, meta.props);
-            // 点击新增和编辑按钮回调
+
+            // 功能点默认点击事件
             initCallback(meta, viewInfo);
         })
 
@@ -296,7 +315,7 @@ const IvzViewTable = defineComponent({
             })
         }
 
-        let {columns, pagination} = attrs;
+        let {columns} = attrs;
         if(columns instanceof Array) {
             columns.forEach(column => {
                 if(column.type == 'action' && !column.funMetas) {
@@ -311,47 +330,12 @@ const IvzViewTable = defineComponent({
             if(viewFunMeta) {
                 let searchModel = viewInfo.searchModel();
                 if(attrs.pagination != false) { // 需要分页
-                    searchModel.current = current;
-                    searchModel.pageSize = pageSize;
+                    searchModel[MetaConst.PageSize] = pageSize;
+                    searchModel[MetaConst.PageCurrent] = current;
                 }
 
-                viewFunMeta.props.onClick(searchModel, viewFunMeta);
-            }
-        }
-
-        // 展开/折叠功能
-        let expandFunMeta = getSearchFunMeta(FunMetaMaps.Expanded)
-            || getTableFunMeta(FunMetaMaps.Expanded);
-        if(expandFunMeta) {
-            let callback = expandFunMeta.callback;
-            expandFunMeta.callback = (searchModel, meta) => {
-                if(callback instanceof Function) {
-                    callback(searchModel, meta, viewInfo);
-                } else {
-                    ibtRef.value.expanded();
-                }
-
-            }
-        }
-
-        // 设置表视图的信息
-        useStore().commit('view/setTableViewContext', {
-            url: viewMenu.url,
-            expanded: () => ibtRef.value.expanded(),
-            dataSource: () => ibtRef.value.getDataSource(),
-            selectedRows: () => ibtRef.value.getSelectedRows(),
-            loadingTableData: () => {
-                let searchModel = viewInfo.searchModel();
-                viewFunMeta.props.onClick(searchModel, viewFunMeta);
-            }
-        })
-
-        if(viewFunMeta) {
-            // 对搜索功能回调进行代理
-            let callback = viewFunMeta.callback;
-            viewFunMeta.callback = (searchModel, meta) => {
                 if(!viewFunMeta.url) {
-                    return console.warn(`获取列表失败 功能点[${meta.name}]没有设置搜索地址[url][${JSON.stringify(meta)}]`)
+                    return console.warn(`获取列表失败 功能点[${viewFunMeta.name}]没有设置搜索地址[url][${JSON.stringify(viewFunMeta)}]`)
                 }
 
                 loading.value = true;
@@ -367,24 +351,17 @@ const IvzViewTable = defineComponent({
                     }
 
                 }).finally(() => loading.value = false)
-
-                if(callback instanceof Function) {
-                    callback(searchModel, meta, viewInfo);
-                }
             }
         }
 
-        // 搜索组件的重置按钮需要重新加载列表数据
-        let resetFunMeta = getSearchFunMeta(FunMetaMaps.Reset);
-        if(resetFunMeta) {
-            resetFunMeta.callback = (model, meta) => {
-                let {resetFields} = viewInfo.searchFormContext();
-                resetFields();
-
-                // 重新加载列表数据
-                loadTableData(1, attrs.defaultPageSize || 10)
-            }
-        }
+        // 设置表视图的信息
+        useStore().commit('view/setTableViewContext', {
+            url: viewMenu.url,
+            expanded: () => ibtRef.value.expanded(),
+            dataSource: () => ibtRef.value.getDataSource(),
+            selectedRows: () => ibtRef.value.getSelectedRows(),
+            loadingTableData: (current) =>  loadTableData(current)
+        })
 
         return {ibtRef, dataRef, loading, viewInfo, loadTableData, page, totalRef}
     },
