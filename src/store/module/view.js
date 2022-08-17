@@ -1,5 +1,5 @@
 /*视图组件相关的数据存储*/
-import {FunMetaMaps, getMetaConfig} from "@/utils/SysUtils";
+import {FunMetaMaps} from "@/utils/SysUtils";
 import {clone} from "@/utils/MetaUtils";
 
 /**
@@ -31,17 +31,15 @@ function resolverFunMetas(menu) {
 
     let children = menu.children;
     if(children) {
-        let props = getMetaConfig(FunMetaMaps.Submit);
         let saveMeta = {field: FunMetaMaps.Submit, name: '提交'
-            , addUrl: null, editUrl: null, sort: 30, view, props};
+            , addUrl: null, editUrl: null, sort: 30, view};
         children.forEach(item => {
             if(item.type != 'A') {
                 return console.log(`错误的功能点[${item.name}][${item.type} != 'A']`)
             }
 
             let {position, permType, type, url, name, sort} = item;
-            let props = getMetaConfig(permType);
-            let meta = {field: permType, name, url, sort, view, props};
+            let meta = {field: permType, name, url, sort, view};
 
             // 需要保存按钮
             if(meta.field == FunMetaMaps.Add) {
@@ -63,8 +61,7 @@ function resolverFunMetas(menu) {
         })
 
         if(saveMeta.editUrl || saveMeta.addUrl) {
-            let props = getMetaConfig(FunMetaMaps.Cancel);
-            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', sort: 50, view, props}
+            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', sort: 50, view}
 
             editFunMetas.push(cancelMeta)
             editFunMetas.push(saveMeta);

@@ -97,8 +97,6 @@ callbackMaps[FunMetaMaps.Reset] = (meta, viewInfo) => {
             meta.callback(model, meta, viewInfo)
         } else {
             resetFields();
-            let funMeta = viewInfo.getSearchFunMeta(FunMetaMaps.View);
-            funMeta.props.onClick(model, funMeta);
         }
     }
 }
@@ -128,11 +126,13 @@ callbackMaps[FunMetaMaps.Del] = (meta, viewInfo) => {
         }
     }
 }
+// 文件导入导出功能
 callbackMaps[FunMetaMaps.Import] = (meta, viewInfo) => {
     meta.props.onClick = (model, meta) => {
         meta.callback(model, meta, viewInfo);
     }
 }
+// 表格的展开和折叠功能
 callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
     meta.props.onClick = (model, meta) => {
         if(meta.callback instanceof Function) {
@@ -174,19 +174,17 @@ const IvzViewSearch = defineComponent({
         let resetFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Reset);
         // 包含搜索功能并且需要显示重置功能按钮
         if(viewFunMeta && !resetFunMeta && config.reset) {
-            let props = getMetaConfig(FunMetaMaps.Reset);
-            searchFunMetas.push({field: FunMetaMaps.Reset, sort: 80, name: '重置', props})
+            searchFunMetas.push({field: FunMetaMaps.Reset, sort: 80, name: '重置'})
         }
 
+        // 包含展开功能
         let expandFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Expanded);
         if(config.isExpand && !expandFunMeta) {
-            let props = getMetaConfig(FunMetaMaps.Expanded);
-            searchFunMetas.push({field: FunMetaMaps.Expanded, sort: 200, name: '展开/折叠', props})
+            searchFunMetas.push({field: FunMetaMaps.Expanded, sort: 200, name: '展开/折叠'})
         }
 
         searchFunMetas.forEach(meta => {
-            meta.props = meta.props || {};
-
+            meta.props = getMetaConfig(meta.field, meta.props);
             // 点击新增和编辑按钮回调
             initCallback(meta, viewInfo);
         })
@@ -233,12 +231,12 @@ const IvzViewModal = defineComponent({
         if(funMetas instanceof Array) {
             let resetFunMeta = viewInfo.getEditFunMeta(FunMetaMaps.Reset);
             if(config.reset && !resetFunMeta) { // 需要显示重置按钮
-                let props = getMetaConfig(FunMetaMaps.Reset);
-                funMetas.push({field: FunMetaMaps.Reset, name: '重置', sort: 80, props})
+                funMetas.push({field: FunMetaMaps.Reset, name: '重置', sort: 80})
             }
 
             funMetas.forEach(meta => {
-                meta.props = meta.props || {};
+                meta.props = getMetaConfig(meta.field, meta.props);
+
                 initCallback(meta, viewInfo);
             })
         }
@@ -288,11 +286,12 @@ const IvzViewTable = defineComponent({
         let page = reactive({});
         let loading = ref(false);
 
-        let {tableFunMetas, viewMenu, getSearchFunMeta, getTableFunMetas} = viewInfo;
+        let {tableFunMetas, viewMenu, getSearchFunMeta, getTableFunMeta} = viewInfo;
 
         if(tableFunMetas instanceof Array) {
             tableFunMetas.forEach(meta => {
-                meta.props = meta.props || {};
+                meta.props = getMetaConfig(meta.field, meta.props);
+
                 initCallback(meta, viewInfo);
             })
         }
@@ -311,7 +310,7 @@ const IvzViewTable = defineComponent({
         let loadTableData = (current, pageSize) => {
             if(viewFunMeta) {
                 let searchModel = viewInfo.searchModel();
-                if(pagination) { // 需要分页
+                if(attrs.pagination != false) { // 需要分页
                     searchModel.current = current;
                     searchModel.pageSize = pageSize;
                 }
@@ -322,7 +321,7 @@ const IvzViewTable = defineComponent({
 
         // 展开/折叠功能
         let expandFunMeta = getSearchFunMeta(FunMetaMaps.Expanded)
-            || getTableFunMetas(FunMetaMaps.Expanded);
+            || getTableFunMeta(FunMetaMaps.Expanded);
         if(expandFunMeta) {
             let callback = expandFunMeta.callback;
             expandFunMeta.callback = (searchModel, meta) => {
@@ -334,7 +333,6 @@ const IvzViewTable = defineComponent({
 
             }
         }
-
 
         // 设置表视图的信息
         useStore().commit('view/setTableViewContext', {
@@ -373,6 +371,18 @@ const IvzViewTable = defineComponent({
                 if(callback instanceof Function) {
                     callback(searchModel, meta, viewInfo);
                 }
+            }
+        }
+
+        // 搜索组件的重置按钮需要重新加载列表数据
+        let resetFunMeta = getSearchFunMeta(FunMetaMaps.Reset);
+        if(resetFunMeta) {
+            resetFunMeta.callback = (model, meta) => {
+                let {resetFields} = viewInfo.searchFormContext();
+                resetFields();
+
+                // 重新加载列表数据
+                loadTableData(1, attrs.defaultPageSize || 10)
             }
         }
 

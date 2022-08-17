@@ -36,13 +36,18 @@ const FunBtnConfig = {
     __Default: {type: 'default', class: 'ivz-fm-default'},
 }
 
-const getMetaConfig = function (field) {
+const getMetaConfig = function (field, props) {
     let config = FunBtnConfig[field];
     if(config == null) {
-        return cloneDeep(FunBtnConfig["__Default"])
-    } else {
-        return cloneDeep(config);
+        config = FunBtnConfig["__Default"];
     }
+
+    let cloneConfig = cloneDeep(config);
+    if(props) {
+        return Object.assign(cloneConfig, props)
+    }
+
+    return cloneConfig;
 }
 
 export {TypeMethodMaps, FunMetaMaps, getMetaConfig}

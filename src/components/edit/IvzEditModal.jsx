@@ -76,7 +76,7 @@ export default defineComponent({
                         {...this.$props} v-slots={slots} ref="iemRef">
                 <a-spin size="small" tip="数据处理中..." spinning={this.spinning}>
                     <ivz-form {...this.$attrs} {...formProps} ref="iemFormRef">
-                        {this.$slots.default({model, context})}
+                        {this.$slots.default ? this.$slots.default({model, context}) : null}
                     </ivz-form>
                 </a-spin>
             </a-modal>
