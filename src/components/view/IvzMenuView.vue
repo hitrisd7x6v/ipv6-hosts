@@ -64,6 +64,10 @@ export default {
     let viewInfo = useStore().getters['view/pageViewData'](url);
     let {editFunMetas, tableFunMetas, searchFunMetas, config} = viewInfo;
 
+    // 设置视图页配置信息
+    viewInfo.config = {...props}
+    viewInfo.config.addTitle = props.addTitle ? props.addTitle : `新增${props.name}`;
+    viewInfo.config.editTitle = props.editTitle ? props.editTitle : `编辑${props.name}`;
 
     // 包含搜索功能并且需要显示重置功能按钮
     if(props.reset) {
@@ -99,8 +103,6 @@ export default {
       searchFunMetas.sort((a, b) => a.sort > b.sort ? 1 : a.sort == b.sort ? 0 : -1);
     }
 
-    // 设置视图页配置信息
-    viewInfo.config = {...props}
     if(!viewInfo.config.isEdit) { // 判断编辑视图是属于新增还是编辑
       let key = viewInfo.config.key;
       viewInfo.config.isEdit = (model) => model[key] != null

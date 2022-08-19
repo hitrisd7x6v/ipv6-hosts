@@ -46,6 +46,9 @@ export default {
     viewInfo.tableFunMetas = tableFunMetas;
     viewInfo.searchFunMetas = searchFunMetas;
 
+    viewInfo.config.addTitle = props.addTitle ? props.addTitle : `新增${props.name}`;
+    viewInfo.config.editTitle = props.editTitle ? props.editTitle : `编辑${props.name}`;
+
     if(editFunMetas instanceof Array) {
       editFunMetas.forEach(meta => mergeMetaOfDefault(meta))
     }

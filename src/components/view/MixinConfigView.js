@@ -6,8 +6,14 @@ export default {
         delDescCall: {type: Function},
         // 唯一标识, 用于table的rowKey 或者用于编辑组件用来判断是修改或者新增
         key: {type: String, default: 'id'},
+        // 功能名称 比如 用户管理
+        name: {type: String, default: ''},
         // 是否是编辑
         isEdit: {type: Function, default: null},
+        // 新增标题
+        addTitle: {type: String, default: null},
+        // 修改标题
+        editTitle: {type: String, default: null},
         // 文件上传<IvzUploadModal>组件配置
         importProps: {type: Object, default: function () {
                 return {
