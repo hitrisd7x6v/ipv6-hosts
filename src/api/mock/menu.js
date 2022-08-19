@@ -1,34 +1,10 @@
-import Mock from 'mockjs'
-import '@/api/mock/user'
-import '@/api/mock/dept'
-import '@/api/mock/menu'
-import {menuUri} from "@/api/index";
+// 用户数据模拟接口
+import Mock from "mockjs";
+import Utils from "@/utils/SysUtils";
 
-Mock.setup({
-    timeout: '20-800'
-})
-
-Mock.Random.extend({
-    phone: function () {
-        let phonePrefix = ['132', '135', '189', '180', '158']
-        return this.pick(phonePrefix) + Mock.mock(/\d{8}/) //Number()
-    }
-})
-
-const menus = [
-    {
-        id: 1, pid: 0,
-        url: "#1", // 访问地址
-        type: "M", // 菜单类型
-        name: "系统设置", // 菜单名称
-        icon: "iz-icon-xitong",
-        children: [
-            {
-                id: 11, pid: 1,
-                name: '系统管理',
-                type: 'M',
-                url: '#1',
-                children: [
+let dataSource = [
+    {id: 1, url: '#', type: 'M', name: '系统设置', icon: 'iz-icon-xitong', children: [
+            {id: 11, url: '#', pid: 1, name: '系统管理', type: 'M', children: [
                     {id: 158, name: '菜单管理', url: '/core/menu', pid: 11, type: 'V', children: [
                             {name: '新增', permType: 'Add', type: 'A', sort: 30, position: 'M', url: '/core/menu/add'},
                             {name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/menu/view'},
@@ -56,46 +32,41 @@ const menus = [
                         ]
                     },
                 ]
-            },
-        ],
-    }
-]
-
-// 模拟菜单数据
-Mock.mock(RegExp(`${menuUri}.*`), 'get', (args) => {
-    return {
-        code: 200,
-        message: '成功',
-        data: Mock.mock(menus)
-    }
-})
-
-// 模拟用户中心详情
-Mock.mock(RegExp(`/core/user/detail.*`), 'get', () => {
-    return {
-        code: 200, message: '成功',
-        data: {nickName:'iteaj', phone: '13123456028', email: 'iteaj@outlook.com', account: 'admin',
-            deptName: '技术部 > 技术总监', roleName: '超级管理员', profile: '希望努力之后活的更像自己',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'}
-    }
-})
-
-// 模拟通知列表
-Mock.mock(RegExp(`/core/notify/view.*`), 'get', (args) => {
-    return {
-        code: 200,
-        message: '成功',
-        data: [
-            {msg: 'klsdfjksdf', title: '测试'}
+            }
         ]
     }
+]
+Mock.mock(RegExp('/core/menu/view'), 'get', args => {
+    let {size, current} = Utils.resolverQueryOfUrl(args.url);
+    return {
+        code: 200, message: 'OK', data: {size: size, records: dataSource, total: dataSource.length}
+    }
 })
 
-// 模拟数据字典
-Mock.mock(RegExp('/core/dictData/listByType'), 'get', args => {
+Mock.mock(RegExp(`/core/menu/edit`), 'get', (args) => {
+    let query = Utils.resolverQueryOfUrl(args.url);
     return {
         code: 200,
         message: 'OK',
-        data: [{label: '男', value: 'man'},{label: '女', value: 'woman'}]
+        data: dataSource.filter(item => item['id'] == query['id'])[0]
+    }
+})
+Mock.mock(RegExp(`/core/menu/edit`), 'post', (args) => {
+    let query = args.body
+
+    return {
+        code: 200,
+        message: 'OK',
+        data: null
+    }
+})
+Mock.mock(RegExp(`/core/menu/del`), 'post', (args) => {
+    let query = args.body;
+    dataSource.forEach((item, index) =>
+        item.id == query ? dataSource.splice(index, 1) : null);
+    return {
+        code: 200,
+        message: 'OK',
+        data: null
     }
 })

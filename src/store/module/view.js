@@ -32,13 +32,13 @@ function resolverFunMetas(menu) {
     let children = menu.children;
     if(children) {
         let saveMeta = {field: FunMetaMaps.Submit, name: '提交'
-            , addUrl: null, editUrl: null, sort: 30, view};
+            , addUrl: null, editUrl: null, view};
         children.forEach(item => {
             if(item.type != 'A') {
                 return console.log(`错误的功能点[${item.name}][${item.type} != 'A']`)
             }
 
-            let {position, permType, type, url, name, sort} = item;
+            let {position, permType, url, name, sort} = item;
             let meta = {field: permType, name, url, sort, view};
 
             // 需要保存按钮
@@ -61,7 +61,7 @@ function resolverFunMetas(menu) {
         })
 
         if(saveMeta.editUrl || saveMeta.addUrl) {
-            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', sort: 50, view}
+            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', view}
 
             editFunMetas.push(cancelMeta)
             editFunMetas.push(saveMeta);

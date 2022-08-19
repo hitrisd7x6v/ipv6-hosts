@@ -1,19 +1,6 @@
 <template>
   <div class="ivz-page-view ivz-func-view">
     <slot></slot>
-    <slot name="import">
-      <ivz-upload-modal ref="uploadRef" :upload="importProps"
-                        tip="文件导入中..." :title="importProps.title">
-        <template #desc>
-          <slot name="desc">
-            <span>点击选择或者拖入需要导入的文件</span>
-            <div style="color: red; padding: 3px 0px; font-size: 13px">
-              注：只支持以下文件格式 {{importProps.accept}}
-            </div>
-          </slot>
-        </template>
-      </ivz-upload-modal>
-    </slot>
   </div>
 </template>
 
@@ -22,13 +9,12 @@
 import {provide} from "vue";
 import {useStore} from "vuex";
 import {FunMetaMaps} from "@/utils/SysUtils";
+import {mergeMetaOfDefault} from "@/utils/MetaUtils";
 import MixinConfigView from "@/components/view/MixinConfigView";
-import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
 
 export default {
   name: "IvzFuncView",
   mixins: [MixinConfigView],
-  components: {IvzUploadModal},
   props: {
     // 编辑组件功能点
     editFunMetas: {type: Array, default: () => []},
@@ -60,13 +46,26 @@ export default {
     viewInfo.tableFunMetas = tableFunMetas;
     viewInfo.searchFunMetas = searchFunMetas;
 
+    if(editFunMetas instanceof Array) {
+      editFunMetas.forEach(meta => mergeMetaOfDefault(meta))
+    }
+
+    if(tableFunMetas instanceof Array) {
+      tableFunMetas.forEach(meta => mergeMetaOfDefault(meta))
+    }
+
+    if(searchFunMetas instanceof Array) {
+      searchFunMetas.forEach(meta => mergeMetaOfDefault(meta))
+    }
+
     if(!viewInfo.config.isEdit) { // 判断编辑视图是属于新增还是编辑
       let key = viewInfo.config.key;
       viewInfo.config.isEdit = (model) => model[key] != null
     }
     if(!viewInfo.config.delDescCall) { // 删除回调,
-      viewInfo.config.delDescCall = (model, viewInfo) =>
-      {return {title: '删除', content: '确定要删除此条记录吗？'}}
+      viewInfo.config.delDescCall = (model, viewInfo) => {
+        return {title: '删除', content: '确定要删除此条记录吗？'}
+      }
     }
 
     // 导入文件

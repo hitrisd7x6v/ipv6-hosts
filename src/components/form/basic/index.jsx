@@ -84,7 +84,6 @@ const IvzSelect = defineComponent({
             return h(resolveComponent('a-select'), attrs, {...this.$slots})
         })
     }
-
 })
 
 const IvzSlider = defineComponent({
@@ -197,7 +196,7 @@ const IvzDateTime = defineComponent({
 })
 
 const formComponent = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch, IvzRate, IvzSlider
-    , IvzInputNumber, IvzCascader, IvzAutoComplete, IvzRadio, IvzMentions, IvzDateTime}
+    , IvzInputNumber, IvzCascader, IvzAutoComplete, IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect}
 
 export default {
     install(app) {

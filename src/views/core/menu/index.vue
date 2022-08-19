@@ -1,29 +1,24 @@
 <template>
-  <ivz-menu-view>
+  <ivz-menu-view :expand="true">
     <ivz-view-search>
       <ivz-input field="name" label="菜单名称" />
     </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small" :bordered="true" />
-    <ivz-view-modal>
-      <template #default="{model}">
-        <ivz-input field="name" label="菜单名称" required/>
-        <ivz-input field="url" label="访问路径" required/>
-        <ivz-input field="perms" label="权限标识" @change="handle"/>
-        <ivz-select field="position" label="功能位置" dict="common_status"/>
-        <ivz-select field="permType" label="功能类型" :options="permType"/>
-        <ivz-input field="remark" label="备注" />
-      </template>
-    </ivz-view-modal>
+    <ivz-view-table :columns="columns" size="small" :pagination="false" />
+    <ivz-view-drawer>
+      <ivz-input field="name" label="菜单名称" required/>
+      <ivz-tree-select field="pid" label="父菜单" required :defaultValue="0"/>
+      <ivz-input field="url" label="访问路径" required/>
+      <ivz-input field="perms" label="权限标识" @change="handle"/>
+      <ivz-select field="position" label="功能位置" dict="common_status"/>
+      <ivz-select field="permType" label="功能类型" :options="permType"/>
+      <ivz-input field="remark" label="备注" />
+    </ivz-view-drawer>
   </ivz-menu-view>
 </template>
 
 <script>
-import IvzMenuView from "@/components/view/IvzMenuView.vue";
-import {IvzViewModal, IvzViewTable, IvzViewSearch} from "@/components/view";
-import {IvzInput, IvzSelect} from "@/components/form/basic";
 export default {
   name: "Menu",
-  components: {IvzInput, IvzViewModal, IvzViewTable, IvzViewSearch, IvzMenuView, IvzSelect},
   setup() {
     let permType = [
       {label: '新增', value: 'Add'},
@@ -37,7 +32,7 @@ export default {
     ];
 
     const columns = [
-      {field: 'name', title: '菜单名称'},
+      {field: 'name', title: '菜单名称', align: 'left'},
       {field: 'url', title: '访问路径'},
       {field: 'perms', title: '权限标识'},
       {field: 'permType', title: '功能类型', options: permType},

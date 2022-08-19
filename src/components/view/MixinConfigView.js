@@ -8,8 +8,6 @@ export default {
         key: {type: String, default: 'id'},
         // 是否是编辑
         isEdit: {type: Function, default: null},
-        // 是否显示展开/缩收按钮
-        isExpand: {type: Boolean, default: false},
         // 文件上传<IvzUploadModal>组件配置
         importProps: {type: Object, default: function () {
                 return {

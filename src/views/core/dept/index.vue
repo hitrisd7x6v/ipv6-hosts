@@ -17,7 +17,6 @@
 <script>
 import IvzMenuView from "@/components/view/IvzMenuView.vue";
 import {IvzViewSearch, IvzViewTable, IvzViewModal} from "@/components/view";
-import {ref} from "vue";
 import {FunMetaMaps} from "@/utils/SysUtils";
 export default {
   name: "Dept",
@@ -32,9 +31,10 @@ export default {
       {field: 'action', type:'action', title: '操作'},
     ]
     let searchFunMetas = [
-      {field: FunMetaMaps.Add, name: '新增', url: '/core/dept/add'},
       {field: FunMetaMaps.View, name: '搜索', url: '/core/dept/view'},
-      {field: FunMetaMaps.Reset, name: '重置'}
+      {field: FunMetaMaps.Reset, name: '重置'},
+      {field: FunMetaMaps.Add, name: '新增', url: '/core/dept/add'},
+      {field: FunMetaMaps.Expanded, name: '展开/折叠'}
     ]
     let editFunMetas = [
       {field: FunMetaMaps.Cancel, name: '取消'},
@@ -42,8 +42,8 @@ export default {
       {field: FunMetaMaps.Reset, name: '重置'}
     ]
     let tableFunMetas = [
-      {field: FunMetaMaps.Del, name: '删除', url: '/core/dept/del'},
       {field: FunMetaMaps.Edit, name: '修改', url: '/core/dept/edit'},
+      {field: FunMetaMaps.Del, name: '删除', url: '/core/dept/del'},
     ]
     let rules = {
       name: {required: true, message: '部门名称必填'}

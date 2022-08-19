@@ -60,6 +60,7 @@ export default {
     let activityMenu = useStore().getters['sys/activityMenu'];
     let activityId = activityMenu.id;
     let breadcrumb = useStore().getters['sys/resolverBreadcrumb'];
+
     return {breadcrumb, activityId}
   },
   created() {
@@ -84,7 +85,6 @@ export default {
         }
       });
 
-      this.funMetas.sort((a, b) => a.sort > b.sort ? 1 : a.sort == b.sort ? 0 : -1);
     }
   },
   methods: {

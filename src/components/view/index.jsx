@@ -3,9 +3,10 @@ import {mapGetters, useStore} from "vuex";
 import IvzMenuView from "@/components/view/IvzMenuView.vue";
 import IvzFuncView from "@/components/view/IvzFuncView.vue";
 import IvzEditModal from "@/components/edit/IvzEditModal.jsx";
+import IvzEditDrawer from "@/components/edit/IvzEditDrawer.jsx";
 import IvzBasicTable from "@/components/table/IvzBasicTable.jsx";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
-import {FunMetaMaps, getMetaConfig, TypeMethodMaps} from "@/utils/SysUtils";
+import {FunMetaMaps, TypeMethodMaps} from "@/utils/SysUtils";
 import {defineComponent, inject, mergeProps, nextTick, reactive, ref} from "vue";
 import {confirm, msgSuccess} from "@/utils/message";
 import {MetaConst} from "@/utils/MetaUtils";
@@ -188,22 +189,7 @@ const IvzViewSearch = defineComponent({
             formContext: () => formRef.value.getSearchContext()
         })
 
-        let viewFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.View);
-        let resetFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Reset);
-        // 包含搜索功能并且需要显示重置功能按钮
-        if(viewFunMeta && !resetFunMeta && config.reset) {
-            searchFunMetas.push({field: FunMetaMaps.Reset, sort: 80, name: '重置'})
-        }
-
-        // 包含展开功能
-        let expandFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Expanded);
-        if(config.isExpand && !expandFunMeta) {
-            searchFunMetas.push({field: FunMetaMaps.Expanded, sort: 200, name: '展开/折叠'})
-        }
-
         searchFunMetas.forEach(meta => {
-            meta.props = getMetaConfig(meta.field, meta.props);
-
             // 功能点默认点击事件
             initCallback(meta, viewInfo);
         })
@@ -248,14 +234,7 @@ const IvzViewModal = defineComponent({
         })
 
         if(funMetas instanceof Array) {
-            let resetFunMeta = viewInfo.getEditFunMeta(FunMetaMaps.Reset);
-            if(config.reset && !resetFunMeta) { // 需要显示重置按钮
-                funMetas.push({field: FunMetaMaps.Reset, name: '重置', sort: 80})
-            }
-
             funMetas.forEach(meta => {
-                meta.props = getMetaConfig(meta.field, meta.props);
-
                 initCallback(meta, viewInfo);
             })
         }
@@ -284,7 +263,60 @@ const IvzViewModal = defineComponent({
         </div>
     }
 })
+const IvzViewDrawer = defineComponent({
+    name: 'IvzViewDrawer',
+    components: {IvzEditDrawer},
+    setup() {
+        let iemRef = ref();
+        let title = ref("");
+        let viewInfo = inject("IvzViewInfo");
+        if(!viewInfo) {
+            throw new Error(`IvzViewModal组件只能作为IvzXxxView等视图组件的子组件`);
+        }
 
+        let {editFunMetas, config, viewMenu} = viewInfo
+        let funMetas = editFunMetas;
+
+        // 设置编辑视图的信息
+        useStore().commit('view/setEditViewContext', {
+            url: viewMenu.url,
+            model: () => iemRef.value.getEditModel(),
+            formContext: () => iemRef.value.getEditContext(),
+            loadingActive: () => iemRef.value.loadingActive(),
+            switchActive: (status) => iemRef.value.switchActive(status),
+            switchSpinning: (spinning) => iemRef.value.switchSpinning(spinning)
+        })
+
+        if(funMetas instanceof Array) {
+            funMetas.forEach(meta => {
+                initCallback(meta, viewInfo);
+            })
+        }
+
+        return {funMetas, viewInfo, viewMenu, iemRef, title}
+    },
+    computed: {
+        ...mapGetters({
+            editActive: 'view/editActive'
+        }),
+    },
+    created() {
+        this.iemRef = this.$refs['iemRef'];
+    },
+    render() {
+        if(this.iemRef && this.iemRef.isInitForm()) {
+            let {config} = this.viewInfo;
+            let editModel = this.iemRef.getEditModel();
+            this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
+        }
+
+        return <div class="ivz-view-drawer">
+            <ivz-edit-drawer {...this.$attrs} funMetas={this.funMetas}
+                     title={this.title} ref="iemRef" v-slots={this.$slots}>
+            </ivz-edit-drawer>
+        </div>
+    }
+})
 const IvzViewTable = defineComponent({
     name: 'IvzViewTable',
     components: {IvzBasicTable},
@@ -305,12 +337,10 @@ const IvzViewTable = defineComponent({
         let page = reactive({});
         let loading = ref(false);
 
-        let {tableFunMetas, viewMenu, getSearchFunMeta, getTableFunMeta} = viewInfo;
+        let {tableFunMetas, viewMenu, getSearchFunMeta} = viewInfo;
 
         if(tableFunMetas instanceof Array) {
             tableFunMetas.forEach(meta => {
-                meta.props = getMetaConfig(meta.field, meta.props);
-
                 initCallback(meta, viewInfo);
             })
         }
@@ -376,8 +406,8 @@ const IvzViewTable = defineComponent({
         )
     },
     mounted() {
-        let defaultPageSize = this.$attrs.defaultPageSize ? this.$attrs.defaultPageSize : 10;
-        this.loadTableData(1, defaultPageSize);
+        // let defaultPageSize = this.$attrs.defaultPageSize ? this.$attrs.defaultPageSize : 10;
+        this.loadTableData(1);
     },
     methods: {
         sizeChange(current, size) {
@@ -389,7 +419,8 @@ const IvzViewTable = defineComponent({
     }
 })
 
-const IvzViewComponents = {IvzMenuView, IvzFuncView, IvzViewSearch, IvzViewModal, IvzViewTable}
+const IvzViewComponents = {IvzMenuView, IvzFuncView, IvzViewSearch
+    , IvzViewModal, IvzViewDrawer, IvzViewTable}
 
 export default {
     install(app) {
@@ -399,4 +430,4 @@ export default {
     }
 }
 
-export {IvzMenuView, IvzViewSearch, IvzViewModal, IvzViewTable}
+export {IvzMenuView, IvzViewSearch, IvzViewModal, IvzViewTable, IvzViewDrawer}

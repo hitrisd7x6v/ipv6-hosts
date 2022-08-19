@@ -40,6 +40,8 @@ function initColumnActionSlot(column, slotName, slots) {
 
             return <div>{children}</div>
         }
+
+
     }
 }
 

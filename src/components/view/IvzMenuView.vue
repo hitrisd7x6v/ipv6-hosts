@@ -24,6 +24,7 @@ import {FunMetaMaps} from "@/utils/SysUtils";
 import {CloudUploadOutlined} from '@ant-design/icons-vue'
 import MixinConfigView from "@/components/view/MixinConfigView";
 import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
+import {mergeMetaOfDefault} from "@/utils/MetaUtils";
 
 /**
  * 视图组件必须作为其父组件的顶级组件 如以下：
@@ -46,6 +47,8 @@ export default {
     addTitle: {type: String, default: '新增'},
     // 修改标题
     editTitle: {type: String, default: '编辑'},
+    // 是否显示展开/缩收按钮
+    expand: {type: Boolean, default: false},
   },
   setup(props) {
     // 获取当前激活的菜单
@@ -59,6 +62,42 @@ export default {
     // 注册当前菜单信息到视图列表
     useStore().commit('view/registerPageView', viewMenu);
     let viewInfo = useStore().getters['view/pageViewData'](url);
+    let {editFunMetas, tableFunMetas, searchFunMetas, config} = viewInfo;
+
+
+    // 包含搜索功能并且需要显示重置功能按钮
+    if(props.reset) {
+      let resetFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Reset);
+      if(!resetFunMeta) {
+        searchFunMetas.push({field: FunMetaMaps.Reset, name: '重置'})
+      }
+
+      let resetEditFunMeta = viewInfo.getEditFunMeta(FunMetaMaps.Reset);
+      if(!resetEditFunMeta) {
+        editFunMetas.push({field: FunMetaMaps.Reset, name: '重置'})
+      }
+    }
+
+    // 包含展开功能
+    let expandFunMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Expanded);
+    if(props.expand && !expandFunMeta) {
+      searchFunMetas.push({field: FunMetaMaps.Expanded, name: '展开/折叠'})
+    }
+
+    if(editFunMetas instanceof Array) {
+      editFunMetas.forEach(meta => mergeMetaOfDefault(meta))
+      editFunMetas.sort((a, b) => a.sort > b.sort ? 1 : a.sort == b.sort ? 0 : -1);
+    }
+
+    if(tableFunMetas instanceof Array) {
+      tableFunMetas.forEach(meta => mergeMetaOfDefault(meta))
+      tableFunMetas.sort((a, b) => a.sort > b.sort ? 1 : a.sort == b.sort ? 0 : -1);
+    }
+
+    if(searchFunMetas instanceof Array) {
+      searchFunMetas.forEach(meta => mergeMetaOfDefault(meta))
+      searchFunMetas.sort((a, b) => a.sort > b.sort ? 1 : a.sort == b.sort ? 0 : -1);
+    }
 
     // 设置视图页配置信息
     viewInfo.config = {...props}
