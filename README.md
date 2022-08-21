@@ -16,8 +16,66 @@ ivzone2.0基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4, 此次更新不兼容1.
   将通用的，常用的，简单的一些操作合并到一个组件里面且提供完整的增删改查功能。对于每个通用的增删改查功能，最大的不同点在于操作的url不同，需要的功能点不同，所以我们只需要将每个功能点交由开发人员定义。下面主要是两个常用的增删改查视图组件的实现，先直观看一下菜单功能用增删改查组件的实现图片和对应的代码
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/0603/191912_c1cbc101_1230742.png "1622719064(1).png")
 #### IvzFuncView视图
+IvzFuncView组件时增删改查的一种实现方式，通过显式自定义功能点来实现，如下：
+
+```
+
+```
 
 #### IvzMenuView视图
+IvzMenuView组件是增删改查的另一种实现方式， 通过后台菜单配置功能点实现 如下：
+
+```
+<template>
+  <ivz-menu-view :expand="true">
+    <ivz-view-search>
+      <ivz-input field="name" label="菜单名称" />
+    </ivz-view-search>
+    <ivz-view-table :columns="columns" size="small" :pagination="false" />
+    <ivz-view-drawer>
+      <ivz-input field="name" label="菜单名称" required/>
+      <ivz-tree-select field="pid" label="父菜单" required :defaultValue="0"/>
+      <ivz-input field="url" label="访问路径" required/>
+      <ivz-input field="perms" label="权限标识"/>
+      <ivz-select field="position" label="功能位置" dict="common_status"/>
+      <ivz-select field="permType" label="功能类型" :options="permType"/>
+      <ivz-input field="remark" label="备注" />
+    </ivz-view-drawer>
+  </ivz-menu-view>
+</template>
+
+<script>
+export default {
+  name: "Menu",
+  setup() {
+    let permType = [
+      {label: '新增', value: 'Add'},
+      {label: '删除', value: 'Del'},
+    ]
+
+    let position = [
+      {label: '全部', value: 'AM'},
+      {label: '搜索栏', value: 'M'},
+      {label: '表格栏', value: 'T'},
+    ];
+
+    const columns = [
+      {field: 'name', title: '菜单名称', align: 'left'},
+      {field: 'url', title: '访问路径'},
+      {field: 'perms', title: '权限标识'},
+      {field: 'permType', title: '功能类型', options: permType},
+      {field: 'position', title: '功能位置', options: position},
+      {field: 'remark', title: '备注'},
+      {field: 'createTime', title: '创建时间', type: 'datetime'},
+      {field: 'action', title: '操作', type: 'action'},
+    ]
+    return {columns, permType}
+  },
+}
+</script>
+
+```
+
 ### 视图子组件
 #### IvzViewSearch搜索
 ### antd2组件扩展
