@@ -149,7 +149,9 @@ export default {
 ```
 
 ### 视图子组件
-#### IvzViewSearch搜索
+#### IvzViewSearch 搜索组件
+#### IvzViewModal 模态框编辑组件
+#### IvzViewDrawer 抽屉编辑组件
 ### antd2组件扩展
 #### 增强ATable组件
 #### 增强AForm组件
