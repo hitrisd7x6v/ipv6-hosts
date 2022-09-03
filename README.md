@@ -155,6 +155,10 @@ export default {
 #### IvzViewTable 表格组件
 ### antd2组件扩展
 #### 增强ATable组件
+antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。IvzBasicTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
+##### 不支持属性
+
+1. rowSelection
 #### 增强AForm组件
 ### 软件架构
 使用vue3+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库， 没有其余的强依赖
