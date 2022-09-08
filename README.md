@@ -154,10 +154,31 @@ export default {
 #### IvzViewDrawer 抽屉编辑组件
 #### IvzViewTable 表格组件
 ### antd2组件扩展
-#### 增强ATable组件
+#### <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">增强ATable组件</a>
 antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。IvzBasicTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
 ##### 不支持的属性
-1. <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">rowSelection</a>
+1. rowSelection 此属性是ATable用来描述表格多选框的一个对象，在IvzBasicTable组件里面此对象直接放到columns属性里面，像这样：
+
+```
+const columns = [
+ // 支持rowSelection里面的多数属性
+ //  type不支持 默认：checkbox，不支持radio
+  {type: 'selection', title: '多选'},
+  {field: 'name', title: '菜单名称', align: 'left'}
+]
+// onChange、onSelect、onSelectAll、onSelectInvert方法将直接支持在IvzBasicTable组件上使用事件
+<IvzBasicTable ref="tableRef" @selectChange="xx" @select="xx" @selectAll="xx" @selectInvert="xx"></IvzBasicTable>
+// selectedRowKeys 不支持， 通过方法提供
+this.$refs['tableRef'].getSelectedRowKeys();
+```
+2. pagination不支持使用对象 只能使用true或者false
+
+```
+// true 显示分页， false不显示分页
+<IvzBasicTable :pagination="true"></IvzBasicTable>
+// 分页的配置项直接通过props属性
+<IvzBasicTable :pagination="true" :showTotal="true" :showQuickJumper="true" :showSizeChanger="true"/>
+```
 
 #### 增强AForm组件
 ### 软件架构
