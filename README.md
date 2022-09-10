@@ -179,7 +179,28 @@ this.$refs['tableRef'].getSelectedRowKeys();
 // 分页的配置项直接通过props属性
 <IvzBasicTable :pagination="true" :showTotal="true" :showQuickJumper="true" :showSizeChanger="true"/>
 ```
+#### 自定义列slot
+```
+// columns列不支持customRender， 通过slot方式提供
+// 展示通过slot实现自定义此列
+const columns = [
+  {field: 'name', title: '菜单名称', align: 'left'}，
+  {field: 'user.name', title: '用户名称', align: 'left'}
+]
 
+// 插槽名称规则：前缀 c_ + 字段名 = c_name
+// 如果是a.b的格式将'.'换成'_'即：c_a_b
+<IvzBasicTable :pagination="true">
+    <template #c_name="{record}">
+        <a>{{record.name}}</a>
+    </template>
+    <template #c_user_name="{record}">
+        <a>{{record.user.name}}</a>
+    </template>
+</IvzBasicTable>
+```
+
+##### columns的属性
 #### 增强AForm组件
 ### 软件架构
 使用vue3+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库， 没有其余的强依赖
