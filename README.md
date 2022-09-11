@@ -179,7 +179,7 @@ this.$refs['tableRef'].getSelectedRowKeys();
 // 分页的配置项直接通过props属性
 <IvzBasicTable :pagination="true" :showTotal="true" :showQuickJumper="true" :showSizeChanger="true"/>
 ```
-#### 自定义列slot
+##### 自定义列slot
 ```
 // columns列不支持customRender， 通过slot方式提供
 // 展示通过slot实现自定义此列
