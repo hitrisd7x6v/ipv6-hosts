@@ -178,6 +178,7 @@ this.$refs['tableRef'].getSelectedRowKeys();
 <IvzBasicTable :pagination="true"></IvzBasicTable>
 // 分页的配置项直接通过props属性
 <IvzBasicTable :pagination="true" :showTotal="true" :showQuickJumper="true" :showSizeChanger="true"/>
+3. 其他的属性全部支持
 ```
 ##### 自定义列slot
 ```
@@ -199,8 +200,6 @@ const columns = [
     </template>
 </IvzBasicTable>
 ```
-
-##### columns的属性
 #### 增强AForm组件
 ### 软件架构
 使用vue3+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库， 没有其余的强依赖
