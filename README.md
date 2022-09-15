@@ -200,6 +200,28 @@ const columns = [
     </template>
 </IvzBasicTable>
 ```
+##### 字典和url
+支持将value转成label 比如性别字段：数据库存的是值：man，表格需要展示：男
+
+```
+// 通过本地变量sex
+const sex = [
+    {label: '男', value: 'man'},{label: '女', value: 'woman'}
+]
+const columns = [
+    {field: 'sex', title: '性别', options: sex}
+]
+// 通过字典， 提供的字典类型sex，必须可以返回options格式相同的数组
+const columns = [
+    {field: 'sex', title: '性别', dict: 'sex'}
+]
+// 通过url, 提供的url必须可以返回options格式相同的数组
+const columns = [
+    {field: 'sex', title: '性别', url: '/core/getSex'}
+]
+```
+
+
 #### 增强AForm组件
 ### 软件架构
 使用vue3+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库， 没有其余的强依赖
