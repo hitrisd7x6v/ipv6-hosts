@@ -156,7 +156,7 @@ export default {
 ### antd2组件扩展
 #### <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">增强ATable组件</a>
 antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。IvzBasicTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
-##### 不支持的属性
+##### 1.不支持的属性
 1. rowSelection 此属性是ATable用来描述表格多选框的一个对象，在IvzBasicTable组件里面此对象直接放到columns属性里面，像这样：
 
 ```
@@ -180,7 +180,7 @@ this.$refs['tableRef'].getSelectedRowKeys();
 <IvzBasicTable :pagination="true" :showTotal="true" :showQuickJumper="true" :showSizeChanger="true"/>
 3. 其他的属性全部支持
 ```
-##### 自定义列slot
+##### 2.自定义列slot
 ```
 // columns列不支持customRender， 通过slot方式提供
 // 展示通过slot实现自定义此列
@@ -200,7 +200,7 @@ const columns = [
     </template>
 </IvzBasicTable>
 ```
-##### 字典和url
+##### 3.字典和url
 支持将value转成label 比如性别字段：数据库存的是值：man，表格需要展示：男
 
 ```
