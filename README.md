@@ -220,7 +220,53 @@ const columns = [
     {field: 'sex', title: '性别', url: '/core/getSex'}
 ]
 ```
+##### 4.日期格式化
+如果是日期列，会默认将日期进行安装指定的格式进行格式化，可以用默认格式也可以自定义格式
 
+```
+// 通过指定type='datetime'
+const columns = [
+    {field: 'createTime', title: '创建时间', type: 'datetime'}
+]
+// 默认格式 {datetime: 'YYYY-MM-DD HH:mm:ss', date: 'YYYY-MM-DD', month: 'MM', week: 'E', time: 'HH:mm:ss'}
+// 通过picker指定具体类型，不指定则默认使用datetime格式
+const columns = [
+    {field: 'createTime', title: '创建时间', type: 'datetime', picker: 'month'}
+]
+```
+##### 5.操作列
+IvzBasicTable组件支持使用两种方式定义操作列
+第一 使用功能点列表
+
+```
+// 使用type="action"声明此列是操作列
+const columns = [
+    {field: 'action', title: '操作', type: 'action', funMetas: [
+            {field:'Edit', '编辑'}， {field:'Del', '删除'}
+        ]
+    }
+]
+```
+第二 使用自定义slot
+```
+// template
+<template #c_action={record, column}>
+    <a-button>编辑</a-button>
+    <a-button>修改</a-button>
+</template>
+// js
+const columns = [
+    {field: 'action', title: '操作', type: 'action'}
+]
+```
+##### 6.数据格式化
+除了上面的自定义slot，日期格式化，字典url，IvzBasicTable组件还支持自定义格式化数据
+
+```
+const columns = [
+    {field: 'createTime', title: '创建时间', formatter: ({value,record,column}) => value}
+]
+```
 
 #### 增强AForm组件
 ### 软件架构
