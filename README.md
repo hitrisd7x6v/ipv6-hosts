@@ -242,7 +242,7 @@ IvzBasicTable组件支持使用两种方式定义操作列
 // 使用type="action"声明此列是操作列
 const columns = [
     {field: 'action', title: '操作', type: 'action', funMetas: [
-            {field:'Edit', '编辑'}， {field:'Del', '删除'}
+            {field:'Edit', '编辑',props: {onClick: (row) => {}}}， {field:'Del', '删除', props: {onClick: (row) => {}}}
         ]
     }
 ]
@@ -254,6 +254,7 @@ const columns = [
     <a-button>编辑</a-button>
     <a-button>修改</a-button>
 </template>
+
 // js
 const columns = [
     {field: 'action', title: '操作', type: 'action'}
