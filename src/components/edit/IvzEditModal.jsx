@@ -1,5 +1,4 @@
 import {defineComponent, reactive, ref} from "vue";
-const formProps = {labelCol: {span: 7}, wrapperCol: {span: 17}}
 export default defineComponent({
     name: 'IvzEditModal',
     props: {
@@ -14,6 +13,7 @@ export default defineComponent({
         closable: {type: Boolean, default: false},
         funMetas: {type: Array, default: () => []},
         forceRender: {type: Boolean, default: false},
+        afterVisibleChange: {type: Function},
     },
     setup({funMetas}) {
         let refs = ref(null);
@@ -44,10 +44,18 @@ export default defineComponent({
         return {formRef, initFunMetas, refs, spinning, visible}
     },
     watch: {
-        visible: function () {
+        visible: function (value) {
             if(!this.formRef) {
-                this.$nextTick().then(() =>
-                    this.formRef = this.$refs['iemFormRef'])
+                this.$nextTick().then(() => {
+                    this.formRef = this.$refs['iemFormRef']
+                    if(this.afterVisibleChange) {
+                        this.afterVisibleChange(value)
+                    }
+                })
+            } else {
+                if(this.afterVisibleChange) {
+                    this.afterVisibleChange(value)
+                }
             }
         },
 
@@ -68,14 +76,14 @@ export default defineComponent({
 
         let slots = {
             footer: () => this.$slots.fun ? this.$slots.fun({model, context})
-                : <div style="text-align: center">{() => fun}</div>,
+                : <div class="ivz-func ivz-iem-func">{fun}</div>,
             title: () => this.$slots.title ? this.$slots.title() : <span>{this.title}</span>
         }
 
         return <a-modal v-model={[this.visible, 'visible', ["modifier"]]}
                         {...this.$props} v-slots={slots} ref="iemRef">
                 <a-spin size="small" tip="数据处理中..." spinning={this.spinning}>
-                    <ivz-form {...this.$attrs} {...formProps} ref="iemFormRef">
+                    <ivz-form {...this.$attrs} ref="iemFormRef">
                         {this.$slots.default ? this.$slots.default({model, context}) : null}
                     </ivz-form>
                 </a-spin>
@@ -97,27 +105,6 @@ export default defineComponent({
 
         toggleActive() {
           this.visible = !this.visible;
-        },
-
-        loadingActive() {
-            return new Promise(resolve => {
-              this.visible = true;
-              this.spinning = true;
-
-              this.$nextTick().then(() => {
-                if(this.formRef) {
-                    let editContext = this.getEditContext();
-                    let callback = () => this.spinning = false;
-                    resolve({callback, ...editContext});
-                } else {
-                    this.$nextTick().then(() => {
-                        let editContext = this.getEditContext();
-                        let callback = () => this.spinning = false;
-                        resolve({callback, ...editContext});
-                    })
-                }
-            })
-          })
         },
 
         getEditModel() {

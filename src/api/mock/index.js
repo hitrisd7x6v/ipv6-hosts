@@ -40,7 +40,7 @@ const menus = [
                             {name: '新增', permType: 'Add', type: 'A', sort: 30, position: 'M', url: '/core/user/add'},
                             {name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/user/view'},
                             {name: '编辑', permType: 'Edit', type: 'A', sort: 10, position: 'T', url: '/core/user/edit'},
-                            {name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/user/del'},
+                            {name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'AM', url: '/core/user/del'},
                             {name: '导入', permType: 'Import', type: 'A', sort: 100, position: 'M', url: '/core/user/import'}
                         ]
                     },

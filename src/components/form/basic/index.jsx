@@ -22,8 +22,22 @@ const IvzInputNumber = defineComponent({
     render() {
         let props = this.getFormItemProps();
         return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent('a-input-number'), attrs, [])
+            let attrs = this.getFormAttrs({style: {width: '100%'}});
+            return h(resolveComponent('a-input-number'), attrs)
+        })
+    }
+
+})
+
+const IvzTextarea = defineComponent({
+    name: 'IvzTextarea',
+    mixins: [MixinsFormItem],
+    render() {
+        let props = this.getFormItemProps();
+        return h(resolveComponent('a-form-item'), props, () => {
+            let attrs = this.getFormAttrs()
+            return this.$slots.default ? this.$slots.default() :
+                h(resolveComponent('a-textarea'), attrs, {...this.$slots})
         })
     }
 
@@ -195,8 +209,9 @@ const IvzDateTime = defineComponent({
 
 })
 
-const formComponent = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch, IvzRate, IvzSlider
-    , IvzInputNumber, IvzCascader, IvzAutoComplete, IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect}
+const formComponent = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
+    , IvzRate, IvzSlider, IvzInputNumber, IvzCascader, IvzAutoComplete
+    , IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect, IvzTextarea}
 
 export default {
     install(app) {

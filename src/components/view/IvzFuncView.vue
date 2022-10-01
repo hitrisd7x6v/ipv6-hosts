@@ -67,7 +67,7 @@ export default {
     }
     if(!viewInfo.config.delDescCall) { // 删除回调,
       viewInfo.config.delDescCall = (model, viewInfo) => {
-        return {title: '删除', content: '确定要删除此条记录吗？'}
+        return {title: '删除记录', content: '确定要删除此条记录吗？'}
       }
     }
 

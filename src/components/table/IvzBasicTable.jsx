@@ -1,11 +1,19 @@
 import moment from 'moment'
 import {useStore} from "vuex";
-import {defineComponent, reactive, ref, watch} from "vue";
+import {Tag} from 'ant-design-vue'
+import {defineComponent, h, mergeProps, reactive, ref, watch} from "vue";
 
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
     fieldPath.splice(0, 0, 'c');
     return fieldPath.join('_');
+}
+function disabledHandle(row, meta) {
+    if(meta.disabled instanceof Function) {
+        return meta.disabled(row, meta);
+    }
+
+    return false;
 }
 function initColumnActionSlot(column, slotName, slots) {
     let funMetas = column['funMetas'];
@@ -19,7 +27,10 @@ function initColumnActionSlot(column, slotName, slots) {
             if(!meta.render) {
                 delete meta.props.onClick; // 删除原先的事件
                 meta.render = (row, meta) => {
+                    let disabled = disabledHandle(row, meta);
                     let onClick = () => {
+                        if(disabled) return;
+
                         if(oriClickEvent) {
                             oriClickEvent(row, meta);
                         } else {
@@ -27,7 +38,9 @@ function initColumnActionSlot(column, slotName, slots) {
                         }
                     }
 
-                    return <a {...meta.props} onClick={onClick} class="ivz-ibt-fun">{meta.name}</a>
+                    let className = `ivz-func ivz-ibt-fun ${disabled ? 'disabled' : ''}`;
+                    return h(Tag, mergeProps(meta.props, {class: className, onClick}), () => meta.name)
+                    // return <a-tag {...meta.props} onClick={onClick} class={className}>{meta.name}</a-tag>
                 }
             }
         })
@@ -35,10 +48,12 @@ function initColumnActionSlot(column, slotName, slots) {
         slots[slotName] = ({record}) => {
             let children = []
             funMetas.forEach(meta => {
-                children.push(meta.render(record, meta))
+                if(meta.view(record, meta)) {
+                    children.push(meta.render(record, meta))
+                }
             })
 
-            return <div>{children}</div>
+            return <div>{() => children}</div>
         }
 
 
@@ -83,13 +98,13 @@ function initColumnFormatterSlot(column, slotName, slots) {
     }
 }
 
-const typeFormatMaps = {date: 'YYYY-MM-DD HH:mm:ss', month: 'MM', week: 'E', time: 'HH:mm:ss'}
+const typeFormatMaps = {datetime: 'YYYY-MM-DD HH:mm:ss', date: 'YYYY-MM-DD', month: 'MM', week: 'E', time: 'HH:mm:ss'}
 function initDatetimeColumnSlot(column, slotName, slots) {
     let formatter = column.formatter;
     if(!(formatter instanceof Function)) {
         column.formatter = ({value, row, column}) => {
             if(value) {
-                let picker = column.picker || 'date';
+                let picker = column.picker || 'datetime';
                 return moment(value, column.format || typeFormatMaps[picker])
             } else {
                 return '';

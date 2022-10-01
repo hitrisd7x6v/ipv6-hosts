@@ -2,16 +2,6 @@
 import {FunMetaMaps} from "@/utils/SysUtils";
 import {clone} from "@/utils/MetaUtils";
 
-/**
- *  此按钮的状态
- * @param editModel 当前编辑的数据
- * @param meta
- * @return false(不显示) | true(显示)
- */
-function view(editModel, meta) {
-    return true
-}
-
 function unMounded() {
     console.warn('获取数据失败, 组件还未挂载完成');
 }
@@ -31,15 +21,14 @@ function resolverFunMetas(menu) {
 
     let children = menu.children;
     if(children) {
-        let saveMeta = {field: FunMetaMaps.Submit, name: '提交'
-            , addUrl: null, editUrl: null, view};
+        let saveMeta = {field: FunMetaMaps.Submit, addUrl: null, editUrl: null};
         children.forEach(item => {
             if(item.type != 'A') {
                 return console.log(`错误的功能点[${item.name}][${item.type} != 'A']`)
             }
 
             let {position, permType, url, name, sort} = item;
-            let meta = {field: permType, name, url, sort, view};
+            let meta = {field: permType, name, url, sort};
 
             // 需要保存按钮
             if(meta.field == FunMetaMaps.Add) {
@@ -61,7 +50,7 @@ function resolverFunMetas(menu) {
         })
 
         if(saveMeta.editUrl || saveMeta.addUrl) {
-            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消', view}
+            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消'}
 
             editFunMetas.push(cancelMeta)
             editFunMetas.push(saveMeta);
@@ -102,10 +91,12 @@ export default function registerViewModule(store) {
                     expanded: unMountedTable, // 表格展开/折叠
                     dataSource: unMountedTable, // 表格当前数据源
                     selectedRows: unMountedTable, // 当前视图选中的行信息(function)
+                    selectedKeys: unMountedTable,
                     loadingTableData: unMountedTable, // 加载表数据源
 
                     editModel: unMoundedEdit, // 获取编辑视图组件数据
                     editFormContext: unMoundedEdit, // 获取编辑表单上下文
+                    openEditView: unMoundedEdit, // 打开编辑视图, 指定新增或者编辑
                     switchEditView: unMoundedEdit, // 切换当前编辑试图组件的激活状态
                     editLoadingActive: unMoundedEdit,
                     editSwitchSpinning: unMoundedEdit, // 切换提交状态
@@ -125,11 +116,12 @@ export default function registerViewModule(store) {
                 state.pageViewInfoMaps[viewMenu['url']] = viewInfo;
             },
 
-            setEditViewContext: (state, {url, formContext
+            setEditViewContext: (state, {url, formContext, openEditView
                 , model, loadingActive, switchActive, switchSpinning}) => {
                 let pageViewInfo = state.pageViewInfoMaps[url];
 
                 pageViewInfo.editModel = model;
+                pageViewInfo.openEditView = openEditView;
                 pageViewInfo.editFormContext = formContext;
                 pageViewInfo.switchEditView = switchActive;
                 pageViewInfo.editLoadingActive = loadingActive;
@@ -143,12 +135,14 @@ export default function registerViewModule(store) {
                 pageViewInfo.searchFormContext = formContext;
             },
 
-            setTableViewContext: (state, {url, selectedRows, loadingTableData, dataSource, expanded}) => {
+            setTableViewContext: (state, {url, selectedRows
+                , selectedKeys, loadingTableData, dataSource, expanded}) => {
                 let pageViewInfo = state.pageViewInfoMaps[url];
 
                 pageViewInfo.expanded = expanded;
                 pageViewInfo.dataSource = dataSource;
                 pageViewInfo.selectedRows = selectedRows;
+                pageViewInfo.selectedKeys = selectedKeys;
                 pageViewInfo.loadingTableData = loadingTableData;
             },
 

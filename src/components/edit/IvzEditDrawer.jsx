@@ -1,5 +1,4 @@
 import {defineComponent, reactive, ref} from "vue";
-const formProps = {labelCol: {span: 7}, wrapperCol: {span: 17}}
 export default defineComponent({
     name: 'IvzEditDrawer',
     props: {
@@ -48,7 +47,7 @@ export default defineComponent({
             if(slots.fun) {
                 return slots.fun({model, context});
             } else {
-                return <div style="text-align: center">{() => fun}</div>
+                return fun;
             }
         }
         return {formRef, initFunMetas, refs, spinning, visible, footer}
@@ -68,7 +67,7 @@ export default defineComponent({
     render() {
         let fun = [], model = {}, context = {};
         for(let meta of this.funMetas) {
-            fun.push(<ivz-button meta={meta}>{meta.name}</ivz-button>)
+            fun.push(<ivz-button meta={meta} class="ivz-fm">{meta.name}</ivz-button>)
         }
 
         if(this.formRef) {
@@ -83,11 +82,11 @@ export default defineComponent({
         return(<a-drawer v-model={[this.visible, 'visible', ["modifier"]]} wrapStyle={{position: 'absolute'}}
                     {...this.$props} v-slots={slots} ref="ADrawerRef" getContainer={false}>
             <a-spin size="small" tip="数据处理中..." spinning={this.spinning}>
-                <ivz-form {...this.$attrs} {...formProps} ref="iemFormRef">
+                <ivz-form {...this.$attrs} ref="iemFormRef">
                     {this.$slots.default ? this.$slots.default({model, context}) : null}
                 </ivz-form>
-                <div>
-                    {this.footer(model, context, fun)}
+                <div class="ivz-func ivz-ied-func">
+                    {this.$slots.fun ? this.$slots.fun({model, context}) : fun}
                 </div>
             </a-spin>
         </a-drawer>)
@@ -108,27 +107,6 @@ export default defineComponent({
 
         toggleActive() {
             this.visible = !this.visible;
-        },
-
-        loadingActive() {
-            return new Promise(resolve => {
-                this.visible = true;
-                this.spinning = true;
-
-                this.$nextTick().then(() => {
-                    if(this.formRef) {
-                        let editContext = this.getEditContext();
-                        let callback = () => this.spinning = false;
-                        resolve({callback, ...editContext});
-                    } else {
-                        this.$nextTick().then(() => {
-                            let editContext = this.getEditContext();
-                            let callback = () => this.spinning = false;
-                            resolve({callback, ...editContext});
-                        })
-                    }
-                })
-            })
         },
 
         getEditModel() {

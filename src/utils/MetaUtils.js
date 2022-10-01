@@ -87,34 +87,34 @@ const MetaConst = {
     SearchFormType: 'search',
 }
 const FunBtnConfig = {
-    Add: {type: 'default', class: 'ivz-fm-add'},
-    Del: {type: 'danger', class: 'ivz-fm-del', style: {color: 'red'}},
-    Edit: {type: 'link', class: 'ivz-fm-edit'},
+    Add: {type: 'default', class: 'ivz-fm-add', color: '#2db7f5'},
+    Del: {type: 'danger', class: 'ivz-fm-del', color: '#f50'},
+    Edit: {type: 'link', class: 'ivz-fm-edit', color: '#108ee9'},
     View: {type: 'primary', class: 'ivz-fm-view'},
     Reset: {type: 'dashed', class: 'ivz-fm-reset'},
     Import: {type: 'default', class: 'ivz-fm-import'},
     Export: {type: 'default', class: 'ivz-fm-export'},
-    Detail: {type: 'default', class: 'ivz-fm-detail'},
+    Detail: {type: 'default', class: 'ivz-fm-detail', color: 'green'},
     Cancel: {type: 'link', class: 'ivz-fm-cancel'},
     Submit: {type: 'primary', class: 'ivz-fm-submit'},
-    Expanded: {type: 'default', class: 'ivz-fm-expanded'},
+    Expanded: {type: 'dashed', class: 'ivz-fm-expanded'},
     __Default: {type: 'default', class: 'ivz-fm-default'},
 }
 
-const DefaultMetas = { }
-DefaultMetas[FunMetaMaps.View] = {name: '搜索', sort: 10}
-DefaultMetas[FunMetaMaps.Reset] = {name: '重置', sort: 20}
-DefaultMetas[FunMetaMaps.Add] = {name: '新增', sort: 30}
+const DefaultMetas = { }, view = () => true;
+DefaultMetas[FunMetaMaps.View] = {name: '搜索', sort: 10, view}
+DefaultMetas[FunMetaMaps.Reset] = {name: '重置', sort: 20, view}
+DefaultMetas[FunMetaMaps.Add] = {name: '新增', sort: 30, view}
 
-DefaultMetas[FunMetaMaps.Edit] = {name: '编辑', sort: 60}
-DefaultMetas[FunMetaMaps.Del] = {name: '删除', sort: 70}
-DefaultMetas[FunMetaMaps.Detail] = {name: '详情', sort: 80}
+DefaultMetas[FunMetaMaps.Edit] = {name: '编辑', sort: 60, view}
+DefaultMetas[FunMetaMaps.Del] = {name: '删除', sort: 70, view}
+DefaultMetas[FunMetaMaps.Detail] = {name: '详情', sort: 80, view}
 
-DefaultMetas[FunMetaMaps.Submit] = {name: '提交', sort: 110}
-DefaultMetas[FunMetaMaps.Cancel] = {name: '取消', sort: 120}
-DefaultMetas[FunMetaMaps.Import] = {name: '导入', sort: 150}
-DefaultMetas[FunMetaMaps.Export] = {name: '导出', sort: 160}
-DefaultMetas[FunMetaMaps.Expanded] = {name: '展开/折叠', sort: 230}
+DefaultMetas[FunMetaMaps.Submit] = {name: '提交', sort: 110, view}
+DefaultMetas[FunMetaMaps.Cancel] = {name: '取消', sort: 120, view}
+DefaultMetas[FunMetaMaps.Import] = {name: '导入', sort: 150, view}
+DefaultMetas[FunMetaMaps.Export] = {name: '导出', sort: 160, view}
+DefaultMetas[FunMetaMaps.Expanded] = {name: '展开/折叠', sort: 230, view}
 
 const getMetaConfig = function (field, props) {
     let config = FunBtnConfig[field];

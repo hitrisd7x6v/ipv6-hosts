@@ -1,5 +1,5 @@
 <template>
-  <ivz-menu-view>
+  <ivz-menu-view name="用户">
     <ivz-view-search>
       <ivz-input field="user.name" label="名称" defaultValue="25" />
       <ivz-date-time field="kl" picker="date" label="时间"
