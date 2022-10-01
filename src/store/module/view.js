@@ -106,7 +106,7 @@ export default function registerViewModule(store) {
 
                     editModel: unMoundedEdit, // 获取编辑视图组件数据
                     editFormContext: unMoundedEdit, // 获取编辑表单上下文
-                    editSwitchActive: unMoundedEdit, // 当前视图编辑组件的激活状态
+                    switchEditView: unMoundedEdit, // 切换当前编辑试图组件的激活状态
                     editLoadingActive: unMoundedEdit,
                     editSwitchSpinning: unMoundedEdit, // 切换提交状态
 
@@ -131,7 +131,7 @@ export default function registerViewModule(store) {
 
                 pageViewInfo.editModel = model;
                 pageViewInfo.editFormContext = formContext;
-                pageViewInfo.editSwitchActive = switchActive;
+                pageViewInfo.switchEditView = switchActive;
                 pageViewInfo.editLoadingActive = loadingActive;
                 pageViewInfo.editSwitchSpinning = switchSpinning;
             },

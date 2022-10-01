@@ -8,6 +8,8 @@ export default {
         key: {type: String, default: 'id'},
         // 功能名称 比如 用户管理
         name: {type: String, default: ''},
+        // 显示重置按钮
+        reset: {type: Boolean, default: true},
         // 是否是编辑
         isEdit: {type: Function, default: null},
         // 新增标题

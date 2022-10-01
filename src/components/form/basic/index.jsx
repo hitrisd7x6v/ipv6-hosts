@@ -130,7 +130,7 @@ const IvzRadio = defineComponent({
         let slots = this.$slots.default ? () => {
             return this.$slots.default()
         } : () => {
-            let attrs = this.getFormAttrs();
+            let attrs = this.getFormAttrs({options: this.dataSource});
             return h(resolveComponent('a-radio-group'), attrs)
         }
 
@@ -167,11 +167,11 @@ const IvzMentions = defineComponent({
 })
 const IvzTreeSelect = defineComponent({
     name: 'IvzTreeSelect',
-    mixins: [MixinsFormItem],
+    mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
         return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
+            let attrs = this.getFormAttrs({treeData: this.dataSource});
             return h(resolveComponent('a-tree-select'), attrs, {...this.$slots})
         })
     }

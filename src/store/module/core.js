@@ -3,6 +3,7 @@ import router from "@/router";
 import {getMenus, getDict, getUser} from "@/api";
 import {registerMenusRoutes} from '@/router'
 import {reactive} from "vue";
+import {GET} from "@/utils/request";
 
 // component: Index必须和首页组件的name一致
 const index = {id: -1, name: '首页', url: '/', component: 'main', closable: false}
@@ -130,7 +131,23 @@ const registerSysModule = function (store) {
             },
 
             getOptionsByUrl: state => {
-                return url => []
+                return url => {
+                    let options = state.optionsMaps[url];
+                    if(!options) {
+                        let dictData = reactive([]), valueLabelMap = {};
+                        state.optionsMaps[url] = {options: dictData, valueLabelMap};
+
+                        GET(url).then(({data}) => {
+                            if(data instanceof Array) {
+                                dictData.push(...data)
+                                data.forEach(item => {
+                                    valueLabelMap[item.value] = item.label;
+                                })
+                            }
+                        })
+                    }
+                    return state.optionsMaps[url].options
+                }
             },
 
             getValueLabelMap: state => {

@@ -41,12 +41,6 @@ export default {
   mixins: [MixinConfigView],
   components: {IvzUploadModal, CloudUploadOutlined},
   props: {
-    // 显示重置按钮
-    reset: {type: Boolean, default: true},
-    // 新增标题
-    addTitle: {type: String, default: '新增'},
-    // 修改标题
-    editTitle: {type: String, default: '编辑'},
     // 是否显示展开/缩收按钮
     expand: {type: Boolean, default: false},
   },

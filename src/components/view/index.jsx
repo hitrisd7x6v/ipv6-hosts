@@ -30,8 +30,8 @@ callbackMaps[FunMetaMaps.Cancel] = (meta, viewInfo) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
-            let {editSwitchActive} = viewInfo;
-            editSwitchActive(false);
+            let {switchEditView} = viewInfo;
+            switchEditView(false);
         }
     }
 }
@@ -58,7 +58,7 @@ callbackMaps[FunMetaMaps.Add] = (meta, viewInfo) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
-            let {config, editSwitchActive, editFormContext} = viewInfo;
+            let {config, switchEditView, editFormContext} = viewInfo;
             let formContext = editFormContext();
             if(formContext) {
                 let {getEditModel, getInitModel, setEditModel} = formContext;
@@ -71,7 +71,8 @@ callbackMaps[FunMetaMaps.Add] = (meta, viewInfo) => {
                         setEditModel(initModel);
                     }
                 }
-                editSwitchActive(true);
+
+                switchEditView(true);
             }
         }
     }

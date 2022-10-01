@@ -30,7 +30,7 @@ export default defineComponent({
     },
     methods: {
         getDefaultValue(defaultValue) {
-            return defaultValue || null;
+            return defaultValue != undefined ? defaultValue : null;
         },
         getFormItemProps(options) {
             options = options ? options : defOptions;
@@ -42,13 +42,13 @@ export default defineComponent({
             }
 
             this.attrs = this.$attrs;
-            let value = computed(() => this.formContext.getFieldValue(this.namePath));
             if(this.formContext && !this.attrs['onUpdate:value']) {
-                this.attrs = reactive(mergeProps(this.$attrs, {
+                let value = computed(() => this.formContext.getFieldValue(this.namePath));
+                this.attrs = mergeProps(this.$attrs, {
                     value: value, 'onUpdate:value': (val) => {
                         this.formContext.setFieldValue(this.namePath, val);
                     }
-                }, options ? options : {}));
+                }, options ? options : {});
             }
 
             return this.attrs;

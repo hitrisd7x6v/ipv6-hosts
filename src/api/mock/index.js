@@ -30,7 +30,7 @@ const menus = [
                 url: '#1',
                 children: [
                     {id: 158, name: '菜单管理', url: '/core/menu', pid: 11, type: 'V', children: [
-                            {name: '新增', permType: 'Add', type: 'A', sort: 30, position: 'M', url: '/core/menu/add'},
+                            {name: '新增', permType: 'Add', type: 'A', sort: 30, position: 'AM', url: '/core/menu/add'},
                             {name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/menu/view'},
                             {name: '编辑', permType: 'Edit', type: 'A', sort: 50, position: 'T', url: '/core/menu/edit'},
                             {name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/menu/del'},
@@ -45,7 +45,7 @@ const menus = [
                         ]
                     },
                     {id: 115, name: '角色管理', url: '/core/role', pid: 11,  type: 'V', children: [
-                            {id: 1151, name: '新增', url: '/core/role/add'}
+                            {id: 1151, name: '新增', type: 'A', url: '/core/role/add'}
                         ]
                     },
                     {id: 120, name: '部门管理', url: '/core/dept', pid: 11,  type: 'V', children: [

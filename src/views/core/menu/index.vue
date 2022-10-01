@@ -1,20 +1,27 @@
 <template>
-  <ivz-func-view :editFunMetas="editFunMetas" name="菜单"
-         :tableFunMetas="tableFunMetas" :searchFunMetas="searchFunMetas">
+  <ivz-menu-view :expand="true" name="菜单">
     <ivz-view-search>
       <ivz-input field="name" label="菜单名称" />
     </ivz-view-search>
     <ivz-view-table :columns="columns" size="small" :pagination="false" />
-    <ivz-view-drawer>
-      <ivz-input field="name" label="菜单名称" required/>
-      <ivz-tree-select field="pid" label="父菜单" required :defaultValue="0"/>
-      <ivz-input field="url" label="访问路径" required/>
-      <ivz-input field="perms" label="权限标识"/>
-      <ivz-select field="position" label="功能位置" dict="common_status"/>
+    <ivz-view-drawer :rules="rules" :width="820" layout="vertical">
+      <a-row>
+        <a-col span="8">
+          <ivz-input field="name" label="菜单名称" required/>
+        </a-col>
+        <a-col span="8">
+          <ivz-tree-select field="pid" label="父菜单" :defaultValue="0" url="/core/menu/parent"/>
+        </a-col>
+        <a-col span="8">
+          <ivz-input field="url" label="访问路径" required/>
+        </a-col>
+      </a-row>
+      <ivz-input field="perms" label="权限标识" @change="handle"/>
+      <ivz-select field="position" label="功能位置" :options="position"/>
       <ivz-select field="permType" label="功能类型" :options="permType"/>
       <ivz-input field="remark" label="备注" />
     </ivz-view-drawer>
-  </ivz-func-view>
+  </ivz-menu-view>
 </template>
 
 <script>
@@ -35,7 +42,6 @@ export default {
     ];
 
     const columns = [
-      {field: '', type: 'selection'},
       {field: 'name', title: '菜单名称', align: 'left'},
       {field: 'url', title: '访问路径'},
       {field: 'perms', title: '权限标识'},
@@ -45,23 +51,28 @@ export default {
       {field: 'createTime', title: '创建时间', type: 'datetime'},
       {field: 'action', title: '操作', type: 'action'},
     ]
-    const editFunMetas = [
-      {field: FunMetaMaps.Reset, name: '重置'},
-      {field: FunMetaMaps.Submit, name: '提交'},
-      {field: FunMetaMaps.Cancel, name: '取消'},
-    ]
-    const tableFunMetas = [
-      {field: FunMetaMaps.Add, name: '新增', url: '/core/menu/add'},
-      {field: FunMetaMaps.Edit, name: '编辑', url: '/core/menu/edit'},
-      {field: FunMetaMaps.Del, name: '删除', url: '/core/menu/del'},
-    ]
-    const searchFunMetas = [
-      {field: FunMetaMaps.View, name: '搜索', url: '/core/menu/view'},
-      {field: FunMetaMaps.Add, name: '新增', url: '/core/menu/add'},
-      {field: FunMetaMaps.Expanded, name: '展开/折叠'},
-    ]
-    return {columns, permType, editFunMetas, tableFunMetas, searchFunMetas}
+    let rules = {
+      pid: {type: 'number', required: true}
+    }
+    return {columns, permType, rules, position}
   },
+  mounted() {
+    let addFunMeta = this.getTableFunMeta(FunMetaMaps.Add);
+    // 覆盖表格新增功能点的默认实现
+    addFunMeta.callback = (row, meta, {switchEditView}) => {
+      switchEditView(true);
+      this.$nextTick().then(() => {
+        let editModel = this.getEditModel();
+        editModel['pid'] = row.id;
+      })
+    }
+  },
+  methods: {
+    handle(model) {
+      let editModel = this.getEditModel();
+
+    }
+  }
 }
 </script>
 

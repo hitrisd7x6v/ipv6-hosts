@@ -1,5 +1,5 @@
 import {defineComponent, reactive, ref} from "vue";
-const formProps = {labelCol: {span: 6}, wrapperCol: {span: 16}}
+const formProps = {labelCol: {span: 7}, wrapperCol: {span: 17}}
 export default defineComponent({
     name: 'IvzEditDrawer',
     props: {
@@ -13,7 +13,7 @@ export default defineComponent({
         zIndex: {default: 1000},
         keyboard: {default: true},
         placement: {default: 'right'},
-        maskClosable: {default: false},
+        maskClosable: {default: true},
         funMetas: {type: Array, default: () => []},
         forceRender: {type: Boolean, default: false},
         afterVisibleChange: {type: Function},
@@ -132,12 +132,17 @@ export default defineComponent({
         },
 
         getEditModel() {
-            return this.formRef.getEditModel();
+            // 再次从$refs获取, 防止未初始化或者延迟
+            return this.$refs['iemFormRef'].getEditModel();
         },
 
         getEditContext() {
             // 可能出现获取的时候form还未初始化, 自行判断
-            return this.formRef ? this.formRef.getFormContext() : {};
+            if(this.formRef) {
+                return this.formRef.getFormContext();
+            }
+
+            return null
         }
     }
 })
