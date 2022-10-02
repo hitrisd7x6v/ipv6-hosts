@@ -1,4 +1,5 @@
 import {defineComponent, reactive, ref} from "vue";
+import MixinsEditItem from "@/components/edit/MixinsEditItem";
 export default defineComponent({
     name: 'IvzEditModal',
     props: {
@@ -7,7 +8,7 @@ export default defineComponent({
         afterClose: Function,
         centered: Boolean,
         destroyOnClose: Boolean,
-        width: {default: 452},
+        width: {default: 558},
         getContainer: {type: Function},
         maskClosable: {default: false},
         closable: {type: Boolean, default: false},
@@ -15,6 +16,7 @@ export default defineComponent({
         forceRender: {type: Boolean, default: false},
         afterVisibleChange: {type: Function},
     },
+    mixins: [MixinsEditItem],
     setup({funMetas}) {
         let refs = ref(null);
         let formRef = ref(null);
@@ -44,21 +46,6 @@ export default defineComponent({
         return {formRef, initFunMetas, refs, spinning, visible}
     },
     watch: {
-        visible: function (value) {
-            if(!this.formRef) {
-                this.$nextTick().then(() => {
-                    this.formRef = this.$refs['iemFormRef']
-                    if(this.afterVisibleChange) {
-                        this.afterVisibleChange(value)
-                    }
-                })
-            } else {
-                if(this.afterVisibleChange) {
-                    this.afterVisibleChange(value)
-                }
-            }
-        },
-
         'funMetas.length': function(newFunMetas) {
             this.initFunMetas(newFunMetas);
         }
@@ -88,37 +75,5 @@ export default defineComponent({
                     </ivz-form>
                 </a-spin>
             </a-modal>
-    },
-    methods: {
-        // 表单组件是否初始化
-        isInitForm() {
-          return this.formRef != null
-        },
-
-        switchActive(visible) {
-          this.visible = visible;
-        },
-
-        switchSpinning(spinning) {
-          this.spinning = spinning;
-        },
-
-        toggleActive() {
-          this.visible = !this.visible;
-        },
-
-        getEditModel() {
-            // 再次从$refs获取, 防止未初始化或者延迟
-            return this.$refs['iemFormRef'].getEditModel();
-        },
-
-        getEditContext() {
-            // 可能出现获取的时候form还未初始化, 自行判断
-            if(this.formRef) {
-                return this.formRef.getFormContext();
-            }
-
-            return null;
-        }
     }
 })

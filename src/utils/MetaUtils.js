@@ -85,6 +85,9 @@ const MetaConst = {
 
     EditFormType: 'edit',
     SearchFormType: 'search',
+
+    DefaultLabelField: 'label',
+    DefaultValueField: 'value',
 }
 const FunBtnConfig = {
     Add: {type: 'default', class: 'ivz-fm-add', color: '#2db7f5'},

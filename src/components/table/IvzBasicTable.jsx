@@ -2,6 +2,7 @@ import moment from 'moment'
 import {useStore} from "vuex";
 import {Tag} from 'ant-design-vue'
 import {defineComponent, h, mergeProps, reactive, ref, watch} from "vue";
+import {MetaConst} from "@/utils/MetaUtils";
 
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
@@ -61,17 +62,23 @@ function initColumnActionSlot(column, slotName, slots) {
 }
 
 function initOptionsLabel(column) {
+    let labelField = column.labelField || MetaConst.DefaultLabelField;
+    let valueField = column.valueField || MetaConst.DefaultValueField;
+
     if(column.options instanceof Array) {
         column['__valueLabelMap'] = {}
         column.options.forEach(item => {
-            column['__valueLabelMap'][item.value] = item.label;
+            let label = item[labelField];
+            let value = item[valueField];
+
+            column['__valueLabelMap'][value] = label;
         })
     } else if(column.dict){
-        useStore().getters['sys/getOptionsByDictType'](column.dict);
+        useStore().getters['sys/getOptionsByDictType'](column.dict, labelField, valueField);
         let valueLabelMap = useStore().getters['sys/getValueLabelMap'](column.dict);
         column['__valueLabelMap'] = valueLabelMap
     } else if(column.url) {
-        useStore().getters['sys/getOptionsByUrl'](column.url);
+        useStore().getters['sys/getOptionsByUrl'](column.url, labelField, valueField);
         let valueLabelMap = useStore().getters['sys/getValueLabelMap'](column.url);
         column['__valueLabelMap'] = valueLabelMap
     }
@@ -174,7 +181,7 @@ function initTableColumns(oriColumns, slots) {
 }
 
 function getTableRowSelection(columns) {
-    if(columns instanceof Array) {
+    if(columns.length > 0) {
         let firstColumn = columns[0];
         if(firstColumn.type == 'selection') {
             let selectionRow = {...firstColumn};

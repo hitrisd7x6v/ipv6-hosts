@@ -1,4 +1,5 @@
 import {defineComponent, reactive, ref} from "vue";
+import MixinsEditItem from "@/components/edit/MixinsEditItem";
 export default defineComponent({
     name: 'IvzEditDrawer',
     props: {
@@ -17,6 +18,7 @@ export default defineComponent({
         forceRender: {type: Boolean, default: false},
         afterVisibleChange: {type: Function},
     },
+    mixins: [MixinsEditItem],
     setup({funMetas}, {slots}) {
         let refs = ref(null);
         let formRef = ref(null);
@@ -80,7 +82,7 @@ export default defineComponent({
         }
 
         return(<a-drawer v-model={[this.visible, 'visible', ["modifier"]]} wrapStyle={{position: 'absolute'}}
-                    {...this.$props} v-slots={slots} ref="ADrawerRef" getContainer={false}>
+                    {...this.$props} closable={false} v-slots={slots} ref="ADrawerRef" getContainer={false}>
             <a-spin size="small" tip="数据处理中..." spinning={this.spinning}>
                 <ivz-form {...this.$attrs} ref="iemFormRef">
                     {this.$slots.default ? this.$slots.default({model, context}) : null}
@@ -90,37 +92,5 @@ export default defineComponent({
                 </div>
             </a-spin>
         </a-drawer>)
-    },
-    methods: {
-        // 表单组件是否初始化
-        isInitForm() {
-            return this.formRef != null
-        },
-
-        switchActive(visible) {
-            this.visible = visible;
-        },
-
-        switchSpinning(spinning) {
-            this.spinning = spinning;
-        },
-
-        toggleActive() {
-            this.visible = !this.visible;
-        },
-
-        getEditModel() {
-            // 再次从$refs获取, 防止未初始化或者延迟
-            return this.$refs['iemFormRef'].getEditModel();
-        },
-
-        getEditContext() {
-            // 可能出现获取的时候form还未初始化, 自行判断
-            if(this.formRef) {
-                return this.formRef.getFormContext();
-            }
-
-            return null
-        }
     }
 })

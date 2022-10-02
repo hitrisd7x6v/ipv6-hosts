@@ -19,8 +19,7 @@ callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo);
         } else {
-            let {loadingTableData} = viewInfo;
-            loadingTableData();
+            viewInfo.loadingTableData();
         }
     }
 }
@@ -41,13 +40,24 @@ callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
-            let {config, editFormContext, editSwitchSpinning} = viewInfo;
+            let {config, editFormContext, editSwitchSpinning
+                , switchEditView, getSearchFunMeta, searchModel} = viewInfo;
             let url = config.isEdit(model) ? meta['editUrl'] : meta['addUrl'];
             let formContext = editFormContext();
             formContext.validate().then(() => {
                 editSwitchSpinning(true);
-                TypeMethodMaps.Submit(url, model, meta.http).then(({data}) => {})
-                    .finally(() => editSwitchSpinning(false))
+                TypeMethodMaps.Submit(url, model, meta.http)
+                    .then(({data}) => {
+                        switchEditView(false)
+                        msgSuccess('提交数据成功')
+
+                        // 提交数据成功之后重新加载列表
+                        let viewFunMeta = getSearchFunMeta(FunMetaMaps.View);
+                        if(viewFunMeta) {
+                            let model = searchModel();
+                            viewFunMeta.props.onClick(model, meta);
+                        }
+                    }).finally(() => editSwitchSpinning(false))
             })
         }
     }
@@ -69,7 +79,7 @@ callbackMaps[FunMetaMaps.Edit] = (meta, viewInfo) => {
         if(meta.callback instanceof Function) {
             meta.callback(row, meta, viewInfo)
         } else {
-            viewInfo.openEditView(meta);
+            viewInfo.openEditView(meta, row);
         }
     }
 }
@@ -94,11 +104,13 @@ callbackMaps[FunMetaMaps.Del] = (meta, viewInfo) => {
             meta.callback(model, meta, viewInfo);
         } else {
             let {config, getSearchFunMeta, searchModel} = viewInfo;
-            let keyValue = model[config.key];
             let {title, content} = config.delDescCall(model, viewInfo);
+            // 删除单条记录
             confirm({title, content
-                , onOk: () => new Promise(resolve => {
-                    TypeMethodMaps.Del(meta.url, keyValue).then(() => {
+                , onOk: () => new Promise((resolve, reject) => {
+                    let keyValue = model[config.key];
+
+                    TypeMethodMaps.Del(meta.url, [keyValue]).then(() => {
                         resolve();
                         let viewMeta = getSearchFunMeta(FunMetaMaps.View);
                         if(viewMeta) {
@@ -107,7 +119,7 @@ callbackMaps[FunMetaMaps.Del] = (meta, viewInfo) => {
                         }
 
                         nextTick().then(() => msgSuccess('删除成功'))
-                    })
+                    }).finally(() => resolve())
                 })
             })
         }
@@ -188,7 +200,7 @@ const IvzViewSearch = defineComponent({
                                     }
 
                                     nextTick().then(() => msgSuccess('删除成功'))
-                                })
+                                }).finally(() => resolve())
                             })
                         })
                     } else {
@@ -220,11 +232,15 @@ const IvzViewSearch = defineComponent({
 
 const IvzViewModal = defineComponent({
     name: 'IvzViewModal',
+    props: {
+        span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
+    },
     components: {IvzEditModal},
     setup() {
         let iemRef = ref();
         let title = ref("");
-        let visibleChange = ref(null);
+        let labelCol = ref(null);
+        let wrapperCol = ref(null);
         let viewInfo = inject("IvzViewInfo");
         if(!viewInfo) {
             throw new Error(`IvzViewModal组件只能作为IvzXxxView等视图组件的子组件`);
@@ -235,44 +251,42 @@ const IvzViewModal = defineComponent({
 
         // 打开编辑视图
         // meta 必须是Add或者Edit
-        let openEditView = (meta) => {
+        let openEditView = (meta, model) => {
             if(meta == null) {
-                return console.error(`未指定新增还是编辑`)
+                return console.error(`未指定要操作的功能点`)
             }
 
             if(meta.field != FunMetaMaps.Add &&
                 meta.field != FunMetaMaps.Edit) {
-                return console.error(`功能点期待新增或者编辑`)
+                return console.error(`期待新增或者编辑功能点`)
             }
 
             if(meta.field == FunMetaMaps.Edit && !meta.url) {
-                return console.error(`功能点[${operaMeta.name}]没有指定url`);
+                return console.error(`功能点[${meta.name}]没有指定url`);
             }
 
-            iemRef.value.switchActive(true)
             return new Promise((resolve, reject) => {
-                visibleChange.value = (visible) => {
-                    if(visible) {
-                        let {setEditModel, getInitModel} = iemRef.value.getEditContext();
-                        if(meta.field == FunMetaMaps.Add) {
-                            let initModel = getInitModel();
-                            resolve(initModel);
-                            setEditModel(initModel);
-                        } else if(meta.field == FunMetaMaps.Edit) {
-                            iemRef.value.switchSpinning(true);
-                            TypeMethodMaps.Edit(meta.url).then(({data}) => {
-                                if(data) {
-                                    resolve(data);
-                                    setEditModel(data);
-                                } else {
-                                    console.error(`获取[${meta.url}]数据失败[${data}]`)
-                                }
-                            }).finally(() => iemRef.value.switchSpinning(false))
-                        } else {
-
-                        }
+                iemRef.value.openEditAtFormInit().then(context => {
+                    let {setEditModel, getInitModel} = context;
+                    if(meta.field == FunMetaMaps.Add) {
+                        let initModel = getInitModel();
+                        resolve(initModel);
+                        setEditModel(initModel);
+                    } else {
+                        let param = {}
+                        iemRef.value.switchSpinning(true);
+                        param[config.key] = model[config.key]
+                        TypeMethodMaps.Edit(meta.url, param).then(({data}) => {
+                            if(data) {
+                                resolve(data);
+                                setEditModel(data);
+                            } else {
+                                console.error(`获取[${meta.url}]数据失败[${data}]`)
+                            }
+                        }).catch(reason => reject(reason))
+                            .finally(() => iemRef.value.switchSpinning(false))
                     }
-                }
+                });
             })
         }
 
@@ -280,8 +294,8 @@ const IvzViewModal = defineComponent({
         useStore().commit('view/setEditViewContext', {
             url: viewMenu.url,
             model: () => iemRef.value.getEditModel(),
-            openEditView: (meta) => openEditView(meta),
             formContext: () => iemRef.value.getEditContext(),
+            openEditView: (meta, model) => openEditView(meta, model),
             switchActive: (status) => iemRef.value.switchActive(status),
             switchSpinning: (spinning) => iemRef.value.switchSpinning(spinning)
         })
@@ -292,7 +306,7 @@ const IvzViewModal = defineComponent({
             })
         }
 
-        return {funMetas, viewInfo, viewMenu, iemRef, title, visibleChange}
+        return {funMetas, viewInfo, viewMenu, iemRef, title, labelCol, wrapperCol}
     },
     computed: {
         ...mapGetters({
@@ -308,10 +322,14 @@ const IvzViewModal = defineComponent({
             let editModel = this.iemRef.getEditModel();
             this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
         }
+        if(this.span instanceof Array) {
+            this.labelCol = {span: this.span[0]};
+            this.wrapperCol = {span: this.span[1]};
+        }
 
         return <div class="ivz-view ivz-view-modal">
-            <ivz-edit-modal {...this.$attrs} funMetas={this.funMetas} title={this.title}
-                ref="iemRef" v-slots={this.$slots} afterVisibleChange={this.visibleChange}>
+            <ivz-edit-modal {...this.$attrs} labelCol={this.labelCol} wrapperCol={this.wrapperCol}
+                funMetas={this.funMetas} title={this.title} ref="iemRef" v-slots={this.$slots}>
             </ivz-edit-modal>
         </div>
     }
@@ -319,10 +337,14 @@ const IvzViewModal = defineComponent({
 const IvzViewDrawer = defineComponent({
     name: 'IvzViewDrawer',
     components: {IvzEditDrawer},
+    props: {
+        span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
+    },
     setup() {
         let iemRef = ref();
         let title = ref("");
-        let operaMeta = ref(null);
+        let labelCol = ref(null);
+        let wrapperCol = ref(null);
         let visibleChange = ref(null);
         let viewInfo = inject("IvzViewInfo");
         if(!viewInfo) {
@@ -334,44 +356,42 @@ const IvzViewDrawer = defineComponent({
 
         // 打开编辑视图
         // meta 必须是Add或者Edit
-        let openEditView = (meta) => {
+        let openEditView = (meta, model) => {
             if(meta == null) {
-                return console.error(`未指定新增还是编辑`)
+                return console.error(`未指定要操作的功能点`)
             }
 
             if(meta.field != FunMetaMaps.Add &&
                 meta.field != FunMetaMaps.Edit) {
-                return console.error(`功能点期待新增或者编辑`)
+                return console.error(`期待新增或者编辑功能点`)
             }
 
             if(meta.field == FunMetaMaps.Edit && !meta.url) {
-                return console.error(`功能点[${operaMeta.name}]没有指定url`);
+                return console.error(`功能点[${meta.name}]没有指定url`);
             }
 
-            iemRef.value.switchActive(true)
             return new Promise((resolve, reject) => {
-                visibleChange.value = (visible) => {
-                    if(visible) {
-                        let {setEditModel, getInitModel} = iemRef.value.getEditContext();
-                        if(meta.field == FunMetaMaps.Add) {
-                            let initModel = getInitModel();
-                            resolve(initModel);
-                            setEditModel(initModel);
-                        } else if(meta.field == FunMetaMaps.Edit) {
-                            iemRef.value.switchSpinning(true);
-                            TypeMethodMaps.Edit(meta.url).then(({data}) => {
-                                if(data) {
-                                    resolve(data);
-                                    setEditModel(data);
-                                } else {
-                                    console.error(`获取[${meta.url}]数据失败[${data}]`)
-                                }
-                            }).finally(() => iemRef.value.switchSpinning(false))
-                        } else {
-
-                        }
+                iemRef.value.openEditAtFormInit().then(context => {
+                    let {setEditModel, getInitModel} = context;
+                    if(meta.field == FunMetaMaps.Add) {
+                        let initModel = getInitModel();
+                        resolve(initModel);
+                        setEditModel(initModel);
+                    } else {
+                        let param = {}
+                        iemRef.value.switchSpinning(true);
+                        param[config.key] = model[config.key]
+                        TypeMethodMaps.Edit(meta.url, param).then(({data}) => {
+                            if(data) {
+                                resolve(data);
+                                setEditModel(data);
+                            } else {
+                                console.error(`获取[${meta.url}]数据失败[${data}]`)
+                            }
+                        }).catch(reason => reject(reason))
+                            .finally(() => iemRef.value.switchSpinning(false))
                     }
-                }
+                });
             })
         }
 
@@ -379,7 +399,7 @@ const IvzViewDrawer = defineComponent({
         useStore().commit('view/setEditViewContext', {
             url: viewMenu.url,
             model: () => iemRef.value.getEditModel(),
-            openEditView: (meta) => openEditView(meta),
+            openEditView: (meta, model) => openEditView(meta, model),
             formContext: () => iemRef.value.getEditContext(),
             switchActive: (status) => iemRef.value.switchActive(status),
             switchSpinning: (spinning) => iemRef.value.switchSpinning(spinning)
@@ -391,7 +411,7 @@ const IvzViewDrawer = defineComponent({
             })
         }
 
-        return {funMetas, viewInfo, viewMenu, iemRef, title, visibleChange}
+        return {funMetas, viewInfo, viewMenu, iemRef, title, visibleChange, labelCol, wrapperCol}
     },
     computed: {
         ...mapGetters({
@@ -406,6 +426,11 @@ const IvzViewDrawer = defineComponent({
             let {config} = this.viewInfo;
             let editModel = this.iemRef.getEditModel();
             this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
+        }
+
+        if(this.span instanceof Array) {
+            this.labelCol = {span: this.span[0]};
+            this.wrapperCol = {span: this.span[1]};
         }
 
         return <div class="ivz-view ivz-view-drawer">

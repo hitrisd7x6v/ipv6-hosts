@@ -16,7 +16,7 @@ export function getMenus() {
 
 // 获取用户中心详情
 export function getUser() {
-    return GET('/core/user/detail')
+    return GET('/core/center/detail')
 }
 
 // 修改用户密码

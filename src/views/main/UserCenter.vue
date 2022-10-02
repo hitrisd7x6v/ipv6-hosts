@@ -1,12 +1,12 @@
 <template>
-  <a-drawer :visible="visible" :width="'90%'" @close="closeHandle"
+  <a-drawer :visible="visible" :width="'78%'" @close="closeHandle"
       placement="right" :closable="false" :get-container="false"
       :after-visible-change="afterVisibleChange" wrapClassName="ivz-user-info"
       :wrap-style="{ position: 'absolute' }" :bodyStyle="{height: '100%'}">
     <div class="ivz-ui-content">
-      <div class="ivz-uic-profile">
-        <UserProfile />
-      </div>
+<!--      <div class="ivz-uic-profile">-->
+<!--        <UserProfile />-->
+<!--      </div>-->
       <div class="ivz-uic-info">
         <a-tabs :activeKey="activeKey" @change="tabChange">
           <a-tab-pane key="msg">

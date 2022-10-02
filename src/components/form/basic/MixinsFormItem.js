@@ -22,7 +22,7 @@ export default defineComponent({
             this.namePath = this.field.split('.');
         }
 
-        if(this.formContext) {
+        if(this.formContext && this.namePath && this.namePath.length > 0) {
             let initModel = inject('initModel');
             let defaultValue = this.$attrs.defaultValue;
             initModel(this.namePath, this.getDefaultValue(defaultValue));

@@ -56,6 +56,18 @@ function resolverMenuMaps(menus) {
     return {urlMenuMap, idMenuMap};
 }
 
+function resolverOptions(data, labelField, valueField, valueLabelMap) {
+    data.forEach(item => {
+        item['label'] = item[labelField];
+        item['value'] = item[valueField];
+        valueLabelMap[item['value']] = item['label'];
+
+        if(item.children instanceof Array) {
+            resolverOptions(item.children, labelField, valueField, valueLabelMap);
+        }
+    })
+}
+
 function resolverMenuToRoutes(urlMenuMaps) {
     return Object.values(urlMenuMaps).map(menu => {
         let {url, name} = menu;
@@ -131,7 +143,7 @@ const registerSysModule = function (store) {
             },
 
             getOptionsByUrl: state => {
-                return url => {
+                return (url, labelField, valueField) => {
                     let options = state.optionsMaps[url];
                     if(!options) {
                         let dictData = reactive([]), valueLabelMap = {};
@@ -139,6 +151,8 @@ const registerSysModule = function (store) {
 
                         GET(url).then(({data}) => {
                             if(data instanceof Array) {
+                                resolverOptions(data, labelField, valueField, valueLabelMap)
+
                                 dictData.push(...data)
                                 data.forEach(item => {
                                     valueLabelMap[item.value] = item.label;
@@ -155,7 +169,7 @@ const registerSysModule = function (store) {
             },
 
             getOptionsByDictType: (state) => {
-                return dictType => {
+                return (dictType, labelField, valueField) => {
                     let dictData = reactive([]), valueLabelMap = {};
                     let options = state.optionsMaps[dictType];
                     if(!options) { // 说明字典数据还不存在, 先缓存
@@ -163,6 +177,11 @@ const registerSysModule = function (store) {
 
                         getDict(dictType).then((options) => {
                             if(options instanceof Array) {
+                                options.forEach(item => {
+                                    item['label'] = item[labelField];
+                                    item['value'] = item[valueField];
+                                })
+
                                 dictData.push(...options)
                                 options.forEach(item => {
                                     valueLabelMap[item.value] = item.label;

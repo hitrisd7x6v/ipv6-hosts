@@ -71,11 +71,11 @@ Mock.mock(RegExp(`${menuUri}.*`), 'get', (args) => {
 })
 
 // 模拟用户中心详情
-Mock.mock(RegExp(`/core/user/detail.*`), 'get', () => {
+Mock.mock(RegExp(`/core/center/detail.*`), 'get', () => {
     return {
         code: 200, message: '成功',
-        data: {nickName:'iteaj', phone: '13123456028', email: 'iteaj@outlook.com', account: 'admin',
-            deptName: '技术部 > 技术总监', roleName: '超级管理员', profile: '希望努力之后活的更像自己',
+        data: {name:'iteaj', phone: '13123456028', email: 'iteaj@outlook.com', account: 'admin',
+            deptName: '技术部 > 技术总监', roleNames: '超级管理员', remark: '希望努力之后活的更像自己',
             avatar: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'}
     }
 })

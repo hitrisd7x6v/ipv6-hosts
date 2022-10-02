@@ -1,13 +1,14 @@
 import {defineComponent} from "vue";
 import {mapActions, useStore} from "vuex";
+import {MetaConst} from "@/utils/MetaUtils";
 
 export default defineComponent({
     props: {
         url: String,
         dict: String,
         options: Array,
-        labelField: {default: 'label'},
-        valueField: {default: 'value'},
+        labelField: {default: MetaConst.DefaultLabelField},
+        valueField: {default: MetaConst.DefaultValueField},
     },
     data() {
         return {
@@ -17,9 +18,11 @@ export default defineComponent({
     created() {
         if(!this.options) {
             if(this.dict) {
-                this.dataSource = useStore().getters['sys/getOptionsByDictType'](this.dict);
+                this.dataSource = useStore().getters['sys/getOptionsByDictType']
+                    (this.dict, this.labelField, this.valueField);
             } else if(this.url) {
-                this.dataSource = useStore().getters['sys/getOptionsByUrl'](this.url);
+                this.dataSource = useStore().getters['sys/getOptionsByUrl']
+                    (this.url, this.labelField, this.valueField);
             }
         } else {
             this.dataSource = this.options;

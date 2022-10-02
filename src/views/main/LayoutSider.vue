@@ -3,7 +3,7 @@
       v-model:collapsed="collapsed" collapsible :collapsedWidth="72">
     <div class="logo" @click="collapsedHandle">
       <a-avatar :size="48" src="/img/logo.png"></a-avatar>
-      <span style="vertical-align: sub; margin-left: 8px; font-size: 17px">由创源科技</span>
+      <span class="ivz-ism-title" style="vertical-align: sub; margin-left: 8px; font-size: 17px">由创源科技</span>
     </div>
     <!--侧边菜单-->
     <div class="ivz-ism-menu">
@@ -81,10 +81,12 @@ export default {
   text-overflow:ellipsis;
   vertical-align: middle;
 }
-/*侧边栏*/
-/*.ant-layout-sider {*/
-/*  background: #001529;*/
-/*}*/
+.ant-layout-sider-collapsed .ivz-ism-title {
+  opacity: 0;
+  max-width: 0px;
+  display: inline-block;
+  margin-left: 0px!important;
+}
 .ivz-ism-menu {
   flex: 1 1 0%;
   overflow: hidden auto;
@@ -113,5 +115,11 @@ export default {
   background: hsla(0,0%,100%,.15);
   border-radius: 3px;
   -webkit-box-shadow: inset 0 0 5px rgb(37 37 37 / 5%);
+}
+.ivz-sider-menu .ant-menu-inline-collapsed .anticon{
+  font-size: 18px!important;
+}
+.ivz-sider-menu .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+  padding: 0px 27px!important;
 }
 </style>

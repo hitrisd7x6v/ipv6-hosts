@@ -4,35 +4,42 @@
       <ivz-input field="name" label="菜单名称" />
     </ivz-view-search>
     <ivz-view-table :columns="columns" size="small" :pagination="false" />
-    <ivz-view-drawer :rules="rules" :width="680" layout="vertical">
+    <ivz-view-drawer :rules="rules" height="100%" layout="vertical" placement="top">
       <a-row :gutter="24">
-        <a-col span="12">
+        <a-col span="8">
           <ivz-input field="name" label="菜单名称"/>
         </a-col>
-        <a-col span="12">
+        <a-col span="8">
           <ivz-tree-select field="pid" label="父菜单" :defaultValue="0"
-               url="/core/menu/parent" :showSearch="true"/>
+               url="/core/menu/parent" labelField="name" valueField="id"
+               treeNodeFilterProp="label"/>
         </a-col>
-        <a-col span="12">
+        <a-col span="8">
           <ivz-select field="type" label="菜单类型" :options="type" @change="typeHandle"/>
         </a-col>
-        <a-col span="12">
+        <a-col span="8">
           <ivz-input field="url" label="菜单地址"/>
         </a-col>
-        <a-col span="12">
+        <a-col span="8">
+          <ivz-input-group label="功能点" compact>
+            <template #default="model">
+              <a-select :options="permType" defaultValue style="width: 38%" @change="permTypeChange"/>
+              <a-input style="width: 62%" v-model:value="model.permType"
+                       :readonly="disabledPermType" placeholder="请输入功能点" ref="permTypeRef"/>
+            </template>
+          </ivz-input-group>
+        </a-col>
+        <a-col span="8">
           <ivz-select field="position" label="功能位置" :options="position"/>
         </a-col>
-        <a-col span="12">
-          <ivz-select field="permType" label="功能点" :options="permType" mode="combobox"/>
-        </a-col>
-        <a-col span="12">
+        <a-col span="8">
           <ivz-input field="perms" label="权限标识"/>
         </a-col>
-        <a-col span="12">
-          <ivz-input-number field="sort" label="排序" :defaultValue="80"/>
-        </a-col>
-        <a-col span="12">
+        <a-col span="8">
           <ivz-input field="icon" label="图标" />
+        </a-col>
+        <a-col span="8">
+          <ivz-input-number field="sort" label="排序" :defaultValue="80"/>
         </a-col>
       </a-row>
     </ivz-view-drawer>
@@ -41,6 +48,7 @@
 
 <script>
 import {FunMetaMaps} from "@/utils/SysUtils";
+import {ref} from "vue";
 
 export default {
   name: "Menu",
@@ -83,7 +91,8 @@ export default {
       type: {required: true, message: '菜单类型必填'},
       position: {required: false, message: '功能位置必填'},
     }
-    return {columns, permType, rules, position, type}
+    let disabledPermType = ref(false);
+    return {columns, permType, rules, position, type, disabledPermType}
   },
   mounted() {
     let addFunMeta = this.getTableFunMeta(FunMetaMaps.Add);
@@ -118,6 +127,16 @@ export default {
       }
 
       validate('position');
+    },
+    permTypeChange(val) {
+      let editModel = this.getEditModel();
+      editModel['permType'] = val;
+      if(val == '') {
+        this.disabledPermType = false;
+        this.$refs['permTypeRef'].focus();
+      } else {
+        this.disabledPermType = true;
+      }
     }
   }
 }

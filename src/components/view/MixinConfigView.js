@@ -50,6 +50,9 @@ export default {
         // 重新加载表格数据
         $parent['loadingTableData'] = (promise) => this.viewInfo.loadingTableData(promise)
 
+        // 打开编辑视图
+        $parent['openEditView'] = (meta, model) => this.viewInfo.openEditView(meta, model);
+
         // 获取当前编辑表单相关上下文信息(包括重置、校验、数据等)
         $parent['getEditContext'] = () => this.viewInfo.editFormContext()
         // 获取当前搜索表单相关上下文信息(包括重置、数据等)

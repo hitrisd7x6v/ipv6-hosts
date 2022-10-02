@@ -29,17 +29,16 @@ const handleResponse = (code, msg) => {
     switch (code) {
         case 401: // 未授权
             router.push({ path: '/login' }).catch(() => {});
-            break;
+            return null;
         case 500:
             msgError(msg)
-            break;
+            return Promise.reject(msg);
         case 404:
             msgError("资源没找到(404)")
-            break;
+            return Promise.reject('404');
         default:
             msgError(msg);
-            console.error(`未知错误：${msg}`)
-            break
+            return Promise.reject(msg);
     }
 }
 
@@ -77,10 +76,10 @@ instance.interceptors.response.use(
             return data
         } else {
             if(config['autoMsg']) {
-                handleResponse(code, message)
+                return handleResponse(code, message)
             }
 
-            return Promise.reject(`请求失败: ${JSON.stringify({ url: config.url, code, message })}`)
+            return response;
         }
     },
     (error) => {
@@ -89,10 +88,10 @@ instance.interceptors.response.use(
         if (response && response.data) {
             const { status, data, config } = response
             if(config['autoMsg']) {
-                handleResponse(status, data.message || message)
+                return handleResponse(status, data.message || message)
             }
 
-            return Promise.reject(data.message || message)
+            return error
         } else {
             let { message } = error
             if(message === 'Network Error') {
