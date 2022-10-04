@@ -118,11 +118,12 @@ DefaultMetas[FunMetaMaps.Cancel] = {name: '取消', sort: 120, view}
 DefaultMetas[FunMetaMaps.Import] = {name: '导入', sort: 150, view}
 DefaultMetas[FunMetaMaps.Export] = {name: '导出', sort: 160, view}
 DefaultMetas[FunMetaMaps.Expanded] = {name: '展开/折叠', sort: 230, view}
+DefaultMetas['__Default'] = {sort: 680, view}
 
 const getMetaConfig = function (field, props) {
     let config = FunBtnConfig[field];
     if(config == null) {
-        config = FunBtnConfig["__Default"];
+        config = FunBtnConfig.__Default;
     }
 
     let cloneConfig = cloneDeep(config);
@@ -143,7 +144,9 @@ const getMetaConfig = function (field, props) {
 const mergeMetaOfDefault = function (meta) {
     if(!meta.field) return;
     let defaultMeta = DefaultMetas[meta.field];
-    if(!defaultMeta) return;
+    if(!defaultMeta) {
+        defaultMeta = DefaultMetas.__Default;
+    }
 
     Object.keys(defaultMeta).forEach(key => {
         meta[key] = meta[key] || defaultMeta[key]

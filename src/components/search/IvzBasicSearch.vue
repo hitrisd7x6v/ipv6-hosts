@@ -139,7 +139,7 @@ export default {
   width: 100%;
   position: relative;
   background: #ffffff;
-  padding: 0px 0px 16px 0px;
+  padding: 0px 0px 24px 0px;
 }
 .ivz-ibs-form {
   padding: 0px 36px;
@@ -151,7 +151,7 @@ export default {
   line-height: 38px;
   padding: 0px 0px 16px;
   background: #fefefe;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 .ivz-isf-btn {
   text-align: center;

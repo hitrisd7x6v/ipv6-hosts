@@ -46,7 +46,11 @@ export default defineComponent({
 
         getEditModel() {
             // 再次从$refs获取, 防止未初始化或者延迟
-            return this.$refs['iemFormRef'].getEditModel();
+            if(this.$refs['iemFormRef']) {
+                return this.$refs['iemFormRef'].getEditModel();
+            } else {
+                return null;
+            }
         },
 
         getEditContext() {

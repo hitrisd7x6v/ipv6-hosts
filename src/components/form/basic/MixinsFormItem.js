@@ -38,7 +38,7 @@ export default defineComponent({
         },
         getFormAttrs(options) {
             if(this.attrs) {
-                return this.attrs;
+                return mergeProps(this.attrs, this.$attrs);
             }
 
             this.attrs = this.$attrs;

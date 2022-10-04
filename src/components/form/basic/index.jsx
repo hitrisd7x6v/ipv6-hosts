@@ -28,6 +28,17 @@ const IvzInputNumber = defineComponent({
     }
 
 })
+const IvzInputPassword = defineComponent({
+    name: 'IvzInputPassword',
+    mixins: [MixinsFormItem],
+    render() {
+        let props = this.getFormItemProps();
+        return h(resolveComponent('a-form-item'), props, () => {
+            let attrs = this.getFormAttrs();
+            return h(resolveComponent('a-input-password'), attrs)
+        })
+    }
+})
 
 const IvzInputGroup = defineComponent({
     name: 'IvzInputGroup',
@@ -223,7 +234,7 @@ const IvzDateTime = defineComponent({
 })
 
 const formComponent = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
-    , IvzRate, IvzSlider, IvzInputNumber, IvzCascader, IvzAutoComplete
+    , IvzRate, IvzSlider, IvzInputNumber, IvzCascader, IvzAutoComplete, IvzInputPassword
     , IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect, IvzTextarea, IvzInputGroup}
 
 export default {
