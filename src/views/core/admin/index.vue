@@ -22,15 +22,12 @@
 </template>
 
 <script>
-import {reactive} from "vue";
-import {FunMetaMaps} from "@/utils/SysUtils";
 
 export default {
   name: "User",
   setup() {
     let sex = [{label: '男', value: 'man'}, {label: '女', value: 'woman'}, {label: '无', value: 'non'}]
     let columns = [
-      {type: 'selection', fixed: true},
       {title: '用户昵称', field: 'name'},
       {title: '用户账号', field: 'account'},
       {title: '性别', field: 'sex', options: sex},
@@ -51,17 +48,8 @@ export default {
     }
     return {columns, rules, status, sex}
   },
-  mounted() {
-    let viewMeta = this.getSearchFunMeta(FunMetaMaps.View);
-  },
   methods: {
-    edit() {
-      this.model.user.name = 8;
-    },
-    submit(e) {
-      let formRef = this.$refs['basicForm'];
-      formRef.resetFields();
-    }
+
   }
 }
 </script>

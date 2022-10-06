@@ -8,17 +8,18 @@ let userMock = {
     "name": '@cname', // 昵称
     "account": '@name()', // 账号
     "email": '@email', // 邮箱
+    "status": 'enabled',
     "createTime": '@now', // 创建时间
 }
 let userData = Mock.mock({"data|8-18": [userMock]}).data;
-Mock.mock(RegExp('/core/user/view'), 'get', args => {
+Mock.mock(RegExp('/core/admin/view'), 'get', args => {
     let {size, current} = Utils.resolverQueryOfUrl(args.url);
     return {
         code: 200, message: 'OK', data: {size: size, records: userData, total: userData.length}
     }
 })
 
-Mock.mock(RegExp(`/core/user/edit`), 'get', (args) => {
+Mock.mock(RegExp(`/core/admin/edit`), 'get', (args) => {
     let query = Utils.resolverQueryOfUrl(args.url);
     return {
         code: 200,
@@ -26,7 +27,7 @@ Mock.mock(RegExp(`/core/user/edit`), 'get', (args) => {
         data: userData.filter(item => item['id'] == query['id'])[0]
     }
 })
-Mock.mock(RegExp(`/core/user/edit`), 'post', (args) => {
+Mock.mock(RegExp(`/core/admin/edit`), 'post', (args) => {
     let query = args.body
 
     return {
@@ -35,7 +36,7 @@ Mock.mock(RegExp(`/core/user/edit`), 'post', (args) => {
         data: null
     }
 })
-Mock.mock(RegExp(`/core/user/del`), 'post', (args) => {
+Mock.mock(RegExp(`/core/admin/del`), 'post', (args) => {
     let query = args.body;
     userData.forEach((item, index) =>
         item.id == query ? userData.splice(index, 1) : null);
