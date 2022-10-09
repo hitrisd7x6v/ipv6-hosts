@@ -46,10 +46,11 @@ callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
             let formContext = editFormContext();
             formContext.validate().then(() => {
                 editSwitchSpinning(true);
+                meta.props.loading = true;
                 TypeMethodMaps.Submit(url, model, meta.http)
-                    .then(({data}) => {
+                    .then(({data, message}) => {
                         switchEditView(false)
-                        msgSuccess('提交数据成功')
+                        msgSuccess(message || '提交数据成功')
 
                         // 提交数据成功之后重新加载列表
                         let viewFunMeta = getSearchFunMeta(FunMetaMaps.View);
@@ -57,7 +58,10 @@ callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
                             let model = searchModel();
                             viewFunMeta.props.onClick(model, meta);
                         }
-                    }).finally(() => editSwitchSpinning(false))
+                    }).finally(() => {
+                        editSwitchSpinning(false)
+                        meta.props.loading = false;
+                    })
             })
         }
     }
@@ -148,16 +152,19 @@ callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
     }
 }
 
-function initCallback(meta, viewInfo) {
-    let callback = callbackMaps[meta.field];
-    if(callback) {
-        callback(meta, viewInfo);
-    } else {
-        callback = meta.callback;
-        meta.callback = (model, meta) => {
-            callback(model, meta, viewInfo)
+callbackMaps[FunMetaMaps.__Default] = (meta, viewInfo) => {
+    meta.props.onClick = (model, meta) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo);
         }
     }
+}
+
+function initCallback(meta, viewInfo) {
+    let callback = callbackMaps[meta.field]
+        || callbackMaps[FunMetaMaps.__Default];
+
+    callback(meta, viewInfo);
 }
 const IvzViewSearch = defineComponent({
     name: 'IvzViewSearch',
@@ -232,15 +239,10 @@ const IvzViewSearch = defineComponent({
 
 const IvzViewModal = defineComponent({
     name: 'IvzViewModal',
-    props: {
-        span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
-    },
     components: {IvzEditModal},
     setup() {
         let iemRef = ref();
         let title = ref("");
-        let labelCol = ref(null);
-        let wrapperCol = ref(null);
         let viewInfo = inject("IvzViewInfo");
         if(!viewInfo) {
             throw new Error(`IvzViewModal组件只能作为IvzXxxView等视图组件的子组件`);
@@ -306,7 +308,7 @@ const IvzViewModal = defineComponent({
             })
         }
 
-        return {funMetas, viewInfo, viewMenu, iemRef, title, labelCol, wrapperCol}
+        return {funMetas, viewInfo, viewMenu, iemRef, title}
     },
     computed: {
         ...mapGetters({
@@ -322,14 +324,10 @@ const IvzViewModal = defineComponent({
             let editModel = this.iemRef.getEditModel();
             this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
         }
-        if(this.span instanceof Array) {
-            this.labelCol = {span: this.span[0]};
-            this.wrapperCol = {span: this.span[1]};
-        }
 
         return <div class="ivz-view ivz-view-modal">
-            <ivz-edit-modal {...this.$attrs} labelCol={this.labelCol} wrapperCol={this.wrapperCol}
-                funMetas={this.funMetas} title={this.title} ref="iemRef" v-slots={this.$slots}>
+            <ivz-edit-modal {...this.$attrs} funMetas={this.funMetas}
+                title={this.title} ref="iemRef" v-slots={this.$slots}>
             </ivz-edit-modal>
         </div>
     }
@@ -337,15 +335,9 @@ const IvzViewModal = defineComponent({
 const IvzViewDrawer = defineComponent({
     name: 'IvzViewDrawer',
     components: {IvzEditDrawer},
-    props: {
-        span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
-    },
     setup() {
         let iemRef = ref();
         let title = ref("");
-        let labelCol = ref(null);
-        let wrapperCol = ref(null);
-        let visibleChange = ref(null);
         let viewInfo = inject("IvzViewInfo");
         if(!viewInfo) {
             throw new Error(`IvzViewModal组件只能作为IvzXxxView等视图组件的子组件`);
@@ -411,7 +403,7 @@ const IvzViewDrawer = defineComponent({
             })
         }
 
-        return {funMetas, viewInfo, viewMenu, iemRef, title, visibleChange, labelCol, wrapperCol}
+        return {funMetas, viewInfo, viewMenu, iemRef, title}
     },
     computed: {
         ...mapGetters({
@@ -428,14 +420,9 @@ const IvzViewDrawer = defineComponent({
             this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
         }
 
-        if(this.span instanceof Array) {
-            this.labelCol = {span: this.span[0]};
-            this.wrapperCol = {span: this.span[1]};
-        }
-
         return <div class="ivz-view ivz-view-drawer">
             <ivz-edit-drawer {...this.$attrs} funMetas={this.funMetas} ref="iemRef"
-                 afterVisibleChange={this.visibleChange} v-slots={this.$slots} title={this.title}>
+                 v-slots={this.$slots} title={this.title}>
             </ivz-edit-drawer>
         </div>
     }

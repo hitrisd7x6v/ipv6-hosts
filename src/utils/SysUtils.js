@@ -13,7 +13,7 @@ const FunMetaMaps = {
     Add: 'Add', Del: 'Del', Edit: 'Edit', View: 'View',
     Import: 'Import', Export: 'Export', Detail: 'Detail',
     Cancel: 'Cancel', Submit: 'Submit', Reset: 'Reset',
-    Expanded: 'Expanded', // 展开/折叠
+    Expanded: 'Expanded', __Default: 'Default',
     getFunMeta: (field, funMetas) => {
         if(funMetas instanceof Array) {
             return funMetas.find(item => item.field == field)

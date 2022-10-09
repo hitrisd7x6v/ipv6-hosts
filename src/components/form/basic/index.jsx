@@ -70,17 +70,24 @@ const IvzTextarea = defineComponent({
 const IvzCheckbox = defineComponent({
     name: 'IvzCheckbox',
     mixins: [MixinsFormItem, MixinsOptionsItem],
-    render() {
-
-        let slots = this.$slots.default  ? () => {
-            return this.$slots.default()
-        } : () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent('a-checkbox'), attrs, () => this.$slots)
+    setup(props, {attrs, slots}) {
+        let defaultSlots
+        if(props.options instanceof Array || props.dict || props.url) {
+            defaultSlots = (attrs) => h(resolveComponent('a-checkbox-group'), attrs, slots.default)
+        } else {
+            defaultSlots = (attrs) => h(resolveComponent('a-checkbox'), attrs, slots.default)
         }
 
+        return {defaultSlots}
+    },
+    render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, slots)
+        return h(resolveComponent('a-form-item'), props
+            , () => {
+                let attrs = this.getFormAttrs({options: this.dataSource});
+                return this.defaultSlots(attrs)
+            }
+        )
     }
 
 })

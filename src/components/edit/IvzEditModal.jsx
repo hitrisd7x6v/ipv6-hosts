@@ -5,16 +5,16 @@ export default defineComponent({
     props: {
         title: String,
         bodyStyle: Object,
-        afterClose: Function,
         centered: Boolean,
-        destroyOnClose: Boolean,
+        span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
+        afterClose: Function,
         width: {default: 558},
+        destroyOnClose: Boolean,
         getContainer: {type: Function},
         maskClosable: {default: false},
         closable: {type: Boolean, default: false},
         funMetas: {type: Array, default: () => []},
         forceRender: {type: Boolean, default: false},
-        afterVisibleChange: {type: Function},
     },
     mixins: [MixinsEditItem],
     setup({funMetas}) {
@@ -67,10 +67,18 @@ export default defineComponent({
             title: () => this.$slots.title ? this.$slots.title() : <span>{this.title}</span>
         }
 
+        let labelCol = this.$attrs.labelCol, wrapperCol = this.$attrs.wrapperCol;
+        if(!labelCol && this.span) {
+            labelCol = {span: this.span[0]};
+        }
+
+        if(!wrapperCol && this.span) {
+            wrapperCol = {span: this.span[1]}
+        }
         return <a-modal v-model={[this.visible, 'visible', ["modifier"]]}
                         {...this.$props} v-slots={slots} ref="iemRef">
                 <a-spin size="small" tip="数据处理中..." spinning={this.spinning}>
-                    <ivz-form {...this.$attrs} ref="iemFormRef">
+                    <ivz-form {...this.$attrs} labelCol={labelCol} wrapperCol={wrapperCol} ref="iemFormRef">
                         {this.$slots.default ? this.$slots.default({model, context}) : null}
                     </ivz-form>
                 </a-spin>

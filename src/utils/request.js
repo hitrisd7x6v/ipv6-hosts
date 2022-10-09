@@ -1,7 +1,7 @@
 import Qs from 'qs';
 import axios from 'axios'
 import router from '@/router'
-import {msgError} from "@/utils/message";
+import {msgError, msgSuccess} from "@/utils/message";
 
 let baseURL = "http://localhost:3000/api";
 // 以下是生产环境配置

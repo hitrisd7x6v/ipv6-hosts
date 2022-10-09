@@ -1,7 +1,9 @@
 import {defineComponent} from "vue";
 
 export default defineComponent({
-
+    mounted() {
+        this.formRef = this.$refs['iemFormRef'];
+    },
     methods: {
         // 表单组件是否初始化
         isInitForm() {
@@ -10,6 +12,7 @@ export default defineComponent({
 
         switchActive(visible) {
             this.visible = visible;
+            this.initFormRef();
         },
 
         switchSpinning(spinning) {
@@ -40,8 +43,29 @@ export default defineComponent({
             })
         },
 
-        toggleActive() {
-            this.visible = !this.visible;
+        /**
+         * 异步打开弹框
+         * @return {Promise<unknown>}
+         */
+        openByAsync() {
+            this.visible = true;
+            return new Promise((resolve, reject) => {
+                if(this.formRef) {
+                    return resolve(this.getEditModel());
+                }
+
+                this.$nextTick().then(() => {
+                    this.formRef = this.$refs['iemFormRef']
+                    if(!this.formRef) {
+                        this.$nextTick().then(() => {
+                            this.formRef = this.$refs['iemFormRef']
+                            resolve(this.getEditModel());
+                        })
+                    } else {
+                        resolve(this.getEditModel());
+                    }
+                })
+            })
         },
 
         getEditModel() {
@@ -60,6 +84,19 @@ export default defineComponent({
             }
 
             return null;
+        },
+
+        initFormRef() {
+            if(this.visible && !this.formRef) {
+                this.$nextTick().then(() => {
+                    this.formRef = this.$refs['iemFormRef']
+                    if(!this.formRef) {
+                        this.$nextTick().then(() => {
+                            this.formRef = this.$refs['iemFormRef']
+                        })
+                    }
+                })
+            }
         }
     }
 })
