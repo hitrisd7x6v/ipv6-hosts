@@ -102,10 +102,12 @@ export default {
     ...mapMutations({
       toggleUserVisible: 'sys/toggleUserVisible',
       switchActiveViewTo: 'sys/switchActiveViewTo',
-      switchActiveMenuTo: 'sys/switchActiveMenuTo',
+      openUrlOrSwitchTask: 'sys/openUrlOrSwitchTask'
     }),
     switchTask (url) { // 切换任务菜单处理
-      this.switchActiveMenuTo(url);
+      this.$router.push(url).then((a) => {
+        this.openUrlOrSwitchTask(url);
+      })
     },
     closeTask (url, action) { // 关闭任务处理
       let prevTemp = null; // 用来保存当前关闭的上一个任务
@@ -128,7 +130,7 @@ export default {
       let start = this.workMenu ? 1 : 0;
       if (item.key === 'all') {
         if(this.workMenu) {
-          this.switchActiveMenuTo(this.workMenu);
+          // this.switchActiveMenuTo(this.workMenu);
           this.selectedKeys[0] = this.activityMenu['url']
         }
 

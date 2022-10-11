@@ -1,6 +1,7 @@
 <template>
   <ivz-form class="ivz-bs-search" ref="ivzBsForm" layout="inline">
     <template #default="{model}">
+      <slot :model="model"></slot>
       <a-row class="ivz-is-fun" align="middle">
         <a-col class="ivz-isf-bru" span="8">
           <a-breadcrumb>
@@ -40,7 +41,6 @@
           </slot>
         </a-col>
       </a-row>
-      <slot :model="model"></slot>
     </template>
   </ivz-form>
 </template>
@@ -137,21 +137,18 @@ export default {
 <style scoped>
 .ivz-bs-search {
   width: 100%;
+  padding: 8px;
   position: relative;
   background: #ffffff;
-  padding: 0px 0px 24px 0px;
-}
-.ivz-ibs-form {
-  padding: 0px 36px;
 }
 
 .ivz-is-fun {
   width: 100%;
   height: 38px;
+  padding: 0px;
+  margin-top: 16px;
   line-height: 38px;
-  padding: 0px 0px 16px;
   background: #fefefe;
-  margin-bottom: 12px;
 }
 .ivz-isf-btn {
   text-align: center;

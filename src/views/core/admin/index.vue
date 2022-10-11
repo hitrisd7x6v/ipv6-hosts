@@ -6,7 +6,7 @@
       <ivz-input field="phone" label="用户手机" />
       <ivz-radio field="status" label="用户状态" :options="status"/>
     </ivz-view-search>
-    <ivz-view-drawer width="860" layout="vertical" :rules="rules">
+    <ivz-view-drawer width="860" layout="vertical" :rules="rules" placement="left">
       <template #default="{model}">
         <a-row :gutter="16">
           <a-col span="8">
@@ -89,23 +89,36 @@ export default {
       account: {required: true, message: '用户帐号必填'},
     }
 
+    let pwdModalRef = ref(null);
+    let validator = (a,b,c) => {
+      let editModel = pwdModalRef.value.getEditModel();
+      return new Promise((resolve, reject) => {
+        if(b == null || b == '') {
+          reject("请输入确认密码");
+        } else if(editModel.password != editModel.surePwd) {
+          reject("两次密码不一致");
+        }else {
+          resolve();
+        }
+      })
+    }
     let pwdRules = {
-      password: {required: true, message: '请输入密码'},
-      surePwd: {required: true, message: '请确认密码'},
+      surePwd: {required: true, validator},
+      password: {required: true, message: '请输入密码'}
     }
 
     let loading = ref(false);
-    return {columns, rules, status, sex, pwdRules, loading}
+    return {columns, rules, status, sex, pwdRules, loading, pwdModalRef}
   },
   mounted() {
+    this.pwdModalRef = this.$refs['pwdModalRef']
     // 修改密码功能点
     let pwdFunMeta = this.getTableFunMeta('Pwd');
     if(pwdFunMeta) {
       pwdFunMeta.callback = (row, meta) => {
-        let pwdModalRef = this.$refs.pwdModalRef;
 
         // 打开编辑框
-        pwdModalRef.openByAsync().then(editModel => {
+        this.pwdModalRef.openByAsync().then(editModel => {
           editModel.id = row.id;
         });
       }
@@ -113,25 +126,23 @@ export default {
   },
   methods: {
     submit() {
-      let pwdModalRef = this.$refs.pwdModalRef;
-      let {validate} = pwdModalRef.getEditContext();
+      let {validate} = this.pwdModalRef.getEditContext();
 
       validate().then(() => {
         let pwdFunMeta = this.getTableFunMeta('Pwd');
-        let editModel = pwdModalRef.getEditModel();
-        // editModel.id = vxzhg*9/\\\\
+        let editModel = this.pwdModalRef.getEditModel();
 
         this.loading = true;
         this.$http.post(pwdFunMeta.url, editModel)
             .then(({message, data}) => {
               msgSuccess(message)
-              this.$refs.pwdModalRef.switchActive(false);
+              this.pwdModalRef.switchActive(false);
         }).finally(() => this.loading = false)
       })
     },
 
     cancel() {
-      this.$refs.pwdModalRef.switchActive(false);
+      this.pwdModalRef.switchActive(false);
     }
   }
 }

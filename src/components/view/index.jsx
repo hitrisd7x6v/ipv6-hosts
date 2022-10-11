@@ -228,7 +228,7 @@ const IvzViewSearch = defineComponent({
         let props = mergeProps(this.$attrs,
             {funMetas: this.searchFunMetas, ref: 'ibsRef'});
 
-        return (<div class="ivz-view-search">
+        return (<div class="ivz-view ivz-view-search">
             <ivz-basic-search {...props} v-slots={this.$slots} />
         </div>)
     },
@@ -511,10 +511,11 @@ const IvzViewTable = defineComponent({
     },
     render() {
         return (
-            <ivz-basic-table {...this.$attrs} dataSource={this.dataRef} ref="ibtRef"
-                rowKey={this.viewInfo.config.key} loading={this.loading} v-slots={this.$slots}
-                onPageChange={this.pageChange} onSizeChange={this.sizeChange} total={this.totalRef}/>
-        )
+            <div class="ivz-view ivz-view-table">
+                <ivz-basic-table {...this.$attrs} dataSource={this.dataRef} ref="ibtRef"
+                    rowKey={this.viewInfo.config.key} loading={this.loading} v-slots={this.$slots}
+                    onPageChange={this.pageChange} onSizeChange={this.sizeChange} total={this.totalRef}/>
+            </div>)
     },
     mounted() {
         // let defaultPageSize = this.$attrs.defaultPageSize ? this.$attrs.defaultPageSize : 10;

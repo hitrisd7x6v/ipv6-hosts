@@ -11,7 +11,7 @@
       <a-layout-content class="ivz-main-container">
         <router-view v-slot="{ Component }">
           <transition name="slide-fade" mode="out-in">
-            <keep-alive :include="cacheViews">
+            <keep-alive :include="alive">
               <component :is="Component" />
             </keep-alive>
           </transition>
@@ -25,30 +25,36 @@
 </template>
 
 <script>
-import {ref} from "vue";
 import {mapGetters, useStore} from "vuex";
 import LayoutSider from "@msn/main/LayoutSider.vue";
 import LayoutHeader from "@msn/main/LayoutHeader.vue";
 import UserCenter from "@msn/main/UserCenter.vue";
+import {initSysRoutesToMenus, resolverMenuToRoutes} from "@/router";
 
 export default {
   name: "index",
   components:{UserCenter, LayoutSider, LayoutHeader},
   setup() {
-    let mounted = ref(false);
-    useStore().dispatch('sys/initMenus')
+    initSysRoutesToMenus(); // 挂载系统路由到菜单列表
+
+    // 初始化后台菜单信息到路由
+    useStore().dispatch('sys/initMenus').then(menus => {
+      // 解析动态菜单到路由
+      resolverMenuToRoutes(menus)
+    })
+
     useStore().dispatch('sys/initUser')
-    return {mounted}
   },
   computed: {
     ...mapGetters({
       taskBarData: 'sys/taskBarData',
     }),
-    cacheViews() {
-      return this.taskBarData
-          .filter(menu => menu.component != null)
-          .map(menu => menu.component)
+    alive() {
+      return this.taskBarData.map(menu => menu.url)
     }
+  },
+  methods: {
+
   }
 }
 </script>

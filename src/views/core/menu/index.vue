@@ -2,9 +2,10 @@
   <ivz-menu-view :expand="true" name="菜单">
     <ivz-view-search>
       <ivz-input field="name" label="菜单名称" />
+      <ivz-input field="msn" label="所属模块" />
     </ivz-view-search>
     <ivz-view-table :columns="columns" size="small" :pagination="false" />
-    <ivz-view-drawer :rules="rules" height="100%" layout="vertical" placement="top">
+    <ivz-view-drawer :rules="rules" width="868" layout="vertical" placement="left">
       <a-row :gutter="24">
         <a-col span="8">
           <ivz-input field="name" label="菜单名称"/>
@@ -16,6 +17,9 @@
         </a-col>
         <a-col span="8">
           <ivz-select field="type" label="菜单类型" :options="type" @change="typeHandle"/>
+        </a-col>
+        <a-col span="8">
+          <ivz-select field="msn" label="所属模块" url="/core/msn" labelField="name" valueField="msn"/>
         </a-col>
         <a-col span="8">
           <ivz-input field="url" label="菜单地址"/>
@@ -79,6 +83,7 @@ export default {
       {field: 'name', title: '菜单名称', align: 'left'},
       {field: 'url', title: '访问路径'},
       {field: 'type', title: '菜单类型', options: type},
+      {field: 'msn', title: '所属模块',  url: "/core/msn", labelField: 'name', valueField: 'msn'},
       {field: 'perms', title: '权限标识'},
       {field: 'permType', title: '功能点', options: permType},
       {field: 'position', title: '功能位置', options: position},

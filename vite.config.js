@@ -37,7 +37,7 @@ export default defineConfig((env)=>{
       proxy: {
         '^/api/.*': {
           changeOrigin: true,
-          target: 'http://www.iteaj.com',
+          target: 'http://192.168.43.197:8085',
           rewrite: (path) => path.replace(/^\/api/, '')
         },
       }

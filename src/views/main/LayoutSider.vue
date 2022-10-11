@@ -55,7 +55,9 @@ export default {
       switchOpenSubMenuTo: 'sys/switchOpenSubMenuTo'
     }),
     selectMenu(menu) {
-      this.openUrlOrSwitchTask(menu.key);
+      this.$router.push(menu.key).then(() => {
+        this.openUrlOrSwitchTask(menu.key);
+      })
     },
 
     openChange(openKeys) {

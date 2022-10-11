@@ -2,9 +2,9 @@ import {GET, POST, baseURL} from '@/utils/request'
 import router from '@/router'
 
 // 图像验证码url
-const captchaUri = `${baseURL}/captcha`
+const captchaUri = `${baseURL}/valid/captcha`
 const menuUri = "/core/menus"
-const loginUri = "/core/login"
+const loginUri = "/core/center/login"
 const avatarUploadUri = "/core/center/avatar"
 
 export {captchaUri, menuUri, loginUri, avatarUploadUri}
