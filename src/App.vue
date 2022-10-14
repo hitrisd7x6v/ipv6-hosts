@@ -24,7 +24,9 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+.ivz-default-search {
+  padding: 8px;
+}
 /*功能点样式*/
 .ivz-fm {
   margin: 0px 6px;

@@ -1,6 +1,5 @@
 /*视图组件相关的数据存储*/
-import {FunMetaMaps} from "@/utils/SysUtils";
-import {clone} from "@/utils/MetaUtils";
+import {FunMetaMaps, clone} from "@/utils/MetaUtils";
 
 function unMounded() {
     console.warn('获取数据失败, 组件还未挂载完成');

@@ -4,14 +4,23 @@
   </div>
 </template>
 
-<!--通过功能点配置生成的增删改查视图-->
+<!--通过功能点配置生成的增删改查视图页-->
 <script>
 import {provide} from "vue";
 import {useStore} from "vuex";
-import {FunMetaMaps} from "@/utils/SysUtils";
+import {FunMetaMaps} from "@/utils/MetaUtils";
 import {mergeMetaOfDefault} from "@/utils/MetaUtils";
 import MixinConfigView from "@/components/view/MixinConfigView";
-
+import router from "@/router";
+/**
+ * 视图组件必须作为其父组件的顶级组件 如以下：
+ * <template>
+ *   <IvzFuncView>
+ *     xxx
+ *   </IvzFuncView>
+ * </template>
+ * 功能点视图页, 是居于自定义功能信息渲染而生成的页面
+ */
 export default {
   name: "IvzFuncView",
   mixins: [MixinConfigView],
@@ -24,13 +33,18 @@ export default {
     searchFunMetas: {type: Array, default: () => []},
   },
   setup(props) {
+    let route = router.currentRoute.value;
+
     // 获取当前激活的菜单
-    let viewMenu = useStore().getters["sys/activityMenu"];
+    let url = route.path;
+    let viewMenu = useStore().getters["sys/urlMenuMaps"][url];
     if(!viewMenu) {
       throw new Error(`IvzFuncView组件必须依赖于当前激活的菜单[activityMenu=null]`);
     }
 
-    let url = viewMenu['url'];
+    // 切换激活菜单当前菜单
+    useStore().commit('sys/switchActiveMenuTo', viewMenu);
+
     // 注册当前菜单信息到视图列表
     useStore().commit('view/registerPageView', viewMenu);
     let viewInfo = useStore().getters['view/pageViewData'](url);

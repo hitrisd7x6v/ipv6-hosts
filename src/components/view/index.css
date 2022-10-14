@@ -5,7 +5,7 @@
     padding: 3px 0px;
     background: #ffffff;
 }
-.ivz-page-view .ivz-view {
+.ivz-page-view .ivz-view,.ivz-page-view.ivz-default-view {
     padding: 8px 16px;
 }
 

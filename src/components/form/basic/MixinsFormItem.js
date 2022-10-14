@@ -3,7 +3,7 @@ const defOptions = {};
 export default defineComponent({
     props: ['name', 'label', 'labelCol', 'wrapperCol', 'colon', 'extra', 'hasFeedback'
         , 'help', 'labelAlign', 'validateStatus', 'validateFirst', 'validateTrigger'
-        , 'extra', 'autoLink', 'required', 'class', 'style', 'field'],
+        , 'extra', 'autoLink', 'required', 'class', 'field'],
     data() {
         return {
             meta: {},
@@ -13,13 +13,16 @@ export default defineComponent({
         }
     },
     created() {
-        this.namePath = this.name;
         if(this.name) {
             if(!(this.name instanceof Array)) {
                 console.warn(`name属性必须是数组[${this.name}]或者用field替代name`)
+            } else {
+                this.namePath = this.name;
             }
         } else if(this.field){
             this.namePath = this.field.split('.');
+        } else {
+            return console.warn(`存在表单组件未设置属性[field or name]`)
         }
 
         if(this.formContext && this.namePath && this.namePath.length > 0) {

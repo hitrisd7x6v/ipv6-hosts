@@ -1,10 +1,9 @@
 import {GET, POST, baseURL} from '@/utils/request'
-import router from '@/router'
 
 // 图像验证码url
-const captchaUri = `${baseURL}/valid/captcha`
 const menuUri = "/core/menus"
 const loginUri = "/core/center/login"
+const captchaUri = `${baseURL}/valid/captcha`
 const avatarUploadUri = "/core/center/avatar"
 
 export {captchaUri, menuUri, loginUri, avatarUploadUri}
@@ -47,9 +46,7 @@ export function getDict(type) {
 
 // 提交登录接口
 export function login(user) {
-    return POST(loginUri, user).then(resp=>{
-        router.push("/").then(r => {});
-    });
+    return POST(loginUri, user);
 }
 
 // oauth2授权认证

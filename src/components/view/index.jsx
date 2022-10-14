@@ -2,14 +2,14 @@ import '@/components/view/index.css'
 import {mapGetters, useStore} from "vuex";
 import IvzMenuView from "@/components/view/IvzMenuView.vue";
 import IvzFuncView from "@/components/view/IvzFuncView.vue";
+import IvzBasicView from "@/components/view/IvzBasicView.jsx";
 import IvzEditModal from "@/components/edit/IvzEditModal.jsx";
 import IvzEditDrawer from "@/components/edit/IvzEditDrawer.jsx";
 import IvzBasicTable from "@/components/table/IvzBasicTable.jsx";
-import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
-import {FunMetaMaps, TypeMethodMaps} from "@/utils/SysUtils";
-import {defineComponent, inject, mergeProps, nextTick, reactive, ref} from "vue";
+import IvzBreadSearch from "@/components/search/IvzBreadSearch.vue";
+import {FunMetaMaps, TypeMethodMaps, MetaConst} from "@/utils/MetaUtils";
 import {confirm, msgSuccess, msgWarn} from "@/utils/message";
-import {MetaConst} from "@/utils/MetaUtils";
+import {defineComponent, inject, mergeProps, nextTick, reactive, ref} from "vue";
 
 let callbackMaps = { }
 
@@ -168,7 +168,7 @@ function initCallback(meta, viewInfo) {
 }
 const IvzViewSearch = defineComponent({
     name: 'IvzViewSearch',
-    components: {IvzBasicSearch},
+    components: {IvzBreadSearch},
     setup() {
         let formRef = ref();
         let viewInfo = inject("IvzViewInfo");
@@ -229,7 +229,7 @@ const IvzViewSearch = defineComponent({
             {funMetas: this.searchFunMetas, ref: 'ibsRef'});
 
         return (<div class="ivz-view ivz-view-search">
-            <ivz-basic-search {...props} v-slots={this.$slots} />
+            <ivz-bread-search {...props} v-slots={this.$slots} />
         </div>)
     },
     mounted() {
@@ -531,8 +531,8 @@ const IvzViewTable = defineComponent({
     }
 })
 
-const IvzViewComponents = {IvzMenuView, IvzFuncView, IvzViewSearch
-    , IvzViewModal, IvzViewDrawer, IvzViewTable}
+const IvzViewComponents = {IvzMenuView, IvzFuncView, IvzBasicView
+    , IvzViewSearch, IvzViewModal, IvzViewDrawer, IvzViewTable}
 
 export default {
     install(app) {
@@ -541,5 +541,3 @@ export default {
         })
     }
 }
-
-export {IvzMenuView, IvzViewSearch, IvzViewModal, IvzViewTable, IvzViewDrawer}

@@ -1,9 +1,12 @@
 import Qs from 'qs';
 import axios from 'axios'
-import router from '@/router'
-import {msgError, msgSuccess} from "@/utils/message";
+import {msgError} from "@/utils/message";
+let router;
+import('@/router').then(item => {
+    router = item.default;
+});
 
-let baseURL = "http://localhost:3000/api";
+let baseURL = "/api";
 // 以下是生产环境配置
 if(import.meta.env.PROD) {
     baseURL = "";
@@ -28,7 +31,7 @@ let baseConfig = {
 const handleResponse = (code, msg) => {
     switch (code) {
         case 401: // 未授权
-            router.push({ path: '/login' }).catch(() => {});
+            router.push({ path: '/login' }).finally(() => {});
             return null;
         case 500:
             msgError(msg)
@@ -119,6 +122,5 @@ let GET = (url, data, config) => {
 
     return instance.get(url, config);
 }
-export {GET, POST, baseURL, instance as http}
 
-export default instance
+export {GET, POST, baseURL, instance as http}

@@ -17,7 +17,7 @@
 <script>
 import IvzMenuView from "@/components/view/IvzMenuView.vue";
 import {IvzViewSearch, IvzViewTable, IvzViewModal} from "@/components/view";
-import {FunMetaMaps} from "@/utils/SysUtils";
+import {FunMetaMaps} from "@/utils/MetaUtils";
 export default {
   name: "Dept",
   components: {IvzViewModal, IvzViewTable, IvzViewSearch, IvzMenuView},

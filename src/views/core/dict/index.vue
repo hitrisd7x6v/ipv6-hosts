@@ -4,7 +4,11 @@
       <ivz-input label="字典名称" field="name" />
       <ivz-select label="字典状态" field="status" :options="status"/>
     </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small" :bordered="true"/>
+    <ivz-view-table :columns="columns" size="small" :bordered="true">
+      <template #c_type="{text, record}">
+        <a @click="$router.push('/dict/data')">{{text}}</a>
+      </template>
+    </ivz-view-table>
     <ivz-view-modal :rules="rules">
       <ivz-input label="字典名称" field="name" />
       <ivz-input label="字典类型" field="type" />

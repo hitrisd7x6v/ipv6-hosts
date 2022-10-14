@@ -1,9 +1,11 @@
 import {h, mergeProps, resolveComponent} from 'vue'
 
 const IvzButton = ({meta}, {slots}) => {
-    let mergeSlots = slots;
-    if(meta.props.icon instanceof Function) {
-        mergeSlots = {...slots, icon: meta.props.icon}
+    let mergeSlots = meta.props.slots;
+    if(mergeSlots instanceof Object) {
+        Object.assign(mergeSlots, slots)
+    } else {
+        mergeSlots = slots;
     }
 
     return h(resolveComponent('a-button'), meta.props, mergeSlots)

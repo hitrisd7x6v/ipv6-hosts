@@ -1,7 +1,24 @@
-import {cloneDeep} from "lodash-es";
-import {FunMetaMaps} from "@/utils/SysUtils";
 import {h} from "vue";
+import {cloneDeep} from "lodash-es";
+import {GET, POST} from "@/utils/request";
 import {DoubleLeftOutlined} from "@ant-design/icons-vue";
+
+const TypeMethodMaps = {
+    Add: null, Edit: GET, Del: POST, View: GET,
+    Import: POST, Export: POST, Detail: GET, Submit: POST
+}
+
+const FunMetaMaps = {
+    Add: 'Add', Del: 'Del', Edit: 'Edit', View: 'View',
+    Import: 'Import', Export: 'Export', Detail: 'Detail',
+    Cancel: 'Cancel', Submit: 'Submit', Reset: 'Reset',
+    Expanded: 'Expanded', __Default: 'Default',
+    getFunMeta: (field, funMetas) => {
+        if(funMetas instanceof Array) {
+            return funMetas.find(item => item.field == field)
+        }
+    }
+}
 
 function buildModelFromMetas(metas) {
     let model = {};
@@ -48,6 +65,10 @@ function getMetaByProp(prop, metasMap) {
     return meta ? meta : console.warn(`没有找到对应的元数据[${prop}]`);
 }
 function getMetaValue(keyPath, model) {
+    if(keyPath.length == 0) {
+        return null;
+    }
+
     let temp = model;
     for(let i=0; i<= keyPath.length - 1; i++) {
         temp = temp[keyPath[i]]
@@ -58,6 +79,10 @@ function getMetaValue(keyPath, model) {
 }
 
 function setMetaValue(keyPath, model, value) {
+    if(keyPath.length == 0) {
+        return;
+    }
+
     let temp = model;
     for(let i=0; i < keyPath.length - 1; i++) {
         if(!temp[keyPath[i]]) {
@@ -134,8 +159,9 @@ const getMetaConfig = function (field, props) {
     if(FunMetaMaps.Expanded == field) {
         // 旋转角度
         cloneConfig['rotate'] = 90;
+        cloneConfig['slots'] = {}
         // 给展开增加操作图标
-        cloneConfig.icon = () => h(DoubleLeftOutlined, {rotate: cloneConfig.rotate})
+        cloneConfig.slots.icon = () => h(DoubleLeftOutlined, {rotate: cloneConfig.rotate})
     }
     return cloneConfig;
 }
@@ -155,5 +181,5 @@ const mergeMetaOfDefault = function (meta) {
     meta.props = getMetaConfig(meta.field, meta.props);
 }
 
-export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue
+export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue,TypeMethodMaps, FunMetaMaps
     , setMetaValue, createFormMetaInfo, getMetaByProp, clone, MetaConst, mergeMetaOfDefault}

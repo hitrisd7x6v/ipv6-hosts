@@ -20,18 +20,18 @@
 <script>
 import {provide, ref} from "vue";
 import {mapMutations, useStore} from "vuex";
-import {FunMetaMaps} from "@/utils/SysUtils";
 import {CloudUploadOutlined} from '@ant-design/icons-vue'
 import MixinConfigView from "@/components/view/MixinConfigView";
 import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
-import {mergeMetaOfDefault} from "@/utils/MetaUtils";
+import {mergeMetaOfDefault, FunMetaMaps} from "@/utils/MetaUtils";
+import router from "@/router";
 
 /**
  * 视图组件必须作为其父组件的顶级组件 如以下：
  * <template>
- *   <IvzBasicView>
+ *   <IvzMenuView>
  *     xxx
- *   </IvzBasicView>
+ *   </IvzMenuView>
  * </template>
  *
  * 菜单视图, 是居于菜单信息渲染而生成的页面
@@ -45,13 +45,17 @@ export default {
     expand: {type: Boolean, default: false},
   },
   setup(props) {
+    let route = router.currentRoute.value;
+
     // 获取当前激活的菜单
-    let viewMenu = useStore().getters["sys/activityMenu"];
+    let url = route.path;
+    let viewMenu = useStore().getters["sys/urlMenuMaps"][url];
     if(!viewMenu) {
       throw new Error(`IvzMenuView组件必须依赖于当前激活的菜单(功能点是通过菜单自动生成), 当前激活菜单为[null]`);
     }
 
-    let url = viewMenu['url'];
+    // 切换激活菜单当前菜单
+    useStore().commit('sys/switchActiveMenuTo', viewMenu);
 
     // 注册当前菜单信息到视图列表
     useStore().commit('view/registerPageView', viewMenu);

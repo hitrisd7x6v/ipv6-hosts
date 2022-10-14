@@ -34,14 +34,14 @@
         <a-divider style="margin: 12px 0px">其他登录方式</a-divider>
         <a-row type="flex" justify="space-between" :gutter="3">
           <a-col span="6" style="text-align: right; cursor: pointer">
-            <a-icon type="wechat" :style="iconStyle" />
+<!--            <a-icon type="wechat" :style="iconStyle" />-->
           </a-col>
           <a-col span="6" style="text-align: center; cursor: pointer">
             <ivz-icon type="iz-icon-gitee" style="font-size: 28px"
                       @click="oauth2Login('Gitee')"></ivz-icon>
           </a-col>
           <a-col span="6" style="text-align: left; cursor: pointer">
-            <a-icon type="alipay-circle" :style="iconStyle" />
+<!--            <a-icon type="alipay-circle" :style="iconStyle" />-->
           </a-col>
         </a-row>
       </a-card>
@@ -50,22 +50,17 @@
   </div>
 </template>
 <script>
-import {captchaUri, login, oauth2} from '@/api'
 import {reactive} from 'vue'
-import {useForm} from '@ant-design-vue/use'
+import {Form} from 'ant-design-vue'
+import {useRoute} from "vue-router";
+import {captchaUri, login, oauth2} from '@/api'
+
 export default {
   name: 'login',
   data () {
     return {
       form: null,
       iconStyle: {fontSize: '36px', cursor: 'pointer'},
-      loginModel: {
-        loading: false,
-        errMsg: '',
-        class: 'iz-login-tip-error',
-        izCaptcha: false,
-        captchaImg: captchaUri
-      }
     }
   },
   setup() {
@@ -76,37 +71,43 @@ export default {
       userName: [{type: 'string', required: true, message: ''}],
       password: [{type: 'string', required: true, message: ''}],
     });
+
     const loginModel = reactive({
       loading: false,
       errMsg: '',
-      class: 'iz-login-tip-error',
       izCaptcha: false,
-      captchaImg: captchaUri
+      captchaImg: captchaUri,
+      class: 'iz-login-tip-error'
     });
-    const {validateInfos, validate, validateField} = useForm(user, rules);
+    const {validateInfos, validate, validateField} = Form.useForm(user, rules);
 
-    const submit = () => {
-        validate().then(res => {
-          loginModel.loading = true;
-          login(user).catch(reason => {
-            loginModel.loading = false;
-          });
-        }).catch(reason => {})
+    const clickImg = () => {
+      loginModel.captchaImg = captchaUri + '?t' + new Date()
     }
+
+
     window.onkeydown = (ev) => {
       let code = ev.keyCode
       if (code === 13) {
         submit()
       }
     }
-    return {user, labelCol, wrapperCol, submit, validateInfos, loginModel}
+    return {user, labelCol, wrapperCol, validateInfos, loginModel, clickImg, validate}
   },
   methods: {
-    clickImg () {
-      this.loginModel.captchaImg = captchaUri + '?t' + new Date()
-    },
     oauth2Login(type) {
       oauth2(type)
+    },
+    submit() {
+      this.validate().then(res => {
+        this.loginModel.loading = true;
+        login(this.user).then(resp=>{
+          this.$router.push("/").finally();
+        }).catch(reason => {
+          this.clickImg();
+          this.loginModel.loading = false;
+        });
+      }).finally()
     }
   }
 }

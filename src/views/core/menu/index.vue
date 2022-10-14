@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import {FunMetaMaps} from "@/utils/SysUtils";
+import {FunMetaMaps} from "@/utils/MetaUtils";
 import {ref} from "vue";
 
 export default {

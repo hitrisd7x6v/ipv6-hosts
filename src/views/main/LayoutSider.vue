@@ -8,18 +8,18 @@
     <!--侧边菜单-->
     <div class="ivz-ism-menu">
       <a-menu @select="selectMenu" mode="inline"
-              v-model:openKeys="openKeys" :theme="theme"
-              v-model:selectedKeys="selectedKeys" @openChange="openChange">
-        <template v-for="menu in menus" :key="menu.id">
-          <template v-if="!menu.children">
+              :openKeys="openKeys" :theme="theme"
+              :selectedKeys="selectedKeys" @openChange="openChange">
+        <template v-for="menu in menus">
+          <template v-if="menu.type=='V'">
             <a-menu-item :key="menu.url">
               <ivz-icon :type="menu.icon"></ivz-icon>
               <span class="ivz-level-o">{{menu.name}}</span>
             </a-menu-item>
           </template>
-          <template v-else>
+          <template v-else-if="menu.type=='M'">
             <!--递归的子菜单-->
-            <ivz-sub-menu :menu="menu" :key="menu.id"/>
+            <ivz-sub-menu :menu="menu"/>
           </template>
         </template>
       </a-menu>
@@ -51,13 +51,10 @@ export default {
   },
   methods: {
     ...mapMutations({
-      openUrlOrSwitchTask: 'sys/openUrlOrSwitchTask',
       switchOpenSubMenuTo: 'sys/switchOpenSubMenuTo'
     }),
     selectMenu(menu) {
-      this.$router.push(menu.key).then(() => {
-        this.openUrlOrSwitchTask(menu.key);
-      })
+      this.$router.push(menu.key).finally()
     },
 
     openChange(openKeys) {

@@ -2,7 +2,7 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import store from "@/store";
 import Router from './router'
-import {http} from '@/utils'
+import {http} from "@/utils/request"
 // import '@/api/mock' // 数据模拟, 开发和正式环境请注释掉
 // import IvzOnline from 'ivz-online'
 import IvzComponents from '@/components'
@@ -24,9 +24,14 @@ if(import.meta.env.DEV) {
 let app = createApp(App).use(Router).use(Antd).use(store)
 .use(IvzComponents).component("ivz-icon", IvzIcon);
 
+let View = {
+    query: function () {
 
+    }
+}
 app.config.globalProperties.ivzStx=''
 app.config.globalProperties.ivzCtx=''
+// app.config.globalProperties.$view = View
 app.config.globalProperties.$http = http
 app.config.globalProperties.$msg = message
 app.config.globalProperties.$notify = notification

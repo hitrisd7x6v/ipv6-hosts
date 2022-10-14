@@ -105,9 +105,7 @@ export default {
       openUrlOrSwitchTask: 'sys/openUrlOrSwitchTask'
     }),
     switchTask (url) { // 切换任务菜单处理
-      this.$router.push(url).then((a) => {
-        this.openUrlOrSwitchTask(url);
-      })
+      this.openUrlOrSwitchTask(url);
     },
     closeTask (url, action) { // 关闭任务处理
       let prevTemp = null; // 用来保存当前关闭的上一个任务

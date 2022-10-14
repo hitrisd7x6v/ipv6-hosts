@@ -1,6 +1,7 @@
 import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
-import {createMetasMap, getMetaByProp, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
 import {cloneDeep} from "lodash-es";
+import {Form} from "ant-design-vue";
+import {createMetasMap, getMetaByProp, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
 
 const unMounted = () => console.log('IvzForm组件未完成挂载')
 export default defineComponent({
@@ -20,7 +21,7 @@ export default defineComponent({
         validateOnRuleChange: {type: Boolean, default: true},
         metas: {type: Array, required: false, default: () => []},
     },
-    setup({metas}) {
+    setup({metas, rules}) {
         const resetModel = {}, initModel = {};
         const metasMap = createMetasMap(metas);
 
@@ -44,9 +45,20 @@ export default defineComponent({
 
         provide('initModel', (namePath, value) =>
             setMetaValue(namePath, editModel, value))
-        provide('formContext', formContext);
+
 
         let proxy = reactive({editModel});
+        if(rules instanceof Object) {
+            Object.keys(rules).forEach(key => {
+                let rule = rules[key];
+                rules[key] = rule instanceof Array ? rule : [rule];
+            })
+            formContext['useForm'] = Form.useForm(proxy.editModel, reactive(rules));
+        } else {
+            formContext['useForm'] = {};
+        }
+
+        provide('formContext', formContext);
         return {resetModel, metasMap, formContext, formRef, proxy, initModel}
     },
     created() {

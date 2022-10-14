@@ -1,7 +1,8 @@
-import {defineComponent, h, mergeProps, resolveComponent} from "vue";
-import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
+import {defineComponent, h, resolveComponent} from "vue";
 import IvzForm from "@/components/form/basic/IvzForm";
+import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
 import MixinsOptionsItem from "@/components/form/basic/MixinsOptionsItem";
+
 const IvzInput = defineComponent({
     name: 'IvzInput',
     mixins: [MixinsFormItem],
@@ -126,7 +127,7 @@ const IvzSelect = defineComponent({
         let props = this.getFormItemProps();
         return h(resolveComponent('a-form-item'), props, () => {
             let attrs = this.getFormAttrs({options: this.dataSource});
-            return h(resolveComponent('a-select'), attrs, {...this.$slots})
+            return h(resolveComponent('a-select'), attrs, this.$slots)
         })
     }
 })
@@ -240,14 +241,6 @@ const IvzDateTime = defineComponent({
 
 })
 
-const formComponent = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
+export {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
     , IvzRate, IvzSlider, IvzInputNumber, IvzCascader, IvzAutoComplete, IvzInputPassword
     , IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect, IvzTextarea, IvzInputGroup}
-
-export default {
-    install(app) {
-        Object.keys(formComponent).forEach(name => {
-            app.component(name, formComponent[name])
-        })
-    }
-}

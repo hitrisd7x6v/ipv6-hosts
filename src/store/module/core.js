@@ -2,6 +2,7 @@
 import {getMenus, getDict, getUser} from "@/api";
 import {reactive} from "vue";
 import {GET} from "@/utils/request";
+import router, {resolverMenuToRoutes} from "@/router";
 
 // component: Index必须和首页组件的name一致
 const index = {id: -1, name: '首页', url: '/', component: 'main', closable: false}
@@ -19,7 +20,6 @@ function resolverMenuMaps(menus) {
             let menu = menus[i];
             idMenuMap[menu.id] = menu;
             if (menu['type'] === 'V') {
-                menu['component'] = ''; // 用于KeepAlive组件
                 urlMenuMap[menu.url] = menu;
             } else if (menu['children']) {
                 doResolverMenuMaps(menu['children'])
@@ -50,7 +50,7 @@ const registerSysModule = function (store) {
         state: {
             user: {}, // 当前登录的用户
             views: [], // 视图信息
-            init: false, // 系统是否已经初始化(菜单初始化, 用于动态路由404问题)
+            init: false, // 系统路由是否已经初始化(菜单初始化, 用于动态路由404问题)
             userKey: null,
             userVisible: false, // 用户中心
 
@@ -98,7 +98,7 @@ const registerSysModule = function (store) {
                 let menu = {name: activeMenu.name, url: activeMenu.url, id: activeMenu.id}
 
                 let parent = state.idMenuMaps[activeMenu.pid];
-                if(parent != activeView) {
+                if(parent && parent != activeView) {
                     let children = resolveMenusBreadcrumb(parent.children);
                     let menus = {id: parent.id, name: parent.name, children, type: '8'}
                     return [view, menus, menu]
@@ -167,44 +167,72 @@ const registerSysModule = function (store) {
                     return console.error(`url[${url}]对应的菜单不存在`)
                 }
 
+                router.push(menu.url).then(() => {
+                    store.commit('sys/openOrSwitchTask', menu)
+                }).catch(reason=> {
+                    console.error(`打开菜单失败(组件不存在或者未注册路由)`)
+                });
+            },
+
+            // 在任务栏打开或者切换任务
+            openOrSwitchTask: (state, urlOrMenu) => {
+                let menu = urlOrMenu;
+                if(typeof menu == 'string') {
+                    menu = state.urlMenuMaps[urlOrMenu];
+                }
+
+                if(!menu) {
+                    return console.error("请指定要打开的菜单");
+                }
+
                 let exists = state.taskBarData.filter(item => menu == item);
                 // 任务已经在任务栏, 直接切换过去
                 if(exists.length > 0) {
-                    store.commit('sys/switchActiveMenuTo', url);
+                    store.commit('sys/switchActiveMenuTo', menu);
                 } else {
-                    store.commit('sys/putMenuToTaskBars', menu);
-                    store.commit('sys/switchActiveMenuTo', url);
+                    state.taskBarData.push(menu)
+                    store.commit('sys/switchActiveMenuTo', menu);
                 }
             },
-
             // 切换激活的菜单
-            switchActiveMenuTo: (state, url) => {
-                let menu = state.urlMenuMaps[url];
-                state.activeMenu = menu;
+            switchActiveMenuTo: (state, urlOrMenu) => {
+                let menu = urlOrMenu;
+                if(typeof menu == 'string') {
+                    menu = state.urlMenuMaps[urlOrMenu];
+                }
 
-                // 说明是侧边栏的菜单, 选中
-                // 通过方法addNewTask新增非侧边栏菜单
-                if(menu.isMenu != false) {
-                    state.selectedKeys.length = 0;
-                    state.selectedKeys.push(url);
+                if(menu != state.activeMenu) {
+                    state.activeMenu = menu;
+
+                    // 说明是侧边栏的菜单, 选中
+                    // 通过方法addNewTask新增非侧边栏菜单
+                    if(menu.isMenu != false) {
+                        state.selectedKeys.length = 0;
+                        state.selectedKeys.push(menu.url);
+                    }
                 }
             },
 
             // 在任务栏上面打开一个任务, 并展开此任务菜单的父菜单
-            openUrlTaskAndMenu: (state, url) => {
+            openUrlAndParentMenu: (state, url) => {
                 let menu = state.urlMenuMaps[url];
-                let parent = state.idMenuMaps[menu.pid];
-                if(parent) {
+                if(menu) {
                     store.commit('sys/openUrlOrSwitchTask', url);
-                    store.commit('sys/switchOpenSubMenuTo', [parent.id]);
+
+                    // 打开菜单栏中此url对应的父菜单
+                    let parent = state.idMenuMaps[menu.pid];
+                    if(parent) {
+                        store.commit('sys/switchOpenSubMenuTo', [parent.id]);
+                    }
                 }
+
             },
 
             // 往任务栏中增加新的任务
             addNewMenu: (state, menu) => {
-                let taskUrl = menu['url'] || menu['path'];
+                let taskUrl = menu['url'] != null ? menu['url'] : menu['path'];
                 if(taskUrl == null) {
-                    console.warn(`菜单[${menu.name}]未指定url`)
+                    return console.warn(`菜单[${menu.name}]未指定url`)
                 }
 
                 if(!menu['name'] && import.meta.env.DEV) {
@@ -248,13 +276,21 @@ const registerSysModule = function (store) {
             },
             initMenus: ({commit, state}) => {
                  return getMenus().then(({data}) => {
-                    state.init = true; //
                     state.views = data;
                     state.activeView = state.views[0];
                     let {urlMenuMap, idMenuMap} = resolverMenuMaps(data);
                     state.idMenuMaps = idMenuMap;
 
-                    return state.urlMenuMaps = urlMenuMap;
+                    // 加入到菜单列表
+                    if(urlMenuMap != null) {
+                        Object.keys(urlMenuMap).forEach(key => {
+                            state.urlMenuMaps[key] = urlMenuMap[key];
+                        })
+                    }
+
+                    resolverMenuToRoutes(urlMenuMap);
+                    state.init = true; // 声明路由信息已经初始化完成
+                    return urlMenuMap;
                 })
             },
 

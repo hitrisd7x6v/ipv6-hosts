@@ -4,7 +4,7 @@
     <LayoutSider />
 
     <a-layout class="ivz-layout-view">
-      <!--右侧头-->
+      <!--右侧头栏-->
       <LayoutHeader />
 
       <!--右侧视图页-->
@@ -29,28 +29,30 @@ import {mapGetters, useStore} from "vuex";
 import LayoutSider from "@msn/main/LayoutSider.vue";
 import LayoutHeader from "@msn/main/LayoutHeader.vue";
 import UserCenter from "@msn/main/UserCenter.vue";
-import {initSysRoutesToMenus, resolverMenuToRoutes} from "@/router";
+import {initStaticRoutesToMenus, resolverMenuToRoutes} from "@/router";
 
 export default {
   name: "index",
   components:{UserCenter, LayoutSider, LayoutHeader},
   setup() {
-    initSysRoutesToMenus(); // 挂载系统路由到菜单列表
+    // 挂载系统静态路由到菜单列表
+    initStaticRoutesToMenus();
 
     // 初始化后台菜单信息到路由
-    useStore().dispatch('sys/initMenus').then(menus => {
-      // 解析动态菜单到路由
-      resolverMenuToRoutes(menus)
-    })
+    useStore().dispatch('sys/initMenus')
 
+    // 初始化当前登入的用户信息
     useStore().dispatch('sys/initUser')
   },
   computed: {
     ...mapGetters({
       taskBarData: 'sys/taskBarData',
     }),
+    // 用于缓存视图页
     alive() {
-      return this.taskBarData.map(menu => menu.url)
+      return this.taskBarData
+          .filter(menu=> menu['keepAlive']!=null)
+          .map(menu => menu.keepAlive)
     }
   },
   methods: {
