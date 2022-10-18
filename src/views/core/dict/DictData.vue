@@ -17,7 +17,7 @@
 
 <script>
 /*字典数据页面*/
-import IvzBasicView from "@/components/view/IvzBasicView";
+import IvzBasicView from "@/components/view/IvzBasicView.vue";
 import IvzBasicTable from "@/components/table/IvzBasicTable";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import IvzBasicModal from "@/components/modal/IvzBasicModal";
