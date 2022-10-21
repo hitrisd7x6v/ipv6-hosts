@@ -1,7 +1,8 @@
-import {defineComponent, h, resolveComponent} from "vue";
+import {defineComponent, h, inject, resolveComponent} from "vue";
 import IvzForm from "@/components/form/basic/IvzForm";
 import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
 import MixinsOptionsItem from "@/components/form/basic/MixinsOptionsItem";
+import {RowContextKey} from "@/utils/ProvideKeys";
 
 const IvzInput = defineComponent({
     name: 'IvzInput',
@@ -47,8 +48,10 @@ const IvzInputGroup = defineComponent({
     name: 'IvzInputGroup',
     mixins: [MixinsFormItem],
     render() {
-        return <a-col {...this.$props}>
-            <a-form-item {...this.$props}>
+        let props = this.getFormItemProps();
+
+        return <a-col {...props}>
+            <a-form-item {...props}>
                 <a-input-group {...this.$attrs} compact>
                     {this.$slots.default ? this.$slots.default(this.formContext.getEditModel(), this.formContext) : []}
                 </a-input-group>

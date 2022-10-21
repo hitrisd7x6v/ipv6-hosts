@@ -15,7 +15,7 @@ export default {
   components: {IvzForm},
   props: { },
   setup() {
-    let Context = inject('IvzViewContext') || {};
+    let Context = inject(ViewContextKey) || {};
     if(Context) {
       if(Context["BasicSearchContext"]) {
         console.warn("IvzBasicSearch组件已经存在, 请标注[primary]声明主搜索")

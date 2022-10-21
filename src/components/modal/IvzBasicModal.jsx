@@ -17,7 +17,7 @@ export default defineComponent({
   setup(props, {attrs}) {
     let refs = ref(null);
     let formRef = ref(null);
-    let visible = ref(true);
+    let visible = ref(false);
     let spinning = ref(false);
 
     let labelCol = attrs.labelCol, wrapperCol = attrs.wrapperCol;

@@ -1,6 +1,7 @@
 import {defineComponent, provide} from "vue";
 import {FunMetaMaps} from "@/utils/MetaUtils";
 import {ViewAction} from "@/components/view/ViewAction";
+import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default defineComponent({
     name: "IvzBasicView",
@@ -12,7 +13,8 @@ export default defineComponent({
         viewContext[FunMetaMaps.View] = null;
         viewContext[FunMetaMaps.Import] = null;
         viewContext[FunMetaMaps.Export] = null;
-        provide("IvzViewContext", viewContext);
+
+        provide(ViewContextKey, viewContext);
         return {viewContext}
     },
     created() {

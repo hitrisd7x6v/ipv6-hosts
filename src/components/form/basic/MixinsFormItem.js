@@ -1,18 +1,23 @@
 import {defineComponent, inject, mergeProps, reactive, computed} from "vue";
+import {RowContextKey} from "@/utils/ProvideKeys";
 const defOptions = {};
 export default defineComponent({
     props: ['name', 'label', 'labelCol', 'wrapperCol', 'colon', 'extra', 'hasFeedback'
         , 'help', 'labelAlign', 'validateStatus', 'validateFirst', 'validateTrigger'
-        , 'extra', 'autoLink', 'required', 'class', 'field'],
+        , 'extra', 'autoLink', 'required', 'class', 'field', 'span', 'order', 'flex'],
     data() {
         return {
             meta: {},
             attrs: null,
             namePath: [],
+            realSpan: null,
             formContext: inject('formContext'),
         }
     },
     created() {
+        let rowContext = inject(RowContextKey);
+        this.realSpan = this.span || rowContext.span;
+
         if(this.name) {
             if(!(this.name instanceof Array)) {
                 console.warn(`name属性必须是数组[${this.name}]或者用field替代name`)
@@ -37,7 +42,11 @@ export default defineComponent({
         },
         getFormItemProps(options) {
             options = options ? options : defOptions;
-            return mergeProps(this.$props, {name: this.namePath, ...options})
+            return mergeProps(this.$props, {
+                name: this.namePath,
+                span: this.realSpan,
+                ...options
+            })
         },
         getFormAttrs(options) {
             if(this.attrs) {

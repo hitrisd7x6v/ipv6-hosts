@@ -25,11 +25,13 @@
 </template>
 
 <script>
+import {provide} from 'vue'
 import {mapGetters, useStore} from "vuex";
 import LayoutSider from "@msn/main/LayoutSider.vue";
 import LayoutHeader from "@msn/main/LayoutHeader.vue";
 import UserCenter from "@msn/main/UserCenter.vue";
-import {initStaticRoutesToMenus, resolverMenuToRoutes} from "@/router";
+import {initStaticRoutesToMenus} from "@/router";
+import {RowContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 
 export default {
   name: "index",
@@ -43,7 +45,22 @@ export default {
 
     // 初始化当前登入的用户信息
     useStore().dispatch('sys/initUser')
+
+    /**
+     * IvzRow组件将覆盖此对象, 使用在表单组件(表单组件使用了ACol)
+     */
+    provide(RowContextKey, {});
+
+    /**
+     * 视图组件使用的上下文
+     * @see IvzBasicView.jsx
+     * @see IvzFuncView.vue
+     * @see IvzMenuView.vue
+     * @param value 必须为null
+     */
+    provide(ViewContextKey, null);
   },
+
   computed: {
     ...mapGetters({
       taskBarData: 'sys/taskBarData',
@@ -129,20 +146,6 @@ export default {
 .ivz-theme-dark .ivz-avatar .ant-avatar {
   background-color: #ffffff;
 }
-
-/*.ant-menu-root {*/
-
-/*}*/
-/*.ant-menu .anticon {*/
-/*  padding: 0px!important;*/
-/*}*/
-/*.ant-menu-inline-collapsed .anticon {*/
-/*  width: 18px!important;*/
-/*  height: 18px!important;*/
-/*}*/
-/*.ivz-sider-menu .ant-menu-inline-collapsed>.ant-menu-submenu>.ant-menu-submenu-title {*/
-/*  padding: 0px 27px!important;*/
-/*}*/
 
 /*动画*/
 .slide-fade-enter-active {
