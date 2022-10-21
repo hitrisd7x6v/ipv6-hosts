@@ -8,11 +8,11 @@ const IvzInput = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs()
-            return this.$slots.default ? this.$slots.default() :
-                h(resolveComponent('a-input'), attrs, {...this.$slots})
-        })
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-input {...this.getFormAttrs()} v-slots={this.$slots}></a-input>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -22,10 +22,11 @@ const IvzInputNumber = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs({style: {width: '100%'}});
-            return h(resolveComponent('a-input-number'), attrs)
-        })
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-input-number {...this.getFormAttrs({style: {width: '100%'}})} v-slots={this.$slots}></a-input-number>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -34,10 +35,11 @@ const IvzInputPassword = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent('a-input-password'), attrs)
-        })
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-input-ppassword {...this.getFormAttrs()} v-slots={this.$slots}></a-input-ppassword>}
+            </a-form-item>
+        </a-col>
     }
 })
 
@@ -45,12 +47,13 @@ const IvzInputGroup = defineComponent({
     name: 'IvzInputGroup',
     mixins: [MixinsFormItem],
     render() {
-        return h(resolveComponent('a-form-item'), this.$props, () => {
-            return h(resolveComponent('a-input-group'), this.$attrs, () => {
-                let editModel = this.formContext.getEditModel();
-                return this.$slots.default ? this.$slots.default(editModel, this.formContext) : [];
-            })
-        })
+        return <a-col {...this.$props}>
+            <a-form-item {...this.$props}>
+                <a-input-group {...this.$attrs} compact>
+                    {this.$slots.default ? this.$slots.default(this.formContext.getEditModel(), this.formContext) : []}
+                </a-input-group>
+            </a-form-item>
+        </a-col>
     }
 })
 
@@ -59,11 +62,11 @@ const IvzTextarea = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs()
-            return this.$slots.default ? this.$slots.default() :
-                h(resolveComponent('a-textarea'), attrs, {...this.$slots})
-        })
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                <a-textarea {...this.getFormAttrs()}></a-textarea>
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -71,7 +74,7 @@ const IvzTextarea = defineComponent({
 const IvzCheckbox = defineComponent({
     name: 'IvzCheckbox',
     mixins: [MixinsFormItem, MixinsOptionsItem],
-    setup(props, {attrs, slots}) {
+    setup(props, {slots}) {
         let defaultSlots
         if(props.options instanceof Array || props.dict || props.url) {
             defaultSlots = (attrs) => h(resolveComponent('a-checkbox-group'), attrs, slots.default)
@@ -83,12 +86,12 @@ const IvzCheckbox = defineComponent({
     },
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props
-            , () => {
-                let attrs = this.getFormAttrs({options: this.dataSource});
-                return this.defaultSlots(attrs)
-            }
-        )
+
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {this.defaultSlots(this.getFormAttrs({options: this.dataSource}))}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -97,12 +100,12 @@ const IvzSwitch = defineComponent({
     name: 'IvzSwitch',
     mixins: [MixinsFormItem],
     render() {
-
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getCheckedAttrs();
-            return h(resolveComponent('a-switch'), attrs, {...this.$slots})
-        })
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-switch {...this.getCheckedAttrs()} v-slots={this.$slots}></a-switch>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -112,10 +115,11 @@ const IvzRate = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent('a-rate'), attrs, [])
-        })
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-rate {...this.getFormAttrs()} v-slots={this.$slots}></a-rate>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -125,10 +129,11 @@ const IvzSelect = defineComponent({
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs({options: this.dataSource});
-            return h(resolveComponent('a-select'), attrs, this.$slots)
-        })
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-select {...this.getFormAttrs({options: this.dataSource})} v-slots={this.$slots}></a-select>}
+            </a-form-item>
+        </a-col>
     }
 })
 
@@ -137,10 +142,12 @@ const IvzSlider = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent('a-slider'), attrs, {...this.$slots})
-        })
+
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-slider {...this.getFormAttrs()} v-slots={this.$slots}></a-slider>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -149,10 +156,12 @@ const IvzCascader = defineComponent({
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent('a-cascader'), attrs, {...this.$slots})
-        })
+
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-cascader {...this.getFormAttrs()} v-slots={this.$slots}></a-cascader>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -161,10 +170,12 @@ const IvzAutoComplete = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent('a-auto-complete'), attrs, {...this.$slots})
-        })
+
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-auto-complete {...this.getFormAttrs()} v-slots={this.$slots}></a-auto-complete>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -181,7 +192,10 @@ const IvzRadio = defineComponent({
         }
 
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, slots)
+
+        return <a-col {...props}>
+            <a-form-item {...props}>{slots()}</a-form-item>
+        </a-col>
     }
 
 })
@@ -216,10 +230,12 @@ const IvzTreeSelect = defineComponent({
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs({treeData: this.dataSource});
-            return h(resolveComponent('a-tree-select'), attrs, {...this.$slots})
-        })
+
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {<a-tree-select {...this.getFormAttrs({treeData: this.dataSource})} v-slots={this.$slots}></a-tree-select>}
+            </a-form-item>
+        </a-col>
     }
 
 })
@@ -233,10 +249,12 @@ const IvzDateTime = defineComponent({
     render() {
         let props = this.getFormItemProps();
         let tag = typeMaps[this.$props['picker']] || 'a-date-picker';
-        return h(resolveComponent('a-form-item'), props, () => {
-            let attrs = this.getFormAttrs();
-            return h(resolveComponent(tag), attrs, this.$slots)
-        })
+
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                {h(resolveComponent(tag), this.getFormAttrs(), this.$slots)}
+            </a-form-item>
+        </a-col>
     }
 
 })
