@@ -44,7 +44,7 @@ export default {
     return {columns, options};
   },
   mounted() {
-    this.$actions.ExecQuery()
+    this.$view.config.query("").GET()
   }
 }
 </script>
