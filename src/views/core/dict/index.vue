@@ -5,13 +5,13 @@
       <ivz-select label="字典状态" field="status" :options="status"/>
     </ivz-view-search>
     <ivz-view-table :columns="columns" size="small" :bordered="true">
-      <template #c_type="{text, record}">
-        <a @click="$router.push({path: '/dict/data', params: {type: text}})">{{text}}</a>
+      <template #c_type="{text}">
+        <a @click="$router.push({path: '/dict/data', query: {type: text}})">{{text}}</a>
       </template>
     </ivz-view-table>
     <ivz-view-modal :rules="rules">
       <ivz-input label="字典名称" field="name" />
-      <ivz-input label="字典类型" field="type" />
+      <ivz-input label="字典标识" field="type" />
       <ivz-radio label="字典状态" field="status" :options="status"/>
       <ivz-input label="备注" field="remark" />
     </ivz-view-modal>

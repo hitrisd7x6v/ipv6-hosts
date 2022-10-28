@@ -5,6 +5,7 @@ import '@/api/mock/menu'
 import '@/api/mock/dict'
 import '@/api/mock/role'
 import '@/api/mock/config'
+import '@/api/mock/dictData'
 import {menuUri} from "@/api/index";
 
 Mock.setup({
@@ -54,10 +55,10 @@ const menus = [
                         ]
                     },
                     {id: 125, name: '字典管理', url: '/core/dict', pid: 11,  type: 'V', children: [
-                            {id: 1250, name: '新增', permType: 'Add', type: 'A', url: '/core/dict/add', position: 'M'},
-                            {id: 1251, name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/dict/view'},
-                            {id: 1252, name: '编辑', permType: 'Edit', type: 'A', sort: 10, position: 'T', url: '/core/dict/edit'},
-                            {id: 1253, name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/dict/del'},
+                            {id: 1250, name: '新增', permType: 'Add', type: 'A', url: '/core/dictType/add', position: 'M'},
+                            {id: 1251, name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/dictType/view'},
+                            {id: 1252, name: '编辑', permType: 'Edit', type: 'A', sort: 10, position: 'T', url: '/core/dictType/edit'},
+                            {id: 1253, name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/dictType/del'},
                         ]
                     },
                     {id: 128, name: '系统配置', url: '/core/config', pid: 11, type: 'V', children: [

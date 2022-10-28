@@ -8,7 +8,7 @@
       <a-button @click="add">新增</a-button>&nbsp;
 <!--      <a-button @click="resetSearch">重置</a-button>-->
     </IvzBasicSearch>
-    <IvzBasicModal title="新增" :span="[6, 16]" primary>
+    <IvzBasicModal title="新增" :span="[6, 16]" primary :rules="rules">
         <IvzInput field="type" label="字典类型" disabled />
         <IvzInput field="label" label="字典标签" />
         <IvzInput field="value" label="标签值" />
@@ -54,28 +54,40 @@ export default {
       {title: '备注', field: 'remark'},
       {title: '操作', field: 'action', type: 'action'},
     ]
-    return {columns, status};
+
+    let rules = {
+      label: {required: true, message: '字典标签必填'},
+      value: {required: true, message: '标签值必填'},
+    }
+
+    return {columns, status, rules};
   },
   mounted() {
+    let type = this.$route.query.type;
     let model = this.$view.getSearchContext().getModel();
-    model.type = "common_status"
+    model.type = type
     this.query();
   },
   methods: {
     query() {
       this.$view.query("/core/dictData/view");
     },
+
     add() {
-      this.$view.add(model => model.type = this.$view.getSearchContext().getModel().type);
+      this.$view.openForAdd(model => model.type = this.$view.getSearchContext().getModel().type);
     },
+
     submit() {
-      this.$view.submit("/core/dictData/add");
+      this.$view.submit("/core/dictData/add").then(() => this.query());
     },
+
     delRow(row) {
-      this.$view.del("/core/dictData/del", [row.id]);
+      this.$view.del("/core/dictData/del", [row.id]).then(() => this.query());
     },
+
     editRow(row) {
-      this.$view.edit(`/core/dictData/edit?id=${row.id}`);
+      let id = row.id;
+      this.$view.openForEdit(`/core/dictData/edit`, {id});
     },
     cancel() {
       this.$view.cancel();

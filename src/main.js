@@ -3,7 +3,7 @@ import App from './App.vue'
 import store from "@/store";
 import Router from './router'
 import {http} from "@/utils/request"
-// import '@/api/mock' // 数据模拟, 开发和正式环境请注释掉
+import '@/api/mock' // 非数据模拟环境请注释
 // import IvzOnline from 'ivz-online'
 import IvzComponents from '@/components'
 import Antd,{message, notification} from 'ant-design-vue'

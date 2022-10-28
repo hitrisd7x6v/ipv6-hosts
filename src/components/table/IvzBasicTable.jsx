@@ -314,6 +314,9 @@ export default defineComponent({
                 tableContext['setLoading'] = setLoading;
                 tableContext['setTotalRows'] = setTotalRows;
                 tableContext['setDataSource'] = setDataSource
+
+                tableContext['getSelectedRows'] = () => selectedRows.value;
+                tableContext['getSelectedRowKeys'] = () => selectedRowKeys.value;
             }
         }
 

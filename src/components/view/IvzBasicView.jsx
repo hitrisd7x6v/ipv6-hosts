@@ -15,7 +15,7 @@ export default defineComponent({
         $parent.$view = new $View(this.viewContext);
     },
     render() {
-        return <div class="ivz-view ivz-basic-view">
+        return <div class="ivz-page-view ivz-basic-view">
             {this.$slots.default ? this.$slots.default() : []}
         </div>
     }
