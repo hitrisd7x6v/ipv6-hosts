@@ -31,10 +31,6 @@ export default {
 .ivz-fm {
   margin: 0px 6px;
 }
-.ivz-func {
-  text-align: center;
-  cursor: pointer!important;
-}
 
 /*表格功能组件样式*/
 .ivz-ibt-fun.disabled {

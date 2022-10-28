@@ -2,6 +2,7 @@ import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
 import {cloneDeep} from "lodash-es";
 import {Form} from "ant-design-vue";
 import {createMetasMap, getMetaByProp, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
+import {FormContext} from "@/components/form/basic/FormContext";
 
 const unMounted = () => console.log('IvzForm组件未完成挂载')
 export default defineComponent({
@@ -27,25 +28,10 @@ export default defineComponent({
 
         let formRef;
         let editModel = reactive({});
-        const formContext = reactive({
-            validate: unMounted,
-            resetFields: unMounted,
-            getEditModel: unMounted,
-            setEditModel: unMounted,
-            getInitModel: unMounted,
-            getResetModel: unMounted,
-            scrollToField: unMounted,
-            clearValidate: unMounted,
-            validateFields: unMounted,
-            getDefaultModel: unMounted,
-            getFieldValue: (namePath) => null,
-            setFieldValue: (namePath, value) => null,
-            getFormMeta: (props) => getMetaByProp(props, metasMap),
-        })
+        let formContext = new FormContext();
 
         provide('initModel', (namePath, value) =>
             setMetaValue(namePath, editModel, value))
-
 
         let proxy = reactive({editModel});
         if(rules instanceof Object) {
@@ -58,16 +44,14 @@ export default defineComponent({
             formContext['useForm'] = {};
         }
 
+        formContext['getFieldValue'] = (namePath) => getMetaValue(namePath, proxy.editModel);
+        formContext['setFieldValue'] = (namePath, value) => setMetaValue(namePath, proxy.editModel, value);
+
         provide('formContext', formContext);
         return {resetModel, metasMap, formContext, formRef, proxy, initModel}
     },
     created() {
         this.formRef = this.$refs['formRef']
-        // 必须在匿名函数里面引用editModel 才能触发editModel的改变
-        this.formContext.getFieldValue = (namePath) =>
-            getMetaValue(namePath, this.proxy.editModel);
-        this.formContext.setFieldValue = (namePath, value) =>
-            {setMetaValue(namePath, this.proxy.editModel, value)};
 
         this.formContext.validate = this.validate;
         this.formContext.resetFields = this.resetFields;

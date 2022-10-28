@@ -1,8 +1,10 @@
 import moment from 'moment'
 import {useStore} from "vuex";
 import {Tag} from 'ant-design-vue'
-import {defineComponent, h, mergeProps, reactive, ref, watch} from "vue";
+import {defineComponent, h, inject, mergeProps, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
+import {ViewContextKey} from "@/utils/ProvideKeys";
+import {TableContext} from "@/components/view/ViewAction";
 
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
@@ -199,6 +201,7 @@ function getTableRowSelection(columns) {
 export default defineComponent({
     name: 'IvzBasicTable',
     props: {
+        dataSource: Array,
         rowSelection: {type: null}, // 不支持此选项
         showTotal: {type: Function},
         columns: {type: Array, default: () => []},
@@ -210,11 +213,13 @@ export default defineComponent({
         expandedRowKeys: {type: Array, default: null}, // 展开的行
         pageSizeOptions: {type: Array, default: () => ['10', '20', '30', '50', '80']},
     },
-    setup(props, {slots, emit}) {
+    setup(props, {slots, emit, attrs}) {
         let page = reactive({});
         let selectedRows = ref([]);
         let selectedRowKeys = ref([]);
 
+        let loading = ref(false);
+        let dataSourceRef = ref(props.dataSource);
         let {columns, expandedRowKeys} = props;
         let unfoldRowKeys = ref(expandedRowKeys);
         let rowSelection = getTableRowSelection(columns);
@@ -224,6 +229,10 @@ export default defineComponent({
             unfoldRowKeys.value = newVal;
         })
 
+        // 监听数据源变化
+        watch(() => props.dataSource, (newVal) => {
+            dataSourceRef.value = newVal;
+        })
         if(rowSelection) {
             rowSelection = reactive(rowSelection);
 
@@ -280,8 +289,37 @@ export default defineComponent({
             columnsRef.value = tableInfo.columns
         }
 
+        let setLoading = (status) => loading.value = status;
+        let setDataSource = (ds) => dataSourceRef.value = ds;
+        let setTotalRows = (total) => page.total = total;
+
+        let tableContext = null;
+        let viewContext = inject(ViewContextKey);
+        if(viewContext) {
+            let primary = attrs.primary;
+            if(primary == '' || primary == true) {
+                let primaryContext = viewContext["primaryTableContext"];
+                if(primaryContext.isPrimary) {
+                    console.warn("当前视图已经包含有声明为[primary]的表格组件")
+                } else {
+                    tableContext = primaryContext;
+                    tableContext.isPrimary = true; // 标记是主上下文
+                }
+            } else if(attrs['id']) {
+                tableContext = new TableContext(viewContext)
+                viewContext.addContextById(attrs['id'], tableContext);
+            }
+
+            if(tableContext) {
+                tableContext['setLoading'] = setLoading;
+                tableContext['setTotalRows'] = setTotalRows;
+                tableContext['setDataSource'] = setDataSource
+            }
+        }
+
         return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys
-            , mergePagination, updateColumns, unfoldRowKeys}
+            , mergePagination, updateColumns, unfoldRowKeys, loading, dataSourceRef
+            , setDataSource, setLoading, setTotalRows}
     },
 
     render() {
@@ -290,6 +328,7 @@ export default defineComponent({
 
         return (
             <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
+                loading={this.loading} dataSource={this.dataSourceRef}
                 pagination={pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
                 ref="ATableRef" onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {

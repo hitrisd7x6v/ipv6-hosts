@@ -1,0 +1,11 @@
+/*功能按钮样式*/
+.ivz-func {
+    cursor: pointer;
+}
+.ivz-func-tag {
+    cursor: pointer;
+}
+.ivz-func-disabled {
+    cursor: not-allowed;
+    background: #cbcbcb!important;
+}

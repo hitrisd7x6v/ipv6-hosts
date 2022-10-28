@@ -1,5 +1,5 @@
 <template>
-  <ivz-form class="ivz-bs-search" ref="ivzBreadForm" layout="inline">
+  <ivz-form class="ivz-bs-search" ref="ivzBasicForm" layout="inline">
     <template #default="{model}">
       <slot :model="model"></slot>
     </template>
@@ -9,52 +9,64 @@
 <script>
 import {inject} from "vue";
 import IvzForm from "@/components/form/basic/IvzForm";
+import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default {
   name: "IvzBasicSearch",
   components: {IvzForm},
   props: { },
-  setup() {
-    let Context = inject(ViewContextKey) || {};
-    if(Context) {
-      if(Context["BasicSearchContext"]) {
-        console.warn("IvzBasicSearch组件已经存在, 请标注[primary]声明主搜索")
-      } else {
-        Context["BasicSearchContext"] = {};
+  setup(props, {attrs}) {
+    let searchContext = {};
+    let viewContext = inject(ViewContextKey);
+
+    if(viewContext) {
+      let primary = attrs.primary;
+      if(primary == '' || primary == true) {
+        let primaryContext = viewContext["primarySearchContext"];
+        if(primaryContext.isPrimary) {
+          console.warn("当前视图页已经包含主搜索[primary]组件")
+        } else {
+          searchContext = primaryContext;
+          searchContext.isPrimary = true; // 标记是主上下文
+        }
       }
     }
 
-    return {Context}
+    return {searchContext}
   },
   created() {
-    let context = this.Context['BasicSearchContext'];
+    let context = this.searchContext;
+
     context['getSearchModel'] = this.getSearchModel;
     context['setSearchModel'] = this.setSearchModel;
-    context['getSearchContext'] = this.getSearchContext;
+    context['getFormContext'] = this.getFormContext;
     context['resetSearchModel'] = this.resetSearchModel;
-
   },
   methods: {
 
     getSearchContext() {
-      return this.$refs['ivzBreadForm'].getFormContext();
+      return this.searchContext;
+    },
+
+    getFormContext() {
+      return this.$refs['ivzBasicForm'].getFormContext();
     },
 
     /**
      * 重置搜索数据
      */
     resetSearchModel() {
-      this.$refs['ivzBreadForm'].resetFields();
+      this.$refs['ivzBasicForm'].resetFields();
     },
 
     // 获取当前的搜索数据
     getSearchModel() {
-      return this.$refs['ivzBreadForm'].getEditModel();
+      return this.$refs['ivzBasicForm'].getEditModel();
     },
 
     // 设置当前的搜索数据
     setSearchModel(searchModel) {
-      this.$refs['ivzBreadForm'].setEditModel(searchModel);
+      this.$refs['ivzBasicForm'].setEditModel(searchModel);
     }
   }
 }

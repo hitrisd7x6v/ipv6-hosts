@@ -512,7 +512,7 @@ const IvzViewTable = defineComponent({
     render() {
         return (
             <div class="ivz-view ivz-view-table">
-                <ivz-basic-table {...this.$attrs} dataSource={this.dataRef} ref="ibtRef"
+                <ivz-basic-table {...this.$attrs} dataSource={this.dataRef} ref="ibtRef" primary
                     rowKey={this.viewInfo.config.key} loading={this.loading} v-slots={this.$slots}
                     onPageChange={this.pageChange} onSizeChange={this.sizeChange} total={this.totalRef}/>
             </div>)

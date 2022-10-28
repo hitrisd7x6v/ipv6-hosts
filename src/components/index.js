@@ -1,3 +1,4 @@
+import './index.css'
 import {IvzButton} from '@/components/functional'
 import IvzViewComponents from '@/components/view'
 import IvzBasicTable from "@/components/table/IvzBasicTable";

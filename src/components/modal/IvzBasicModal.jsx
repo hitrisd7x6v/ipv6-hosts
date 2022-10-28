@@ -1,4 +1,8 @@
-import {defineComponent, ref} from "vue";
+import {defineComponent, inject, ref} from "vue";
+import {ViewContextKey} from "@/utils/ProvideKeys";
+import MixinsEditItem from "@/components/edit/MixinsEditItem";
+import {EditContext} from "@/components/view/ViewAction";
+
 export default defineComponent({
   name: 'IvzBasicModal',
   props: {
@@ -14,6 +18,7 @@ export default defineComponent({
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: false},
   },
+  mixins: [MixinsEditItem],
   setup(props, {attrs}) {
     let refs = ref(null);
     let formRef = ref(null);
@@ -31,7 +36,21 @@ export default defineComponent({
       }
     }
 
-    return {formRef, refs, spinning, visible, labelCol, wrapperCol}
+    let viewContext = inject(ViewContextKey);
+    let editContext = new EditContext(viewContext);
+    if(viewContext) {
+      let primary = attrs.primary;
+      if(primary == '' || primary == true) {
+        let context = viewContext['primaryEditContext'];
+        if(!context.isPrimary) {
+          editContext = context;
+          context.isPrimary = true;
+        }
+      } else if(attrs['id']) {
+        viewContext.addContextById(attrs['id'], editContext);
+      }
+    }
+    return {formRef, refs, spinning, visible, labelCol, wrapperCol, editContext}
   },
   render() {
     let model = {}, context = {};
@@ -63,6 +82,7 @@ export default defineComponent({
 
     toggle() {
       this.visible = !this.visible;
-    }
+    },
+
   }
 })

@@ -6,7 +6,7 @@
     </ivz-view-search>
     <ivz-view-table :columns="columns" size="small" :bordered="true">
       <template #c_type="{text, record}">
-        <a @click="$router.push('/dict/data')">{{text}}</a>
+        <a @click="$router.push({path: '/dict/data', params: {type: text}})">{{text}}</a>
       </template>
     </ivz-view-table>
     <ivz-view-modal :rules="rules">

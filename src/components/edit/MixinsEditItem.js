@@ -1,6 +1,13 @@
 import {defineComponent} from "vue";
 
 export default defineComponent({
+    created() {
+        let editContext = this.getEditContext();
+        editContext.setVisible = this.setVisible;
+        editContext.setLoading = this.setLoading;
+        editContext.asyncVisible = this.openByAsync;
+        editContext.getFormContext = this.getFormContext;
+    },
     mounted() {
         this.formRef = this.$refs['iemFormRef'];
     },
@@ -8,6 +15,14 @@ export default defineComponent({
         // 表单组件是否初始化
         isInitForm() {
             return this.formRef != null
+        },
+
+        setVisible(visible) {
+            this.visible = visible;
+        },
+
+        setLoading(status) {
+            this.spinning = status;
         },
 
         switchActive(visible) {
@@ -77,13 +92,17 @@ export default defineComponent({
             }
         },
 
-        getEditContext() {
+        getFormContext() {
             // 可能出现获取的时候form还未初始化, 自行判断
             if(this.formRef) {
                 return this.formRef.getFormContext();
             }
 
             return null;
+        },
+
+        getEditContext() {
+            return this.editContext;
         },
 
         initFormRef() {

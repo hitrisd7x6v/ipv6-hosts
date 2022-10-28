@@ -1,5 +1,7 @@
-import {defineComponent, reactive, ref} from "vue";
+import {defineComponent, ref} from "vue";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
+import {EditContext} from "@/components/view/ViewAction";
+
 export default defineComponent({
     name: 'IvzEditModal',
     props: {
@@ -43,7 +45,8 @@ export default defineComponent({
         }
         // watch('xx', () => {})
         initFunMetas(formRef, funMetas);
-        return {formRef, initFunMetas, refs, spinning, visible}
+        let editContext = new EditContext({});
+        return {formRef, initFunMetas, refs, spinning, visible, editContext}
     },
     watch: {
         'funMetas.length': function(newFunMetas) {
