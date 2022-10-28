@@ -19,7 +19,7 @@ export default defineComponent({
     forceRender: {type: Boolean, default: false},
   },
   mixins: [MixinsEditItem],
-  setup(props, {attrs}) {
+  setup(props, {attrs, slots}) {
     let refs = ref(null);
     let formRef = ref(null);
     let visible = ref(false);

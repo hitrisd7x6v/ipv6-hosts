@@ -1,19 +1,6 @@
 <template>
   <div class="ivz-page-view ivz-menu-view">
     <slot></slot>
-    <slot name="import">
-      <ivz-upload-modal ref="uploadRef" :upload="importProps"
-          tip="文件导入中..." :title="importProps.title">
-        <template #desc>
-          <slot name="desc">
-            <span>点击选择或者拖入需要导入的文件</span>
-            <div style="color: red; padding: 3px 0px; font-size: 13px">
-              注：只支持以下文件格式 {{importProps.accept}}
-            </div>
-          </slot>
-        </template>
-      </ivz-upload-modal>
-    </slot>
   </div>
 </template>
 

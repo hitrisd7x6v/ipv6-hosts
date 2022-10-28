@@ -6,9 +6,8 @@
       <ivz-input label="名称" field="name" />
       <a-button type="primary" @click="query">查询</a-button>&nbsp;
       <a-button @click="add">新增</a-button>&nbsp;
-<!--      <a-button @click="resetSearch">重置</a-button>-->
     </IvzBasicSearch>
-    <IvzBasicModal title="新增" :span="[6, 16]" primary :rules="rules">
+    <IvzBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules">
         <IvzInput field="type" label="字典类型" disabled />
         <IvzInput field="label" label="字典标签" />
         <IvzInput field="value" label="标签值" />
@@ -18,7 +17,7 @@
         <IvzFuncBtn type="submit" @click="submit">提交</IvzFuncBtn>&nbsp;
         <IvzFuncBtn type="reset" @click="resetEdit">重置</IvzFuncBtn>&nbsp;
       </template>
-    </IvzBasicModal>
+    </IvzBasicDrawer>
     <IvzBasicTable :columns="columns" size="small" :bordered="true" primary :pagination="false">
       <template #c_action="{record}">
         <IvzFuncTag type="edit" :data="record" @handle="editRow">编辑</IvzFuncTag>
@@ -36,9 +35,12 @@ import IvzBasicModal from "@/components/modal/IvzBasicModal";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import {IvzInput} from "@/components/form/basic";
 import {IvzFuncBtn, IvzFuncTag} from "@/components/basic";
+import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
 export default {
   name: "DictData",
-  components: {IvzFuncBtn, IvzFuncTag, IvzInput, IvzBasicModal, IvzBasicSearch, IvzBasicTable, IvzBasicView},
+  components: {
+    IvzBasicDrawer,
+    IvzFuncBtn, IvzFuncTag, IvzInput, IvzBasicModal, IvzBasicSearch, IvzBasicTable, IvzBasicView},
   setup() {
     let status = [
       {label: '启用', value: 'enabled'},
