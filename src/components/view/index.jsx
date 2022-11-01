@@ -15,129 +15,110 @@ let callbackMaps = { }
 
 // 搜索按钮点击回调
 callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo);
         } else {
-            viewInfo.loadingTableData();
+            viewInfo.get$View().query(meta.url);
         }
     }
 }
 // 取消按钮点击回调
 callbackMaps[FunMetaMaps.Cancel] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
-            let {switchEditView} = viewInfo;
-            switchEditView(false);
+            viewInfo.get$View().cancel();
         }
     }
 }
 // 提交表单点击回调
 callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
             let {config, editFormContext, editSwitchSpinning
                 , switchEditView, getSearchFunMeta, searchModel} = viewInfo;
             let url = config.isEdit(model) ? meta['editUrl'] : meta['addUrl'];
-            let formContext = editFormContext();
-            formContext.validate().then(() => {
-                editSwitchSpinning(true);
-                meta.props.loading = true;
-                TypeMethodMaps.Submit(url, model, meta.http)
-                    .then(({data, message}) => {
-                        switchEditView(false)
-                        msgSuccess(message || '提交数据成功')
-
-                        // 提交数据成功之后重新加载列表
-                        let viewFunMeta = getSearchFunMeta(FunMetaMaps.View);
-                        if(viewFunMeta) {
-                            let model = searchModel();
-                            viewFunMeta.props.onClick(model, meta);
-                        }
-                    }).finally(() => {
-                        editSwitchSpinning(false)
-                        meta.props.loading = false;
-                    })
-            })
+            viewInfo.get$View().submit(url).then(() => viewInfo.get$View().query());
         }
     }
 }
 // 新增按钮点击回调
 callbackMaps[FunMetaMaps.Add] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
-            viewInfo.openEditView(meta);
+            viewInfo.get$View().openForAdd();
         }
     }
 
 }
 // 编辑按钮点击回调
 callbackMaps[FunMetaMaps.Edit] = (meta, viewInfo) => {
-    meta.props.onClick = (row, meta) => {
+    meta.props.onClick = (row) => {
         if(meta.callback instanceof Function) {
-            meta.callback(row, meta, viewInfo)
+            meta.callback(row, meta)
         } else {
-            viewInfo.openEditView(meta, row);
+            let data = {};
+            let rowKey = viewInfo.get$View().getRowKey();
+            data[rowKey] = row[rowKey];
+            viewInfo.get$View().openForEdit(meta.url, data)
         }
     }
 }
 // 重置按钮点击回调
-callbackMaps[FunMetaMaps.Reset] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta, {resetFields, type}) => {
+callbackMaps[FunMetaMaps.Reset] = (meta, viewInfo, type) => {
+    meta.props.onClick = (event) => {
         if(meta.callback instanceof Function) {
+            let model = null;
+            if(type == 'search') {
+                model = viewInfo.get$View().getSearchContext().getModel();
+            } else {
+                model = viewInfo.get$View().getEditContext().getModel();
+            }
+
             meta.callback(model, meta, viewInfo)
         } else {
-            resetFields();
-            if(type == MetaConst.SearchFormType) {
-                let {loadingTableData} = viewInfo;
-                loadingTableData(1);
+            if(type == 'search') {
+                viewInfo.get$View().resetSearchModel();
+                // 重新加载表数据
+                let viewMeta = viewInfo.getSearchFunMeta(FunMetaMaps.View);
+                viewInfo.get$View().query(viewMeta.url);
+            } else {
+                viewInfo.get$View().resetEditModel();
             }
         }
     }
 }
 // 删除按钮点击回调
-callbackMaps[FunMetaMaps.Del] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+callbackMaps[FunMetaMaps.Del] = (meta, viewInfo, type) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
-            meta.callback(model, meta, viewInfo);
+            meta.callback(model, meta);
         } else {
-            let {config, getSearchFunMeta, searchModel} = viewInfo;
-            let {title, content} = config.delDescCall(model, viewInfo);
-            // 删除单条记录
-            confirm({title, content
-                , onOk: () => new Promise((resolve, reject) => {
-                    let keyValue = model[config.key];
-
-                    TypeMethodMaps.Del(meta.url, [keyValue]).then(() => {
-                        resolve();
-                        let viewMeta = getSearchFunMeta(FunMetaMaps.View);
-                        if(viewMeta) {
-                            let model = searchModel();
-                            viewMeta.props.onClick(model, viewMeta);
-                        }
-
-                        nextTick().then(() => msgSuccess('删除成功'))
-                    }).finally(() => resolve())
-                })
-            })
+            if(type == 'search') {
+                viewInfo.get$View().batchDel(meta.url);
+            } else if(type == 'table') {
+                let rowKey = viewInfo.get$View().getRowKey();
+                let data = [model[rowKey]];
+                viewInfo.get$View().del(meta.url, data).catch(reason => {});
+            }
         }
     }
 }
 // 文件导入导出功能
 callbackMaps[FunMetaMaps.Import] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+    meta.props.onClick = (model) => {
         meta.callback(model, meta, viewInfo);
     }
 }
 // 表格的展开和折叠功能
 callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo);
         } else {
@@ -153,18 +134,18 @@ callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
 }
 
 callbackMaps[FunMetaMaps.__Default] = (meta, viewInfo) => {
-    meta.props.onClick = (model, meta) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo);
         }
     }
 }
 
-function initCallback(meta, viewInfo) {
+function initCallback(meta, viewInfo, type) {
     let callback = callbackMaps[meta.field]
         || callbackMaps[FunMetaMaps.__Default];
 
-    callback(meta, viewInfo);
+    callback(meta, viewInfo, type);
 }
 const IvzViewSearch = defineComponent({
     name: 'IvzViewSearch',
@@ -219,7 +200,7 @@ const IvzViewSearch = defineComponent({
 
         searchFunMetas.forEach(meta => {
             // 功能点默认点击事件
-            initCallback(meta, viewInfo);
+            initCallback(meta, viewInfo, 'search');
         })
 
         return {searchFunMetas, viewInfo, formRef};
@@ -229,7 +210,7 @@ const IvzViewSearch = defineComponent({
             {funMetas: this.searchFunMetas, ref: 'ibsRef'});
 
         return (<div class="ivz-view ivz-view-search">
-            <ivz-bread-search {...props} v-slots={this.$slots} />
+            <ivz-bread-search {...props} v-slots={this.$slots} primary/>
         </div>)
     },
     mounted() {
@@ -304,7 +285,7 @@ const IvzViewModal = defineComponent({
 
         if(funMetas instanceof Array) {
             funMetas.forEach(meta => {
-                initCallback(meta, viewInfo);
+                initCallback(meta, viewInfo, 'edit');
             })
         }
 
@@ -319,11 +300,11 @@ const IvzViewModal = defineComponent({
         this.iemRef = this.$refs['iemRef'];
     },
     render() {
-        if(this.iemRef && this.iemRef.isInitForm()) {
-            let {config} = this.viewInfo;
-            let editModel = this.iemRef.getEditModel();
-            this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
-        }
+        // if(this.iemRef && this.iemRef.isInitForm()) {
+        //     let {config} = this.viewInfo;
+        //     let editModel = this.iemRef.getEditModel();
+        //     this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
+        // }
 
         return <div class="ivz-view ivz-view-modal">
             <ivz-edit-modal {...this.$attrs} funMetas={this.funMetas}
@@ -399,7 +380,7 @@ const IvzViewDrawer = defineComponent({
 
         if(funMetas instanceof Array) {
             funMetas.forEach(meta => {
-                initCallback(meta, viewInfo);
+                initCallback(meta, viewInfo, 'edit');
             })
         }
 
@@ -414,15 +395,10 @@ const IvzViewDrawer = defineComponent({
         this.iemRef = this.$refs['iemRef'];
     },
     render() {
-        if(this.iemRef && this.iemRef.isInitForm()) {
-            let {config} = this.viewInfo;
-            let editModel = this.iemRef.getEditModel();
-            this.title = config.isEdit(editModel) ? config.editTitle : config.addTitle;
-        }
 
         return <div class="ivz-view ivz-view-drawer">
             <ivz-edit-drawer {...this.$attrs} funMetas={this.funMetas} ref="iemRef"
-                 v-slots={this.$slots} title={this.title}>
+                 v-slots={this.$slots}>
             </ivz-edit-drawer>
         </div>
     }
@@ -443,15 +419,11 @@ const IvzViewTable = defineComponent({
         let ibtRef = ref();
         let dataRef = ref([]);
 
-        let totalRef = ref(0);
-        let page = reactive({});
-        let loading = ref(false);
-
-        let {tableFunMetas, viewMenu, getSearchFunMeta} = viewInfo;
+        let {tableFunMetas} = viewInfo;
 
         if(tableFunMetas instanceof Array) {
             tableFunMetas.forEach(meta => {
-                initCallback(meta, viewInfo);
+                initCallback(meta, viewInfo, 'table');
             })
         }
 
@@ -464,47 +436,7 @@ const IvzViewTable = defineComponent({
             })
         }
 
-        // 搜索功能
-        let viewFunMeta = getSearchFunMeta(FunMetaMaps.View);
-        let loadTableData = (current, pageSize) => {
-            if(viewFunMeta) {
-                let searchModel = viewInfo.searchModel();
-                if(attrs.pagination != false) { // 需要分页
-                    searchModel[MetaConst.PageSize] = pageSize;
-                    searchModel[MetaConst.PageCurrent] = current;
-                }
-
-                if(!viewFunMeta.url) {
-                    return console.warn(`获取列表失败 功能点[${viewFunMeta.name}]没有设置搜索地址[url][${JSON.stringify(viewFunMeta)}]`)
-                }
-
-                loading.value = true;
-                TypeMethodMaps[FunMetaMaps.View](viewFunMeta.url
-                    , searchModel, viewFunMeta.http).then(({data}) => {
-
-                    if(data instanceof Array){
-                        dataRef.value = data;
-                    } else if(data instanceof Object) { // 需要分页
-                        let {records, total} = data;
-                        dataRef.value = records;
-                        totalRef.value = total
-                    }
-
-                }).finally(() => loading.value = false)
-            }
-        }
-
-        // 设置表视图的信息
-        useStore().commit('view/setTableViewContext', {
-            url: viewMenu.url,
-            expanded: () => ibtRef.value.expanded(),
-            dataSource: () => ibtRef.value.getDataSource(),
-            selectedRows: () => ibtRef.value.getSelectedRows(),
-            selectedKeys: () => ibtRef.value.getSelectedRowKeys(),
-            loadingTableData: (current) =>  loadTableData(current)
-        })
-
-        return {ibtRef, dataRef, loading, viewInfo, loadTableData, page, totalRef}
+        return {ibtRef, dataRef, viewInfo}
     },
     created() {
         this.ibtRef = this.$refs['ibtRef']
@@ -512,22 +444,9 @@ const IvzViewTable = defineComponent({
     render() {
         return (
             <div class="ivz-view ivz-view-table">
-                <ivz-basic-table {...this.$attrs} dataSource={this.dataRef} ref="ibtRef" primary
-                    rowKey={this.viewInfo.config.key} loading={this.loading} v-slots={this.$slots}
-                    onPageChange={this.pageChange} onSizeChange={this.sizeChange} total={this.totalRef}/>
+                <IvzBasicTable {...this.$attrs} dataSource={this.dataRef} ref="ibtRef" primary
+                    rowKey={this.viewInfo.config.key} v-slots={this.$slots}/>
             </div>)
-    },
-    mounted() {
-        // let defaultPageSize = this.$attrs.defaultPageSize ? this.$attrs.defaultPageSize : 10;
-        this.loadTableData(1);
-    },
-    methods: {
-        sizeChange(current, size) {
-            this.loadTableData(current, size)
-        },
-        pageChange(current, size) {
-            this.loadTableData(current, size)
-        }
     }
 })
 

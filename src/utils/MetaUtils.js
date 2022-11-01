@@ -181,5 +181,142 @@ const mergeMetaOfDefault = function (meta) {
     meta.props = getMetaConfig(meta.field, meta.props);
 }
 
+let callbackMaps = { }
+
+// 搜索按钮点击回调
+callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
+    meta.props.onClick = (model) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo);
+        } else {
+            viewInfo.get$View().query(meta.url);
+        }
+    }
+}
+// 取消按钮点击回调
+callbackMaps[FunMetaMaps.Cancel] = (meta, viewInfo) => {
+    meta.props.onClick = (model) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo)
+        } else {
+            viewInfo.get$View().cancel();
+        }
+    }
+}
+// 提交表单点击回调
+callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
+    meta.props.onClick = (model) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo)
+        } else {
+            let {config, editFormContext, editSwitchSpinning
+                , switchEditView, getSearchFunMeta, searchModel} = viewInfo;
+            let url = config.isEdit(model) ? meta['editUrl'] : meta['addUrl'];
+            viewInfo.get$View().submit(url).then(() => viewInfo.get$View().query());
+        }
+    }
+}
+// 新增按钮点击回调
+callbackMaps[FunMetaMaps.Add] = (meta, viewInfo) => {
+    meta.props.onClick = (model) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo)
+        } else {
+            viewInfo.get$View().openForAdd();
+        }
+    }
+
+}
+// 编辑按钮点击回调
+callbackMaps[FunMetaMaps.Edit] = (meta, viewInfo) => {
+    meta.props.onClick = (row) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(row, meta)
+        } else {
+            let data = {};
+            let rowKey = viewInfo.get$View().getRowKey();
+            data[rowKey] = row[rowKey];
+            viewInfo.get$View().openForEdit(meta.url, data)
+        }
+    }
+}
+// 重置按钮点击回调
+callbackMaps[FunMetaMaps.Reset] = (meta, viewInfo, type) => {
+    meta.props.onClick = (event) => {
+        if(meta.callback instanceof Function) {
+            let model = null;
+            if(type == 'search') {
+                model = viewInfo.get$View().getSearchContext().getModel();
+            } else {
+                model = viewInfo.get$View().getEditContext().getModel();
+            }
+
+            meta.callback(model, meta, viewInfo)
+        } else {
+            if(type == 'search') {
+                viewInfo.get$View().resetSearchModel();
+                // 重新加载表数据
+                let viewMeta = viewInfo.getSearchFunMeta(FunMetaMaps.View);
+                viewInfo.get$View().query(viewMeta.url);
+            } else {
+                viewInfo.get$View().resetEditModel();
+            }
+        }
+    }
+}
+// 删除按钮点击回调
+callbackMaps[FunMetaMaps.Del] = (meta, viewInfo, type) => {
+    meta.props.onClick = (model) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta);
+        } else {
+            if(type == 'search') {
+                viewInfo.get$View().batchDel(meta.url);
+            } else if(type == 'table') {
+                let rowKey = viewInfo.get$View().getRowKey();
+                let data = [model[rowKey]];
+                viewInfo.get$View().del(meta.url, data).catch(reason => {});
+            }
+        }
+    }
+}
+// 文件导入导出功能
+callbackMaps[FunMetaMaps.Import] = (meta, viewInfo) => {
+    meta.props.onClick = (model) => {
+        meta.callback(model, meta, viewInfo);
+    }
+}
+// 表格的展开和折叠功能
+callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
+    meta.props.onClick = (model) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo);
+        } else {
+            viewInfo.expanded();
+            // 图标旋转
+            if(meta.props.rotate == 90) {
+                meta.props.rotate = 270;
+            } else {
+                meta.props.rotate = 90;
+            }
+        }
+    }
+}
+
+callbackMaps[FunMetaMaps.__Default] = (meta, viewInfo) => {
+    meta.props.onClick = (model) => {
+        if(meta.callback instanceof Function) {
+            meta.callback(model, meta, viewInfo);
+        }
+    }
+}
+
+function initMetaCallback(meta, viewInfo, type) {
+    let callback = callbackMaps[meta.field]
+        || callbackMaps[FunMetaMaps.__Default];
+
+    callback(meta, viewInfo, type);
+}
+
 export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue,TypeMethodMaps, FunMetaMaps
-    , setMetaValue, createFormMetaInfo, getMetaByProp, clone, MetaConst, mergeMetaOfDefault}
+    , setMetaValue, createFormMetaInfo, getMetaByProp, clone, MetaConst, mergeMetaOfDefault, initMetaCallback}

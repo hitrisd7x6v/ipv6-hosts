@@ -36,11 +36,7 @@ export default {
   },
   created() {
     let context = this.searchContext;
-
-    context['getSearchModel'] = this.getSearchModel;
-    context['setSearchModel'] = this.setSearchModel;
     context['getFormContext'] = this.getFormContext;
-    context['resetSearchModel'] = this.resetSearchModel;
   },
   methods: {
 

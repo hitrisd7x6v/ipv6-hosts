@@ -12,6 +12,8 @@ import MixinConfigView from "@/components/view/MixinConfigView";
 import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
 import {mergeMetaOfDefault, FunMetaMaps} from "@/utils/MetaUtils";
 import router from "@/router";
+import {$View, ViewContext} from "@/components/view/ViewAction";
+import {ViewContextKey} from "@/utils/ProvideKeys";
 
 /**
  * 视图组件必须作为其父组件的顶级组件 如以下：
@@ -88,26 +90,24 @@ export default {
       searchFunMetas.sort((a, b) => a.sort > b.sort ? 1 : a.sort == b.sort ? 0 : -1);
     }
 
-    if(!viewInfo.config.isEdit) { // 判断编辑视图是属于新增还是编辑
-      let key = viewInfo.config.key;
-      viewInfo.config.isEdit = (model) => model[key] != null
-    }
-    if(!viewInfo.config.delDescCall) { // 删除回调,
-      viewInfo.config.delDescCall = (model, viewInfo) =>
-        {return {title: '删除记录', content: '确定要删除此条记录吗？'}}
-    }
-
-    // 导入文件
-    let importMeta = viewInfo.getSearchFunMeta(FunMetaMaps.Import);
-    if(importMeta) {
-      props.importProps.action = importMeta.url;
-    }
-
     // 提供视图信息给其视图子组件
     provide('IvzViewInfo', viewInfo);
-    return {viewMenu, url, viewInfo, importMeta}
-  },
+    const viewContext = new ViewContext();
+    let IvzView = new $View(viewContext);
+    viewInfo['get$View'] = () => IvzView;
 
+    provide(ViewContextKey, viewContext);
+    return {viewMenu, url, viewInfo, IvzView}
+  },
+  created() {
+    // 暴露$View对象到父组件
+    this.$parent.$view = this.IvzView;
+  },
+  mounted() {
+    // 加载数据
+    let viewMeta = this.viewInfo.getSearchFunMeta(FunMetaMaps.View);
+    this.IvzView.query(viewMeta.url);
+  }
 }
 </script>
 

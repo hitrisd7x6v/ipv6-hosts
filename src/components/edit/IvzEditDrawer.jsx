@@ -1,6 +1,6 @@
-import {defineComponent, reactive, ref} from "vue";
-import MixinsEditItem from "@/components/edit/MixinsEditItem";
+import {defineComponent, ref} from "vue";
 import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
+
 export default defineComponent({
     name: 'IvzEditDrawer',
     props: {
@@ -20,7 +20,6 @@ export default defineComponent({
         funMetas: {type: Array, default: () => []},
         forceRender: {type: Boolean, default: false},
     },
-    mixins: [MixinsEditItem],
     setup({funMetas}, {slots}) {
         let refs = ref(null);
         let formRef = ref(null);

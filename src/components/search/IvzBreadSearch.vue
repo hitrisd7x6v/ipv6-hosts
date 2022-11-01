@@ -50,6 +50,8 @@
 import {DownOutlined, HomeFilled} from '@ant-design/icons-vue'
 import IvzForm from "@/components/form/basic/IvzForm";
 import {mapMutations, useStore} from "vuex";
+import {inject} from "vue";
+import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default {
   name: "IvzBreadSearch",
@@ -57,36 +59,32 @@ export default {
   props: {
     funMetas: {type: Array, default: () => []},
   },
-  setup() {
+  setup(props, {attrs}) {
     let activityMenu = useStore().getters['sys/activityMenu'];
-    let activityId = activityMenu.id;
     let breadcrumb = useStore().getters['sys/resolverBreadcrumb'];
 
-    return {breadcrumb, activityId}
+    let searchContext = {};
+    let activityId = activityMenu.id;
+    let viewContext = inject(ViewContextKey);
+
+    if(viewContext) {
+      let primary = attrs.primary;
+      if(primary == '' || primary == true) {
+        let primaryContext = viewContext["primarySearchContext"];
+        if(primaryContext.isPrimary) {
+          console.warn("当前视图页已经包含主搜索[primary]组件")
+        } else {
+          searchContext = primaryContext;
+          searchContext.isPrimary = true; // 标记是主上下文
+        }
+      }
+    }
+
+    return {breadcrumb, activityId, searchContext}
   },
   created() {
-    // 为功能按钮单击事件创建代理
-    if(this.funMetas instanceof Array) {
-      this.funMetas.forEach(meta => {
-        let clickOriEvent = meta.props['onClick'];
-        if(!clickOriEvent && import.meta.env.DEV) {
-          console.warn(`组件[IvzBreadSearch]的功能[${meta.field}]没有监听点击事件`)
-        }
-
-        // 为原事件创建代理, 增加原数据meta和编辑对象editModel
-        meta.props['onClick'] = () => {
-          let bsForm = this.$refs['ivzBsForm'];
-          let editModel = bsForm.getEditModel();
-          let searchContext = this.getSearchContext();
-          if(clickOriEvent) {
-            clickOriEvent(editModel, meta, searchContext)
-          } else {
-            console.error(`组件[IvzBreadSearch]功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
-          }
-        }
-      });
-
-    }
+    let context = this.searchContext;
+    context['getFormContext'] = this.getFormContext;
   },
   methods: {
     ...mapMutations({
@@ -109,10 +107,9 @@ export default {
     menuHandle(menu) {
       this.openUrlAndParentMenu(menu.key);
     },
-    getSearchContext() {
-      let formContext = this.$refs['ivzBsForm'].getFormContext();
-      formContext['type'] = 'search'; // 设置form上下文属于搜索类型
-      return formContext;
+
+    getFormContext() {
+      return this.$refs['ivzBsForm'].getFormContext();
     },
 
     /**
