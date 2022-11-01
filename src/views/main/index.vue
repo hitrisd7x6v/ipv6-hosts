@@ -56,7 +56,7 @@ export default {
      * @see IvzBasicView.jsx
      * @see IvzFuncView.vue
      * @see IvzMenuView.vue
-     * @param value 必须为null
+     * @param value 必须为 null
      */
     provide(ViewContextKey, null);
   },

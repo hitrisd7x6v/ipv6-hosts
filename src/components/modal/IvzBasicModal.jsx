@@ -24,6 +24,7 @@ export default defineComponent({
     let formRef = ref(null);
     let visible = ref(false);
     let spinning = ref(false);
+    let spinTip = ref("数据处理中...");
 
     let labelCol = attrs.labelCol, wrapperCol = attrs.wrapperCol;
     if(props.span) {
@@ -50,7 +51,7 @@ export default defineComponent({
         viewContext.addContextById(attrs['id'], editContext);
       }
     }
-    return {formRef, refs, spinning, visible, labelCol, wrapperCol, editContext}
+    return {formRef, refs, spinning, spinTip, visible, labelCol, wrapperCol, editContext}
   },
   render() {
     let model = {}, context = {};
@@ -65,24 +66,13 @@ export default defineComponent({
       footer: () => this.$slots.footer ? this.$slots.footer({model, context}) : null
     }
 
-    return <a-modal v-model={[this.visible, 'visible', ["modifier"]]}
-                    {...this.$props} v-slots={slots} ref="iemRef">
-      <a-spin size="small" tip="数据处理中..." spinning={this.spinning}>
+    return <a-modal v-model={[this.visible, 'visible', ["modifier"]]} {...this.$props} v-slots={slots} ref="iemRef">
+      <a-spin size="small" tip={this.spinTip} spinning={this.spinning}>
         <ivz-form {...this.$attrs} labelCol={this.labelCol}
                   wrapperCol={this.wrapperCol} ref="iemFormRef">
-          {this.$slots.default({model, context})}
+          {this.$slots.default ? this.$slots.default({model, context}) : []}
         </ivz-form>
       </a-spin>
     </a-modal>
-  },
-  methods: {
-    visible() {
-      return this.visible;
-    },
-
-    toggle() {
-      this.visible = !this.visible;
-    },
-
   }
 })

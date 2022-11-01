@@ -38,6 +38,18 @@ export function $View(context) {
     }
 
     /**
+     * 校验一个model是编辑还是新增
+     * 默认根据 rowKey判断
+     * @param model
+     * @return {boolean}
+     */
+    this.isEdit = function (model) {
+        let rowKey = this.getRowKey();
+        let rowKeyValue = model[rowKey];
+        return rowKeyValue != null;
+    }
+
+    /**
      * 打开编辑框
      * @param callback 用来对数据进行处理
      */
@@ -155,7 +167,7 @@ export function $View(context) {
                         } else {
                             msgError(message);
                         }
-                    }).finally(editContext.setLoading(false))
+                    }).finally(() => editContext.setLoading(false))
                 })
             } else {
                 editContext.asyncVisible().then(() => {
@@ -229,9 +241,25 @@ export function $View(context) {
             return console.warn("未声明标记为[primary]的编辑组件")
         }
 
+        // 关闭编辑框的加载状态
+        editContext.setLoading(false);
+        // 关闭编辑框
         editContext.setVisible(false);
+        // 移除所有的校验
+        editContext.getFormContext().clearValidate();
     }
+    /**
+     * 展开树形的表格
+     * @param expandedRowKeys 要展开的行的key列表 不指定则展开所有
+     */
+    this.expanded = function (expandedRowKeys) {
+        let tableContext = this.getTableContext();
+        if(!tableContext.isPrimary) {
+            return console.warn("未声明标记为[primary]的表组件")
+        }
 
+        tableContext.expanded(expandedRowKeys);
+    }
     /**
      * 提交主编辑表单
      * @param url 编辑地址
@@ -399,7 +427,6 @@ export function SearchContext(viewContext) {
  * @constructor
  */
 export function EditContext(viewContext) {
-
     // 是否是主上下文
     this.isPrimary = false;
 
@@ -415,29 +442,37 @@ export function EditContext(viewContext) {
         this.setVisible(false);
     }
 
-    this.submit = function (url, queryUrl) {
-        this.getFormContext().validate().then(() => {
-            let model = this.getModel();
-            this.setLoading(true);
-            TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
-                if(code == 200) {
-                    this.setVisible(false);
-                    msgSuccess(message || "提交成功");
-                    if(queryUrl) {
-
-                        // 刷新当前主表格列表
-                        this.get$View().query(queryUrl);
+    /**
+     * 提交表单
+     * @param url 提交地址
+     * @return {Promise<unknown>}
+     */
+    this.submit = function (url) {
+        return new Promise((resolve, reject) => {
+            this.getFormContext().validate().then(() => {
+                let model = this.getModel();
+                this.setLoading(true);
+                TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
+                    if(code == 200) {
+                        this.setVisible(false);
+                        msgSuccess(message || "提交成功");
+                    } else {
+                        msgError(message);
+                        reject(message);
                     }
-                } else {
-                    msgError(message);
-                }
-            }).finally(this.setLoading(false))
+                }).catch(reason => reject(reason))
+                    .finally(() => this.setLoading(false))
+            }).catch(reason => {})
         })
     }
 
+    // 修改加载状态
     this.setLoading = (status) => {};
+    // 设置加载文本
+    this.setLoadingTip = (tip) => {};
+    // 修改弹框状态(模态框或者抽屉框)
     this.setVisible = (status) => {};
-
+    // 异步打开弹框(模态框或者抽屉框) 等表单初始化完成
     this.asyncVisible = () => Promise.reject("未挂载");
 
     // 必须在相应的地方重新初始化
@@ -465,6 +500,12 @@ export function TableContext(viewContext) {
     this.CurrentRow = null;
 
     this.del = function (url, data) {}
+
+    /**
+     * 展开行
+     * @param expandedRowKeys 要展开的行key, 不传则展开所有行
+     */
+    this.expanded = (expandedRowKeys) => {};
 
     /**
      * 获取当前点击的行

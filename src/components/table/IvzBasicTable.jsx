@@ -296,8 +296,7 @@ export default defineComponent({
         let tableContext = null;
         let viewContext = inject(ViewContextKey);
         if(viewContext) {
-            let primary = attrs.primary;
-            if(primary == '' || primary == true) {
+            if(attrs.primary) {
                 let primaryContext = viewContext["primaryTableContext"];
                 if(primaryContext.isPrimary) {
                     console.warn("当前视图已经包含有声明为[primary]的表格组件")
@@ -314,26 +313,27 @@ export default defineComponent({
                 tableContext['setLoading'] = setLoading;
                 tableContext['setTotalRows'] = setTotalRows;
                 tableContext['setDataSource'] = setDataSource
-
-                tableContext['getSelectedRows'] = () => selectedRows.value;
-                tableContext['getSelectedRowKeys'] = () => selectedRowKeys.value;
             }
         }
 
         return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys
             , mergePagination, updateColumns, unfoldRowKeys, loading, dataSourceRef
-            , setDataSource, setLoading, setTotalRows}
+            , setDataSource, setLoading, setTotalRows, tableContext}
     },
-
+    created() {
+        this.tableContext['expanded'] = this.expanded;
+        this.tableContext['getSelectedRows'] = this.getSelectedRows;
+        this.tableContext['getSelectedRowKeys'] = this.getSelectedRowKeys;
+    },
     render() {
         this.updateColumns();
         let pagination = this.mergePagination(this.$props);
 
         return (
             <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
-                loading={this.loading} dataSource={this.dataSourceRef}
-                pagination={pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
-                ref="ATableRef" onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
+                loading={this.loading} dataSource={this.dataSourceRef} ref="ATableRef"
+                     pagination={pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
+               onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {
                         onClick: (event) => this.$emit('rowClick', row),       // 点击行
                         onDblclick: (event) => this.$emit('rowDblclick', row), // 行双击
@@ -346,6 +346,9 @@ export default defineComponent({
           return this.$props.pagination ? this.page : false;
         },
 
+        getTableContext() {
+            return this.tableContext;
+        },
         /**
          * 展开/折叠
          */
@@ -375,7 +378,7 @@ export default defineComponent({
          * @return {null|[]}
          */
         getAllKeys() {
-            let dataSource = this.$attrs.dataSource;
+            let dataSource = this.dataSourceRef;
             if(dataSource instanceof Array) {
                 let keys = [];
                 let doGetAllKeys = (children) => {

@@ -20,13 +20,13 @@ export default defineComponent({
         maskClosable: {default: true},
         afterVisibleChange: {type: Function},
         forceRender: {type: Boolean, default: false},
-        spinTip: {type: String, default: "数据处理中..."},
     },
     mixins: [MixinsEditItem],
     setup(props, {attrs, slots}) {
         let formRef = ref(null);
         let visible = ref(false);
         let spinning = ref(false);
+        let spinTip = ref("数据处理中...");
 
         let labelCol = attrs.labelCol, wrapperCol = attrs.wrapperCol;
         if(props.span) {
@@ -58,7 +58,7 @@ export default defineComponent({
             }
         }
 
-        return {formRef, spinning, visible, labelCol, wrapperCol, titleSlots, editContext}
+        return {formRef, spinning, spinTip, visible, labelCol, wrapperCol, titleSlots, editContext}
     },
     render() {
         let model = {}, context = {};
@@ -76,6 +76,7 @@ export default defineComponent({
                 <ivz-form {...this.$attrs} ref="iemFormRef" labelCol={this.labelCol} wrapperCol={this.wrapperCol}>
                     {this.$slots.default ? this.$slots.default({model, context}) : []}
                 </ivz-form>
+                {this.$slots.footer ? this.$slots.footer({model, context}) : []}
             </a-spin>
         </a-drawer>)
     }

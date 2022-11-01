@@ -1,24 +1,24 @@
 <template>
   <ivz-menu-view name="部门" :expand="true">
-    <ivz-view-search>
+    <ivz-primary-search>
       <ivz-input field="name"/>
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small">
+    </ivz-primary-search>
+    <ivz-primary-table :columns="columns" size="small">
 
-    </ivz-view-table>
-    <ivz-view-modal :span="[7, 15]" :rules="rules">
+    </ivz-primary-table>
+    <ivz-primary-modal :span="[7, 15]" :rules="rules">
       <ivz-input field="name" label="部门名称"/>
       <ivz-tree-select field="pid" label="所属部门" valueField="id"
          :defaultValue="0" url="/core/org/parent" labelField="name"
          treeNodeFilterProp="label"/>
       <ivz-input field="leader" label="部门负责人"/>
       <ivz-input field="phone" label="负责人手机号"/>
-    </ivz-view-modal>
+    </ivz-primary-modal>
   </ivz-menu-view>
 </template>
 <!--部门管理-->
 <script>
-import {FunMetaMaps} from "@/utils/SysUtils";
+import {FunMetaMaps} from "@/utils/MetaUtils";
 
 export default {
   name: "Dept",
@@ -42,9 +42,10 @@ export default {
     // 表格组件添加子部门
     let addFunMeta = this.getTableFunMeta(FunMetaMaps.Add);
     if(addFunMeta) {
-      addFunMeta.callback = (row, meta, {openEditView}) => {
+      addFunMeta.name = "新增子部门"
+      addFunMeta.callback = (row, meta) => {
         // 打开编辑视图
-        openEditView(meta).then(model => {
+        this.$view.openForAdd(model=>{
           model.pid = row.id;
         })
       }

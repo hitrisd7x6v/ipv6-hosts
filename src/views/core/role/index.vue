@@ -1,16 +1,16 @@
 <template>
   <ivz-menu-view name="角色">
-    <ivz-view-search ref="ivzForm">
+    <ivz-primary-search ref="ivzForm">
       <ivz-input label="角色名称" field="name" />
       <ivz-radio label="状态" field="status" :options="status"/>
-    </ivz-view-search>
-    <ivz-view-modal :span="[5, 16]" :rules="rules">
+    </ivz-primary-search>
+    <ivz-primary-modal :span="[5, 16]" :rules="rules">
       <ivz-input label="角色名称" field="name" />
       <ivz-radio label="状态" field="status" :options="status"/>
       <ivz-input-number label="排序" field="sort" />
       <ivz-textarea label="备注" field="remark" />
-    </ivz-view-modal>
-    <ivz-view-table :columns="columns" :bordered="true" size="small"/>
+    </ivz-primary-modal>
+    <ivz-primary-table :columns="columns" :bordered="true" size="small"/>
   </ivz-menu-view>
 </template>
 

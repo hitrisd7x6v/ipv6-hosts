@@ -1,6 +1,7 @@
 import './index.css'
 import {IvzButton} from '@/components/functional'
 import IvzViewComponents from '@/components/view'
+import IvzBasicComponents from '@/components/basic'
 import IvzBasicTable from "@/components/table/IvzBasicTable";
 import IvzBreadSearch from "@/components/search/IvzBreadSearch.vue";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
@@ -11,7 +12,7 @@ import {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
 export default {
     install(app) {
         app.use(IvzViewComponents) // 视图组件
-
+        app.use(IvzBasicComponents) // 基础组件
         app.component("IvzButton", IvzButton)
         app.component(IvzBasicTable.name, IvzBasicTable)
         app.component(IvzBasicSearch.name, IvzBasicSearch)

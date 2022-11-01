@@ -35,35 +35,6 @@ export default {
         $parent['getEditFunMeta'] = getEditFunMeta;
         $parent['getTableFunMeta'] = getTableFunMeta;
         $parent['getSearchFunMeta'] = getSearchFunMeta;
-
-        $parent['getViewMenu'] = () => this.viewMenu
-        // 获取当前编辑表单组件的数据
-        $parent['getEditModel'] = () => this.viewInfo.editModel()
-        // 获取当前搜索表单组件的数据
-        $parent['getSearchModel'] = () => this.viewInfo.searchModel()
-        // 获取当前表格的列表数据
-        $parent['getDataSource'] = () => this.viewInfo.dataSource()
-        // 获取当前表格选中的行
-        $parent['getSelectedRows'] = () => this.viewInfo.selectedRows()
-        // 设置当前表格可以展开的行
-        $parent['setExpandedRows'] = (expandedRows) => this.viewInfo.expanded(expandedRows)
-        // 重新加载表格数据
-        $parent['loadingTableData'] = (promise) => this.viewInfo.loadingTableData(promise)
-
-        // 打开编辑视图
-        $parent['openEditView'] = (meta, model) => this.viewInfo.openEditView(meta, model);
-
-        // 获取当前编辑表单相关上下文信息(包括重置、校验、数据等)
-        $parent['getEditContext'] = () => this.viewInfo.editFormContext()
-        // 获取当前搜索表单相关上下文信息(包括重置、数据等)
-        $parent['getSearchContext'] = () => this.viewInfo.searchFormContext()
-
-
-        if(this.importMeta) {
-            this.importMeta.callback = (model, meta) => {
-                this.$refs['uploadRef'].switchActive(true)
-            }
-        }
     },
     methods: {
         ...mapMutations({

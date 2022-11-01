@@ -6,6 +6,7 @@ export default defineComponent({
         editContext.setVisible = this.setVisible;
         editContext.setLoading = this.setLoading;
         editContext.asyncVisible = this.openByAsync;
+        editContext.setLoadingTip = this.setLoadingTip;
         editContext.getFormContext = this.getFormContext;
     },
     mounted() {
@@ -23,6 +24,10 @@ export default defineComponent({
 
         setLoading(status) {
             this.spinning = status;
+        },
+
+        setLoadingTip(tip) {
+            this.spinTip = tip;
         },
 
         switchActive(visible) {

@@ -1,26 +1,29 @@
 <template>
   <ivz-menu-view name="配置">
-    <ivz-view-search>
+    <IvzPrimarySearch>
       <ivz-input field="name" label="配置名称"/>
       <ivz-input field="label" label="配置标识"/>
       <ivz-radio field="type" label="系统配置" :options="type"/>
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" :bordered="true" size="small" />
-    <ivz-view-modal :span="[6, 15]" :rules="rules">
+    </IvzPrimarySearch>
+    <IvzPrimaryTable :columns="columns" :bordered="true" size="small" />
+    <IvzPrimaryModal :span="[6, 15]" :rules="rules">
       <template #default="{model}">
         <ivz-input field="name" label="配置名称"/>
-        <ivz-input field="label" label="配置标识" :disabled="model.id"/>
+        <ivz-input field="label" label="配置标识" :disabled="model.id != null"/>
         <ivz-input field="value" label="配置值" />
         <ivz-radio field="type" label="系统配置" :options="type" defaultValue="def"/>
         <ivz-textarea field="remark" label="配置说明" />
       </template>
-    </ivz-view-modal>
+    </IvzPrimaryModal>
   </ivz-menu-view>
 </template>
 <!--系统配置管理-->
 <script>
+
+import {IvzPrimarySearch, IvzPrimaryModal, IvzPrimaryTable} from "@/components/view";
 export default {
   name: "Config",
+  components: {IvzPrimaryTable, IvzPrimarySearch, IvzPrimaryModal},
   setup() {
     let type = [
       {label: '是', value:'sys'}, {label: '否', value: 'def'}

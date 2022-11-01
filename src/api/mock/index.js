@@ -45,10 +45,11 @@ const menus = [
                             {name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/admin/view'},
                             {name: '编辑', permType: 'Edit', type: 'A', sort: 10, position: 'T', url: '/core/admin/edit'},
                             {name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/admin/del'},
+                            {name: '修改密码', permType: 'Pwd', type: 'A', sort: 80, position: 'T', url: '/core/admin/del'},
                         ]
                     },
                     {id: 120, name: '部门管理', url: '/core/org', pid: 11,  type: 'V', children: [
-                            {id: 1200, name: '新增', permType: 'Add', type: 'A', url: '/core/dept/add', position: 'M'},
+                            {id: 1200, name: '新增', permType: 'Add', type: 'A', url: '/core/dept/add', position: 'AM'},
                             {id: 1210, name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/dept/view'},
                             {id: 1220, name: '编辑', permType: 'Edit', type: 'A', sort: 10, position: 'T', url: '/core/dept/edit'},
                             {id: 1230, name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/dept/del'},

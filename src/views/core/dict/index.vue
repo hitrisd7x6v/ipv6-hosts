@@ -1,26 +1,29 @@
 <template>
   <ivz-menu-view>
-    <ivz-view-search>
+    <IvzPrimarySearch>
       <ivz-input label="字典名称" field="name" />
       <ivz-select label="字典状态" field="status" :options="status"/>
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small" :bordered="true">
+    </IvzPrimarySearch>
+    <IvzPrimaryTable :columns="columns" size="small" :bordered="true">
       <template #c_type="{text}">
         <a @click="$router.push({path: '/dict/data', query: {type: text}})">{{text}}</a>
       </template>
-    </ivz-view-table>
-    <ivz-view-modal :rules="rules">
+    </IvzPrimaryTable>
+    <IvzPrimaryModal :rules="rules">
       <ivz-input label="字典名称" field="name" />
       <ivz-input label="字典标识" field="type" />
       <ivz-radio label="字典状态" field="status" :options="status"/>
       <ivz-input label="备注" field="remark" />
-    </ivz-view-modal>
+    </IvzPrimaryModal>
   </ivz-menu-view>
 </template>
 <!--字典管理-->
 <script>
+import {IvzPrimarySearch, IvzPrimaryTable, IvzPrimaryModal} from "@/components/view";
+
 export default {
   name: "DictType",
+  components: {IvzPrimaryModal, IvzPrimaryTable, IvzPrimarySearch},
   setup() {
     let status = [
       {label: '启用', value: 'enabled'}, {label: '禁用', value: 'disabled'}

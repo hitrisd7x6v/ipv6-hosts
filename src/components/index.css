@@ -9,3 +9,9 @@
     cursor: not-allowed;
     background: #cbcbcb!important;
 }
+
+/*功能 footer*/
+.ivz-func-footer {
+    padding: 8px;
+    text-align: center;
+}

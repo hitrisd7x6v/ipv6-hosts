@@ -1,65 +1,47 @@
 <template>
   <ivz-menu-view name="用户">
-    <ivz-view-search>
+    <IvzPrimarySearch>
       <ivz-input field="name" label="用户昵称" />
       <ivz-input field="account" label="用户帐号" />
       <ivz-input field="phone" label="用户手机" />
       <ivz-radio field="status" label="用户状态" :options="status"/>
-    </ivz-view-search>
-    <ivz-view-drawer width="860" layout="vertical" :rules="rules" placement="left">
+    </IvzPrimarySearch>
+    <IvzPrimaryDrawer width="860" layout="vertical" :rules="rules" placement="left">
       <template #default="{model}">
-        <a-row :gutter="16">
-          <a-col span="8">
-            <ivz-input field="name" label="用户昵称" />
-          </a-col>
-          <a-col span="8">
-            <ivz-input field="account" label="用户帐号" :disabled="model.id != null"/>
-          </a-col>
-          <a-col span="8">
-            <ivz-tree-select field="orgId" label="所属部门" treeNodeFilterProp="label"
-                 url="/core/org/parent" labelField="name" valueField="id"/>
-          </a-col>
-          <a-col span="8">
-            <ivz-input field="email" label="用户邮箱" />
-          </a-col>
-          <a-col span="8">
-            <ivz-radio field="status" label="用户状态"
-                       defaultValue="enabled" :options="status"/>
-          </a-col>
-          <a-col span="8">
-            <ivz-radio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
-          </a-col>
-          <a-col span="24">
-            <ivz-checkbox field="roleIds" label="用户角色"
-              url="/core/role/list" labelField="name" valueField="id"/>
-          </a-col>
-          <a-col span="24">
-            <ivz-textarea field="remark" label="用户简介" />
-          </a-col>
-        </a-row>
+        <IvzRow :gutter="16" span="8">
+          <ivz-input field="name" label="用户昵称" />
+          <ivz-input field="account" label="用户帐号" :disabled="model.id != null"/>
+          <ivz-tree-select field="orgId" label="所属部门" treeNodeFilterProp="label" url="/core/org/parent" labelField="name" valueField="id"/>
+          <ivz-input field="email" label="用户邮箱" />
+          <ivz-radio field="status" label="用户状态" defaultValue="enabled" :options="status"/>
+          <ivz-radio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
+          <ivz-checkbox field="roleIds" label="用户角色" url="/core/role/list" labelField="name" valueField="id" span="24"/>
+          <ivz-textarea field="remark" label="用户简介" span="24" />
+        </IvzRow>
       </template>
-    </ivz-view-drawer>
-    <ivz-view-table :columns="columns" :bordered="true" size="small" />
+    </IvzPrimaryDrawer>
+    <IvzPrimaryTable :columns="columns" :bordered="true" size="small" />
     <!--  修改密码  -->
-    <ivz-edit-modal ref="pwdModalRef" title="修改密码" :span="[6, 15]" :rules="pwdRules">
+    <IvzBasicModal id="modPwd" title="修改密码" :span="[6, 15]" :rules="pwdRules">
       <ivz-input-password label="密码" field="password" />
       <ivz-input-password label="确认密码" field="surePwd" />
-      <template #fun>
+      <template #footer>
         <a-button type="primary" @click="submit" :loading="loading">提交</a-button>
-        <a-button @click="cancel">取消</a-button>
+        <a-button @click="cancelModPwd">取消</a-button>
       </template>
-    </ivz-edit-modal>
+    </IvzBasicModal>
   </ivz-menu-view>
 </template>
 
 <script>
 
-import IvzEditModal from "@/components/edit/IvzEditModal";
 import {ref} from "vue";
 import {msgSuccess} from "@/utils/message";
+import {IvzPrimaryTable, IvzPrimaryDrawer, IvzPrimarySearch} from "@/components/view";
+import IvzBasicModal from "@/components/modal/IvzBasicModal";
 export default {
   name: "User",
-  components: {IvzEditModal},
+  components: {IvzBasicModal, IvzPrimaryTable, IvzPrimarySearch, IvzPrimaryDrawer},
   setup() {
     let sex = [
       {label: '男', value: 'man'},
@@ -116,33 +98,21 @@ export default {
     let pwdFunMeta = this.getTableFunMeta('Pwd');
     if(pwdFunMeta) {
       pwdFunMeta.callback = (row, meta) => {
-
-        // 打开编辑框
-        this.pwdModalRef.openByAsync().then(editModel => {
-          editModel.id = row.id;
-        });
+        this.$view.getEditContext("modPwd")
+            .asyncVisible().then(model => {
+          model.id = row.id;
+        })
       }
     }
   },
   methods: {
     submit() {
-      let {validate} = this.pwdModalRef.getEditContext();
-
-      validate().then(() => {
-        let pwdFunMeta = this.getTableFunMeta('Pwd');
-        let editModel = this.pwdModalRef.getEditModel();
-
-        this.loading = true;
-        this.$http.post(pwdFunMeta.url, editModel)
-            .then(({message, data}) => {
-              msgSuccess(message)
-              this.pwdModalRef.switchActive(false);
-        }).finally(() => this.loading = false)
-      })
+      let pwdMeta = this.getTableFunMeta('Pwd');
+      this.$view.getEditContext("modPwd").submit(pwdMeta.url)
     },
 
-    cancel() {
-      this.pwdModalRef.switchActive(false);
+    cancelModPwd() {
+      this.$view.getEditContext('modPwd').setVisible(false)
     }
   }
 }

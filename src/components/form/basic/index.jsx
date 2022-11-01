@@ -38,7 +38,7 @@ const IvzInputPassword = defineComponent({
         let props = this.getFormItemProps();
         return <a-col {...props}>
             <a-form-item {...props}>
-                {<a-input-ppassword {...this.getFormAttrs()} v-slots={this.$slots}></a-input-ppassword>}
+                {<a-input-password {...this.getFormAttrs()} v-slots={this.$slots}></a-input-password>}
             </a-form-item>
         </a-col>
     }

@@ -1,26 +1,26 @@
 <template>
   <ivz-func-view :searchFunMetas="searchFunMetas" :editFunMetas="editFunMetas"
                  :tableFunMetas="tableFunMetas" :isExpand="true">
-    <ivz-view-search>
+    <IvzPrimarySearch>
       <ivz-input label="部门名称" field="name"/>
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" :pagination="false" size="small"/>
-    <ivz-view-modal :rules="rules">
+    </IvzPrimarySearch>
+    <IvzPrimaryTable :columns="columns" :pagination="false" size="small"/>
+    <IvzPrimaryModal :rules="rules">
       <ivz-input label="部门名称" field="name"/>
       <ivz-input label="部门负责人" field="leader"/>
       <ivz-input label="负责人邮箱" field="email"/>
       <ivz-input label="负责人手机" field="phone"/>
-    </ivz-view-modal>
+    </IvzPrimaryModal>
   </ivz-func-view>
 </template>
 <!--部门管理-->
 <script>
-import IvzMenuView from "@/components/view/IvzMenuView.vue";
-import {IvzViewSearch, IvzViewTable, IvzViewModal} from "@/components/view";
+import {IvzPrimarySearch, IvzPrimaryTable, IvzPrimaryModal} from "@/components/view";
 import {FunMetaMaps} from "@/utils/MetaUtils";
+
 export default {
   name: "Dept",
-  components: {IvzViewModal, IvzViewTable, IvzViewSearch, IvzMenuView},
+  components: {IvzPrimaryModal, IvzPrimaryTable, IvzPrimarySearch},
   setup() {
     let columns = [
       {field: 'name', title: '部门名称', align: 'left'},

@@ -1,11 +1,11 @@
 <template>
   <ivz-menu-view :expand="true" name="菜单">
-    <ivz-view-search>
+    <IvzPrimarySearch>
       <ivz-input field="name" label="菜单名称" />
       <ivz-input field="msn" label="所属模块" />
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small" :pagination="false" />
-    <ivz-view-drawer :rules="rules" width="868" layout="vertical" placement="left">
+    </IvzPrimarySearch>
+    <IvzPrimaryTable :columns="columns" size="small" :pagination="false" />
+    <IvzPrimaryDrawer :rules="rules" width="868" layout="vertical" placement="left">
       <IvzRow :gutter="24" span="8">
         <ivz-input field="name" label="菜单名称" />
         <ivz-tree-select field="pid" label="父菜单" :defaultValue="0"
@@ -26,7 +26,7 @@
         <ivz-input field="icon" label="图标" />
         <ivz-input-number field="sort" label="排序" :defaultValue="80" />
       </IvzRow>
-    </ivz-view-drawer>
+    </IvzPrimaryDrawer>
   </ivz-menu-view>
 </template>
 
@@ -34,10 +34,11 @@
 import {FunMetaMaps} from "@/utils/MetaUtils";
 import {ref} from "vue";
 import {IvzRow} from "@/components/basic";
+import {IvzPrimarySearch, IvzPrimaryTable, IvzPrimaryDrawer} from "@/components/view";
 
 export default {
   name: "Menu",
-  components: {IvzRow},
+  components: {IvzPrimaryDrawer, IvzPrimaryTable, IvzPrimarySearch, IvzRow},
   setup() {
     let type = [
       {label: '目录', value: 'M'},
@@ -86,16 +87,15 @@ export default {
     let addFunMeta = this.getTableFunMeta(FunMetaMaps.Add);
     if(addFunMeta) {
       // 覆盖表格新增功能点的默认实现
-      addFunMeta.callback = (row, meta, {openEditView}) => {
-        openEditView(addFunMeta).then(model => {
+      addFunMeta.callback = (row, meta) => {
+        this.$view.openForAdd((model) => {
           model['pid'] = row.id
           if(row.type == 'V') {
             model.type = 'A'
           }
-        });
+        })
       }
 
-      // 如果是功能类型, 则不能删除
       addFunMeta.disabled = (row) => {
         if(row['type'] == 'A') {
           return true;
@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     typeHandle(val) {
-      let {validate} = this.getEditContext();
+      let {validate} = this.$view.getEditContext().getFormContext();
 
       if(val == 'A') {
         this.rules['position'].required = true;
@@ -117,7 +117,7 @@ export default {
       validate('position');
     },
     permTypeChange(val) {
-      let editModel = this.getEditModel();
+      let editModel = this.$view.getEditContext().getModel();
       editModel['permType'] = val;
       if(val == '') {
         this.disabledPermType = false;

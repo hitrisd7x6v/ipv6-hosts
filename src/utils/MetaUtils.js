@@ -1,4 +1,4 @@
-import {h} from "vue";
+import {h, ref} from "vue";
 import {cloneDeep} from "lodash-es";
 import {GET, POST} from "@/utils/request";
 import {DoubleLeftOutlined} from "@ant-design/icons-vue";
@@ -124,7 +124,7 @@ const FunBtnConfig = {
     Export: {type: 'default', class: 'ivz-fm-export'},
     Detail: {type: 'default', class: 'ivz-fm-detail', color: 'green'},
     Cancel: {type: 'link', class: 'ivz-fm-cancel'},
-    Submit: {type: 'primary', class: 'ivz-fm-submit'},
+    Submit: {type: 'primary', class: 'ivz-fm-submit', loading: ref(false)},
     Expanded: {type: 'dashed', class: 'ivz-fm-expanded'},
     __Default: {type: 'default', class: 'ivz-fm-default'},
 }
@@ -209,10 +209,13 @@ callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
-            let {config, editFormContext, editSwitchSpinning
-                , switchEditView, getSearchFunMeta, searchModel} = viewInfo;
-            let url = config.isEdit(model) ? meta['editUrl'] : meta['addUrl'];
-            viewInfo.get$View().submit(url).then(() => viewInfo.get$View().query());
+            let url = viewInfo.get$View().isEdit(model) ? meta['editUrl'] : meta['addUrl'];
+            // 将提交按钮设置为加载状态
+            meta.props['loading'] = true;
+            viewInfo.get$View().submit(url)
+                .then(() => viewInfo.get$View().query())
+                // 取消加载按钮的加载状态
+                .finally(() => meta.props['loading'] = false);
         }
     }
 }
@@ -292,13 +295,14 @@ callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo);
         } else {
-            viewInfo.expanded();
             // 图标旋转
             if(meta.props.rotate == 90) {
                 meta.props.rotate = 270;
             } else {
                 meta.props.rotate = 90;
             }
+
+            viewInfo.get$View().expanded();
         }
     }
 }
