@@ -19,6 +19,7 @@ export default defineComponent({
         placement: {default: 'right'},
         maskClosable: {default: true},
         afterVisibleChange: {type: Function},
+        primary: {type: Boolean, default: false},
         forceRender: {type: Boolean, default: false},
     },
     mixins: [MixinsEditItem],
@@ -46,12 +47,13 @@ export default defineComponent({
         let viewContext = inject(ViewContextKey);
         let editContext = new EditContext(viewContext);
         if(viewContext) {
-            let primary = attrs.primary;
-            if(primary == '' || primary == true) {
+            if(props.primary) {
                 let context = viewContext['primaryEditContext'];
                 if(!context.isPrimary) {
                     editContext = context;
                     context.isPrimary = true;
+                } else {
+                    console.warn(`当前视图[${viewContext.name}]已经包含声明为[primary]的编辑组件`)
                 }
             } else if(attrs['id']) {
                 viewContext.addContextById(attrs['id'], editContext);
@@ -71,7 +73,8 @@ export default defineComponent({
         }
 
         return(<a-drawer v-model={[this.visible, 'visible', ["modifier"]]} wrapStyle={{position: 'absolute'}}
-                         {...this.$props} closable={false} v-slots={this.titleSlots} ref="ADrawerRef" getContainer={false}>
+                         {...this.$props} closable={false} v-slots={this.titleSlots}
+                         getContainer=".ivz-main-container" ref="ADrawerRef">
             <a-spin size="small" tip={this.spinTip} spinning={this.spinning}>
                 <ivz-form {...this.$attrs} ref="iemFormRef" labelCol={this.labelCol} wrapperCol={this.wrapperCol}>
                     {this.$slots.default ? this.$slots.default({model, context}) : []}

@@ -4,6 +4,10 @@ import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default defineComponent({
     name: "IvzBasicView",
+    props: {
+        // 功能名称 比如 用户管理
+        name: {type: String, default: ''},
+    },
     setup() {
         const viewContext = new ViewContext();
         provide(ViewContextKey, viewContext);

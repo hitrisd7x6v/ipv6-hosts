@@ -2,14 +2,14 @@
   <ivz-menu-view>
     <IvzPrimarySearch>
       <ivz-input label="字典名称" field="name" />
-      <ivz-select label="字典状态" field="status" :options="status"/>
+      <ivz-select label="字典状态" field="status" :options="status" span="5"/>
     </IvzPrimarySearch>
     <IvzPrimaryTable :columns="columns" size="small" :bordered="true">
       <template #c_type="{text}">
         <a @click="$router.push({path: '/dict/data', query: {type: text}})">{{text}}</a>
       </template>
     </IvzPrimaryTable>
-    <IvzPrimaryModal :rules="rules">
+    <IvzPrimaryModal :rules="rules" title="字典管理" :span="[6, 16]">
       <ivz-input label="字典名称" field="name" />
       <ivz-input label="字典标识" field="type" />
       <ivz-radio label="字典状态" field="status" :options="status"/>

@@ -12,7 +12,7 @@ import {FunMetaMaps} from "@/utils/MetaUtils";
 import {mergeMetaOfDefault} from "@/utils/MetaUtils";
 import MixinConfigView from "@/components/view/MixinConfigView";
 import router from "@/router";
-import {$View, ViewContext} from "@/components/view/ViewAction";
+import {$View, FuncMetaContext, ViewContext} from "@/components/view/ViewAction";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 /**
  * 视图组件必须作为其父组件的顶级组件 如以下：
@@ -52,10 +52,6 @@ export default {
     let viewInfo = useStore().getters['view/pageViewData'](url);
 
     // 设置视图页配置信息
-    viewInfo.config = {...props}
-    delete viewInfo.config.editFunMetas;
-    delete viewInfo.config.tableFunMetas;
-    delete viewInfo.config.searchFunMetas;
     let {editFunMetas, tableFunMetas, searchFunMetas} = props;
 
     viewInfo.editFunMetas = editFunMetas;
@@ -83,17 +79,11 @@ export default {
     let IvzView = new $View(viewContext);
     viewInfo['get$View'] = () => IvzView;
 
+    viewContext.funMetasContext = new FuncMetaContext
+    (editFunMetas, tableFunMetas, searchFunMetas);
+
     provide(ViewContextKey, viewContext);
     return {viewMenu, url, viewInfo, IvzView}
-  },
-  created() {
-    // 暴露$View对象到父组件
-    this.$parent.$view = this.IvzView;
-  },
-  mounted() {
-    // 加载数据
-    let viewMeta = this.viewInfo.getSearchFunMeta(FunMetaMaps.View);
-    this.IvzView.query(viewMeta.url);
   }
 }
 </script>

@@ -87,30 +87,10 @@ export default function registerViewModule(store) {
                     tableFunMetas, // 表格功能按钮
                     searchFunMetas, // 搜索栏功能按钮
 
-                    expanded: unMountedTable, // 表格展开/折叠
-                    dataSource: unMountedTable, // 表格当前数据源
-                    selectedRows: unMountedTable, // 当前视图选中的行信息(function)
-                    selectedKeys: unMountedTable,
-                    loadingTableData: unMountedTable, // 加载表数据源
-
-                    editModel: unMoundedEdit, // 获取编辑视图组件数据
-                    editFormContext: unMoundedEdit, // 获取编辑表单上下文
-                    openEditView: unMoundedEdit, // 打开编辑视图, 指定新增或者编辑
-                    switchEditView: unMoundedEdit, // 切换当前编辑试图组件的激活状态
-                    editLoadingActive: unMoundedEdit,
-                    editSwitchSpinning: unMoundedEdit, // 切换提交状态
-
-                    searchModel: unMounded, // 获取搜索视图组件数据
-                    searchFormContext: unMounded, // 获取搜索表单上下文
-
                     getEditFunMeta: (field) => editFunMetas.find(item => item.field == field),
                     getTableFunMeta: (field) => tableFunMetas.find(item => item.field == field),
                     getSearchFunMeta: (field) => searchFunMetas.find(item => item.field == field)
                 }
-
-                viewInfo['getEditFunMeta'] = (field) => viewInfo.editFunMetas.find(item => item.field == field)
-                viewInfo['getTableFunMeta'] = (field) => viewInfo.tableFunMetas.find(item => item.field == field)
-                viewInfo['getSearchFunMeta'] = (field) => viewInfo.searchFunMetas.find(item => item.field == field)
 
                 state.pageViewInfoMaps[viewMenu['url']] = viewInfo;
             },

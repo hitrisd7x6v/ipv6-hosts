@@ -15,6 +15,7 @@ export default defineComponent({
     destroyOnClose: Boolean,
     getContainer: {type: Function},
     maskClosable: {default: false},
+    primary: {type: Boolean, default: false},
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: false},
   },
@@ -40,12 +41,13 @@ export default defineComponent({
     let viewContext = inject(ViewContextKey);
     let editContext = new EditContext(viewContext);
     if(viewContext) {
-      let primary = attrs.primary;
-      if(primary == '' || primary == true) {
+      if(props.primary) {
         let context = viewContext['primaryEditContext'];
         if(!context.isPrimary) {
           editContext = context;
           context.isPrimary = true;
+        } else {
+          console.warn(`当前视图[${viewContext.name}]已经包含声明为[primary]的编辑组件`)
         }
       } else if(attrs['id']) {
         viewContext.addContextById(attrs['id'], editContext);

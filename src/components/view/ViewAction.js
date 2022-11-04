@@ -38,6 +38,71 @@ export function $View(context) {
     }
 
     /**
+     * 获取功能元上下文, 只能用于以下两种组件
+     * @see IvzFuncView
+     * @set IvzMenuView
+     * @return {void|FuncMetaContext|*}
+     */
+    this.getMetaContext = function () {
+        if(!this.context.funMetasContext) {
+            return console.warn("此方法只能在组件[IvzFuncView or IvzMenuView]中使用")
+        }
+
+        return this.context.funMetasContext;
+    }
+
+    /**
+     * 获取编辑功能元数据
+     * @param field
+     * @return {*}
+     */
+    this.getEditMeta = function (field) {
+        return this.getMetaContext().getEditMeta(field);
+    }
+
+    /**
+     * 获取表格功能元数据
+     * @param field
+     * @return {*}
+     */
+    this.getTableMeta = function (field) {
+        return this.getMetaContext().getTableMeta(field);
+    }
+
+    /**
+     * 获取搜索功能元数据
+     * @param field
+     * @return {*}
+     */
+    this.getSearchMeta = function (field) {
+        return this.getMetaContext().getSearchMeta(field);
+    }
+
+    /**
+     * 获取当前视图页的名称 eg: 用户管理、部门管理等
+     * 需要在视图组件设置属性：name
+     */
+    this.getFuncName = function () {
+        return this.context.name;
+    }
+
+    /**
+     * 获取主编辑组件的model对象
+     * @return {*}
+     */
+    this.getEditModel = function () {
+        return this.getEditContext().getModel();
+    }
+
+    /**
+     * 获取主搜索组件的model对象
+     * @return {*}
+     */
+    this.getSearchModel = function () {
+        return this.getSearchContext().getModel();
+    }
+
+    /**
      * 校验一个model是编辑还是新增
      * 默认根据 rowKey判断
      * @param model
@@ -399,6 +464,29 @@ export function $View(context) {
 }
 
 /**
+ * 功能元数据对象
+ * @constructor
+ */
+export function FuncMetaContext(editFunMetas, tableFunMetas, searchFunMetas) {
+
+    this.editFunMetas = editFunMetas || [];
+    this.tableFunMetas = tableFunMetas || [];
+    this.searchFunMetas = searchFunMetas || [];
+
+    this.getEditMeta = function (field) {
+        return this.editFunMetas.find(item => item.field == field)
+    }
+
+    this.getTableMeta = function (field) {
+        return this.tableFunMetas.find(item => item.field == field)
+    }
+
+    this.getSearchMeta = function (field) {
+        return this.searchFunMetas.find(item => item.field == field)
+    }
+}
+
+/**
  * 搜索栏
  * @param context 视图上下文
  * @constructor
@@ -564,7 +652,11 @@ export function DetailContext(viewContext) {
  */
 export function ViewContext () {
     this.rowKey = "id";
+    this.name = ""; // 视图名称
     this.IdContextMaps = {}
+
+    this.funMetasContext = new FuncMetaContext(this);
+
     this.primaryEditContext = new EditContext(this);
     this.primaryTableContext = new TableContext(this);
     this.primaryDetailContext = new DetailContext(this);

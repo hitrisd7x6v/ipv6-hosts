@@ -1,12 +1,11 @@
 <template>
   <ivz-menu-view name="部门" :expand="true">
     <ivz-primary-search>
-      <ivz-input field="name"/>
+      <ivz-input field="name" label="部门名称"/>
+      <ivz-input field="phone" label="手机号"/>
     </ivz-primary-search>
-    <ivz-primary-table :columns="columns" size="small">
-
-    </ivz-primary-table>
-    <ivz-primary-modal :span="[7, 15]" :rules="rules">
+    <ivz-primary-table :columns="columns" size="small" />
+    <ivz-primary-modal :span="[7, 15]" :rules="rules" title="部门管理">
       <ivz-input field="name" label="部门名称"/>
       <ivz-tree-select field="pid" label="所属部门" valueField="id"
          :defaultValue="0" url="/core/org/parent" labelField="name"
@@ -40,7 +39,7 @@ export default {
   },
   mounted() {
     // 表格组件添加子部门
-    let addFunMeta = this.getTableFunMeta(FunMetaMaps.Add);
+    let addFunMeta = this.$view.getTableMeta(FunMetaMaps.Add);
     if(addFunMeta) {
       addFunMeta.name = "新增子部门"
       addFunMeta.callback = (row, meta) => {

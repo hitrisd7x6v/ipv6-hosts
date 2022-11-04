@@ -1,24 +1,25 @@
 <template>
   <IvzBasicView>
     <IvzBasicSearch primary>
-      <ivz-select label="字典类型" field="type" @change="loadDictData" :clear="true"
+      <ivz-select label="字典类型" field="type" @change="loadDictData" span="5"
                   url="/core/dictType/list" labelField="name" valueField="type"/>
       <ivz-input label="名称" field="name" />
       <a-button type="primary" @click="query">查询</a-button>&nbsp;
       <a-button @click="add">新增</a-button>&nbsp;
     </IvzBasicSearch>
     <IvzBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules">
-        <IvzInput field="type" label="字典类型" disabled />
+        <IvzInput field="type" label="字典类型" disabled/>
         <IvzInput field="label" label="字典标签" />
         <IvzInput field="value" label="标签值" />
         <IvzInputNumber field="sort" label="排序" :defaultValue="10"/>
       <template #footer>
-        <IvzFuncBtn type="cancel" @click="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn type="submit" @click="submit">提交</IvzFuncBtn>&nbsp;
-        <IvzFuncBtn type="reset" @click="resetEdit">重置</IvzFuncBtn>&nbsp;
+        <IvzFuncBtn func="cancel" @click="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit" @click="submit">提交</IvzFuncBtn>&nbsp;
+        <IvzFuncBtn func="reset" @click="resetEdit">重置</IvzFuncBtn>&nbsp;
       </template>
     </IvzBasicDrawer>
-    <IvzBasicTable :columns="columns" size="small" :bordered="true" primary :pagination="false">
+    <IvzBasicTable :columns="columns" size="small" rowKey="id"
+             :bordered="true" primary :pagination="false">
       <template #c_action="{record}">
         <IvzFuncTag type="edit" :data="record" @handle="editRow">编辑</IvzFuncTag>
         <IvzFuncTag type="del" :data="record" @handle="delRow">删除</IvzFuncTag>
@@ -31,16 +32,16 @@
 /*字典数据页面*/
 import IvzBasicView from "@/components/view/IvzBasicView";
 import IvzBasicTable from "@/components/table/IvzBasicTable";
-import IvzBasicModal from "@/components/modal/IvzBasicModal";
 import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
 import {IvzInput} from "@/components/form/basic";
 import {IvzFuncBtn, IvzFuncTag} from "@/components/basic";
 import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
+
 export default {
   name: "DictData",
   components: {
-    IvzBasicDrawer,
-    IvzFuncBtn, IvzFuncTag, IvzInput, IvzBasicModal, IvzBasicSearch, IvzBasicTable, IvzBasicView},
+    IvzBasicDrawer, IvzFuncBtn, IvzFuncTag, IvzInput
+    , IvzBasicSearch, IvzBasicTable, IvzBasicView},
   setup() {
     let status = [
       {label: '启用', value: 'enabled'},
@@ -65,9 +66,9 @@ export default {
     return {columns, status, rules};
   },
   mounted() {
-    let type = this.$route.query.type;
-    let model = this.$view.getSearchContext().getModel();
-    model.type = type
+    let model = this.$view.getSearchModel();
+    model.type = this.$route.query.type;
+
     this.query();
   },
   methods: {

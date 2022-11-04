@@ -84,7 +84,9 @@ export default {
     return {columns, permType, rules, position, type, disabledPermType}
   },
   mounted() {
-    let addFunMeta = this.getTableFunMeta(FunMetaMaps.Add);
+    let addFunMeta = this.$view.getMetaContext()
+        .getTableMeta(FunMetaMaps.Add);
+
     if(addFunMeta) {
       // 覆盖表格新增功能点的默认实现
       addFunMeta.callback = (row, meta) => {

@@ -112,11 +112,15 @@ function initDatetimeColumnSlot(column, slotName, slots) {
     let formatter = column.formatter;
     if(!(formatter instanceof Function)) {
         column.formatter = ({value, row, column}) => {
-            if(value) {
-                let picker = column.picker || 'datetime';
-                return moment(value, column.format || typeFormatMaps[picker])
-            } else {
-                return '';
+            try {
+                if (value) {
+                    let picker = column.picker || 'datetime';
+                    return moment(value).format(column.format || typeFormatMaps[picker]);
+                } else {
+                    return '';
+                }
+            } catch (e) {
+                console.error(e);
             }
         }
     }
@@ -201,6 +205,7 @@ function getTableRowSelection(columns) {
 export default defineComponent({
     name: 'IvzBasicTable',
     props: {
+        primary: {type: Boolean, default: false},
         dataSource: Array,
         rowSelection: {type: null}, // 不支持此选项
         showTotal: {type: Function},
@@ -293,19 +298,19 @@ export default defineComponent({
         let setDataSource = (ds) => dataSourceRef.value = ds;
         let setTotalRows = (total) => page.total = total;
 
-        let tableContext = null;
         let viewContext = inject(ViewContextKey);
+        let tableContext = new TableContext(viewContext);
+
         if(viewContext) {
-            if(attrs.primary) {
+            if(props.primary) {
                 let primaryContext = viewContext["primaryTableContext"];
                 if(primaryContext.isPrimary) {
-                    console.warn("当前视图已经包含有声明为[primary]的表格组件")
+                    console.warn(`当前视图[${viewContext.name}]已经包含声明为[primary]的表格组件`)
                 } else {
                     tableContext = primaryContext;
                     tableContext.isPrimary = true; // 标记是主上下文
                 }
             } else if(attrs['id']) {
-                tableContext = new TableContext(viewContext)
                 viewContext.addContextById(attrs['id'], tableContext);
             }
 

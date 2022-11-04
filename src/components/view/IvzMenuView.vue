@@ -12,7 +12,7 @@ import MixinConfigView from "@/components/view/MixinConfigView";
 import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
 import {mergeMetaOfDefault, FunMetaMaps} from "@/utils/MetaUtils";
 import router from "@/router";
-import {$View, ViewContext} from "@/components/view/ViewAction";
+import {$View, FuncMetaContext, ViewContext} from "@/components/view/ViewAction";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 /**
@@ -95,6 +95,9 @@ export default {
     const viewContext = new ViewContext();
     let IvzView = new $View(viewContext);
     viewInfo['get$View'] = () => IvzView;
+
+    viewContext.funMetasContext = new FuncMetaContext
+    (editFunMetas, tableFunMetas, searchFunMetas);
 
     provide(ViewContextKey, viewContext);
     return {viewMenu, url, viewInfo, IvzView}

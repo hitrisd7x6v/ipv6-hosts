@@ -22,7 +22,7 @@
     </IvzPrimaryDrawer>
     <IvzPrimaryTable :columns="columns" :bordered="true" size="small" />
     <!--  修改密码  -->
-    <IvzBasicModal id="modPwd" title="修改密码" :span="[6, 15]" :rules="pwdRules">
+    <IvzBasicModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
       <ivz-input-password label="密码" field="password" />
       <ivz-input-password label="确认密码" field="surePwd" />
       <template #footer>
@@ -95,7 +95,7 @@ export default {
   mounted() {
     this.pwdModalRef = this.$refs['pwdModalRef']
     // 修改密码功能点
-    let pwdFunMeta = this.getTableFunMeta('Pwd');
+    let pwdFunMeta = this.$view.getMetaContext().getTableMeta('Pwd');
     if(pwdFunMeta) {
       pwdFunMeta.callback = (row, meta) => {
         this.$view.getEditContext("modPwd")
@@ -107,7 +107,7 @@ export default {
   },
   methods: {
     submit() {
-      let pwdMeta = this.getTableFunMeta('Pwd');
+      let pwdMeta = this.$view.getMetaContext().getTableMeta('Pwd');
       this.$view.getEditContext("modPwd").submit(pwdMeta.url)
     },
 
