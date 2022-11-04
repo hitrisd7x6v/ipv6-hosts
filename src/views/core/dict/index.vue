@@ -35,7 +35,7 @@ export default {
       {field: 'status', title: '字典状态', options: status},
       {field: 'remark', title: '备注'},
       {field: 'createTime', title: '创建时间'},
-      {field: 'action', title: '操作'},
+      {field: 'action', title: '操作', type: 'action'},
     ]
 
     let rules = {

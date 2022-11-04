@@ -1,6 +1,7 @@
 import moment from 'moment'
 import {useStore} from "vuex";
 import {Tag} from 'ant-design-vue'
+import {IvzFuncTag} from "@/components/basic";
 import {defineComponent, h, inject, mergeProps, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
 import {ViewContextKey} from "@/utils/ProvideKeys";
@@ -11,13 +12,7 @@ function getSlotName(dataIndex) {
     fieldPath.splice(0, 0, 'c');
     return fieldPath.join('_');
 }
-function disabledHandle(row, meta) {
-    if(meta.disabled instanceof Function) {
-        return meta.disabled(row, meta);
-    }
 
-    return false;
-}
 function initColumnActionSlot(column, slotName, slots) {
     let funMetas = column['funMetas'];
     if(funMetas instanceof Array) {
@@ -30,20 +25,8 @@ function initColumnActionSlot(column, slotName, slots) {
             if(!meta.render) {
                 delete meta.props.onClick; // 删除原先的事件
                 meta.render = (row, meta) => {
-                    let disabled = disabledHandle(row, meta);
-                    let onClick = () => {
-                        if(disabled) return;
-
-                        if(oriClickEvent) {
-                            oriClickEvent(row, meta);
-                        } else {
-                            console.error(`组件[IvzBasicTable]的操作功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
-                        }
-                    }
-
-                    let className = `ivz-func ivz-ibt-fun ${disabled ? 'disabled' : ''}`;
-                    return h(Tag, mergeProps(meta.props, {class: className, onClick}), () => meta.name)
-                    // return <a-tag {...meta.props} onClick={onClick} class={className}>{meta.name}</a-tag>
+                    return <IvzFuncTag func={meta.field} onHandle={oriClickEvent}
+                        data={row} disabled={meta.disabled}>{meta.name}</IvzFuncTag>
                 }
             }
         })

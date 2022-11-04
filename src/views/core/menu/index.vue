@@ -84,10 +84,10 @@ export default {
     return {columns, permType, rules, position, type, disabledPermType}
   },
   mounted() {
-    let addFunMeta = this.$view.getMetaContext()
-        .getTableMeta(FunMetaMaps.Add);
+    let addFunMeta = this.$view.getTableMeta(FunMetaMaps.Add);
 
     if(addFunMeta) {
+      addFunMeta.name = "新增子菜单"
       // 覆盖表格新增功能点的默认实现
       addFunMeta.callback = (row, meta) => {
         this.$view.openForAdd((model) => {

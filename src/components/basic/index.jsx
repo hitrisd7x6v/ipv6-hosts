@@ -15,26 +15,37 @@ export const IvzRow = defineComponent({
 })
 
 const colorMaps = {
-    add: '#2db7f5', del: '#f50', edit: '#3b5999', query: '#108ee9', import: 'default'
-    , export: 'orange',cancel: 'red', detail: '#87d068', reset: 'warning', def: 'default'
+    ADD: '#2db7f5', DEL: '#f50', EDIT: '#3b5999', QUERY: '#108ee9', IMPORT: 'default'
+    , EXPORT: 'orange',CANCEL: 'red', DETAIL: '#87d068', RESET: 'warning', DEF: 'default'
+    , SUBMIT: 'blue'
 }
 export const IvzFuncTag = defineComponent({
     name: 'IvzFuncTag',
     props: {
-        type: {type: String, default: 'def'}, // add, del, edit, query, import, export, cancel, detail, reset
+        func: {type: String, default: 'def'}, // add, del, edit, query, import, export, cancel, detail, reset
         color: String,
         data: {type: Object}, // 行数据
-        disabled: {type: Boolean, default: false}, // 是否禁用
+        disabled: Function, // 是否禁用
+    },
+    computed: {
+      tagColor() {
+          let upperCase = this.func.toUpperCase();
+          return this.color || colorMaps[upperCase]
+      },
+        tagDisabled() {
+            return this.disabled != null ? this.disabled(this.data) : false;
+        }
     },
     render() {
-        let disabledClass = this.disabled ? 'ivz-func-disabled' : 'ivz-func-tag'
-        let color = this.color || colorMaps[this.type];
+        let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
         return <a-tag closable={false} visible={true} class={disabledClass} {...this.$attrs}
-           class="ivz-func" color={color} v-slots={this.$slots} onClick={this.clickHandle} />
+           class="ivz-func" color={this.tagColor} v-slots={this.$slots} onClick={this.clickHandle} />
     },
     methods: {
         clickHandle() {
-            this.$emit('handle', this.data);
+            if(!this.tagDisabled) {
+                this.$emit('handle', this.data);
+            }
         }
     }
 })
