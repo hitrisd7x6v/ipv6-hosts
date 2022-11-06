@@ -1,6 +1,6 @@
 import {FormContext} from "@/components/form/basic/FormContext";
 import {confirm, msgError, msgSuccess, msgWarn} from "@/utils/message";
-import {TypeMethodMaps} from "@/utils/MetaUtils";
+import {MetaConst, TypeMethodMaps} from "@/utils/MetaUtils";
 
 function Unmount() {
     console.warn("此方法只能在组件挂载时才能使用");
@@ -91,7 +91,8 @@ export function $View(context) {
      * @return {*}
      */
     this.getEditModel = function () {
-        return this.getEditContext().getModel();
+        let editContext = this.getEditContext();
+        return editContext != null ? editContext.getModel() : null;
     }
 
     /**
@@ -99,7 +100,8 @@ export function $View(context) {
      * @return {*}
      */
     this.getSearchModel = function () {
-        return this.getSearchContext().getModel();
+        let searchContext = this.getSearchContext();
+        return searchContext != null ? searchContext.getModel() : null;
     }
 
     /**
@@ -121,7 +123,7 @@ export function $View(context) {
     this.openForAdd = function (callback) {
         let editContext = this.getEditContext();
 
-        if(editContext['isPrimary']) {
+        if(editContext) {
             editContext.asyncVisible().then((model) => {
                 let initModel = editContext.getFormContext().getInitModel();
                 if(callback instanceof Function) {
@@ -130,8 +132,6 @@ export function $View(context) {
 
                 editContext.getFormContext().setEditModel(initModel);
             })
-        } else {
-            console.warn('未声明标记为[primary]的编辑组件')
         }
     }
 
@@ -154,11 +154,11 @@ export function $View(context) {
         }
 
         let title = confirmTitle || "删除确认";
-        let context = confirmContext || "确定删除数据吗？"
+        let content = confirmContext || "确定删除数据吗？"
         return new Promise((resolve, reject) => {
             try {
                 confirm({
-                    title, context, onOk: () => {
+                    title, content, onOk: () => {
                         TypeMethodMaps.Del(url, data).then(({code, message, data}) => {
                             if (code == 200) {
                                 resolve(data);
@@ -222,7 +222,7 @@ export function $View(context) {
 
         let editContext = this.getEditContext();
 
-        if(editContext['isPrimary']) {
+        if(editContext) {
             if(url) {
                 editContext.asyncVisible().then(() => {
                     editContext.setLoading(true);
@@ -264,22 +264,31 @@ export function $View(context) {
      */
     this.query = function (url) {
         let searchContext = this.getSearchContext();
-        if(!searchContext.isPrimary) {
-            return console.warn("未声明标记为[primary]的搜索组件");
+        if(!searchContext) {
+            return;
         }
 
-        if(!url) {
+        let queryUrl = url || searchContext.queryUrl;
+        if(!queryUrl) {
             return console.error("未指定查询地址[url]")
+        } else {
+            // 保存查询地址
+            searchContext.queryUrl = queryUrl;
         }
 
         let tableContext = this.getTableContext();
-        if(!tableContext.isPrimary) {
-            return console.warn("未声明标记为[primary]的表组件")
+        if(!tableContext) {
+            return;
         }
 
         let model = searchContext.getModel();
+        if(tableContext.pageSize && tableContext.currentPage) {
+            model[MetaConst.PageSize] = tableContext.pageSize;
+            model[MetaConst.PageCurrent] = tableContext.currentPage;
+        }
+
         tableContext.setLoading(true);
-        TypeMethodMaps.View(url, model).then(({code, message, data}) => {
+        TypeMethodMaps.View(queryUrl, model).then(({code, message, data}) => {
             if(code == 200) {
                 if(data instanceof Array){
                     tableContext.setDataSource(data)
@@ -407,6 +416,10 @@ export function $View(context) {
             }
         }
 
+        if(!this.context.primarySearchContext.isPrimary) {
+            return console.warn("未声明标记为[primary]的搜索组件")
+        }
+
         return this.context.primarySearchContext;
     }
 
@@ -422,6 +435,10 @@ export function $View(context) {
             } else {
                 return console.warn(`查找不到id=${id}的编辑上下文`)
             }
+        }
+
+        if(!this.context.primaryEditContext.isPrimary) {
+            return console.warn("未声明标记为[primary]的编辑组件")
         }
 
         return this.context.primaryEditContext;
@@ -441,6 +458,10 @@ export function $View(context) {
             }
         }
 
+        if(!this.context.primaryTableContext.isPrimary) {
+            return console.warn("未声明标记为[primary]的表组件")
+        }
+
         return this.context.primaryTableContext;
     }
 
@@ -456,6 +477,10 @@ export function $View(context) {
             } else {
                 return console.warn(`查找不到id=${id}的编辑上下文`)
             }
+        }
+
+        if(!this.context.primaryDetailContext.isPrimary) {
+            return console.warn("未声明标记为[primary]的详情组件")
         }
 
         return this.context.primaryDetailContext;
@@ -494,6 +519,8 @@ export function FuncMetaContext(editFunMetas, tableFunMetas, searchFunMetas) {
 export function SearchContext(viewContext) {
     // 是否是主上下文
     this.isPrimary = false;
+    // 查询地址
+    this.queryUrl = null;
 
     this.getModel = function () {
         return this.getFormContext().getEditModel();
@@ -587,6 +614,9 @@ export function TableContext(viewContext) {
     // 在使用IvzFuncTag#data组件时, 将可以获取该值
     this.CurrentRow = null;
 
+    this.pageSize = null;
+    this.currentPage = null;
+
     this.del = function (url, data) {}
 
     /**
@@ -594,6 +624,20 @@ export function TableContext(viewContext) {
      * @param expandedRowKeys 要展开的行key, 不传则展开所有行
      */
     this.expanded = (expandedRowKeys) => {};
+
+    /**
+     * 获取当前页码
+     */
+    this.getCurrentPage = function () {
+        return this.currentPage;
+    }
+
+    /**
+     * 获取每页条数
+     */
+    this.getPageSize = function () {
+        return this.pageSize;
+    }
 
     /**
      * 获取当前点击的行
@@ -605,7 +649,35 @@ export function TableContext(viewContext) {
     }
 
     /**
-     * 获取当前选中的行的key列表
+     * 页码改变
+     * @param current 当前页
+     * @param pageSize 每页条数
+     */
+    this.pageChange = function (current, pageSize) {
+        this.pageSize = pageSize;
+        this.currentPage = current;
+
+        if(this.isPrimary) {
+            this.get$View().query();
+        }
+    }
+
+    /**
+     * 每页条数改变事件
+     * @param current 当前页
+     * @param pageSize 每页条数
+     */
+    this.sizeChange = function (current, pageSize) {
+        this.pageSize = pageSize;
+        this.currentPage = current;
+
+        if(this.isPrimary) {
+            this.get$View().query();
+        }
+    }
+
+    /**
+     * 获取当前选中的行key列表
      * @returns {*[]}
      */
     this.getSelectedRowKeys = () => [];

@@ -3,10 +3,9 @@ import App from './App.vue'
 import store from "@/store";
 import Router from './router'
 import {http} from "@/utils/request"
-// import '@/api/mock' // 非数据模拟环境请注释
-// import IvzOnline from 'ivz-online'
+import '@/api/mock' // 非数据模拟环境请注释
 import IvzComponents from '@/components'
-import Antd,{message, notification} from 'ant-design-vue'
+import Antd, {message, notification} from 'ant-design-vue'
 import {createFromIconfontCN} from '@ant-design/icons-vue';
 
 // 项目中使用到的图标
@@ -24,14 +23,8 @@ if(import.meta.env.DEV) {
 let app = createApp(App).use(Router).use(Antd).use(store)
 .use(IvzComponents).component("ivz-icon", IvzIcon);
 
-let View = {
-    query: function () {
-
-    }
-}
 app.config.globalProperties.ivzStx=''
 app.config.globalProperties.ivzCtx=''
-// app.config.globalProperties.$view = View
 app.config.globalProperties.$http = http
 app.config.globalProperties.$msg = message
 app.config.globalProperties.$notify = notification

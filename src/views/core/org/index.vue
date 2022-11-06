@@ -4,7 +4,7 @@
       <ivz-input field="name" label="部门名称"/>
       <ivz-input field="phone" label="手机号"/>
     </ivz-primary-search>
-    <ivz-primary-table :columns="columns" size="small" />
+    <ivz-primary-table :columns="columns" size="small" :pagination="false"/>
     <ivz-primary-modal :span="[7, 15]" :rules="rules" title="部门管理">
       <ivz-input field="name" label="部门名称"/>
       <ivz-tree-select field="pid" label="所属部门" valueField="id"
