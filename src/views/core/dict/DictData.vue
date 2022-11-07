@@ -21,8 +21,8 @@
     <IvzBasicTable :columns="columns" size="small" rowKey="id"
              :bordered="true" primary :pagination="false">
       <template #c_action="{record}">
-        <IvzFuncTag type="edit" :data="record" @handle="editRow">编辑</IvzFuncTag>
-        <IvzFuncTag type="del" :data="record" @handle="delRow">删除</IvzFuncTag>
+        <IvzFuncTag func="edit" :data="record" @handle="editRow">编辑</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" @handle="delRow">删除</IvzFuncTag>
       </template>
     </IvzBasicTable>
   </IvzBasicView>
