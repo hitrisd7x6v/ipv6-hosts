@@ -115,18 +115,18 @@ const MetaConst = {
     DefaultValueField: 'value',
 }
 const FunBtnConfig = {
-    Add: {type: 'default', class: 'ivz-fm-add', color: '#2db7f5'},
-    Del: {type: 'danger', class: 'ivz-fm-del', color: '#f50'},
-    Edit: {type: 'link', class: 'ivz-fm-edit', color: '#108ee9'},
-    View: {type: 'primary', class: 'ivz-fm-view'},
-    Reset: {type: 'dashed', class: 'ivz-fm-reset'},
-    Import: {type: 'default', class: 'ivz-fm-import'},
-    Export: {type: 'default', class: 'ivz-fm-export'},
-    Detail: {type: 'default', class: 'ivz-fm-detail', color: 'green'},
-    Cancel: {type: 'link', class: 'ivz-fm-cancel'},
-    Submit: {type: 'primary', class: 'ivz-fm-submit', loading: ref(false)},
-    Expanded: {type: 'dashed', class: 'ivz-fm-expanded'},
-    __Default: {type: 'default', class: 'ivz-fm-default'},
+    Add: {class: 'ivz-fm-add', color: '#2db7f5'},
+    Del: {class: 'ivz-fm-del', color: '#f50'},
+    Edit: {class: 'ivz-fm-edit', color: '#108ee9'},
+    View: {class: 'ivz-fm-view'},
+    Reset: {class: 'ivz-fm-reset'},
+    Import: {class: 'ivz-fm-import'},
+    Export: {class: 'ivz-fm-export'},
+    Detail: {class: 'ivz-fm-detail', color: 'green'},
+    Cancel: {class: 'ivz-fm-cancel'},
+    Submit: {class: 'ivz-fm-submit', loading: ref(false)},
+    Expanded: {class: 'ivz-fm-expanded'},
+    __Default: {class: 'ivz-fm-default'},
 }
 
 const DefaultMetas = { }, view = () => true;

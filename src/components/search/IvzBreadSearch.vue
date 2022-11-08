@@ -19,9 +19,9 @@
                   </a>
                   <template #overlay>
                     <a-menu @click="menuHandle">
-                      <template v-for="item in menu.children" :key="item.url">
+                      <template v-for="item in menu.children" :key="item.id">
                         <a-menu-item :key="item.url" v-if="item.id != activityId">
-                          <a href="javascript:;">{{item.name}}</a>
+                          <span>{{item.name}}</span>
                         </a-menu-item>
                       </template>
                     </a-menu>
@@ -35,7 +35,7 @@
           <slot name="fun" :metas="funMetas" :model="model">
             <a-space style="text-align: center; padding: 0px 16px">
               <template v-for="meta in funMetas" :key="meta.field">
-                <ivz-button :meta="meta">{{meta.name}}</ivz-button>
+                <IvzFuncBtn :func="meta.field" :meta="meta">{{meta.name}}</IvzFuncBtn>
               </template>
             </a-space>
           </slot>

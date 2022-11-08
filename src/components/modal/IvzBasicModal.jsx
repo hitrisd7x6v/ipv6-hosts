@@ -68,7 +68,8 @@ export default defineComponent({
       footer: () => this.$slots.footer ? this.$slots.footer({model, context}) : null
     }
 
-    return <a-modal v-model={[this.visible, 'visible', ["modifier"]]} {...this.$props} v-slots={slots} ref="iemRef">
+    return <a-modal v-model={[this.visible, 'visible', ["modifier"]]}
+                    {...this.$props} v-slots={slots} ref="iemRef">
       <a-spin size="small" tip={this.spinTip} spinning={this.spinning}>
         <ivz-form {...this.$attrs} labelCol={this.labelCol}
                   wrapperCol={this.wrapperCol} ref="iemFormRef">

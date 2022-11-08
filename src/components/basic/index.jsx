@@ -53,7 +53,7 @@ const typeMaps = {
     ADD: {type: 'dashed'},
     DEL: {danger: true},
     EDIT: {type: '#3b5999'},
-    QUERY: {type: 'primary'},
+    VIEW: {type: 'primary'},
     IMPORT: {type: 'default'},
     EXPORT: 'orange',
     CANCEL: {type: 'default'},
