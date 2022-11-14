@@ -6,6 +6,8 @@ let userMock = {
     "id|+1": 1,
     "phone": '@phone', // 手机号
     "name": '@cname', // 昵称
+    "orgId|1-5": 3, // 所属部门
+    "sex|1": ['man', 'woman', 'non'],
     "account": '@name()', // 账号
     "email": '@email', // 邮箱
     "status": 'enabled',
@@ -32,7 +34,7 @@ Mock.mock(RegExp(`/core/admin/edit`), 'post', (args) => {
 
     return {
         code: 200,
-        message: 'OK',
+        message: '修改成功',
         data: null
     }
 })
@@ -42,7 +44,7 @@ Mock.mock(RegExp(`/core/admin/del`), 'post', (args) => {
         item.id == query ? userData.splice(index, 1) : null);
     return {
         code: 200,
-        message: 'OK',
+        message: '删除成功',
         data: null
     }
 })

@@ -1,6 +1,6 @@
 <template>
   <a-form ref="formRef" :model="user" :rules="rules" class="ivz-user-detail"
-          :label-col="{span: 6}" :wrapper-col="{span: 18}" @finish="submit">
+          :label-col="{span: 6}" :wrapper-col="{span: 18}">
     <a-row>
       <a-col :span="13">
         <a-form-item label="用户账号">
@@ -38,7 +38,7 @@
       </a-col>
     </a-row>
     <a-form-item label=" " :colon="false">
-      <a-button type="primary" :loading="loading" html-type="submit">提交</a-button>
+      <a-button type="primary" :loading="loading" @click="submit">提交</a-button>
     </a-form-item>
   </a-form>
 </template>
@@ -46,9 +46,10 @@
 <!--用户资料-->
 <script>
 import {ref} from "vue";
-import {mapGetters} from "vuex";
-import {avatarUploadUri} from '@/api'
+import {mapGetters, mapMutations} from "vuex";
+import {avatarUploadUri, editUser} from '@/api'
 import {UserOutlined} from "@ant-design/icons-vue"
+import {msgSuccess} from "@/utils/message";
 
 export default {
   name: "UserDetail",
@@ -71,8 +72,21 @@ export default {
     return {rules, loading, fileList, avatarUploadUri}
   },
   methods: {
+    ...mapMutations({
+      toggleUserVisible: 'sys/toggleUserVisible'
+    }),
     submit() {
-
+      this.$refs['formRef'].validate().then(resp => {
+        this.loading = true;
+        editUser(this.user).then(({code, message}) => {
+          if(code == 200) {
+            msgSuccess(message || "修改成功");
+            this.toggleUserVisible({visible: false})
+          } else {
+            msgError(message);
+          }
+        }).finally(() => this.loading = false)
+      });
     },
     handlePreview() {
 

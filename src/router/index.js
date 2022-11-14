@@ -3,6 +3,7 @@ import {computed, watch} from 'vue'
 import Main from '@msn/main/index.vue'
 import Login from '@msn/login/login.vue'
 import NotFound from '@msn/error/404.vue'
+import Refresh from "@msn/main/Refresh.vue";
 import Index from '@msn/core/index/index.vue'
 import {createRouter, createWebHashHistory} from 'vue-router'
 
@@ -24,6 +25,7 @@ let StaticRoutes = [
 let routes = [
     {path: '/', component: Main, name: MainName, children: [
             ...StaticRoutes,
+            {path: '/refresh', name: 'refresh', component: Refresh}, // 页面刷新功能中做路由中转
             {path:'/:chapters+', name: '404', component: NotFound, beforeEnter(to, from, next) {
                     let path = to.path;
                     let init = store.getters["sys/init"];
@@ -67,7 +69,14 @@ router.beforeEach((to, form, next) => {
 
     next();
 });
+/**
+ * 处理路由刷新问题
+ */
+router.afterEach((to, from) => {
+    if(from.name == 'refresh') {
 
+    }
+})
 /**
  * 添加系统和其他静态路由到菜单列表
  */

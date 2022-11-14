@@ -13,19 +13,19 @@ export function getMenus() {
     return GET(menuUri)
 }
 
-// 获取用户中心详情
+// 用户中心 - 获取用户详情
 export function getUser() {
     return GET('/core/center/detail')
 }
 
-// 修改用户密码
+// 用户中心 - 修改用户密码
 export function editPwd(model) {
-    return POST('', model)
+    return POST("/core/center/pwd", model)
 }
 
-// 修改当前用户信息
+// 用户中心 - 修改当前用户信息
 export function editUser(user) {
-    return POST('', user);
+    return POST('/core/center/editUser', user);
 }
 
 export function getNotifyList() {
@@ -47,6 +47,11 @@ export function getDict(type) {
 // 提交登录接口
 export function login(user) {
     return POST(loginUri, user);
+}
+
+// 注销系统
+export function logout() {
+    return POST('/core/center/logout')
 }
 
 // oauth2授权认证

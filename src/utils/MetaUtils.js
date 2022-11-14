@@ -185,8 +185,9 @@ let callbackMaps = { }
 
 // 搜索按钮点击回调
 callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
-    meta.props.onClick = (model) => {
+    meta.props.onClick = (e) => {
         if(meta.callback instanceof Function) {
+            let model = viewInfo.get$View().getEditModel();
             meta.callback(model, meta, viewInfo);
         } else {
             viewInfo.get$View().query(meta.url);
@@ -194,9 +195,15 @@ callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
     }
 }
 // 取消按钮点击回调
-callbackMaps[FunMetaMaps.Cancel] = (meta, viewInfo) => {
-    meta.props.onClick = (model) => {
+callbackMaps[FunMetaMaps.Cancel] = (meta, viewInfo, type) => {
+    meta.props.onClick = (e) => {
         if(meta.callback instanceof Function) {
+            let model = null;
+            if(type == 'edit') {
+                model = viewInfo.get$View().getEditModel();
+            } else if(type == 'search') {
+                model = viewInfo.get$View().getSearchModel();
+            }
             meta.callback(model, meta, viewInfo)
         } else {
             viewInfo.get$View().cancel();
@@ -205,7 +212,8 @@ callbackMaps[FunMetaMaps.Cancel] = (meta, viewInfo) => {
 }
 // 提交表单点击回调
 callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
-    meta.props.onClick = (model) => {
+    meta.props.onClick = (e) => {
+        let model = viewInfo.get$View().getEditModel();
         if(meta.callback instanceof Function) {
             meta.callback(model, meta, viewInfo)
         } else {
@@ -221,8 +229,9 @@ callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
 }
 // 新增按钮点击回调
 callbackMaps[FunMetaMaps.Add] = (meta, viewInfo) => {
-    meta.props.onClick = (model) => {
+    meta.props.onClick = (e) => {
         if(meta.callback instanceof Function) {
+            let model = viewInfo.get$View().getEditModel();
             meta.callback(model, meta, viewInfo)
         } else {
             viewInfo.get$View().openForAdd();
@@ -274,11 +283,15 @@ callbackMaps[FunMetaMaps.Del] = (meta, viewInfo, type) => {
             meta.callback(model, meta);
         } else {
             if(type == 'search') {
-                viewInfo.get$View().batchDel(meta.url);
+                viewInfo.get$View().batchDel(meta.url).then(resp=>{
+                    viewInfo.get$View().query();
+                });
             } else if(type == 'table') {
                 let rowKey = viewInfo.get$View().getRowKey();
                 let data = [model[rowKey]];
-                viewInfo.get$View().del(meta.url, data).catch(reason => {});
+                viewInfo.get$View().del(meta.url, data).then(resp=>{
+                    viewInfo.get$View().query();
+                })
             }
         }
     }

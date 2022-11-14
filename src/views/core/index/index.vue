@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%; text-align: center">
+  <div style="width: 100%; height: 100%; text-align: center; overflow: auto">
     <h2 style="color: #d98a00; margin-top: 18px">
       <a style="font-size: 30px; color: #ffa500" href="https://www.gitee.com/iteaj/ivzone" target="_blank">
         ivzone
@@ -59,14 +59,18 @@
           <div class="context">
             <h4>版本号：2.0.0</h4>
             <a-timeline style="text-align: left">
+              <a-timeline-item color="green">2021-07-24
+                <p>1. 修改 crud api 在编辑的时候获取model和url错误</p>
+                <p>2. 新增 任务栏上面增加刷新功能</p>
+              </a-timeline-item>
               <a-timeline-item color="green">2021-07-21
-                <p>1. 新增首页, 用来做系统简介</p>
-                <p>2. 修改在IvzBreadSearch组件中使用IvzFuncBtn功能按钮组件</p>
+                <p>1. 新增 首页, 用来做系统简介</p>
+                <p>2. 修改 在IvzBreadSearch组件中使用IvzFuncBtn功能按钮组件</p>
               </a-timeline-item>
               <a-timeline-item color="green">2021-07-20
-                <p>1. 修改字典页IvzFuncBtn类型错误问题</p>
-                <p>2. 修改IvzBasicTable组件切换分页和条数不重新加载问题</p>
-                <p>3. 修改删除行提示框不显示提示内容问题</p>
+                <p>1. 修改 字典页IvzFuncBtn类型错误问题</p>
+                <p>2. 修改 IvzBasicTable组件切换分页和条数不重新加载问题</p>
+                <p>3. 修改 删除行提示框不显示提示内容问题</p>
                 <p>4. $View对象新增多个api来操作元数据</p>
               </a-timeline-item>
               <a-timeline-item color="green">2021-07-19

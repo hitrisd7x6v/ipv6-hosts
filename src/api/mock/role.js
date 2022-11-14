@@ -2,8 +2,8 @@ import Mock from "mockjs";
 import Utils from "@/utils/SysUtils";
 
 let data = [
-    {id: 1, name: '系统名称', label: 'sys_name', value: '由创源科技'},
-    {id: 1, name: '系统logo', label: 'sys_logo', value: '/img/logo.png'},
+    {id: 1, name: '超级管理员', status: 'enabled', sort: 1, remark: '拥有所有角色', createTime: '2020-10-05'},
+    {id: 2, name: '普通角色', status: 'disabled', sort: 2, remark: '只拥有特定权限', createTime: '2020-10-16'},
 ]
 
 Mock.mock(RegExp('/core/role/view'), 'get', args => {

@@ -37,21 +37,16 @@
             </a-dropdown>
           </li>
           <li class="ivz-opera-col">
-            <a href="https://gitee.com/iteaj/ivzone" target="_blank">
-              <ivz-icon type="iz-icon-gitee"></ivz-icon>
-            </a>
-          </li>
-          <li class="ivz-opera-col" @click="() => quickOpera({key: 'msg'})">
             <a-tooltip title="消息通知">
-              <a-badge count="5">
-                <ivz-icon type="iz-icon-notify"/>
+              <a-badge :count="msgCount">
+                <ivz-icon type="iz-icon-notify" :style="{fontSize: '18px'}"/>
               </a-badge>
             </a-tooltip>
           </li>
           <li class="ivz-opera-col" @click="() => quickOpera({key: 'wait'})">
             <a-tooltip title="代办事项">
-              <a-badge count="5">
-                <ivz-icon type="iz-icon-daiban"/>
+              <a-badge :count="waitCount">
+                <ivz-icon type="iz-icon-daiban" :style="{fontSize: '18px'}"/>
               </a-badge>
             </a-tooltip>
           </li>
@@ -60,6 +55,7 @@
       </div>
       <div style="clear: both"></div>
     </div>
+    <!--  任务栏  -->
     <div class="ivz-task-bar">
       <a-tabs :active-key="activityMenu.url" @change="switchTask" :hide-add="true"
               @edit="closeTask" type="editable-card" size="small">
@@ -67,7 +63,7 @@
         <template v-for="menu in taskBarData" :key="menu.url">
           <a-tab-pane :closable="menu.closable != false">
             <template #tab>
-<!--              <ReloadOutlined class="ivz-tba-reload"/>-->
+              <ReloadOutlined class="ivz-tba-reload" @click="refresh"/>
               <span class="ivz-tba-dot"></span>
               <span class="ivz-tba-title">{{menu.name}}</span>
             </template>
@@ -79,6 +75,8 @@
 </template>
 
 <script>
+import {logout} from "@/api";
+import {msgError} from "@/utils/message";
 import {mapGetters, mapMutations} from "vuex";
 import {ReloadOutlined, LockFilled, LogoutOutlined, NotificationFilled} from '@ant-design/icons-vue'
 export default {
@@ -95,8 +93,10 @@ export default {
   },
   components: {ReloadOutlined, LockFilled, LogoutOutlined, NotificationFilled},
   setup() {
+    let msgCount = 0
+    let waitCount = 0;
     let workMenu = {}
-    return {workMenu}
+    return {workMenu, msgCount, waitCount}
   },
   methods: {
     ...mapMutations({
@@ -104,6 +104,10 @@ export default {
       switchActiveViewTo: 'sys/switchActiveViewTo',
       openUrlOrSwitchTask: 'sys/openUrlOrSwitchTask'
     }),
+    refresh() {
+      let activityMenu = this.activityMenu;
+      this.$router.push('/refresh').catch(reason => {})
+    },
     switchTask (url) { // 切换任务菜单处理
       this.openUrlOrSwitchTask(url);
     },
@@ -120,8 +124,7 @@ export default {
       if(prevTemp) {
         this.switchTask(prevTemp['url']);
       } else {
-        this.selectedKeys[0] = '';
-        this.$router.push('/');
+        this.switchTask('/');
       }
     },
     taskBarCloseMoreOpera (item) { // 任务栏菜单关闭处理
@@ -154,7 +157,17 @@ export default {
     },
     quickOpera({key}) {
       if(key != 'logout') {
+        // 其他快速操作
         this.toggleUserVisible({visible: true, key});
+      } else {
+        // 注销动作
+        logout().then(({code, message}) => {
+          if(code == 200) {
+            this.$router.push('/login');
+          } else {
+            msgError(message);
+          }
+        }).catch(reason => console.error(reason))
       }
     },
     loadError() {
@@ -228,12 +241,11 @@ export default {
 }
 .ivz-tba-title {
   color: #000000;
-  margin-left: 5px;
+  margin-left: 8px;
 }
-.ivz-tba-reload {
+.ant-tabs-tab .ivz-tba-reload {
   display: none;
-  color: #000000;
-  font-size: 16px;
+  font-size: 19px;
 }
 .ant-tabs-tab-active .ivz-tba-dot {
   background: dodgerblue;
@@ -242,7 +254,18 @@ export default {
   color: #3e3e3e;
 }
 .ant-tabs-tab-active .ivz-tba-reload {
+  top: 9px;
+  left: -4px;
+  position: absolute;
   display: inline-block;
+}
+.ivz-tba-reload:hover {
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg)
+}
+.ivz-tba-reload:active {
+  /*transform: rotate(720deg);*/
+  /*-webkit-transform: rotate(720deg)*/
 }
 .ivz-task-bar .ant-tabs {
   width: 100%;
@@ -254,8 +277,8 @@ export default {
 
 }
 .ivz-task-bar .ant-tabs-nav-container,iz-task-more-opera,.ivz-task-bar .ant-tabs-tab {
-  height: 35px!important;
-  line-height: 36px!important;
+  height: 36px!important;
+  line-height: 39px!important;
 }
 .ivz-task-bar .ant-tabs-nav-container .ant-tabs-nav-wrap {
   margin-top: 0px;

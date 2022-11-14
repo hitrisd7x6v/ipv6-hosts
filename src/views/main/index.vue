@@ -76,7 +76,10 @@ export default {
     }
   },
   methods: {
+    // 刷新功能
+    reload(menu) {
 
+    }
   }
 }
 </script>

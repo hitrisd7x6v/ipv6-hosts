@@ -9,18 +9,6 @@
 <!--      </div>-->
       <div class="ivz-uic-info">
         <a-tabs :activeKey="activeKey" @change="tabChange">
-          <a-tab-pane key="msg">
-            <template #tab>
-              <span><ivz-icon type="iz-icon-notify" />消息通知</span>
-            </template>
-            <UserNotifyList />
-          </a-tab-pane>
-          <a-tab-pane key="wait">
-            <template #tab>
-              <span><ivz-icon type="iz-icon-daiban" />代办事项</span>
-            </template>
-            <UserOperaHistory />
-          </a-tab-pane>
           <a-tab-pane key="user">
             <template #tab>
               <span><ivz-icon type="iz-icon-profile" />个人资料</span>
@@ -32,6 +20,12 @@
               <span><ivz-icon type="iz-icon-password" />修改密码</span>
             </template>
             <UserEditPwd />
+          </a-tab-pane>
+          <a-tab-pane key="wait">
+            <template #tab>
+              <span><ivz-icon type="iz-icon-daiban" />代办事项</span>
+            </template>
+            <UserOperaHistory />
           </a-tab-pane>
         </a-tabs>
       </div>

@@ -328,11 +328,9 @@ export function $View(context) {
      */
     this.expanded = function (expandedRowKeys) {
         let tableContext = this.getTableContext();
-        if(!tableContext.isPrimary) {
-            return console.warn("未声明标记为[primary]的表组件")
+        if(tableContext) {
+            tableContext.expanded(expandedRowKeys);
         }
-
-        tableContext.expanded(expandedRowKeys);
     }
     /**
      * 提交主编辑表单
@@ -345,8 +343,8 @@ export function $View(context) {
         }
 
         let editContext = this.getEditContext();
-        if(!editContext.isPrimary) {
-            return Promise.reject("未声明标记为[primary]的编辑组件");
+        if(!editContext) {
+            return Promise.reject("获取不到[primary]编辑组件");
         }
 
         return new Promise((resolve, reject) => {
@@ -416,7 +414,7 @@ export function $View(context) {
             }
         }
 
-        if(!this.context.primarySearchContext.isPrimary) {
+        if(!this.context.primarySearchContext.isPrimary && import.meta.env.DEV) {
             return console.warn("未声明标记为[primary]的搜索组件")
         }
 
@@ -437,7 +435,7 @@ export function $View(context) {
             }
         }
 
-        if(!this.context.primaryEditContext.isPrimary) {
+        if(!this.context.primaryEditContext.isPrimary && import.meta.env.DEV) {
             return console.warn("未声明标记为[primary]的编辑组件")
         }
 
@@ -458,7 +456,7 @@ export function $View(context) {
             }
         }
 
-        if(!this.context.primaryTableContext.isPrimary) {
+        if(!this.context.primaryTableContext.isPrimary && import.meta.env.DEV) {
             return console.warn("未声明标记为[primary]的表组件")
         }
 
@@ -479,7 +477,7 @@ export function $View(context) {
             }
         }
 
-        if(!this.context.primaryDetailContext.isPrimary) {
+        if(!this.context.primaryDetailContext.isPrimary && import.meta.env.DEV) {
             return console.warn("未声明标记为[primary]的详情组件")
         }
 
