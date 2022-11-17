@@ -229,9 +229,8 @@ callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
 }
 // 新增按钮点击回调
 callbackMaps[FunMetaMaps.Add] = (meta, viewInfo) => {
-    meta.props.onClick = (e) => {
+    meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
-            let model = viewInfo.get$View().getEditModel();
             meta.callback(model, meta, viewInfo)
         } else {
             viewInfo.get$View().openForAdd();

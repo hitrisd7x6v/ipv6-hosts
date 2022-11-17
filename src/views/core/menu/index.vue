@@ -12,7 +12,7 @@
              url="/core/menu/parent" labelField="name" valueField="id"
              treeNodeFilterProp="label"/>
         <ivz-select field="type" label="菜单类型" :options="type" @change="typeHandle"/>
-        <ivz-select field="msn" label="所属模块" url="/core/msn" labelField="name" valueField="msn"/>
+<!--        <ivz-select field="msn" label="所属模块" url="/core/msn" labelField="name" valueField="msn"/>-->
         <ivz-input field="url" label="菜单地址"/>
         <ivz-input-group label="功能点" compact field="permType">
           <template #default="model">
@@ -26,6 +26,9 @@
         <ivz-input field="icon" label="图标" />
         <ivz-input-number field="sort" label="排序" :defaultValue="80" />
       </IvzRow>
+      <template #title="{model}">
+        {{model.id != null ? '修改菜单' : '新增菜单'}}
+      </template>
     </IvzPrimaryDrawer>
   </ivz-menu-view>
 </template>
@@ -66,7 +69,7 @@ export default {
       {field: 'name', title: '菜单名称', align: 'left'},
       {field: 'url', title: '访问路径'},
       {field: 'type', title: '菜单类型', options: type},
-      {field: 'msn', title: '所属模块',  url: "/core/msn", labelField: 'name', valueField: 'msn'},
+      // {field: 'msn', title: '所属模块',  url: "/core/msn", labelField: 'name', valueField: 'msn'},
       {field: 'perms', title: '权限标识'},
       {field: 'permType', title: '功能点', options: permType},
       {field: 'position', title: '功能位置', options: position},

@@ -64,7 +64,7 @@ export default defineComponent({
     }
 
     let slots = {
-      title: () => this.$slots.title ? this.$slots.title({model, context}) : null,
+      title: () => this.$slots.title ? this.$slots.title({model, context}) : this.title,
       footer: () => this.$slots.footer ? this.$slots.footer({model, context}) : null
     }
 

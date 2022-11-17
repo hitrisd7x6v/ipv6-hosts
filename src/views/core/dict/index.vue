@@ -14,6 +14,9 @@
       <ivz-input label="字典标识" field="type" />
       <ivz-radio label="字典状态" field="status" :options="status"/>
       <ivz-input label="备注" field="remark" />
+      <template #title="{model}">
+        {{model.id != null ? '修改字典' : '新增字典'}}
+      </template>
     </IvzPrimaryModal>
   </ivz-menu-view>
 </template>

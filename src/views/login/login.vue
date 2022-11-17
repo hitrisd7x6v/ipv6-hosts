@@ -47,6 +47,9 @@
       </a-card>
 
     </div>
+    <div style="position: absolute; bottom: 0px; text-align: center; width: 100%">
+      Copyright © 2020-2021 iteaj.com All Rights Reserved.
+    </div>
   </div>
 </template>
 <script>
@@ -66,7 +69,10 @@ export default {
   setup() {
     let labelCol = {span: 0};
     let wrapperCol = {span: 24};
-    const user = reactive({userName: null, password: null, captcha: null, rememberMe: false});
+    const user = reactive({
+      userName: 'admin',
+      password: 'admin123456',
+      captcha: 168});
     const rules = reactive({
       userName: [{type: 'string', required: true, message: ''}],
       password: [{type: 'string', required: true, message: ''}],

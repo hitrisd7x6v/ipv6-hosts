@@ -62,6 +62,8 @@
               <a-timeline-item color="green">2021-07-24
                 <p>1. 修改 crud api 在编辑的时候获取model和url错误</p>
                 <p>2. 新增 任务栏上面增加刷新功能</p>
+                <p>3. 修改 编辑组件不显示标题问题</p>
+                <p>4. 新增 为所有已实现功能添加标题</p>
               </a-timeline-item>
               <a-timeline-item color="green">2021-07-21
                 <p>1. 新增 首页, 用来做系统简介</p>

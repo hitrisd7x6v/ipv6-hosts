@@ -12,7 +12,11 @@ Mock.mock(RegExp('/core/role/view'), 'get', args => {
         code: 200, message: 'OK', data: data
     }
 })
-
+Mock.mock(RegExp('/core/role/list'), 'get', args => {
+    return {
+        code: 200, message: 'OK', data: data
+    }
+})
 Mock.mock(RegExp(`/core/role/edit`), 'get', (args) => {
     let query = Utils.resolverQueryOfUrl(args.url);
     return {
@@ -29,6 +33,17 @@ Mock.mock(RegExp(`/core/role/edit`), 'post', (args) => {
     return {
         code: 200,
         message: 'OK',
+        data: null
+    }
+})
+Mock.mock(RegExp(`/core/role/add`), 'post', (args) => {
+    let body = args.body
+    let parse = JSON.parse(body);
+    parse['id'] = data.length + 1
+    data.push(parse);
+    return {
+        code: 200,
+        message: '',
         data: null
     }
 })

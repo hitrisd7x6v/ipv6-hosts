@@ -3,7 +3,7 @@ import Utils from "@/utils/SysUtils";
 
 let configData = [
     {id: 1, name: '系统名称', label: 'sys_name', value: '由创源科技', type: 'sys'},
-    {id: 1, name: '系统logo', label: 'sys_logo', value: '/img/logo.png', type: 'sys'},
+    {id: 2, name: '系统logo', label: 'sys_logo', value: '/img/logo.png', type: 'sys'},
 ]
 
 Mock.mock(RegExp('/core/config/view'), 'get', args => {
@@ -19,6 +19,17 @@ Mock.mock(RegExp(`/core/config/edit`), 'get', (args) => {
         code: 200,
         message: 'OK',
         data: configData.filter(item => item['id'] == query['id'])[0]
+    }
+})
+Mock.mock(RegExp(`/core/config/add`), 'post', (args) => {
+    let body = args.body
+    let parse = JSON.parse(body);
+    parse['id'] = configData.length + 1
+    configData.push(parse);
+    return {
+        code: 200,
+        message: '',
+        data: null
     }
 })
 Mock.mock(RegExp(`/core/config/edit`), 'post', (args) => {

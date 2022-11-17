@@ -38,6 +38,17 @@ Mock.mock(RegExp(`/core/admin/edit`), 'post', (args) => {
         data: null
     }
 })
+Mock.mock(RegExp(`/core/admin/add`), 'post', (args) => {
+    let body = args.body
+    let parse = JSON.parse(body);
+    parse['id'] = userData.length + 1
+    userData.push(parse);
+    return {
+        code: 200,
+        message: '',
+        data: null
+    }
+})
 Mock.mock(RegExp(`/core/admin/del`), 'post', (args) => {
     let query = args.body;
     userData.forEach((item, index) =>

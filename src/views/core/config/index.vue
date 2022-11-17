@@ -14,6 +14,9 @@
         <ivz-radio field="type" label="系统配置" :options="type" defaultValue="def"/>
         <ivz-textarea field="remark" label="配置说明" />
       </template>
+      <template #title="{model}">
+        {{model.id != null ? '修改配置' : '新增配置'}}
+      </template>
     </IvzPrimaryModal>
   </ivz-menu-view>
 </template>

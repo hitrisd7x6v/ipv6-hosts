@@ -57,6 +57,17 @@ Mock.mock(RegExp(`/core/org/edit`), 'post', (args) => {
         data: null
     }
 })
+Mock.mock(RegExp(`/core/org/add`), 'post', (args) => {
+    let body = args.body
+    let parse = JSON.parse(body);
+    parse['id'] = deptData.length + 1
+    deptData.push(parse);
+    return {
+        code: 200,
+        message: '',
+        data: null
+    }
+})
 Mock.mock(RegExp(`/core/org/del`), 'post', (args) => {
     let query = args.body;
     deptData.forEach((item, index) =>

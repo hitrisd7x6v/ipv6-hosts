@@ -11,6 +11,7 @@
         <IvzInput field="type" label="字典类型" disabled/>
         <IvzInput field="label" label="字典标签" />
         <IvzInput field="value" label="标签值" />
+        <IvzRadio field="status" label="状态" :options="status" :defaultValue="'enabled'"/>
         <IvzInputNumber field="sort" label="排序" :defaultValue="10"/>
       <template #footer>
         <IvzFuncBtn func="cancel" @click="cancel">取消</IvzFuncBtn>

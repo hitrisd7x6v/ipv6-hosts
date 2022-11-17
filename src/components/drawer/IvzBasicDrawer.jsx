@@ -41,7 +41,10 @@ export default defineComponent({
         }
 
         let titleSlots = {
-            title: () => slots.title ? slots.title() : []
+            title: () => {
+                let model = formRef.value ? formRef.value.getEditModel() : {};
+                return slots.title ? slots.title({model}) : props.title
+            }
         }
 
         let viewContext = inject(ViewContextKey);

@@ -9,6 +9,9 @@
       <ivz-radio label="状态" field="status" :options="status" defaultValue="enabled"/>
       <ivz-input-number label="排序" field="sort" :defaultValue="10"/>
       <ivz-textarea label="备注" field="remark" />
+      <template #title="{model}">
+        {{model.id != null ? '修改角色' : '新增角色'}}
+      </template>
     </ivz-primary-modal>
     <ivz-primary-table :columns="columns" :bordered="true" size="small"/>
   </ivz-menu-view>

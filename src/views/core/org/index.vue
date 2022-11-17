@@ -5,13 +5,16 @@
       <ivz-input field="phone" label="手机号"/>
     </ivz-primary-search>
     <ivz-primary-table :columns="columns" size="small" :pagination="false"/>
-    <ivz-primary-modal :span="[7, 15]" :rules="rules" title="部门管理">
+    <ivz-primary-modal :span="[7, 15]" :rules="rules">
       <ivz-input field="name" label="部门名称"/>
       <ivz-tree-select field="pid" label="所属部门" valueField="id"
          :defaultValue="0" url="/core/org/parent" labelField="name"
          treeNodeFilterProp="label"/>
       <ivz-input field="leader" label="部门负责人"/>
       <ivz-input field="phone" label="负责人手机号"/>
+      <template #title="{model}">
+        {{model.id != null ? '修改部门' : '新增部门'}}
+      </template>
     </ivz-primary-modal>
   </ivz-menu-view>
 </template>

@@ -94,6 +94,17 @@ Mock.mock(RegExp(`/core/menu/edit`), 'post', (args) => {
         data: null
     }
 })
+Mock.mock(RegExp(`/core/menu/add`), 'post', (args) => {
+    let body = args.body
+    let parse = JSON.parse(body);
+    parse['id'] = dataSource.length + 1
+    dataSource.push(parse);
+    return {
+        code: 200,
+        message: '',
+        data: null
+    }
+})
 Mock.mock(RegExp(`/core/menu/del`), 'post', (args) => {
     let query = args.body;
     dataSource.forEach((item, index) =>

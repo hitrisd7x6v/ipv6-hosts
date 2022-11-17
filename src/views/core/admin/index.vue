@@ -19,6 +19,9 @@
           <ivz-textarea field="remark" label="用户简介" span="24" />
         </IvzRow>
       </template>
+      <template #title="{model}">
+        {{model.id != null ? '修改用户' : '新增用户'}}
+      </template>
     </IvzPrimaryDrawer>
     <IvzPrimaryTable :columns="columns" :bordered="true" size="small" />
     <!--  修改密码  -->

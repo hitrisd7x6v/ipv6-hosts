@@ -46,6 +46,17 @@ Mock.mock(RegExp(`/core/dictData/edit`), 'post', (args) => {
         data: null
     }
 })
+Mock.mock(RegExp(`/core/dictData/add`), 'post', (args) => {
+    let body = args.body
+    let parse = JSON.parse(body);
+    parse['id'] = dataSource.length + 1
+    dataSource.push(parse);
+    return {
+        code: 200,
+        message: '',
+        data: null
+    }
+})
 Mock.mock(RegExp(`/core/dictData/del`), 'post', (args) => {
     let query = args.body;
     dataSource.forEach((item, index) =>
