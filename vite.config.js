@@ -2,13 +2,18 @@ const path = require('path');
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+
+import vitePluginVueDoc, { vueDocFiles } from 'vite-plugin-vuedoc'
 import styleImport from 'vite-plugin-style-import';
 import {vitePluginChunk} from './IvzVitePlugins'
 // https://vitejs.dev/config/
 export default defineConfig((env)=>{
   return {
     plugins: [
-      vue(),
+      vitePluginVueDoc({}), // 必须放在plugin-vue插件之前
+      vue({
+        include: [...vueDocFiles]
+      }),
       vueJsx(),
       styleImport({
         libs: [{

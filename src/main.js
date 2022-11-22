@@ -2,6 +2,7 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import store from "@/store";
 import Router from './router'
+import Doc from '@/doc'
 import {http} from "@/utils/request"
 import '@/api/mock' // 非数据模拟环境请注释
 import IvzComponents from '@/components'
