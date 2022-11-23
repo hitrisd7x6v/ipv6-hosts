@@ -1,5 +1,6 @@
-import {defineComponent, mergeProps, provide} from "vue";
+import {defineComponent, mergeProps, provide, ref} from "vue";
 import {RowContextKey} from "@/utils/ProvideKeys";
+import {msgError} from "@/utils/message";
 
 export const IvzRow = defineComponent({
     name: 'IvzRow',
@@ -84,9 +85,143 @@ export const IvzFuncBtn = defineComponent({
     }
 })
 
+export const IvzTree = defineComponent({
+    name: 'IvzTree',
+    props: {
+        dataUrl: {type: String}, // 数据地址
+        checkedUrl: {type: String}, // 多选框的数据地址
+        selectedUrl: {type: String}, // 选中的数据地址
+        replaceFields: {type: Object, default: {key: 'id', title: 'name', children:'children'}}
+    },
+    setup(props) {
+        let allKeys = ref([]);
+        let treeData = ref([]);
+        let checkedKeys = ref([]);
+        let expandedKeys = ref([]);
+        let selectedKeys = ref([]);
+        return {allKeys, treeData, selectedKeys, checkedKeys, expandedKeys}
+    },
+    watch: {
+        dataUrl(newUrl) {
+            this.loadingInitData(newUrl)
+        },
+        checkedUrl(newUrl) {
+            this.loadingCheckedData(newUrl)
+        },
+        selectedUrl(newUrl) {
+            this.loadingSelectedData(newUrl)
+        }
+    },
+    created() {
+        if(this.dataUrl) {
+            this.loadingInitData(this.dataUrl);
+        }
+
+        if(this.checkedUrl) {
+            this.loadingCheckedData(this.checkedUrl)
+        }
+
+        if(this.selectedUrl) {
+            this.loadingSelectedData(this.selectedUrl);
+        }
+    },
+    render() {
+        return <a-tree {...this.$attrs} v-models={[
+                    [this.checkedKeys, 'checkedKeys', ["modifier"]],
+                    [this.selectedKeys, 'selectedKeys', ["modifier"]],
+                    [this.expandedKeys, 'expandedKeys', ["modifier"]]
+                ]} treeData={this.treeData} replaceFields={this.replaceFields}>
+            </a-tree>
+    },
+    methods: {
+        loadingInitData(dataUrl) {
+            this.$http.get(dataUrl).then(({code, message, data}) => {
+                if(code == 200) {
+                    this.treeData = data;
+                    this.initAllKeys(data);
+                } else {
+                    msgError(message);
+                }
+            }).catch(reason => console.error(reason));
+        },
+
+        loadingSelectedData(selectedUrl) {
+            this.$http.get(selectedUrl).then(({code, message, data}) => {
+                if(code == 200) {
+                    this.selectedKeys = data;
+                } else {
+                    msgError(message)
+                }
+            }).catch(reason => console.error(reason))
+        },
+        loadingCheckedData(checkedUrl) {
+            this.$http.get(checkedUrl).then(({code, message, data}) => {
+                if(code == 200) {
+                    this.checkedKeys = data;
+                } else {
+                    msgError(message)
+                }
+            }).catch(reason => console.error(reason))
+        },
+        getSelectedKeys() {
+            return this.selectedKeys;
+        },
+
+        setSelectedKeys(selectedKeys) {
+            if(selectedKeys instanceof Array) {
+                this.selectedKeys = selectedKeys;
+            } else {
+                this.selectedKeys = this.allKeys;
+            }
+        },
+
+        getCheckedKeys() {
+            return this.checkedKeys;
+        },
+
+        setCheckedKeys(checkedKeys) {
+            if(checkedKeys instanceof Array) {
+                this.checkedKeys = checkedKeys
+            } else {
+                this.checkedKeys = this.allKeys;
+            }
+        },
+
+        getExpandedKeys() {
+            return this.expandedKeys;
+        },
+
+        /**
+         * 设置展开的行的key
+         * @param expandedKeys 如果不指定则展开所有
+         */
+        setExpandedKeys(expandedKeys) {
+            if(expandedKeys instanceof Array) {
+                this.expandedKeys = expandedKeys;
+            } else {
+                this.expandedKeys = this.allKeys;
+            }
+        },
+
+        initAllKeys(data) {
+            if(data instanceof Array) {
+                data.forEach(item => {
+                    this.allKeys.push(item[this.replaceFields.key]);
+
+                    let children = item[this.replaceFields.children];
+                    if(children instanceof Array) {
+                        this.initAllKeys(children);
+                    }
+                })
+            }
+        }
+    }
+})
+
 export default {
     install(app) {
         app.component(IvzRow.name, IvzRow)
+        app.component(IvzTree.name, IvzTree)
         app.component(IvzFuncBtn.name, IvzFuncBtn)
         app.component(IvzFuncTag.name, IvzFuncTag)
     }

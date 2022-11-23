@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import './theme/index.css'
 import 'moment/dist/locale/zh-cn';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 

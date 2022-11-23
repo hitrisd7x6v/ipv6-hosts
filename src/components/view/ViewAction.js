@@ -551,6 +551,16 @@ export function EditContext(viewContext) {
         this.getFormContext().setEditModel(model);
     }
 
+    /**
+     * 重置当前表单
+     */
+    this.reset = function () {
+        this.getFormContext().resetFields();
+    }
+
+    /**
+     * 关闭当前弹框
+     */
     this.cancel = function () {
         this.setVisible(false);
     }

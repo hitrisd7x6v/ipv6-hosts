@@ -1,0 +1,9 @@
+/* 默认主题 */
+@import "theme.default.css";
+
+/* 纯洁无瑕(纯白主题) */
+@import "theme.pure.css";
+
+.ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
+    border-right: unset!important;
+}

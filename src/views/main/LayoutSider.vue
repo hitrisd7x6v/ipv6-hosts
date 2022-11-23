@@ -1,12 +1,14 @@
 <template>
-  <a-layout-sider class="ivz-sider-menu" width="208" :trigger="null"
+  <a-layout-sider class="ivz-sider-menu" :width="236" :trigger="null"
       v-model:collapsed="collapsed" collapsible :collapsedWidth="72">
-    <div class="logo" @click="collapsedHandle">
-      <a-avatar :size="48" src="/img/logo.png"></a-avatar>
-      <span class="ivz-ism-title" style="vertical-align: sub; margin-left: 8px; font-size: 17px">由创源科技</span>
+    <div class="ivz-logo" @click="collapsedHandle">
+      <div class="ivz-logo-c">
+        <a-avatar :size="48" src="/img/logo.png"></a-avatar>
+        <span class="ivz-ism-title" style="vertical-align: sub; margin-left: 8px; font-size: 17px">由创源科技</span>
+      </div>
     </div>
     <!--侧边菜单-->
-    <div class="ivz-ism-menu">
+    <div class="ivz-sider-menu">
       <a-menu @select="selectMenu" mode="inline"
               :openKeys="openKeys" :theme="theme"
               :selectedKeys="selectedKeys" @openChange="openChange">
@@ -36,7 +38,7 @@ export default {
   name: "LayoutSider",
   setup() {
     // 主题 dark or light
-    let theme = ref('dark')
+    let theme = ref('light')
     let collapsed = ref(false);
     return {collapsed, theme}
   },
@@ -69,10 +71,8 @@ export default {
 </script>
 
 <style>
-.ivz-sider-menu .logo {
-  height: 68px;
-  padding: 12px;
-  color: #ffffff;
+.ivz-logo {
+  height: 82px;
   cursor: pointer;
   overflow: hidden;
   text-align: center;
@@ -86,7 +86,7 @@ export default {
   display: inline-block;
   margin-left: 0px!important;
 }
-.ivz-ism-menu {
+.ivz-sider-menu {
   flex: 1 1 0%;
   overflow: hidden auto;
 }
@@ -104,17 +104,6 @@ export default {
   height: 6px;
 }
 
-.ivz-sider-menu .ant-layout-sider-children ::-webkit-scrollbar-thumb {
-  background: hsla(0,0%,100%,.2);
-  border-radius: 3px;
-  -webkit-box-shadow: inset 0 0 5px hsl(0deg 0% 100% / 5%);
-}
-
-.ivz-sider-menu .ant-layout-sider-children ::-webkit-scrollbar-track {
-  background: hsla(0,0%,100%,.15);
-  border-radius: 3px;
-  -webkit-box-shadow: inset 0 0 5px rgb(37 37 37 / 5%);
-}
 .ivz-sider-menu .ant-menu-inline-collapsed .anticon{
   font-size: 18px!important;
 }

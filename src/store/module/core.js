@@ -52,6 +52,7 @@ const registerSysModule = function (store) {
             views: [], // 视图信息
             init: false, // 系统路由是否已经初始化(菜单初始化, 用于动态路由404问题)
             userKey: null,
+            theme: 'pure', // 默认主题
             userVisible: false, // 用户中心
 
             openKeys: [], // 当前展开的子菜单key
@@ -71,6 +72,7 @@ const registerSysModule = function (store) {
             init: state => state.init,
             user: state => state.user,
             views: state => state.views,
+            theme: state => state.theme,
             userKey: state => state.userKey,
             userVisible: state => state.userVisible,
 
@@ -160,6 +162,11 @@ const registerSysModule = function (store) {
             }
         },
         mutations: {
+            // 切换主题
+            switchTheme(state, theme) {
+                state.theme = theme;
+            },
+
             // 在任务栏上面打开一个任务
             openUrlOrSwitchTask: (state, url) => {
                 let menu = state.urlMenuMaps[url];

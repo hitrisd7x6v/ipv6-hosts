@@ -1,5 +1,5 @@
 <template>
-  <a-layout-header class="ivz-header-bar" style="background: #fff; padding: 0">
+  <a-layout-header class="ivz-header-bar">
     <div class="ivz-header-row">
       <!--头部菜单-->
       <div class="ivz-header-col ivz-header-col-left">
@@ -48,6 +48,11 @@
               <a-badge :count="waitCount">
                 <ivz-icon type="iz-icon-daiban" :style="{fontSize: '18px'}"/>
               </a-badge>
+            </a-tooltip>
+          </li>
+          <li class="ivz-opera-col" @click="switchTheme">
+            <a-tooltip title="主题">
+                <ivz-icon type="iz-icon-theme" :style="{fontSize: '18px'}"/>
             </a-tooltip>
           </li>
           <li style="clear: both"></li>
@@ -100,6 +105,7 @@ export default {
   },
   methods: {
     ...mapMutations({
+      switchTheme: 'sys/switchTheme',
       toggleUserVisible: 'sys/toggleUserVisible',
       switchActiveViewTo: 'sys/switchActiveViewTo',
       openUrlOrSwitchTask: 'sys/openUrlOrSwitchTask'
@@ -126,6 +132,9 @@ export default {
       } else {
         this.switchTask('/');
       }
+    },
+    switchTheme() {
+      this.$store.commit('sys/switchTheme', 'iteaj');
     },
     taskBarCloseMoreOpera (item) { // 任务栏菜单关闭处理
       let start = this.workMenu ? 1 : 0;
@@ -178,13 +187,9 @@ export default {
 </script>
 
 <style>
-.ivz-header-bar{
-  z-index: 0;
-  padding: 0px!important;
-  height: 83px!important;
-  background-color: #ffffff!important;
+.ivz-header-bar {
+  height: 82px!important;
 }
-
 .ivz-header-row {
   color: #000000;
   position: relative;

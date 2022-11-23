@@ -1,10 +1,9 @@
-import {defineComponent, h, inject, resolveComponent} from "vue";
+import {defineComponent, h, resolveComponent} from "vue";
 import IvzForm from "@/components/form/basic/IvzForm";
 import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
 import MixinsOptionsItem from "@/components/form/basic/MixinsOptionsItem";
-import {RowContextKey} from "@/utils/ProvideKeys";
 
-const IvzInput = defineComponent({
+export const IvzInput = defineComponent({
     name: 'IvzInput',
     mixins: [MixinsFormItem],
     render() {
@@ -18,7 +17,7 @@ const IvzInput = defineComponent({
 
 })
 
-const IvzInputNumber = defineComponent({
+export const IvzInputNumber = defineComponent({
     name: 'IvzInputNumber',
     mixins: [MixinsFormItem],
     render() {
@@ -31,7 +30,7 @@ const IvzInputNumber = defineComponent({
     }
 
 })
-const IvzInputPassword = defineComponent({
+export const IvzInputPassword = defineComponent({
     name: 'IvzInputPassword',
     mixins: [MixinsFormItem],
     render() {
@@ -44,7 +43,7 @@ const IvzInputPassword = defineComponent({
     }
 })
 
-const IvzInputGroup = defineComponent({
+export const IvzInputGroup = defineComponent({
     name: 'IvzInputGroup',
     mixins: [MixinsFormItem],
     render() {
@@ -60,7 +59,7 @@ const IvzInputGroup = defineComponent({
     }
 })
 
-const IvzTextarea = defineComponent({
+export const IvzTextarea = defineComponent({
     name: 'IvzTextarea',
     mixins: [MixinsFormItem],
     render() {
@@ -74,7 +73,7 @@ const IvzTextarea = defineComponent({
 
 })
 
-const IvzCheckbox = defineComponent({
+export const IvzCheckbox = defineComponent({
     name: 'IvzCheckbox',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     setup(props, {slots}) {
@@ -99,7 +98,7 @@ const IvzCheckbox = defineComponent({
 
 })
 
-const IvzSwitch = defineComponent({
+export const IvzSwitch = defineComponent({
     name: 'IvzSwitch',
     mixins: [MixinsFormItem],
     render() {
@@ -113,7 +112,7 @@ const IvzSwitch = defineComponent({
 
 })
 
-const IvzRate = defineComponent({
+export const IvzRate = defineComponent({
     name: 'IvzRate',
     mixins: [MixinsFormItem],
     render() {
@@ -127,7 +126,7 @@ const IvzRate = defineComponent({
 
 })
 
-const IvzSelect = defineComponent({
+export const IvzSelect = defineComponent({
     name: 'IvzSelect',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
@@ -140,7 +139,7 @@ const IvzSelect = defineComponent({
     }
 })
 
-const IvzSlider = defineComponent({
+export const IvzSlider = defineComponent({
     name: 'IvzSlider',
     mixins: [MixinsFormItem],
     render() {
@@ -154,7 +153,7 @@ const IvzSlider = defineComponent({
     }
 
 })
-const IvzCascader = defineComponent({
+export const IvzCascader = defineComponent({
     name: 'IvzCascader',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
@@ -168,7 +167,7 @@ const IvzCascader = defineComponent({
     }
 
 })
-const IvzAutoComplete = defineComponent({
+export const IvzAutoComplete = defineComponent({
     name: 'IvzAutoComplete',
     mixins: [MixinsFormItem],
     render() {
@@ -183,7 +182,7 @@ const IvzAutoComplete = defineComponent({
 
 })
 
-const IvzRadio = defineComponent({
+export const IvzRadio = defineComponent({
     name: 'IvzRadio',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
@@ -202,7 +201,7 @@ const IvzRadio = defineComponent({
     }
 
 })
-const IvzMentions = defineComponent({
+export const IvzMentions = defineComponent({
     name: 'IvzMentions',
     mixins: [MixinsFormItem],
     render() {
@@ -228,7 +227,7 @@ const IvzMentions = defineComponent({
     }
 
 })
-const IvzTreeSelect = defineComponent({
+export const IvzTreeSelect = defineComponent({
     name: 'IvzTreeSelect',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
@@ -245,7 +244,7 @@ const IvzTreeSelect = defineComponent({
 
 const typeMaps = {date: 'a-date-picker', month: 'a-month-picker'
     , range: 'a-range-picker', week: 'a-week-picker', time: 'a-time-picker'}
-const IvzDateTime = defineComponent({
+export const IvzDateTime = defineComponent({
     name: 'IvzDateTime',
     props: ['picker'],
     mixins: [MixinsFormItem],
@@ -262,6 +261,14 @@ const IvzDateTime = defineComponent({
 
 })
 
-export {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
+const formComponents = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
     , IvzRate, IvzSlider, IvzInputNumber, IvzCascader, IvzAutoComplete, IvzInputPassword
     , IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect, IvzTextarea, IvzInputGroup}
+
+export default {
+    install(app) {
+        Object.values(formComponents).forEach(component => {
+            app.component(component.name, component);
+        })
+    }
+}

@@ -1,6 +1,7 @@
 const path = require('path');
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+// https://github.com/vuejs/jsx-next#syntax
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
 import vitePluginVueDoc, { vueDocFiles } from 'vite-plugin-vuedoc'
@@ -20,7 +21,10 @@ export default defineConfig((env)=>{
           libraryName: 'ant-design-vue',
           esModule: true,
           resolveStyle: (name) => {
-            return `ant-design-vue/es/${name}/style/css`;
+            return `ant-design-vue/es/${name}/style`;
+          },
+          resolveComponent: (name) => {
+            return `ant-design-vue/es/${name}`;
           },
         },{
           libraryName: 'ivz-online',
@@ -50,7 +54,13 @@ export default defineConfig((env)=>{
     optimizeDeps: {
       include: ["@ant-design/icons-vue"],
     },
-
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true
+        }
+      }
+    },
     build: {
       cssCodeSplit: true,
     }

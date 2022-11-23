@@ -1,5 +1,5 @@
 <template>
-  <a-layout style="width: 100%; height: 100%;" class="ant-layout-has-sider">
+  <a-layout class="ivz-layout" :class="'ivz-theme-'+theme">
     <!--侧边菜单栏-->
     <LayoutSider />
 
@@ -66,6 +66,7 @@ export default {
 
   computed: {
     ...mapGetters({
+      theme: 'sys/theme',
       taskBarData: 'sys/taskBarData',
     }),
     // 用于缓存视图页
@@ -74,6 +75,9 @@ export default {
           .filter(menu=> menu['keepAlive']!=null)
           .map(menu => menu.keepAlive)
     }
+  },
+  updated() {
+    console.log('main')
   },
   methods: {
     // 刷新功能
@@ -85,6 +89,10 @@ export default {
 </script>
 
 <style>
+.ivz-layout {
+  width: 100%;
+  height: 100%;
+}
 .ivz-opera-more {
   margin-right: 12px;
 }
