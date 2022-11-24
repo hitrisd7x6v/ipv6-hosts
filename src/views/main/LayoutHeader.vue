@@ -188,7 +188,7 @@ export default {
 
 <style>
 .ivz-header-bar {
-  height: 82px!important;
+  height: 83px!important;
 }
 .ivz-header-row {
   color: #000000;
@@ -232,7 +232,7 @@ export default {
   z-index: 0;
   padding: 0px;
   position: relative;
-  box-shadow: 0px 2px 4px -2px #e0e0e0;
+  box-shadow: 2px 2px 6px 0px #e0e0e0;
 }
 .ivz-task-bar .ant-tabs-tab-active {
   box-shadow: 0px 0px 6px 0px #cbcbcb;

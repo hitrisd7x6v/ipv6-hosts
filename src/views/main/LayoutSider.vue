@@ -1,5 +1,5 @@
 <template>
-  <a-layout-sider class="ivz-sider-menu" :width="236" :trigger="null"
+  <a-layout-sider class="ivz-sider" :width="252" :trigger="null"
       v-model:collapsed="collapsed" collapsible :collapsedWidth="72">
     <div class="ivz-logo" @click="collapsedHandle">
       <div class="ivz-logo-c">

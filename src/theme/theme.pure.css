@@ -16,18 +16,30 @@
     background: #ffffff;
 }
 .ivz-theme-pure .ivz-logo-c {
-    height: 80px;
-    padding: 17px;
-    box-shadow: 0px 3px 4px -4px #cacaca;
+    height: 72px;
+    padding: 12px;
+    margin: 5px;
+    /*border-radius: 5px;*/
+    /*box-shadow: 0px 0px 8px 1px #cacaca;*/
 }
 .ivz-theme-pure .ivz-main-container {
     background: #ffffff;
+    border-top: 16px solid #f1f1f1;
+    border-left: 16px solid #f1f1f1;
+    border-right: 16px solid #f1f1f1;
 }
+
 .ivz-theme-pure .ant-layout-sider .ant-menu-sub {
     background: #ffffff;
 }
 .ivz-theme-pure .ant-layout-sider .ant-menu-submenu-title {
     /*border-bottom: 1px solid #e9e9e9;*/
+}
+.ivz-theme-pure .ivz-sider-menu {
+    width: 236px;
+    /*padding: 20px 0px;*/
+    border-radius: 5px;
+    /*box-shadow: 0px 0px 18px 3px #e4e4e4*/
 }
 .ivz-theme-pure .ant-layout-sider .ant-menu-submenu-open .ant-menu-submenu-title {
     box-shadow: 0px 3px 4px -4px #cacaca;
