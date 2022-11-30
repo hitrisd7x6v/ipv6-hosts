@@ -20,9 +20,9 @@
         <!-- 用户中心 -->
         <UserCenter />
       </a-layout-content>
-      <a-layout-footer style="text-align: center; height: 36px; line-height: 36px; padding: 0px">
-        ivzone ©2020 Created by 厦门由创源科技  <a href="https://beian.miit.gov.cn/" target="_blank">闽ICP备16015055号</a>
-      </a-layout-footer>
+<!--      <a-layout-footer style="text-align: center; height: 36px; line-height: 36px; padding: 0px">-->
+<!--        ivzone ©2020 Created by 厦门由创源科技  <a href="https://beian.miit.gov.cn/" target="_blank">闽ICP备16015055号</a>-->
+<!--      </a-layout-footer>-->
     </a-layout>
   </a-layout>
 </template>

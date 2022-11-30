@@ -188,16 +188,15 @@ export default {
 
 <style>
 .ivz-header-bar {
-  height: 83px!important;
+  height: 82px;
 }
 .ivz-header-row {
   color: #000000;
   position: relative;
-  border-bottom: 1px dashed #e9e9e9;
 }
 .ivz-view-col {
-  padding: 0px 12px;
   cursor: pointer;
+  padding: 0px 12px;
 }
 .ivz-view-active {
   border-bottom: 2px solid dodgerblue;
@@ -232,7 +231,6 @@ export default {
   z-index: 0;
   padding: 0px;
   position: relative;
-  box-shadow: 2px 2px 6px 0px #e0e0e0;
 }
 .ivz-task-bar .ant-tabs-tab-active {
   box-shadow: 0px 0px 6px 0px #cbcbcb;

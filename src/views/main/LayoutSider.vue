@@ -9,8 +9,7 @@
     </div>
     <!--侧边菜单-->
     <div class="ivz-sider-menu">
-      <a-menu @select="selectMenu" mode="inline"
-              :openKeys="openKeys" :theme="theme"
+      <a-menu @select="selectMenu" mode="inline" :openKeys="openKeys"
               :selectedKeys="selectedKeys" @openChange="openChange">
         <template v-for="menu in menus">
           <template v-if="menu.type=='V'">
@@ -72,7 +71,6 @@ export default {
 
 <style>
 .ivz-logo {
-  height: 82px;
   cursor: pointer;
   overflow: hidden;
   text-align: center;
@@ -86,20 +84,20 @@ export default {
   display: inline-block;
   margin-left: 0px!important;
 }
-.ivz-sider-menu {
-  flex: 1 1 0%;
-  overflow: hidden auto;
-}
-.ivz-sider-menu .ant-layout-sider-children {
+.ivz-sider .ant-layout-sider-children {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
+.ivz-sider .ivz-sider-menu {
+  flex-grow: 1;
+  overflow: hidden auto;
+}
 /*侧边菜单栏滚动条样式*/
-.ivz-sider-menu.ant-layout-sider-collapsed .ant-menu-inline-collapsed {
+.ivz-sider .ant-layout-sider-collapsed .ant-menu-inline-collapsed {
   width: 72px;
 }
-.ivz-sider-menu .ant-layout-sider-children ::-webkit-scrollbar {
+.ivz-sider .ant-layout-sider-children ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
