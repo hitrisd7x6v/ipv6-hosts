@@ -50,11 +50,11 @@
               </a-badge>
             </a-tooltip>
           </li>
-          <li class="ivz-opera-col" @click="switchTheme">
-            <a-tooltip title="主题">
-                <ivz-icon type="iz-icon-theme" :style="{fontSize: '18px'}"/>
-            </a-tooltip>
-          </li>
+<!--          <li class="ivz-opera-col" @click="switchTheme">-->
+<!--            <a-tooltip title="主题">-->
+<!--                <ivz-icon type="iz-icon-theme" :style="{fontSize: '18px'}"/>-->
+<!--            </a-tooltip>-->
+<!--          </li>-->
           <li style="clear: both"></li>
         </ul>
       </div>
@@ -134,7 +134,7 @@ export default {
       }
     },
     switchTheme() {
-      this.$store.commit('sys/switchTheme', 'iteaj');
+      this.$store.commit('sys/switchTheme', 'pure');
     },
     taskBarCloseMoreOpera (item) { // 任务栏菜单关闭处理
       let start = this.workMenu ? 1 : 0;
@@ -189,6 +189,7 @@ export default {
 <style>
 .ivz-header-bar {
   height: 82px;
+  z-index: 0;
 }
 .ivz-header-row {
   color: #000000;

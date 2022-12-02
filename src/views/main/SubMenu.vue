@@ -1,5 +1,5 @@
 <template>
-  <a-sub-menu :key="menu.id">
+  <a-sub-menu :key="menu.id" :popupClassName="'ivz-theme-popupmenu-'+theme">
     <template #title>
       <ivz-icon :type="menu.icon"></ivz-icon>
       <span class="ivz-level-o">{{menu.name}}</span>
@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: "IvzSubMenu",
   props: {
@@ -27,6 +29,11 @@ export default {
       default: () => ({}),
     },
   },
+  computed: {
+    ...mapGetters({
+      theme: 'sys/theme',
+    }),
+  }
 }
 </script>
 

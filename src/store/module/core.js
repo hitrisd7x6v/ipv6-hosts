@@ -52,7 +52,7 @@ const registerSysModule = function (store) {
             views: [], // 视图信息
             init: false, // 系统路由是否已经初始化(菜单初始化, 用于动态路由404问题)
             userKey: null,
-            theme: 'pure', // 默认主题
+            theme: 'default', // 默认主题
             userVisible: false, // 用户中心
 
             openKeys: [], // 当前展开的子菜单key
