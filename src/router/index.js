@@ -69,12 +69,7 @@ router.beforeEach((to, form, next) => {
 
     next();
 });
-/**
- * 处理路由刷新问题
- */
-router.afterEach((to, from) => {
 
-})
 /**
  * 添加系统和其他静态路由到菜单列表
  */

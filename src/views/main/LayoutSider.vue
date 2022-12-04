@@ -14,7 +14,7 @@
         <template v-for="menu in menus">
           <template v-if="menu.type=='V'">
             <a-menu-item :key="menu.url">
-              <ivz-icon :type="menu.icon"></ivz-icon>
+              <ivz-icon :type="menu.icon || 'iz-icon-icon'" />
               <span class="ivz-level-o">{{menu.name}}</span>
             </a-menu-item>
           </template>

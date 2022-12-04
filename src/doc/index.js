@@ -5,15 +5,15 @@ import TableDoc from '@/doc/table.doc.md'
 import store from "@/store";
 import router from "@/router";
 
-import DP from './demo.md'
-store.commit('sys/addNewMenu', {url: '/doc/table', name: '表组件'})
+import BasicView from './basic.doc.md'
+store.commit('sys/addNewMenu', {url: '/doc', name: '基础视图'})
 router.addRoute("Main", {path: 'doc', component: Doc, name: '文档', children: [
-        {path: 'table', component: DP}
+        {path: '', component: BasicView, name: '基础视图'}
     ]
 })
 export const Demo = defineComponent({
     name: 'Demo',
-    components: {DP},
+    components: {BasicView},
     template: `
         <DP></DP>
     `

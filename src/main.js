@@ -3,6 +3,7 @@ import App from './App.vue'
 import store from "@/store";
 import Router from './router'
 import {http} from "@/utils/request"
+import '@/doc' // 文档教程 不需要请注释掉
 import '@/api/mock' // 非数据模拟环境请注释
 import IvzComponents from '@/components'
 import Antd, {message, notification} from 'ant-design-vue'
@@ -12,7 +13,7 @@ import {createFromIconfontCN} from '@ant-design/icons-vue';
 const IvzIcon = createFromIconfontCN({
     extraCommonProps: {style: {fontSize: '16px'}},
     // https://www.iconfont.cn/
-    scriptUrl: '//at.alicdn.com/t/font_1174643_57g8bqeqgzf.js',
+    scriptUrl: '//at.alicdn.com/t/font_1174643_moy3ilu84wm.js',
 });
 
 

@@ -50,6 +50,9 @@
               </a-badge>
             </a-tooltip>
           </li>
+          <li class="ivz-opera-col">
+                <router-link to="/doc"><ivz-icon type="iz-icon-doc" :style="{fontSize: '18px'}"/> 文档教程</router-link>
+          </li>
 <!--          <li class="ivz-opera-col" @click="switchTheme">-->
 <!--            <a-tooltip title="主题">-->
 <!--                <ivz-icon type="iz-icon-theme" :style="{fontSize: '18px'}"/>-->

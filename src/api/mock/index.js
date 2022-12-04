@@ -25,7 +25,7 @@ const menus = [
         id: 1, pid: 0,
         url: "#1", // 访问地址
         type: "M", // 菜单类型
-        name: "系统设置", // 菜单名称
+        name: "后台模板", // 菜单名称
         icon: "iz-icon-xitong",
         children: [
             {
