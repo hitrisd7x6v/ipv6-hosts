@@ -65,11 +65,11 @@
     </div>
     <!--  任务栏  -->
     <div class="ivz-task-bar">
-      <a-tabs :active-key="activityMenu.url" @change="switchTask" :hide-add="true"
+      <a-tabs :active-key="$route.path" @change="switchTask" :hide-add="true"
               @edit="closeTask" type="editable-card" size="small">
 
-        <template v-for="menu in taskBarData" :key="menu.url">
-          <a-tab-pane :closable="menu.closable != false">
+        <template v-for="menu in taskBarData" :key="menu.path">
+          <a-tab-pane :closable="menu.meta.closable != false">
             <template #tab>
               <ReloadOutlined class="ivz-tba-reload" @click="refresh"/>
               <span class="ivz-tba-dot"></span>
@@ -89,6 +89,7 @@ import {mapGetters, mapMutations} from "vuex";
 import {ReloadOutlined, LockFilled, LogoutOutlined, NotificationFilled} from '@ant-design/icons-vue'
 export default {
   name: "LayoutHeader",
+  props: ['reload'],
   computed: {
     ...mapGetters({
       user: 'sys/user',
@@ -108,30 +109,30 @@ export default {
   },
   methods: {
     ...mapMutations({
+      removeTask: 'sys/removeTask',
       switchTheme: 'sys/switchTheme',
       toggleUserVisible: 'sys/toggleUserVisible',
       switchActiveViewTo: 'sys/switchActiveViewTo',
-      openUrlOrSwitchTask: 'sys/openUrlOrSwitchTask'
+      pushAndSwitchTask: 'sys/pushAndSwitchTask'
     }),
     refresh() {
-      let activityMenu = this.activityMenu;
-      this.$router.push('/refresh').catch(reason => {})
+      this.reload();
     },
     switchTask (url) { // 切换任务菜单处理
-      this.openUrlOrSwitchTask(url);
+      this.pushAndSwitchTask(url);
     },
     closeTask (url, action) { // 关闭任务处理
       let prevTemp = null; // 用来保存当前关闭的上一个任务
-      this.taskBarData.forEach((item, index, ori) => {
-        if(item['url'] === url) {
+      this.taskBarData.forEach((route, index, ori) => {
+        if(route['path'] === url) {
           prevTemp = ori[index-1]; // 获取要删除的前一个
-          ori.splice(index, 1);
+          this.removeTask(url); // 移除任务
           if(!prevTemp) prevTemp = ori[index];
         }
       });
 
       if(prevTemp) {
-        this.switchTask(prevTemp['url']);
+        this.switchTask(prevTemp['path']);
       } else {
         this.switchTask('/');
       }

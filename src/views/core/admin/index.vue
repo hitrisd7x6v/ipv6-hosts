@@ -43,7 +43,7 @@ import {msgSuccess} from "@/utils/message";
 import {IvzPrimaryTable, IvzPrimaryDrawer, IvzPrimarySearch} from "@/components/view";
 import IvzBasicModal from "@/components/modal/IvzBasicModal";
 export default {
-  name: "User",
+  name: "Admin",
   components: {IvzBasicModal, IvzPrimaryTable, IvzPrimarySearch, IvzPrimaryDrawer},
   setup() {
     let sex = [

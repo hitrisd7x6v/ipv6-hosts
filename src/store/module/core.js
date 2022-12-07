@@ -4,9 +4,6 @@ import {reactive} from "vue";
 import {GET} from "@/utils/request";
 import router, {resolverMenuToRoutes} from "@/router";
 
-// component: Index必须和首页组件的name一致
-const index = {id: -1, name: '首页', url: '/', component: 'main', closable: false}
-
 function resolveMenusBreadcrumb(menus) {
     if(menus instanceof Array) {
         return menus.map(({name, id, url}) => {return {name, id, url}})
@@ -57,12 +54,14 @@ const registerSysModule = function (store) {
 
             openKeys: [], // 当前展开的子菜单key
             activeMenu: {}, // 当前激活的菜单
+            activeRoute: {}, // 当前激活的路由
             activeView: {}, // 当前激活的视图
             taskBarData: [], // 任务栏打开的菜单
             optionsMaps: {}, // url | dict -> {options, valueLabelMap}
             idMenuMaps: {}, // id和菜单的映射
             selectedKeys: [], // 选中的菜单
             urlMenuMaps: {}, // url -> menu 对象
+            urlRouteMaps: {}, // url -> route taskBarData
             optionsInfo: {/*dict -> data | url -> data*/}, // 字典和url的数据信息
             pidBreadcrumbMaps: {}, // pid和面包屑菜单列表映射
 
@@ -78,6 +77,7 @@ const registerSysModule = function (store) {
 
             // 打开的子菜单
             openKeys: state => state.openKeys,
+
             // url -> menu 映射
             urlMenuMaps: state => state.urlMenuMaps,
             // 当前激活的视图
@@ -166,40 +166,52 @@ const registerSysModule = function (store) {
             switchTheme(state, theme) {
                 state.theme = theme;
             },
-
-            // 在任务栏上面打开一个任务
-            openUrlOrSwitchTask: (state, url) => {
-                let menu = state.urlMenuMaps[url];
-                if(menu == null) {
-                    return console.error(`url[${url}]对应的菜单不存在`)
+            // 任务栏切换
+            pushAndSwitchTask: (state, url) => {
+                let route = state.urlRouteMaps[url];
+                if(route == null) {
+                    return console.error(`url[${url}]对应的路由不存在`)
                 }
 
-                router.push(menu.url).then(() => {
-                    store.commit('sys/openOrSwitchTask', menu)
-                }).catch(reason=> {
-                    console.error(`打开菜单失败(组件不存在或者未注册路由)`)
+                router.push(route).catch(reason=> {
+                    console.error(`切换任务失败(组件不存在或者未注册路由)[${reason}]`)
                 });
             },
 
-            // 在任务栏打开或者切换任务
-            openOrSwitchTask: (state, urlOrMenu) => {
-                let menu = urlOrMenu;
-                if(typeof menu == 'string') {
-                    menu = state.urlMenuMaps[urlOrMenu];
+            // 移除任务栏的任务
+            removeTask: (state, url) => {
+                let urlRoute = state.urlRouteMaps[url];
+                if(urlRoute) {
+                    state.urlRouteMaps[url] = null;
+                    let number = state.taskBarData.findIndex(route => route.path == url);
+                    if(number > -1) {
+                        state.taskBarData.splice(number, 1);
+                    }
+                }
+            },
+            // 在任务栏上面打开一个任务
+            openUrlOrSwitchTask: (state, url) => {
+                router.push(url).catch(reason=> {
+                    console.error(`打开菜单失败(组件不存在或者未注册路由)`)
+                });
+            },
+            openOrSwitchTask: (state, route) => {
+                let path = route.path;
+                if(!state.urlRouteMaps[path]) {
+                    state.taskBarData.push(route);
                 }
 
-                if(!menu) {
-                    return console.error("请指定要打开的菜单");
+                state.activeRoute = route;
+                state.urlRouteMaps[path] = route;
+            },
+            setRouteKeepAlive: (state, {url, componentName}) => {
+                let urlRoute = state.urlRouteMaps[url];
+                if(urlRoute && componentName) {
+                    urlRoute.meta['keepAlive'] = componentName;
                 }
-
-                let exists = state.taskBarData.filter(item => menu == item);
-                // 任务已经在任务栏, 直接切换过去
-                if(exists.length > 0) {
-                    store.commit('sys/switchActiveMenuTo', menu);
-                } else {
-                    state.taskBarData.push(menu)
-                    store.commit('sys/switchActiveMenuTo', menu);
-                }
+            },
+            switchActiveRouteTo: (state, route) => {
+                state.activeRoute = route;
             },
             // 切换激活的菜单
             switchActiveMenuTo: (state, urlOrMenu) => {
@@ -259,6 +271,9 @@ const registerSysModule = function (store) {
                 }
             },
 
+            addNewTask: (state, route) => {
+
+            },
             putMenuToTaskBars: (state, menu) => {
                 state.taskBarData.push(menu)
             },

@@ -5,7 +5,7 @@
 
     <a-layout class="ivz-layout-view">
       <!--右侧头栏-->
-      <LayoutHeader />
+      <LayoutHeader :reload="reload"/>
 
       <!--右侧视图页-->
       <a-layout-content class="ivz-main-container">
@@ -33,15 +33,12 @@ import {mapGetters, useStore} from "vuex";
 import LayoutSider from "@msn/main/LayoutSider.vue";
 import LayoutHeader from "@msn/main/LayoutHeader.vue";
 import UserCenter from "@msn/main/UserCenter.vue";
-import {initStaticRoutesToMenus} from "@/router";
 import {RowContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 
 export default {
   name: "index",
   components:{UserCenter, LayoutSider, LayoutHeader},
   setup() {
-    // 挂载系统静态路由到菜单列表
-    initStaticRoutesToMenus();
 
     // 初始化后台菜单信息到路由
     useStore().dispatch('sys/initMenus')
@@ -72,17 +69,20 @@ export default {
     // 用于缓存视图页
     alive() {
       return this.taskBarData
-          .filter(menu=> menu['keepAlive']!=null)
-          .map(menu => menu.keepAlive)
+          .filter(route => route.meta['keepAlive']!=null)
+          .map(route => route.meta.keepAlive)
     }
-  },
-  updated() {
-    console.log('main')
   },
   methods: {
     // 刷新功能
     reload(menu) {
-
+      let keepAlive = this.$route.meta.keepAlive;
+      this.$route.meta.keepAlive = null;
+      this.$router.push('/refresh').then(() => {
+        this.$nextTick().then(() => {
+          this.$route.meta.keepAlive = keepAlive;
+        })
+      })
     }
   }
 }

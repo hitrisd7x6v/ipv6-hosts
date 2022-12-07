@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     ...mapMutations({
+      pushAndSwitchTask: 'sys/pushAndSwitchTask',
       switchOpenSubMenuTo: 'sys/switchOpenSubMenuTo'
     }),
     selectMenu(menu) {
