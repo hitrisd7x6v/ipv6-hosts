@@ -71,7 +71,7 @@
         <template v-for="menu in taskBarData" :key="menu.path">
           <a-tab-pane :closable="menu.meta.closable != false">
             <template #tab>
-              <ReloadOutlined class="ivz-tba-reload" @click="refresh"/>
+              <ReloadOutlined class="ivz-tba-reload" @click="() => refresh(menu)"/>
               <span class="ivz-tba-dot"></span>
               <span class="ivz-tba-title">{{menu.name}}</span>
             </template>
@@ -115,8 +115,8 @@ export default {
       switchActiveViewTo: 'sys/switchActiveViewTo',
       pushAndSwitchTask: 'sys/pushAndSwitchTask'
     }),
-    refresh() {
-      this.reload();
+    refresh(route) {
+      this.reload(route);
     },
     switchTask (url) { // 切换任务菜单处理
       this.pushAndSwitchTask(url);

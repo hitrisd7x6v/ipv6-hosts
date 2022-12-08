@@ -66,6 +66,18 @@ export default {
 
     return {columns, status, rules};
   },
+  watch: {
+    $route(to, form) {
+      let type = to.query.type;
+      if(type) {
+        let model = this.$view.getSearchModel();
+        if(model.type != type) {
+          model.type = type;
+          this.query();
+        }
+      }
+    }
+  },
   mounted() {
     let model = this.$view.getSearchModel();
     model.type = this.$route.query.type;

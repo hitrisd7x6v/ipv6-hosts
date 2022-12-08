@@ -7,9 +7,6 @@ import Refresh from "@msn/main/Refresh.vue";
 import Index from '@msn/core/index/index.vue'
 import {createRouter, createWebHashHistory} from 'vue-router'
 
-// 用来处理组件缓存(KeepAlive)
-const KeepAliveMaps = {};
-
 // 主页路由名称            // 首页路径
 const MainName = "Main";
 
@@ -24,11 +21,13 @@ const router = createRouter({
                 {path:'/:chapters+', name: '404', component: NotFound, beforeEnter(to, from, next) {
                         let path = to.path;
                         let init = store.getters["sys/init"];
-                        if(!init) {
-                            // 先移除任务
+                        // 用来处理整个页面刷新时, 动态菜单还没有生成路由报404的问题
+                        if(!init) { // 判断当前系统是否初始化, 如果没有初始化则监听初始化状态
+                            // 先移除任务, 用来把首页放在任务栏第一个位置
                             store.commit('sys/removeTask', path);
                             init = computed(() => store.getters["sys/init"]);
                             watch(init, (val) => {
+                                // 系统初始化完成之后, 跳到刷新时所在的页面
                                 let urlMenuMaps = store.getters['sys/urlMenuMaps'];
                                 let menu = urlMenuMaps[path];
                                 if(menu) { // 当前url对应的菜单, 如果存在激活
@@ -55,6 +54,7 @@ const router = createRouter({
  * 1. 切换路由时同步切换任务栏
  */
 router.beforeEach((to, form, next) => {
+    // 刷新页面不放到任务栏, 只做页面中转处理
     if(to.name != 'refresh') {
         store.commit('sys/openOrSwitchTask', to)
     }
@@ -62,7 +62,8 @@ router.beforeEach((to, form, next) => {
     next();
 });
 
-
+// 用来处理组件缓存(KeepAlive)
+const KeepAliveMaps = {};
 // 动态菜单生成路由
 function importLocale(path, menu) {
     return () => {

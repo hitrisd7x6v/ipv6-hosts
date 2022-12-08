@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import {provide} from 'vue'
+import {provide, ref} from 'vue'
 import {mapGetters, useStore} from "vuex";
 import LayoutSider from "@msn/main/LayoutSider.vue";
 import LayoutHeader from "@msn/main/LayoutHeader.vue";
@@ -59,6 +59,9 @@ export default {
      * @param value 必须为 null
      */
     provide(ViewContextKey, null);
+
+    let aliveComponents = ref([]);
+    return {aliveComponents};
   },
 
   computed: {
@@ -75,13 +78,11 @@ export default {
   },
   methods: {
     // 刷新功能
-    reload(menu) {
-      let keepAlive = this.$route.meta.keepAlive;
-      this.$route.meta.keepAlive = null;
+    reload(route) {
+      let keepAlive = route.meta.keepAlive;
+      route.meta.keepAlive = null;
       this.$router.push('/refresh').then(() => {
-        this.$nextTick().then(() => {
-          this.$route.meta.keepAlive = keepAlive;
-        })
+        route.meta.keepAlive = keepAlive;
       })
     }
   }

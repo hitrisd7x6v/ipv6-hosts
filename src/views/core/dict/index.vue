@@ -6,7 +6,7 @@
     </IvzPrimarySearch>
     <IvzPrimaryTable :columns="columns" size="small" :bordered="true">
       <template #c_type="{text}">
-        <a @click="$router.push({path: '/dict/data', query: {type: text}})">{{text}}</a>
+        <router-link :to="{path: '/dict/data', query: {type: text}}">{{text}}</router-link>
       </template>
     </IvzPrimaryTable>
     <IvzPrimaryModal :rules="rules" title="字典管理" :span="[6, 16]">
