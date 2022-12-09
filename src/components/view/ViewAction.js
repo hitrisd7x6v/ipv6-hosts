@@ -306,6 +306,10 @@ export function $View(context) {
         })
     }
 
+    this.detail = function (url) {
+
+    }
+
     /**
      * 隐藏主编辑框
      */
@@ -422,6 +426,20 @@ export function $View(context) {
     }
 
     /**
+     * 通过前缀获取搜索上下文
+     * @param prefix
+     * @return {SearchContext}
+     */
+    this.getSearchContextByPrefix = function (prefix) {
+        let context = this.context.getContextByPrefix(prefix);
+        if(context instanceof SearchContext) {
+            return context;
+        } else {
+            return console.warn(`未声明前缀为[${prefix}]的搜索组件`)
+        }
+    }
+
+    /**
      * @param id 元素的唯一id 如果空将返回主编辑上下文对象
      * @return {EditContext|*}
      */
@@ -440,6 +458,20 @@ export function $View(context) {
         }
 
         return this.context.primaryEditContext;
+    }
+
+    /**
+     * 通过前缀获取编辑上下文
+     * @param prefix
+     * @return {EditContext}
+     */
+    this.getEditContextByPrefix = function (prefix) {
+        let context = this.context.getContextByPrefix(prefix);
+        if(context instanceof EditContext) {
+            return context;
+        } else {
+            return console.warn(`未声明前缀为[${prefix}]的编辑组件`)
+        }
     }
 
     /**
@@ -464,6 +496,20 @@ export function $View(context) {
     }
 
     /**
+     * 通过前缀获取表上下文
+     * @param prefix
+     * @return {TableContext}
+     */
+    this.getTableContextByPrefix = function (prefix) {
+        let context = this.context.getContextByPrefix(prefix);
+        if(context instanceof TableContext) {
+            return context;
+        } else {
+            return console.warn(`未声明前缀为[${prefix}]的表组件`)
+        }
+    }
+
+    /**
      * @param id 元素的唯一id 如果空将返回主详情上下文对象
      * @return {DetailContext|*}
      */
@@ -484,6 +530,19 @@ export function $View(context) {
         return this.context.primaryDetailContext;
     }
 
+    /**
+     * 通过前缀获取详情上下文
+     * @param prefix
+     * @return {DetailContext}
+     */
+    this.getDetailContextByPrefix = function (prefix) {
+        let context = this.context.getContextByPrefix(prefix);
+        if(context instanceof DetailContext) {
+            return context;
+        } else {
+            return console.warn(`未声明前缀为[${prefix}]的详情组件`)
+        }
+    }
 }
 
 /**
@@ -515,6 +574,8 @@ export function FuncMetaContext(editFunMetas, tableFunMetas, searchFunMetas) {
  * @constructor
  */
 export function SearchContext(viewContext) {
+    // 用于关联各个组件(表格、编辑、详情)
+    this.prefix = '';
     // 是否是主上下文
     this.isPrimary = false;
     // 查询地址
@@ -540,6 +601,9 @@ export function SearchContext(viewContext) {
  * @constructor
  */
 export function EditContext(viewContext) {
+    // 用于关联各个组件(搜索、表格、详情)
+    this.prefix = '';
+
     // 是否是主上下文
     this.isPrimary = false;
 
@@ -617,6 +681,9 @@ export function EditContext(viewContext) {
  * @constructor
  */
 export function TableContext(viewContext) {
+    // 用于关联各个组件(搜索、编辑、详情)
+    this.prefix = '';
+
     // 是否是主上下文
     this.isPrimary = false;
     // 在使用IvzFuncTag#data组件时, 将可以获取该值
@@ -718,6 +785,9 @@ export function TableContext(viewContext) {
  * @constructor
  */
 export function DetailContext(viewContext) {
+    // 用于关联各个组件(搜索、编辑、表格)
+    this.prefix = '';
+
     // 是否是主上下文
     this.isPrimary = false;
 
@@ -742,8 +812,6 @@ export function ViewContext () {
     this.primaryDetailContext = new DetailContext(this);
     this.primarySearchContext = new SearchContext(this);
 
-
-
     /**
      * 获取元数的id获取对应上下文
      * @param id
@@ -751,6 +819,15 @@ export function ViewContext () {
      */
     this.getContextById = function (id) {
         return this.IdContextMaps[id];
+    }
+
+    /**
+     * 获取上下文通过指定的前缀
+     * @param prefix
+     * @return {EditContext | TableContext | SearchContext | DetailContext}
+     */
+    this.getContextByPrefix = function (prefix) {
+        return Object.values(this.IdContextMaps).find(item => item.prefix == prefix);
     }
 
     /**
@@ -762,6 +839,10 @@ export function ViewContext () {
         if(id && context) {
             if(!this.IdContextMaps[id]) {
                 this.IdContextMaps[id] = context;
+                let idSplit = id.split(":"); // demo:table 将demo作为上下文对象的前缀
+                if(idSplit.length == 2) {
+                    context.prefix = idSplit[0];
+                }
             } else {
 
             }

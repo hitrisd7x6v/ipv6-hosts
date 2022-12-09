@@ -1,5 +1,5 @@
-import {defineComponent, inject, ref} from "vue";
-import {ViewContextKey} from "@/utils/ProvideKeys";
+import {defineComponent, inject, provide, ref} from "vue";
+import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {EditContext} from "@/components/view/ViewAction";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 
@@ -63,6 +63,7 @@ export default defineComponent({
             }
         }
 
+        provide(FuncContextKey, editContext);
         return {formRef, spinning, spinTip, visible, labelCol, wrapperCol, titleSlots, editContext}
     },
     render() {

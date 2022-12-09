@@ -7,24 +7,26 @@
 </template>
 <!-- 基础搜索组件 -->
 <script>
-import {inject} from "vue";
+import {inject, provide} from "vue";
 import IvzForm from "@/components/form/basic/IvzForm";
-import {ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {SearchContext} from "@/components/view/ViewAction";
 
 export default {
   name: "IvzBasicSearch",
   components: {IvzForm},
-  props: { },
+  props: {
+    primary: {type: Boolean}
+  },
   setup(props, {attrs}) {
-    let searchContext = {};
     let viewContext = inject(ViewContextKey);
+    let searchContext = new SearchContext(viewContext);
 
     if(viewContext) {
-      let primary = attrs.primary;
-      if(primary == '' || primary == true) {
+      if(props.primary) {
         let primaryContext = viewContext["primarySearchContext"];
         if(primaryContext.isPrimary) {
-          console.warn("当前视图页已经包含主搜索[primary]组件")
+          console.warn("当前视图页已经包含标识[primary]的搜索组件")
         } else {
           searchContext = primaryContext;
           searchContext.isPrimary = true; // 标记是主上下文
@@ -32,11 +34,11 @@ export default {
       }
     }
 
+    provide(FuncContextKey, searchContext);
     return {searchContext}
   },
   created() {
-    let context = this.searchContext;
-    context['getFormContext'] = this.getFormContext;
+    this.searchContext['getFormContext'] = this.getFormContext;
   },
   methods: {
 

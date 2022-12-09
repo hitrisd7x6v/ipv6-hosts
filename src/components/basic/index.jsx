@@ -1,6 +1,7 @@
-import {defineComponent, mergeProps, provide, ref} from "vue";
-import {RowContextKey} from "@/utils/ProvideKeys";
+import {defineComponent, inject, mergeProps, provide, ref} from "vue";
+import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
 import {msgError} from "@/utils/message";
+import {EditContext, SearchContext} from "@/components/view/ViewAction";
 
 export const IvzRow = defineComponent({
     name: 'IvzRow',
@@ -56,7 +57,8 @@ const typeMaps = {
     EDIT: {type: '#3b5999'},
     VIEW: {type: 'primary'},
     IMPORT: {type: 'default'},
-    EXPORT: 'orange',
+    EXPORT: {type: 'orange'},
+    EXPAND: {type: 'primary', ghost: true},
     CANCEL: {type: 'default'},
     DETAIL: {type: '#87d068'},
     RESET: {type: 'primary', ghost: true},
@@ -64,11 +66,51 @@ const typeMaps = {
     SUBMIT: {type: 'primary'}
 }
 
+/**
+ * 功能按钮, 可以指定url, 功能类型
+ * 注：只适用于编辑组件包括不限于(搜索组件, 编辑组件)等编辑组件
+ * @type {DefineComponent<{func: {default: string, type: StringConstructor}, meta: {default: (function(): {}), type: ObjectConstructor}, url: {type: StringConstructor}}, unknown, unknown, {typeCompute(): *}, {}, ComponentOptionsMixin, ComponentOptionsMixin, Record<string, any>, string>}
+ */
 export const IvzFuncBtn = defineComponent({
     name: 'IvzFuncBtn',
     props: {
-        meta: {type: Object, default: function () { return {} }},
+        url: {type: String}, // 功能地址
         func: {type: String, default: 'default'},  // add, del, edit, query, import, export, cancel, detail, reset
+    },
+    setup(props) {
+        let context = inject(FuncContextKey);
+        let clickProxy = {onClick: (e) => {
+            // if(context != null) {
+            //     let func = props.func.toUpperCase();
+            //     if(context.isPrimary) { // 使用默认操作
+            //         switch (func) {
+            //             case 'ADD': return context.get$View().openForAdd();
+            //             case "DEL": return context.get$View().del(props.url, null);
+            //             case "EDIT": return context.get$View().openForEdit(props.url, null);
+            //             case "VIEW": return context.get$View().query(props.url);
+            //             case "CANCEL": return context.get$View().cancel();
+            //             case "RESET":
+            //                 if(context instanceof EditContext) {
+            //                     return context.get$View().resetEditModel();
+            //                 } else if(context instanceof SearchContext) {
+            //                     return context.get$View().resetSearchModel();
+            //                 } else {
+            //                     return console.error("错误的编辑模型");
+            //                 }
+            //             case "DETAIL": return context.get$View().detail(props.url);
+            //             case "SUBMIT": return context.get$View().submit(props.url);
+            //             case "EXPAND": return context.get$View().expanded(); // 展开所有行
+            //             default: console.error(`不支持的功能类型[${props.func}]`)
+            //         }
+            //     } else if(context.prefix){ // 各个组件操作
+            //
+            //     } else {
+            //         console.error(`不支持的操作[${props.func}]`)
+            //     }
+            // }
+          }
+        }
+        return {clickProxy, context};
     },
     computed: {
         typeCompute() {
@@ -76,12 +118,15 @@ export const IvzFuncBtn = defineComponent({
         }
     },
     render() {
-        let type = typeMaps[this.typeCompute];
-        let props = mergeProps(type, this.meta.props, this.$attrs);
-        return <a-button {...props} v-slots={this.$slots} style="margin: 0px 3px"></a-button>
-    },
-    methods: {
+        let type = typeMaps[this.typeCompute], props;
+        // 如果自定义单击事件, 不做处理
+        if(this.$attrs.onClick instanceof Function) {
+            props = mergeProps(type, this.$attrs);
+        } else { // 使用代理单击事件
+            props = mergeProps(type, this.clickProxy, this.$attrs);
+        }
 
+        return <a-button {...props} v-slots={this.$slots} style="margin: 0px 3px"/>
     }
 })
 

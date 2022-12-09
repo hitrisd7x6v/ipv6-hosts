@@ -15,7 +15,7 @@ export default defineComponent({
             let funcBtn = [];
             funMetas.forEach(meta => {
                 initMetaCallback(meta, viewInfo, 'edit');
-                funcBtn.push(<IvzFuncBtn func={meta.field} meta={meta}>{meta.name}</IvzFuncBtn>)
+                funcBtn.push(<IvzFuncBtn {...meta.props} func={meta.field}>{meta.name}</IvzFuncBtn>)
             })
 
             funcBtnRef.value = funcBtn;

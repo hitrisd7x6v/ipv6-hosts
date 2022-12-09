@@ -35,7 +35,7 @@
           <slot name="fun" :metas="funMetas" :model="model">
             <a-space style="text-align: center; padding: 0px 16px">
               <template v-for="meta in funMetas" :key="meta.field">
-                <IvzFuncBtn :func="meta.field" :meta="meta">{{meta.name}}</IvzFuncBtn>
+                <IvzFuncBtn :func="meta.field" :type="meta.props.type" @click="meta.props.onClick">{{meta.name}}</IvzFuncBtn>
               </template>
             </a-space>
           </slot>
@@ -50,26 +50,27 @@
 import {DownOutlined, HomeFilled} from '@ant-design/icons-vue'
 import IvzForm from "@/components/form/basic/IvzForm";
 import {mapMutations, useStore} from "vuex";
-import {inject} from "vue";
-import {ViewContextKey} from "@/utils/ProvideKeys";
+import {inject, provide} from "vue";
+import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {SearchContext} from "@/components/view/ViewAction";
 
 export default {
   name: "IvzBreadSearch",
   components: {IvzForm, DownOutlined, HomeFilled},
   props: {
+    primary: {type: Boolean},
     funMetas: {type: Array, default: () => []},
   },
   setup(props, {attrs}) {
     let activityMenu = useStore().getters['sys/activityMenu'];
     let breadcrumb = useStore().getters['sys/resolverBreadcrumb'];
 
-    let searchContext = {};
     let activityId = activityMenu.id;
     let viewContext = inject(ViewContextKey);
+    let searchContext = new SearchContext(viewContext);
 
     if(viewContext) {
-      let primary = attrs.primary;
-      if(primary == '' || primary == true) {
+      if(props.primary) {
         let primaryContext = viewContext["primarySearchContext"];
         if(primaryContext.isPrimary) {
           console.warn("当前视图页已经包含主搜索[primary]组件")
@@ -80,11 +81,11 @@ export default {
       }
     }
 
+    provide(FuncContextKey, searchContext);
     return {breadcrumb, activityId, searchContext}
   },
   created() {
-    let context = this.searchContext;
-    context['getFormContext'] = this.getFormContext;
+    this.searchContext['getFormContext'] = this.getFormContext;
   },
   methods: {
     ...mapMutations({
