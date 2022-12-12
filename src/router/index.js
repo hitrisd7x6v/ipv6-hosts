@@ -55,7 +55,8 @@ const router = createRouter({
  */
 router.beforeEach((to, form, next) => {
     // 刷新页面不放到任务栏, 只做页面中转处理
-    if(to.name != 'refresh') {
+    // 登录页面不放到任务栏
+    if(to.name != 'refresh' && to.path != '/login') {
         store.commit('sys/openOrSwitchTask', to)
     }
 

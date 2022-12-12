@@ -17,7 +17,6 @@ const IvzIcon = createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_1174643_moy3ilu84wm.js',
 });
 
-
 // 开发环境需要导入的库文件
 if(import.meta.env.DEV) {
     import('ant-design-vue/dist/antd.css')

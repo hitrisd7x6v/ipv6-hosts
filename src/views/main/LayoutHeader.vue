@@ -262,7 +262,7 @@ export default {
   color: #3e3e3e;
 }
 .ant-tabs-tab-active .ivz-tba-reload {
-  top: 9px;
+  top: 7px;
   left: -4px;
   position: absolute;
   display: inline-block;
@@ -285,8 +285,8 @@ export default {
 
 }
 .ivz-task-bar .ant-tabs-nav-container,iz-task-more-opera,.ivz-task-bar .ant-tabs-tab {
-  height: 36px!important;
-  line-height: 39px!important;
+  height: 34px!important;
+  line-height: 36px!important;
 }
 .ivz-task-bar .ant-tabs-nav-container .ant-tabs-nav-wrap {
   margin-top: 0px;

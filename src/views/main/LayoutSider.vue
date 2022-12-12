@@ -1,6 +1,6 @@
 <template>
-  <a-layout-sider class="ivz-sider" :width="252" :trigger="null"
-      v-model:collapsed="collapsed" collapsible :collapsedWidth="72">
+  <a-layout-sider class="ivz-sider" :width="232" :trigger="null"
+      v-model:collapsed="collapsed" collapsible :collapsedWidth="62">
     <div class="ivz-logo" @click="collapsedHandle">
       <div class="ivz-logo-c">
         <a-avatar :size="48" src="/img/logo.png"></a-avatar>
@@ -107,6 +107,6 @@ export default {
   font-size: 18px!important;
 }
 .ivz-sider-menu .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
-  padding: 0px 27px!important;
+  padding: 0px 22px!important;
 }
 </style>

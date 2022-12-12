@@ -197,12 +197,20 @@ const registerSysModule = function (store) {
             },
             openOrSwitchTask: (state, route) => {
                 let path = route.path;
+                // 首页(工作台)作为第一个任务
+                if(state.taskBarData.length == 0 && route.path != '/') {
+                    return router.push('/').then(() => {
+                        router.push(route).finally()
+                    })
+                }
+
                 if(!state.urlRouteMaps[path]) {
                     state.taskBarData.push(route);
                 }
 
                 state.activeRoute = route;
                 state.urlRouteMaps[path] = route;
+                store.commit('sys/switchActiveMenuTo', path)
             },
             setRouteKeepAlive: (state, {url, componentName}) => {
                 let urlRoute = state.urlRouteMaps[url];
@@ -214,21 +222,16 @@ const registerSysModule = function (store) {
                 state.activeRoute = route;
             },
             // 切换激活的菜单
-            switchActiveMenuTo: (state, urlOrMenu) => {
-                let menu = urlOrMenu;
-                if(typeof menu == 'string') {
-                    menu = state.urlMenuMaps[urlOrMenu];
-                }
+            switchActiveMenuTo: (state, url) => {
+                let menu = state.urlMenuMaps[url];
 
-                if(menu != state.activeMenu) {
+                if(menu) {
                     state.activeMenu = menu;
 
-                    // 说明是侧边栏的菜单, 选中
-                    // 通过方法addNewTask新增非侧边栏菜单
-                    if(menu.isMenu != false) {
-                        state.selectedKeys.length = 0;
-                        state.selectedKeys.push(menu.url);
-                    }
+                    state.selectedKeys.length = 0;
+                    state.selectedKeys.push(menu.url);
+                } else {
+                    state.selectedKeys.length = 0;
                 }
             },
 

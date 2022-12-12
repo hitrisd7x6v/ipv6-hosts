@@ -43,9 +43,6 @@ export default {
       throw new Error(`IvzMenuView组件必须依赖于当前激活的菜单(功能点是通过菜单自动生成), 当前激活菜单为[null]`);
     }
 
-    // 切换激活菜单当前菜单
-    useStore().commit('sys/switchActiveMenuTo', viewMenu);
-
     // 注册当前菜单信息到视图列表
     useStore().commit('view/registerPageView', viewMenu);
     let viewInfo = useStore().getters['view/pageViewData'](url);
