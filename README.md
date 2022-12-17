@@ -1,4 +1,57 @@
-### ivzone2.0更新说明([预览地址 _【数据全部用mock模拟】_ ](http://ivzone.iteaj.com/#/))
+### 如何优雅、简洁、灵活的实现一个通用的增删改查功能
+```
+<template>
+  <IvzBasicView>
+    <IvzBasicSearch primary>
+      <IvzInput field="name" label="茶叶名称"/>
+      <AButton type="primary" @click="query">查询</AButton>&nbsp;
+      <AButton @click="add">新增</AButton>
+    </IvzBasicSearch>
+    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+      <template #c_action="{record}">
+        <ATag color="blue" @click="add">新增</ATag>
+        <ATag color="red" @click="() => del(record)">删除</ATag>
+      </template>
+    </IvzBasicTable>
+    <IvzBasicModal primary>
+      <IvzInput field="name" label="茶叶名称"/>
+      <template #title="{model}">
+        {{model.id ? '编辑产品' : '新增产品'}}
+      </template>
+    </IvzBasicModal>
+  </IvzBasicView>
+</template>
+
+<script>
+export default {
+  name: "Demo",
+  setup() {
+    let columns = [
+      {field: 'name', title: '产品名称'},
+      {field: 'type', title: '产品类型'},
+      {field: 'action', type:'action', title: '操作'},
+    ]
+    let dataSource = [
+      {id: 1, name: '清香秋茶', type: '清香型'}
+    ]
+    return {columns, dataSource}
+  },
+  methods: {
+    add() {
+      this.$view.openForAdd();
+    },
+    del(row) {
+      this.$view.del('/product/del', [row.id]);
+    },
+    query() {
+      this.$view.query('/product/list');
+    }
+  }
+}
+</script>
+```
+
+ivzone2.0更新说明([预览地址 _【数据全部用mock模拟】_ ](http://ivzone.iteaj.com/#/))
 ivzone2.0基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4, 此次更新不兼容1.0版本，是重新出发重新整理的一个版本，使用单页面架构(spa). 此版本对antd2的一些常用组件进行了简易封装比如：表格，表单。并且提供了增删改查视图页组件，模态框编辑框组件以及其他组件；在后续将会提供更多的简单方便且灵活的组件。还有此版本是一个纯前端版， 没有和任何后端集成，基于java后端的集成版本还在开发适配中
 ###  **核心思想** 
 1. 约定大于配置
