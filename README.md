@@ -1,7 +1,7 @@
 ### ivzone通用后台管理模板库([预览地址 _【数据全部用mock模拟】_ ](http://ivzone.iteaj.com/#/)) 
-它基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4开发的一套后台模板，并且包含一套通用的增删改查组件库，此组件库具有 实现优雅、代码简洁、通俗易懂、开发效率高、代码量减少30%+等优点
+它基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4开发的一套后台模板，并且包含一套通用的增删改查组件库，此组件库具有 实现优雅、代码简洁、通俗易懂、开发效率高、代码量减少30%+等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动)
 
-### 如何优雅、简洁、灵活的实现一个通用的增删改查功能
+#### 如何优雅、简洁、灵活的实现一个通用的增删改查功能
 ```
 <template>
   <IvzBasicView>
@@ -41,22 +41,20 @@ export default {
   },
   methods: {
     add() {
-      this.$view.openForAdd();
+      this.$view.openForAdd(); // 打开一个新增的模态框
     },
     del(row) {
-      this.$view.del('/product/del', [row.id]);
+      this.$view.del('/product/del', [row.id]); // 删除某一行
     },
     query() {
-      this.$view.query('/product/list');
+      this.$view.query('/product/list'); // 查询列表
     }
   }
 }
 </script>
 ```
 
-ivzone2.0更新说明([预览地址 _【数据全部用mock模拟】_ ](http://ivzone.iteaj.com/#/))
-ivzone2.0基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4, 此次更新不兼容1.0版本，是重新出发重新整理的一个版本，使用单页面架构(spa). 此版本对antd2的一些常用组件进行了简易封装比如：表格，表单。并且提供了增删改查视图页组件，模态框编辑框组件以及其他组件；在后续将会提供更多的简单方便且灵活的组件。还有此版本是一个纯前端版， 没有和任何后端集成，基于java后端的集成版本还在开发适配中
-###  **核心思想** 
+####  **核心思想** 
 1. 约定大于配置
 2. 组件高内聚
 3. 重用inject和provide
