@@ -4,19 +4,19 @@
 #### 如何优雅、简洁、灵活的实现一个通用的增删改查功能
 ```
 <template>
-  <IvzBasicView>
-    <IvzBasicSearch primary>
+  <IvzBasicView> // 基础视图页面
+    <IvzBasicSearch primary> // 基础搜索组件
       <IvzInput field="name" label="茶叶名称"/>
       <AButton type="primary" @click="query">查询</AButton>&nbsp;
       <AButton @click="add">新增</AButton>
-    </IvzBasicSearch>
+    </IvzBasicSearch> // 基础表组件
     <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
       <template #c_action="{record}">
         <ATag color="blue" @click="add">新增</ATag>
         <ATag color="red" @click="() => del(record)">删除</ATag>
       </template>
     </IvzBasicTable>
-    <IvzBasicModal primary>
+    <IvzBasicModal primary>// 基础模态框编辑组件
       <IvzInput field="name" label="茶叶名称"/>
       <template #title="{model}">
         {{model.id ? '编辑产品' : '新增产品'}}
@@ -40,6 +40,7 @@ export default {
     return {columns, dataSource}
   },
   methods: {
+    // 默认实现的通用增删改查接口
     add() {
       this.$view.openForAdd(); // 打开一个新增的模态框
     },
@@ -48,7 +49,8 @@ export default {
     },
     query() {
       this.$view.query('/product/list'); // 查询列表
-    }
+    },
+//    ... edit,cancel,submit等等
   }
 }
 </script>
@@ -56,6 +58,7 @@ export default {
 
 ####  **核心思想** 
 1. 约定大于配置
+* 拥有一套默认实现的增删改查api
 2. 组件高内聚
 3. 重用inject和provide
 ### 核心功能
