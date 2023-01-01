@@ -1,7 +1,7 @@
-### ivzone是一套基于vue3+antdv2实现的通用增删改查组件库([预览地址 _【数据全部用mock模拟】_ ](http://ivzone.iteaj.com/#/)) 
-它颠覆对增删改查模板的开发体验和使用方式,基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4最新技术，具有实现优雅、代码简洁、通俗易懂、开发效率高、代码量减少30%+等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动)，并提供一套后台管理常用功能模板(用户，角色，菜单，字典，机构，配置等)的实现（ _**相信会爱上它的**_ ）
+### ivzone是一套基于vue3+antdv2实现的通用增删改查组件库([预览地址 mock数据模拟](http://ivzone.iteaj.com/#/)) 
+它颠覆对增删改查模板的开发体验和使用方式,基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4最新技术，具有实现优雅、代码简洁、通俗易懂、开发效率高、代码量减少30%+等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动)，并提供一套后台管理常用功能模板(用户，角色，菜单，字典，机构，配置等)的实现（ _**会爱上它的**_ ）
 
-#### 如何优雅、简洁、灵活的实现一个通用的增删改查功能
+#### 优雅、简洁、灵活的实现一个通用的增删改查功能
 ```
 <template>
   <IvzBasicView> // 基础视图页面
@@ -55,7 +55,52 @@ export default {
 }
 </script>
 ```
+#### 其实还能更优雅、更简洁
+```
+<template>
+  <IvzBasicView> // 基础视图页面
+    <IvzBasicSearch primary> // 基础搜索组件
+      <IvzInput field="name" label="茶叶名称"/>
+      <IvzFuncBtn func='view' url='/product/list'>查询</AButton>&nbsp;
+      <IvzFuncBtn func="add">新增</AButton>
+    </IvzBasicSearch> // 基础表组件
+    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+      <template #c_action="{record}">
+        <IvzFuncTag func='add'>新增</ATag>
+        <IvzFuncTag func="del" url='/product/del'>删除</ATag>
+      </template>
+    </IvzBasicTable>
+    <IvzBasicModal primary>// 基础模态框编辑组件
+      <IvzInput field="name" label="茶叶名称"/>
+      <template #title="{model}">
+        {{model.id ? '编辑产品' : '新增产品'}}
+      </template>
+      <template #footer>
+        <IvzFuncBtn func='cancel'>取消</IvzFuncBtn>
+        <IvzFuncBtn func='submit' url='/product/add'>提交</IvzFuncBtn>
+        <IvzFuncBtn func='reset'>重置</IvzFuncBtn>
+      </template>
+    </IvzBasicModal>
+  </IvzBasicView>
+</template>
 
+<script>
+export default {
+  name: "Demo",
+  setup() {
+    let columns = [
+      {field: 'name', title: '产品名称'},
+      {field: 'type', title: '产品类型'},
+      {field: 'action', type:'action', title: '操作'},
+    ]
+    let dataSource = [
+      {id: 1, name: '清香秋茶', type: '清香型'}
+    ]
+    return {columns, dataSource}
+  }
+}
+</script>
+```
 ####  **核心思想** 
 ##### 约定大于配置
 1. 约定一个功能页面包含大于0 的增删改查组件，并将组件划分和关联
