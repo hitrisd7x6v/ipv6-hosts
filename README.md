@@ -66,8 +66,8 @@ export default {
     </IvzBasicSearch> // 基础表组件
     <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
       <template #c_action="{record}">
-        <IvzFuncTag func='add'>新增</ATag>
-        <IvzFuncTag func="del" url='/product/del'>删除</ATag>
+        <IvzFuncTag func='add'>新增</IvzFuncTag>
+        <IvzFuncTag func="del" url='/product/del'>删除</IvzFuncTag>
       </template>
     </IvzBasicTable>
     <IvzBasicModal primary>// 基础模态框编辑组件
@@ -107,7 +107,9 @@ export default {
 2. 约定每个页面可能包含 增、删、改、查、导入、导出、删除、重置、取消、展开、提交的某几个功能
 3. 约定通用功能的实现逻辑具有通用性(比如提交表单的逻辑是先校验表单然后提交到后台，如果提交失败提示失败信息，如果成功关闭编辑框并且刷新列表) 
 4. 约定某些组件的层级关系, 比如组件IvzBasicTable必须作为IvzBasicView的子组件, 且IvzBasicView必须做顶级组件
-##### 重用inject和provide
+##### 灵活(只做增强不做限制)
+1. api灵活：除了使用默认已经实现的api外，所有的功能都可以按照往常的方式开发
+2. 布局灵活：可以对组件实现任意布局, 不会因为通用而丧失布局的灵活性
 
 ### 核心功能
 1. 是一套简易美观的基础功能框架(基于antd2的ui组件库)，基本可以开箱即用
