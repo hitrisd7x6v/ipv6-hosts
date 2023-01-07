@@ -1,9 +1,117 @@
-### ivzone2.0更新说明([预览地址 _【数据全部用mock模拟】_ ](http://ivzone.iteaj.com/#/))
-ivzone2.0基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4, 此次更新不兼容1.0版本，是重新出发重新整理的一个版本，使用单页面架构(spa). 此版本对antd2的一些常用组件进行了简易封装比如：表格，表单。并且提供了增删改查视图页组件，模态框编辑框组件以及其他组件；在后续将会提供更多的简单方便且灵活的组件。还有此版本是一个纯前端版， 没有和任何后端集成，基于java后端的集成版本还在开发适配中
-###  **核心思想** 
-1. 约定大于配置
-2. 组件高内聚
-3. 重用inject和provide
+### ivzone是一套基于vue3+antdv2实现的通用增删改查组件库([预览地址 mock数据模拟](http://ivzone.iteaj.com/#/))
+1. 它颠覆对增删改查模板的开发体验和使用方式,基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4最新技术，具有实现优雅、代码简洁、通俗易懂、开发效率高、代码量减少30%+等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动，只做增强不做限制)
+2. 并提供一套后台管理常用功能模板(用户，角色，菜单，字典，机构，配置等)的实现
+3. _**相信你会爱上它的**_ 
+#### 优雅、简洁、灵活的实现一个通用的增删改查功能
+```
+<template>
+  <IvzBasicView> // 基础视图页面
+    <IvzBasicSearch primary> // 基础搜索组件
+      <IvzInput field="name" label="茶叶名称"/>
+      <AButton type="primary" @click="query">查询</AButton>&nbsp;
+      <AButton @click="add">新增</AButton>
+    </IvzBasicSearch> // 基础表组件
+    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+      <template #c_action="{record}">
+        <ATag color="blue" @click="add">新增</ATag>
+        <ATag color="red" @click="() => del(record)">删除</ATag>
+      </template>
+    </IvzBasicTable>
+    <IvzBasicModal primary>// 基础模态框编辑组件
+      <IvzInput field="name" label="茶叶名称"/>
+      <template #title="{model}">
+        {{model.id ? '编辑产品' : '新增产品'}}
+      </template>
+    </IvzBasicModal>
+  </IvzBasicView>
+</template>
+
+<script>
+export default {
+  name: "Demo",
+  setup() {
+    let columns = [
+      {field: 'name', title: '产品名称'},
+      {field: 'type', title: '产品类型'},
+      {field: 'action', type:'action', title: '操作'},
+    ]
+    let dataSource = [
+      {id: 1, name: '清香秋茶', type: '清香型'}
+    ]
+    return {columns, dataSource}
+  },
+  methods: {
+    // 默认实现的通用增删改查接口
+    add() {
+      this.$view.openForAdd(); // 打开一个新增的模态框
+    },
+    del(row) {
+      this.$view.del('/product/del', [row.id]); // 删除某一行
+    },
+    query() {
+      this.$view.query('/product/list'); // 查询列表
+    },
+//    ... edit,cancel,submit等等
+  }
+}
+</script>
+```
+#### 其实还能更优雅、更简洁
+```
+<template>
+  <IvzBasicView> // 基础视图页面
+    <IvzBasicSearch primary> // 基础搜索组件
+      <IvzInput field="name" label="茶叶名称"/>
+      <IvzFuncBtn func='view' url='/product/list'>查询</AButton>&nbsp;
+      <IvzFuncBtn func="add">新增</AButton>
+    </IvzBasicSearch> // 基础表组件
+    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+      <template #c_action="{record}">
+        <IvzFuncTag func='add'>新增</IvzFuncTag>
+        <IvzFuncTag func="del" url='/product/del'>删除</IvzFuncTag>
+      </template>
+    </IvzBasicTable>
+    <IvzBasicModal primary>// 基础模态框编辑组件
+      <IvzInput field="name" label="茶叶名称"/>
+      <template #title="{model}">
+        {{model.id ? '编辑产品' : '新增产品'}}
+      </template>
+      <template #footer>
+        <IvzFuncBtn func='cancel'>取消</IvzFuncBtn>
+        <IvzFuncBtn func='submit' url='/product/add'>提交</IvzFuncBtn>
+        <IvzFuncBtn func='reset'>重置</IvzFuncBtn>
+      </template>
+    </IvzBasicModal>
+  </IvzBasicView>
+</template>
+
+<script>
+export default {
+  name: "Demo",
+  setup() {
+    let columns = [
+      {field: 'name', title: '产品名称'},
+      {field: 'type', title: '产品类型'},
+      {field: 'action', type:'action', title: '操作'},
+    ]
+    let dataSource = [
+      {id: 1, name: '清香秋茶', type: '清香型'}
+    ]
+    return {columns, dataSource}
+  }
+}
+</script>
+```
+####  **核心思想** 
+##### 约定大于配置
+1. 约定一个功能页面包含大于0 的增删改查组件，并将组件划分和关联
+2. 约定每个页面可能包含 增、删、改、查、导入、导出、删除、重置、取消、展开、提交的某几个功能
+3. 约定通用功能的实现逻辑具有通用性(比如提交表单的逻辑是先校验表单然后提交到后台，如果提交失败提示失败信息，如果成功关闭编辑框并且刷新列表) 
+4. 约定某些组件的层级关系, 比如组件IvzBasicTable必须作为IvzBasicView的子组件, 且IvzBasicView必须做顶级组件
+##### 灵活(只做增强不做限制)
+1. api灵活：除了使用默认已经实现的api外，所有的功能都可以按照往常的方式开发
+2. 布局灵活：可以对组件实现任意布局, 不会因为通用而丧失布局的灵活性
+
 ### 核心功能
 1. 是一套简易美观的基础功能框架(基于antd2的ui组件库)，基本可以开箱即用
 2. 提供一套增删改查组件，做了简单封装，使用简单灵活，代码量降低30%+
@@ -18,8 +126,7 @@ ivzone2.0基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4, 此次更新不兼容1.
 11. 不依赖于后台框架的使用语言(java, php, c#等)， 友好的声明api接口和字段，可以方便的对接任何后台
 ### 增删改查视图组件
   将通用的，常用的，简单的一些操作合并到一个组件里面且提供完整的增删改查功能。对于每个通用的增删改查功能，最大的不同点在于操作的url不同，需要的功能点不同，所以我们只需要将每个功能点交由开发人员定义。下面主要是两个常用的增删改查视图组件的实现，先直观看一下菜单功能用增删改查组件的实现图片和对应的代码
-![输入图片说明](https://images.gitee.com/uploads/images/2021/0603/191912_c1cbc101_1230742.png "1622719064(1).png")
-![输入图片说明](https://images.gitee.com/uploads/images/2021/0603/201308_9df49df1_1230742.png "1622722329(1).png")
+
 #### IvzFuncView视图
 IvzFuncView组件时增删改查的一种实现方式，通过显式自定义功能点来实现，如下：
 
