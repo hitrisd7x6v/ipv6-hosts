@@ -184,128 +184,128 @@ const mergeMetaOfDefault = function (meta) {
 let callbackMaps = { }
 
 // 搜索按钮点击回调
-callbackMaps[FunMetaMaps.View] = (meta, viewInfo) => {
+callbackMaps[FunMetaMaps.View] = (meta, $view) => {
     meta.props.onClick = (e) => {
         if(meta.callback instanceof Function) {
-            let model = viewInfo.get$View().getEditModel();
-            meta.callback(model, meta, viewInfo);
+            let model = $view.getEditModel();
+            meta.callback(model, meta, $view);
         } else {
-            viewInfo.get$View().query(meta.url);
+            $view.query(meta.url);
         }
     }
 }
 // 取消按钮点击回调
-callbackMaps[FunMetaMaps.Cancel] = (meta, viewInfo, type) => {
+callbackMaps[FunMetaMaps.Cancel] = (meta, $view, type) => {
     meta.props.onClick = (e) => {
         if(meta.callback instanceof Function) {
             let model = null;
             if(type == 'edit') {
-                model = viewInfo.get$View().getEditModel();
+                model = $view.getEditModel();
             } else if(type == 'search') {
-                model = viewInfo.get$View().getSearchModel();
+                model = $view.getSearchModel();
             }
-            meta.callback(model, meta, viewInfo)
+            meta.callback(model, meta, $view)
         } else {
-            viewInfo.get$View().cancel();
+            $view.cancel();
         }
     }
 }
 // 提交表单点击回调
-callbackMaps[FunMetaMaps.Submit] = (meta, viewInfo) => {
+callbackMaps[FunMetaMaps.Submit] = (meta, $view) => {
     meta.props.onClick = (e) => {
-        let model = viewInfo.get$View().getEditModel();
+        let model = $view.getEditModel();
         if(meta.callback instanceof Function) {
-            meta.callback(model, meta, viewInfo)
+            meta.callback(model, meta, $view)
         } else {
-            let url = viewInfo.get$View().isEdit(model) ? meta['editUrl'] : meta['addUrl'];
+            let url = $view.isEdit(model) ? meta['editUrl'] : meta['addUrl'];
             // 将提交按钮设置为加载状态
             meta.props['loading'] = true;
-            viewInfo.get$View().submit(url)
-                .then(() => viewInfo.get$View().query())
+            $view.submit(url)
+                .then(() => $view.query())
                 // 取消加载按钮的加载状态
                 .finally(() => meta.props['loading'] = false);
         }
     }
 }
 // 新增按钮点击回调
-callbackMaps[FunMetaMaps.Add] = (meta, viewInfo) => {
+callbackMaps[FunMetaMaps.Add] = (meta, $view) => {
     meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
-            meta.callback(model, meta, viewInfo)
+            meta.callback(model, meta, $view)
         } else {
-            viewInfo.get$View().openForAdd();
+            $view.openForAdd();
         }
     }
 
 }
 // 编辑按钮点击回调
-callbackMaps[FunMetaMaps.Edit] = (meta, viewInfo) => {
+callbackMaps[FunMetaMaps.Edit] = (meta, $view) => {
     meta.props.onClick = (row) => {
         if(meta.callback instanceof Function) {
             meta.callback(row, meta)
         } else {
             let data = {};
-            let rowKey = viewInfo.get$View().getRowKey();
+            let rowKey = $view.getRowKey();
             data[rowKey] = row[rowKey];
-            viewInfo.get$View().openForEdit(meta.url, data)
+            $view.openForEdit(meta.url, data)
         }
     }
 }
 // 重置按钮点击回调
-callbackMaps[FunMetaMaps.Reset] = (meta, viewInfo, type) => {
+callbackMaps[FunMetaMaps.Reset] = (meta, $view, type) => {
     meta.props.onClick = (event) => {
         if(meta.callback instanceof Function) {
-            let model = null;
+            let model;
             if(type == 'search') {
-                model = viewInfo.get$View().getSearchContext().getModel();
+                model = $view.getSearchModel();
             } else {
-                model = viewInfo.get$View().getEditContext().getModel();
+                model = $view.getEditModel();
             }
 
-            meta.callback(model, meta, viewInfo)
+            meta.callback(model, meta, $view)
         } else {
             if(type == 'search') {
-                viewInfo.get$View().resetSearchModel();
+                $view.resetSearchModel();
                 // 重新加载表数据
-                let viewMeta = viewInfo.getSearchFunMeta(FunMetaMaps.View);
-                viewInfo.get$View().query(viewMeta.url);
+                let viewMeta = $view.getSearchMeta(FunMetaMaps.View);
+                $view.query(viewMeta.url);
             } else {
-                viewInfo.get$View().resetEditModel();
+                $view.resetEditModel();
             }
         }
     }
 }
 // 删除按钮点击回调
-callbackMaps[FunMetaMaps.Del] = (meta, viewInfo, type) => {
+callbackMaps[FunMetaMaps.Del] = (meta, $view, type) => {
     meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
             meta.callback(model, meta);
         } else {
             if(type == 'search') {
-                viewInfo.get$View().batchDel(meta.url).then(resp=>{
-                    viewInfo.get$View().query();
+                $view.batchDel(meta.url).then(resp=>{
+                    $view.query();
                 });
             } else if(type == 'table') {
-                let rowKey = viewInfo.get$View().getRowKey();
+                let rowKey = $view.getRowKey();
                 let data = [model[rowKey]];
-                viewInfo.get$View().del(meta.url, data).then(resp=>{
-                    viewInfo.get$View().query();
+                $view.del(meta.url, data).then(resp=>{
+                    $view.query();
                 })
             }
         }
     }
 }
 // 文件导入导出功能
-callbackMaps[FunMetaMaps.Import] = (meta, viewInfo) => {
+callbackMaps[FunMetaMaps.Import] = (meta, $view) => {
     meta.props.onClick = (model) => {
-        meta.callback(model, meta, viewInfo);
+        meta.callback(model, meta, $view);
     }
 }
 // 表格的展开和折叠功能
-callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
+callbackMaps[FunMetaMaps.Expanded] = (meta, $view) => {
     meta.props.onClick = (model) => {
         if(meta.callback instanceof Function) {
-            meta.callback(model, meta, viewInfo);
+            meta.callback(model, meta, $view);
         } else {
             // 图标旋转
             if(meta.props.rotate == 90) {
@@ -314,7 +314,7 @@ callbackMaps[FunMetaMaps.Expanded] = (meta, viewInfo) => {
                 meta.props.rotate = 90;
             }
 
-            viewInfo.get$View().expanded();
+            $view.expanded();
         }
     }
 }
@@ -327,11 +327,11 @@ callbackMaps[FunMetaMaps.__Default] = (meta, viewInfo) => {
     }
 }
 
-function initMetaCallback(meta, viewInfo, type) {
+function initMetaCallback(meta, $view, type) {
     let callback = callbackMaps[meta.field]
         || callbackMaps[FunMetaMaps.__Default];
 
-    callback(meta, viewInfo, type);
+    callback(meta, $view, type);
 }
 
 export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue,TypeMethodMaps, FunMetaMaps

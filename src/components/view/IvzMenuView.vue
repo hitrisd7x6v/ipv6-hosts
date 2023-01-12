@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import {provide, ref} from "vue";
-import {mapMutations, useStore} from "vuex";
+import {provide} from "vue";
+import {useStore} from "vuex";
 import {CloudUploadOutlined} from '@ant-design/icons-vue'
-import MixinConfigView from "@/components/view/MixinConfigView";
+import MixinConfigView from "@/components/view/MixinMetaView";
 import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
-import {mergeMetaOfDefault, FunMetaMaps} from "@/utils/MetaUtils";
+import {FunMetaMaps, mergeMetaOfDefault} from "@/utils/MetaUtils";
 import router from "@/router";
 import {$View, FuncMetaContext, ViewContext} from "@/components/view/ViewAction";
 import {ViewContextKey} from "@/utils/ProvideKeys";
@@ -88,26 +88,15 @@ export default {
     }
 
     // 提供视图信息给其视图子组件
-    provide('IvzViewInfo', viewInfo);
     const viewContext = new ViewContext();
-    let IvzView = new $View(viewContext);
-    viewInfo['get$View'] = () => IvzView;
+    let meta$View = new $View(viewContext);
 
     viewContext.funMetasContext = new FuncMetaContext
     (editFunMetas, tableFunMetas, searchFunMetas);
 
     provide(ViewContextKey, viewContext);
-    return {viewMenu, url, viewInfo, IvzView}
+    return {viewMenu, url, viewInfo, meta$View}
   },
-  created() {
-    // 暴露$View对象到父组件
-    this.$parent.$view = this.IvzView;
-  },
-  mounted() {
-    // 加载数据
-    let viewMeta = this.viewInfo.getSearchFunMeta(FunMetaMaps.View);
-    this.IvzView.query(viewMeta.url);
-  }
 }
 </script>
 

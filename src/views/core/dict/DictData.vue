@@ -4,8 +4,8 @@
       <ivz-select label="字典类型" field="type" @change="loadDictData" span="5"
                   url="/core/dictType/list" labelField="name" valueField="type"/>
       <ivz-input label="名称" field="name" />
-      <a-button type="primary" @click="query">查询</a-button>&nbsp;
-      <a-button @click="add">新增</a-button>&nbsp;
+      <IvzFuncBtn func="query" url="/core/dictData/view">查询</IvzFuncBtn>&nbsp;
+      <IvzFuncBtn func="add" @click="add">新增</IvzFuncBtn>&nbsp;
     </IvzBasicSearch>
     <IvzBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules">
         <IvzInput field="type" label="字典类型" disabled/>
@@ -13,17 +13,19 @@
         <IvzInput field="value" label="标签值" />
         <IvzRadio field="status" label="状态" :options="status" :defaultValue="'enabled'"/>
         <IvzInputNumber field="sort" label="排序" :defaultValue="10"/>
-      <template #footer>
-        <IvzFuncBtn func="cancel" @click="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" @click="submit">提交</IvzFuncBtn>&nbsp;
-        <IvzFuncBtn func="reset" @click="resetEdit">重置</IvzFuncBtn>&nbsp;
+      <template #footer="{model}">
+        <div style="text-align: center">
+          <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+          <IvzFuncBtn func="submit" :url="model.id ? '/core/dictData/edit' : '/core/dictData/add'">提交</IvzFuncBtn>&nbsp;
+          <IvzFuncBtn func="reset">重置</IvzFuncBtn>&nbsp;
+        </div>
       </template>
     </IvzBasicDrawer>
     <IvzBasicTable :columns="columns" size="small" rowKey="id"
              :bordered="true" primary :pagination="false">
       <template #c_action="{record}">
-        <IvzFuncTag func="edit" :data="record" @handle="editRow">编辑</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" @handle="delRow">删除</IvzFuncTag>
+        <IvzFuncTag func="edit" :data="record" url="/core/dictData/edit">编辑</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" url="/core/dictData/del">删除</IvzFuncTag>
       </template>
     </IvzBasicTable>
   </IvzBasicView>
@@ -97,20 +99,6 @@ export default {
       this.$view.submit("/core/dictData/add").then(() => this.query());
     },
 
-    delRow(row) {
-      this.$view.del("/core/dictData/del", [row.id]).then(() => this.query());
-    },
-
-    editRow(row) {
-      let id = row.id;
-      this.$view.openForEdit(`/core/dictData/edit`, {id});
-    },
-    cancel() {
-      this.$view.cancel();
-    },
-    resetEdit() {
-      this.$view.resetEditModel();
-    },
     loadDictData() {
       this.query();
     },

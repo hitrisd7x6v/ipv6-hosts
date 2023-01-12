@@ -2,9 +2,9 @@ import moment from 'moment'
 import {useStore} from "vuex";
 import {Tag} from 'ant-design-vue'
 import {IvzFuncTag} from "@/components/basic";
-import {defineComponent, h, inject, mergeProps, reactive, ref, watch} from "vue";
+import {defineComponent, h, inject, mergeProps, provide, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
-import {ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {TableContext} from "@/components/view/ViewAction";
 
 function getSlotName(dataIndex) {
@@ -25,7 +25,7 @@ function initColumnActionSlot(column, slotName, slots) {
             if(!meta.render) {
                 delete meta.props.onClick; // 删除原先的事件
                 meta.render = (row, meta) => {
-                    return <IvzFuncTag func={meta.field} onHandle={oriClickEvent}
+                    return <IvzFuncTag func={meta.field} onClick={oriClickEvent}
                         data={row} disabled={meta.disabled}>{meta.name}</IvzFuncTag>
                 }
             }
@@ -313,6 +313,7 @@ export default defineComponent({
             }
         }
 
+        provide(FuncContextKey, tableContext);
         return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys
             , mergePagination, updateColumns, unfoldRowKeys, loading, dataSourceRef
             , setDataSource, setLoading, setTotalRows, tableContext}

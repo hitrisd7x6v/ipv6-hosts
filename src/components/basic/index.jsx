@@ -15,47 +15,105 @@ export const IvzRow = defineComponent({
         return <a-row {...this.$attrs} v-slots={this.$slots} />
     }
 })
+function funcClickHandle(context, props) {
+    if(context != null) {
+        let $view = context.get$View();
+        let func = props.func.toUpperCase();
+        if(context.isPrimary) { // 使用默认操作
+            switch (func) {
+                case 'ADD':
+                    return $view.openForAdd();
+                case "DEL":
+                    if(context instanceof SearchContext) {
+                        return $view.batchDel(props.url)
+                    }
 
+                    let data = [props.data[$view.getRowKey()]];
+                    return $view.del(props.url, data);
+                case "EDIT":
+                    return $view.openForEdit(props.url, props.data);
+                case "QUERY":
+                    return $view.query(props.url);
+                case "CANCEL":
+                    return $view.cancel();
+                case "RESET":
+                    if(context instanceof EditContext) {
+                        return $view.resetEditModel();
+                    } else if(context instanceof SearchContext) {
+                        return $view.resetSearchModel();
+                    } else {
+                        return console.error("错误的编辑模型");
+                    }
+                case "DETAIL":
+                    return $view.detail(props.url);
+                case "SUBMIT":
+                    return $view.submit(props.url).then(() => {
+                        let query = $view.getSearchContext().getFunc("QUERY");
+                        if(query instanceof Function) {
+                            query();
+                        }
+                    });
+                case "EXPAND":
+                    return $view.expanded(); // 展开所有行
+                default: console.error(`不支持的功能类型[${props.func}]`)
+            }
+        } else if(context.prefix){ // 各个组件操作
+
+        } else {
+            console.error(`不支持的操作[${props.func}]`)
+        }
+    }
+}
 const colorMaps = {
     ADD: '#2db7f5', DEL: '#f50', EDIT: '#3b5999', QUERY: '#108ee9', IMPORT: 'default'
     , EXPORT: 'orange',CANCEL: 'red', DETAIL: '#87d068', RESET: 'warning', DEF: 'default'
-    , SUBMIT: 'blue'
+    , SUBMIT: 'blue', VIEW: '#108ee9'
 }
 export const IvzFuncTag = defineComponent({
     name: 'IvzFuncTag',
     props: {
-        func: {type: String, default: 'def'}, // add, del, edit, query, import, export, cancel, detail, reset
+        url: String,
         color: String,
         data: {type: Object}, // 行数据
+        func: {type: String, default: 'def'}, // add, del, edit, query, import, export, cancel, detail, reset
         disabled: Function, // 是否禁用
+        onClick: Function,
+    },
+    setup(props, {attrs}) {
+        let context = inject(FuncContextKey);
+        let clickProxy = (e) => {
+            if(props.onClick instanceof Function) {
+                props.onClick(props.data)
+            } else {
+                if(context != null) {
+                    funcClickHandle(context, props)
+                }
+            }
+        }
+
+        return {clickProxy, context};
     },
     computed: {
-      tagColor() {
-          let upperCase = this.func.toUpperCase();
-          return this.color || colorMaps[upperCase]
-      },
+        tagColor() {
+            let upperCase = this.func.toUpperCase();
+            return this.color || colorMaps[upperCase]
+        },
         tagDisabled() {
             return this.disabled != null ? this.disabled(this.data) : false;
         }
     },
     render() {
         let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
-        return <a-tag closable={false} visible={true} class={disabledClass} {...this.$attrs}
-           class="ivz-func" color={this.tagColor} v-slots={this.$slots} onClick={this.clickHandle} />
-    },
-    methods: {
-        clickHandle() {
-            if(!this.tagDisabled) {
-                this.$emit('handle', this.data);
-            }
-        }
+        return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
+                     color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
     }
 })
 const typeMaps = {
     ADD: {type: 'dashed'},
     DEL: {danger: true},
     EDIT: {type: '#3b5999'},
-    VIEW: {type: 'primary'},
+    QUERY: {type: 'primary'}, // 查询
+    VIEW: {type: 'primary'}, // 查询 和query选其一
     IMPORT: {type: 'default'},
     EXPORT: {type: 'orange'},
     EXPAND: {type: 'primary', ghost: true},
@@ -75,39 +133,14 @@ export const IvzFuncBtn = defineComponent({
     name: 'IvzFuncBtn',
     props: {
         url: {type: String}, // 功能地址
-        func: {type: String, default: 'default'},  // add, del, edit, query, import, export, cancel, detail, reset
+        func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
     },
-    setup(props) {
+    setup(props, attrs) {
         let context = inject(FuncContextKey);
         let clickProxy = {onClick: (e) => {
-            // if(context != null) {
-            //     let func = props.func.toUpperCase();
-            //     if(context.isPrimary) { // 使用默认操作
-            //         switch (func) {
-            //             case 'ADD': return context.get$View().openForAdd();
-            //             case "DEL": return context.get$View().del(props.url, null);
-            //             case "EDIT": return context.get$View().openForEdit(props.url, null);
-            //             case "VIEW": return context.get$View().query(props.url);
-            //             case "CANCEL": return context.get$View().cancel();
-            //             case "RESET":
-            //                 if(context instanceof EditContext) {
-            //                     return context.get$View().resetEditModel();
-            //                 } else if(context instanceof SearchContext) {
-            //                     return context.get$View().resetSearchModel();
-            //                 } else {
-            //                     return console.error("错误的编辑模型");
-            //                 }
-            //             case "DETAIL": return context.get$View().detail(props.url);
-            //             case "SUBMIT": return context.get$View().submit(props.url);
-            //             case "EXPAND": return context.get$View().expanded(); // 展开所有行
-            //             default: console.error(`不支持的功能类型[${props.func}]`)
-            //         }
-            //     } else if(context.prefix){ // 各个组件操作
-            //
-            //     } else {
-            //         console.error(`不支持的操作[${props.func}]`)
-            //     }
-            // }
+            if(context != null) {
+                funcClickHandle(context, props)
+            }
           }
         }
         return {clickProxy, context};
@@ -115,6 +148,17 @@ export const IvzFuncBtn = defineComponent({
     computed: {
         typeCompute() {
             return this.func.toUpperCase();
+        }
+    },
+    created() {
+        if(this.typeCompute && this.context) {
+            this.context.regFunc(this.typeCompute, () => {
+                if(this.$attrs.onClick instanceof Function) {
+                    this.$attrs.onClick(this.typeCompute);
+                } else {
+                    this.clickProxy.onClick(this.typeCompute);
+                }
+            });
         }
     },
     render() {

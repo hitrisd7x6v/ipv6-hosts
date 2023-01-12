@@ -36,8 +36,8 @@ Mock.mock(RegExp(`/core/dictData/edit`), 'get', (args) => {
     }
 })
 Mock.mock(RegExp(`/core/dictData/edit`), 'post', (args) => {
-    let body = args.body
-    let dept = dataSource.filter(item => item['id'] == body['id'])[0];
+    let body = JSON.parse(args.body)
+    let dept = Values.filter(item => item['id'] == body['id'])[0];
     Object.assign(dept, body);
 
     return {
@@ -49,8 +49,9 @@ Mock.mock(RegExp(`/core/dictData/edit`), 'post', (args) => {
 Mock.mock(RegExp(`/core/dictData/add`), 'post', (args) => {
     let body = args.body
     let parse = JSON.parse(body);
-    parse['id'] = dataSource.length + 1
-    dataSource.push(parse);
+    let data = dataSource[parse.type];
+    parse['id'] = data.length + 1
+    data.push(parse);
     return {
         code: 200,
         message: '',
@@ -58,9 +59,11 @@ Mock.mock(RegExp(`/core/dictData/add`), 'post', (args) => {
     }
 })
 Mock.mock(RegExp(`/core/dictData/del`), 'post', (args) => {
-    let query = args.body;
-    dataSource.forEach((item, index) =>
-        item.id == query ? dataSource.splice(index, 1) : null);
+    let query = JSON.parse(args.body);
+    let id = query instanceof Array ? query[0] : query;
+
+    Values.forEach((item, index) =>
+        item.id == id ? Values.splice(index, 1) : null);
     return {
         code: 200,
         message: 'OK',

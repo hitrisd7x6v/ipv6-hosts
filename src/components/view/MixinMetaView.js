@@ -8,16 +8,13 @@ export default {
     },
     created() {
         // 对于视图组件(IvzXxxView)必须作为页面的顶级组件
-        let $parent = this.$parent;
-        $parent.$view = this.IvzView;
+        this.$parent.$view = this.meta$View;
     },
 
     mounted() {
         // 加载数据
-        let viewMeta = this.IvzView.getMetaContext()
-            .getSearchMeta(FunMetaMaps.View);
-
-        this.IvzView.query(viewMeta.url);
+        let viewMeta = this.meta$View.getSearchMeta(FunMetaMaps.View);
+        this.meta$View.query(viewMeta.url);
     },
     methods: {
         ...mapMutations({

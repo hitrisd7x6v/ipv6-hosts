@@ -78,6 +78,18 @@ export function $View(context) {
         return this.getMetaContext().getSearchMeta(field);
     }
 
+    this.getEditFunc = function (func) {
+        return this.getEditContext().getFunc(func)
+    }
+
+    this.getSearchFunc = function (func) {
+        return this.getSearchContext().getFunc(func);
+    }
+
+    this.getTableFunc = function (func) {
+        return this.getTableContext().getFunc(func)
+    }
+
     /**
      * 获取当前视图页的名称 eg: 用户管理、部门管理等
      * 需要在视图组件设置属性：name
@@ -91,8 +103,7 @@ export function $View(context) {
      * @return {*}
      */
     this.getEditModel = function () {
-        let editContext = this.getEditContext();
-        return editContext != null ? editContext.getModel() : null;
+        return this.getEditContext().getModel();
     }
 
     /**
@@ -100,8 +111,7 @@ export function $View(context) {
      * @return {*}
      */
     this.getSearchModel = function () {
-        let searchContext = this.getSearchContext();
-        return searchContext != null ? searchContext.getModel() : null;
+        return this.getSearchContext().getModel();
     }
 
     /**
@@ -123,7 +133,7 @@ export function $View(context) {
     this.openForAdd = function (callback) {
         let editContext = this.getEditContext();
 
-        if(editContext) {
+        if(editContext.isPrimary) {
             editContext.asyncVisible().then((model) => {
                 let initModel = editContext.getFormContext().getInitModel();
                 if(callback instanceof Function) {
@@ -201,7 +211,7 @@ export function $View(context) {
      */
     this.batchDel = function (url, confirmTitle, confirmContext) {
         let tableContext = this.getTableContext();
-        if(tableContext == null) {
+        if(!tableContext.isPrimary) {
             return Promise.reject("未声明标记为[primary]的表组件");
         }
 
@@ -222,7 +232,7 @@ export function $View(context) {
 
         let editContext = this.getEditContext();
 
-        if(editContext) {
+        if(editContext.isPrimary) {
             if(url) {
                 editContext.asyncVisible().then(() => {
                     editContext.setLoading(true);
@@ -239,8 +249,6 @@ export function $View(context) {
                     editContext.getFormContext().setEditModel(data);
                 })
             }
-        } else {
-            console.warn('没有声明[primary]的编辑组件')
         }
     }
 
@@ -264,9 +272,7 @@ export function $View(context) {
      */
     this.query = function (url) {
         let searchContext = this.getSearchContext();
-        if(!searchContext) {
-            return;
-        }
+        if(!searchContext.isPrimary) return;
 
         let queryUrl = url || searchContext.queryUrl;
         if(!queryUrl) {
@@ -277,9 +283,7 @@ export function $View(context) {
         }
 
         let tableContext = this.getTableContext();
-        if(!tableContext) {
-            return;
-        }
+        if(!tableContext.isPrimary) return;
 
         let model = searchContext.getModel();
         if(tableContext.pageSize && tableContext.currentPage) {
@@ -315,9 +319,7 @@ export function $View(context) {
      */
     this.cancel = function () {
         let editContext = this.getEditContext();
-        if(!editContext.isPrimary) {
-            return console.warn("未声明标记为[primary]的编辑组件")
-        }
+        if(!editContext.isPrimary) return;
 
         // 关闭编辑框的加载状态
         editContext.setLoading(false);
@@ -332,7 +334,7 @@ export function $View(context) {
      */
     this.expanded = function (expandedRowKeys) {
         let tableContext = this.getTableContext();
-        if(tableContext) {
+        if(tableContext.isPrimary) {
             tableContext.expanded(expandedRowKeys);
         }
     }
@@ -347,7 +349,7 @@ export function $View(context) {
         }
 
         let editContext = this.getEditContext();
-        if(!editContext) {
+        if(!editContext.isPrimary) {
             return Promise.reject("获取不到[primary]编辑组件");
         }
 
@@ -382,9 +384,7 @@ export function $View(context) {
      */
     this.resetEditModel = function () {
         let editContext = this.getEditContext();
-        if(!editContext.isPrimary) {
-            return console.warn("未声明标记为[primary]的编辑组件")
-        }
+        if(!editContext.isPrimary) return;
 
         editContext.getFormContext().resetFields();
     }
@@ -394,9 +394,7 @@ export function $View(context) {
      */
     this.resetSearchModel = function () {
         let searchContext = this.getSearchContext();
-        if(!searchContext.isPrimary) {
-            return console.warn("未声明标记为[primary]的搜索组件")
-        }
+        if(!searchContext.isPrimary) return;
 
         searchContext.getFormContext().resetFields();
     }
@@ -419,7 +417,7 @@ export function $View(context) {
         }
 
         if(!this.context.primarySearchContext.isPrimary && import.meta.env.DEV) {
-            return console.warn("未声明标记为[primary]的搜索组件")
+            console.warn("未声明标记为[primary]的搜索组件")
         }
 
         return this.context.primarySearchContext;
@@ -454,7 +452,7 @@ export function $View(context) {
         }
 
         if(!this.context.primaryEditContext.isPrimary && import.meta.env.DEV) {
-            return console.warn("未声明标记为[primary]的编辑组件")
+            console.warn("未声明标记为[primary]的编辑组件")
         }
 
         return this.context.primaryEditContext;
@@ -489,7 +487,7 @@ export function $View(context) {
         }
 
         if(!this.context.primaryTableContext.isPrimary && import.meta.env.DEV) {
-            return console.warn("未声明标记为[primary]的表组件")
+            console.warn("未声明标记为[primary]的表组件")
         }
 
         return this.context.primaryTableContext;
@@ -524,7 +522,7 @@ export function $View(context) {
         }
 
         if(!this.context.primaryDetailContext.isPrimary && import.meta.env.DEV) {
-            return console.warn("未声明标记为[primary]的详情组件")
+            console.warn("未声明标记为[primary]的详情组件")
         }
 
         return this.context.primaryDetailContext;
@@ -580,7 +578,21 @@ export function SearchContext(viewContext) {
     this.isPrimary = false;
     // 查询地址
     this.queryUrl = null;
+    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    this.funcMetas = {};
 
+    // 获取功能组件配置
+    this.getFunc = function (func) {
+        let funcMeta = this.funcMetas[func];
+        if(funcMeta) {
+            return funcMeta;
+        } else {
+            return console.warn(`搜索组件不包含功能[${func}]`);
+        }
+    }
+    this.regFunc = function (func, config) {
+        this.funcMetas[func] = config;
+    }
     this.getModel = function () {
         return this.getFormContext().getEditModel();
     }
@@ -603,10 +615,23 @@ export function SearchContext(viewContext) {
 export function EditContext(viewContext) {
     // 用于关联各个组件(搜索、表格、详情)
     this.prefix = '';
-
     // 是否是主上下文
     this.isPrimary = false;
+    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    this.funcMetas = {};
 
+    // 获取功能组件配置
+    this.getFunc = function (func) {
+        let funcMeta = this.funcMetas[func];
+        if(funcMeta) {
+            return funcMeta;
+        } else {
+            return console.warn(`搜索组件不包含功能[${func}]`);
+        }
+    }
+    this.regFunc = function (func, config) {
+        this.funcMetas[func] = config;
+    }
     this.getModel = function () {
         return this.getFormContext().getEditModel();
     }
@@ -658,7 +683,7 @@ export function EditContext(viewContext) {
     // 设置加载文本
     this.setLoadingTip = (tip) => {};
     // 修改弹框状态(模态框或者抽屉框)
-    this.setVisible = (status) => {};
+    this.setVisible = (status) => {Unmount()};
     // 异步打开弹框(模态框或者抽屉框) 等表单初始化完成
     this.asyncVisible = () => Promise.reject("未挂载");
 
@@ -691,7 +716,21 @@ export function TableContext(viewContext) {
 
     this.pageSize = null;
     this.currentPage = null;
+    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    this.funcMetas = {};
 
+    // 获取功能组件配置
+    this.getFunc = function (func) {
+        let funcMeta = this.funcMetas[func];
+        if(funcMeta) {
+            return funcMeta;
+        } else {
+            return console.warn(`搜索组件不包含功能[${func}]`);
+        }
+    }
+    this.regFunc = function (func, config) {
+        this.funcMetas[func] = config;
+    }
     this.del = function (url, data) {}
 
     /**
@@ -787,10 +826,23 @@ export function TableContext(viewContext) {
 export function DetailContext(viewContext) {
     // 用于关联各个组件(搜索、编辑、表格)
     this.prefix = '';
-
     // 是否是主上下文
     this.isPrimary = false;
+    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    this.funcMetas = {};
 
+    // 获取功能组件配置
+    this.getFunc = function (func) {
+        let funcMeta = this.funcMetas[func];
+        if(funcMeta) {
+            return funcMeta;
+        } else {
+            return console.warn(`搜索组件不包含功能[${func}]`);
+        }
+    }
+    this.regFunc = function (func, config) {
+        this.funcMetas[func] = config;
+    }
     this.get$View = function () {
         // viewContext['__$View'] 不可能为空, 为空说明异常
         return viewContext['__$View'] || new $View(null);

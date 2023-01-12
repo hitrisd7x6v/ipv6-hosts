@@ -10,7 +10,7 @@
 
 .ivz-theme-default .ivz-task-bar {
     background: #eaeaea;
-    box-shadow: 6px 3px 6px 0px #cacaca;
+    box-shadow: 6px 3px 6px -2px #cacaca;
 }
 
 .ivz-theme-default .ant-layout-sider {
@@ -22,7 +22,7 @@
 }
 .ivz-theme-default .ivz-logo-c {
     height: 80px;
-    padding: 7px;
+    padding: 17px 7px;
 }
 .ivz-theme-default .ivz-ism-title {
     color: #ffffff;

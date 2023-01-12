@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     submit() {
-      let pwdMeta = this.$view.getMetaContext().getTableMeta('Pwd');
+      let pwdMeta = this.$view.getTableMeta('Pwd');
       this.$view.getEditContext("modPwd").submit(pwdMeta.url)
     },
 

@@ -8,22 +8,23 @@ import {initMetaCallback} from "@/utils/MetaUtils";
 import {defineComponent, inject, mergeProps} from "vue";
 import IvzMetaModal from "@/components/modal/IvzMetaModal";
 import IvzMetaDrawer from "@/components/drawer/IvzMetaDrawer";
+import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export const IvzPrimarySearch = defineComponent({
     name: 'IvzPrimarySearch',
     components: {IvzBreadSearch},
     setup() {
-        let viewInfo = inject("IvzViewInfo");
+        let viewContext = inject(ViewContextKey);
         let searchFunMetas = [];
-        if(viewInfo) {
-            searchFunMetas = viewInfo['searchFunMetas'];
+        if(viewContext) {
+            searchFunMetas = viewContext.funMetasContext['searchFunMetas'];
             searchFunMetas.forEach(meta => {
                 // 功能点默认点击事件
-                initMetaCallback(meta, viewInfo, 'search');
+                initMetaCallback(meta, viewContext.__$View, 'search');
             })
         }
 
-        return {searchFunMetas, viewInfo};
+        return {searchFunMetas, viewContext};
     },
     render() {
         let props = mergeProps( {funMetas: this.searchFunMetas}, this.$attrs);
@@ -58,12 +59,12 @@ export const IvzPrimaryTable = defineComponent({
     components: {IvzBasicTable},
     setup(props, {attrs}) {
         let tableFunMetas = [];
-        let viewInfo = inject("IvzViewInfo");
-        if(viewInfo) {
-            tableFunMetas = viewInfo['tableFunMetas'];
+        let viewContext = inject(ViewContextKey);
+        if(viewContext) {
+            tableFunMetas = viewContext.funMetasContext['tableFunMetas'];
             if(tableFunMetas instanceof Array) {
                 tableFunMetas.forEach(meta => {
-                    initMetaCallback(meta, viewInfo, 'table');
+                    initMetaCallback(meta, viewContext.__$View, 'table');
                 })
             }
         }
@@ -76,8 +77,8 @@ export const IvzPrimaryTable = defineComponent({
                 }
             })
         }
-        let rowKey = viewInfo.get$View().getRowKey();
-        return {viewInfo, rowKey}
+        let rowKey = viewContext.__$View.getRowKey();
+        return {viewContext, rowKey}
     },
     render() {
 

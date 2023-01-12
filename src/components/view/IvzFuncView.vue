@@ -10,7 +10,7 @@ import {provide} from "vue";
 import {useStore} from "vuex";
 import {FunMetaMaps} from "@/utils/MetaUtils";
 import {mergeMetaOfDefault} from "@/utils/MetaUtils";
-import MixinConfigView from "@/components/view/MixinConfigView";
+import MixinMetaView from "@/components/view/MixinMetaView";
 import router from "@/router";
 import {$View, FuncMetaContext, ViewContext} from "@/components/view/ViewAction";
 import {ViewContextKey} from "@/utils/ProvideKeys";
@@ -25,7 +25,7 @@ import {ViewContextKey} from "@/utils/ProvideKeys";
  */
 export default {
   name: "IvzFuncView",
-  mixins: [MixinConfigView],
+  mixins: [MixinMetaView],
   props: {
     // 编辑组件功能点
     editFunMetas: {type: Array, default: () => []},
@@ -71,16 +71,14 @@ export default {
     }
 
     // 提供视图信息给其视图子组件
-    provide('IvzViewInfo', viewInfo);
     const viewContext = new ViewContext();
-    let IvzView = new $View(viewContext);
-    viewInfo['get$View'] = () => IvzView;
+    let meta$View = new $View(viewContext);
 
     viewContext.funMetasContext = new FuncMetaContext
     (editFunMetas, tableFunMetas, searchFunMetas);
 
     provide(ViewContextKey, viewContext);
-    return {viewMenu, url, viewInfo, IvzView}
+    return {viewMenu, url, viewInfo, meta$View}
   }
 }
 </script>
