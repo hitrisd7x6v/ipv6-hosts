@@ -50,9 +50,12 @@ Mock.mock(RegExp(`/core/admin/add`), 'post', (args) => {
     }
 })
 Mock.mock(RegExp(`/core/admin/del`), 'post', (args) => {
-    let query = args.body;
-    userData.forEach((item, index) =>
-        item.id == query ? userData.splice(index, 1) : null);
+    let query = JSON.parse(args.body);
+    query.forEach(id => {
+        userData.forEach((item, index) =>
+            item.id == id ? userData.splice(index, 1) : null);
+    })
+
     return {
         code: 200,
         message: '删除成功',

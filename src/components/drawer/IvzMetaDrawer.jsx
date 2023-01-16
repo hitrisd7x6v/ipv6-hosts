@@ -7,11 +7,12 @@ import {ViewContextKey} from "@/utils/ProvideKeys";
 export default defineComponent({
     name: 'IvzMetaDrawer',
     props: {
-        funMetas: {type: Array}
+        funMetas: {type: Array, default: () => []}
     },
     components: {IvzBasicDrawer, IvzFuncBtn},
     setup({funMetas}) {
         let funcBtnRef = ref([]);
+        let viewContext = inject(ViewContextKey);
         let initFunMetas = (funMetas) => {
             let funcBtn = [];
             funMetas.forEach(meta => {
@@ -22,16 +23,7 @@ export default defineComponent({
             funcBtnRef.value = funcBtn;
         }
 
-        let editFuncMetas = funMetas
-        let viewContext = inject(ViewContextKey);
-        if(editFuncMetas == null && viewContext != null) {
-            editFuncMetas = viewContext.funMetasContext.editFunMetas;
-            watch(() => viewContext.funMetasContext.editFunMetas, (newFunMetas) => {
-                initFunMetas(newFunMetas);
-            })
-        }
-
-        initFunMetas(editFuncMetas);
+        initFunMetas(funMetas);
         return {initFunMetas, funcBtnRef}
     },
     watch: {

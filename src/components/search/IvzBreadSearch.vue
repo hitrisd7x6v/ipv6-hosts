@@ -53,6 +53,7 @@ import {mapMutations, useStore} from "vuex";
 import {inject, provide} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {SearchContext} from "@/components/view/ViewAction";
+import {initMetaCallback} from "@/utils/MetaUtils";
 
 export default {
   name: "IvzBreadSearch",
@@ -70,6 +71,13 @@ export default {
     let searchContext = new SearchContext(viewContext);
 
     if(viewContext) {
+      if(props.funMetas) {
+        props.funMetas.forEach(meta => {
+          // 功能点默认点击事件
+          initMetaCallback(meta, viewContext.__$View, 'search');
+        })
+      }
+
       if(props.primary) {
         let primaryContext = viewContext["primarySearchContext"];
         if(primaryContext.isPrimary) {

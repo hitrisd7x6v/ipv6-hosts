@@ -244,10 +244,7 @@ callbackMaps[FunMetaMaps.Edit] = (meta, $view) => {
         if(meta.callback instanceof Function) {
             meta.callback(row, meta)
         } else {
-            let data = {};
-            let rowKey = $view.getRowKey();
-            data[rowKey] = row[rowKey];
-            $view.openForEdit(meta.url, data)
+            $view.openForEdit(meta.url, row)
         }
     }
 }
@@ -286,9 +283,7 @@ callbackMaps[FunMetaMaps.Del] = (meta, $view, type) => {
                     $view.query();
                 });
             } else if(type == 'table') {
-                let rowKey = $view.getRowKey();
-                let data = [model[rowKey]];
-                $view.del(meta.url, data).then(resp=>{
+                $view.del(meta.url, model).then(resp=>{
                     $view.query();
                 })
             }

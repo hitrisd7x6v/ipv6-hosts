@@ -1,6 +1,7 @@
 import {FormContext} from "@/components/form/basic/FormContext";
 import {confirm, msgError, msgSuccess, msgWarn} from "@/utils/message";
 import {MetaConst, TypeMethodMaps} from "@/utils/MetaUtils";
+import SysUtils from "@/utils/SysUtils";
 
 function Unmount() {
     console.warn("此方法只能在组件挂载时才能使用");
@@ -90,6 +91,9 @@ export function $View(context) {
         return this.getTableContext().getFunc(func)
     }
 
+    this.getDetailFunc = function (func) {
+        return this.getDetailContext().getFunc(func)
+    }
     /**
      * 获取当前视图页的名称 eg: 用户管理、部门管理等
      * 需要在视图组件设置属性：name
@@ -155,12 +159,18 @@ export function $View(context) {
      */
     this.del = function (url, data, confirmTitle, confirmContext) {
         if(!url) {
-            return Promise.reject("未指定删除的地址[url]或者删除的记录[data]")
+            return Promise.reject("未指定删除的地址[url]")
         }
 
-        if(!data) {
-            msgWarn("未选择要删除的记录")
+        let query = SysUtils.resolverQueryOfUrl(url);
+        if(!data && Object.keys(query).length == 0) {
+            msgWarn("请选择要删除的记录")
             return Promise.reject("未选择要删除的记录");
+        }
+
+        // 删除的默认参数是数组
+        if(typeof data == 'object') {
+            data = [data[this.getRowKey()]];
         }
 
         let title = confirmTitle || "删除确认";
@@ -196,11 +206,9 @@ export function $View(context) {
      * @param confirmContext 确认内容 非必填
      */
     this.delByFuncTag = function (url, confirmTitle, confirmContext) {
-        let rowKey = this.getRowKey(), data = {};
         let currentRow = this.getTableContext().getCurrentRow();
-        data[rowKey] = currentRow[rowKey]
 
-        return this.del(url, data, confirmTitle, confirmContext);
+        return this.del(url, currentRow, confirmTitle, confirmContext);
     }
 
     /**
@@ -226,17 +234,28 @@ export function $View(context) {
      * @param data 编辑数据
      */
     this.openForEdit = function (url, data) {
-        if(!data && !url) {
-            return console.error("未指定要编辑数据的[url or data]")
+        if(!url) {
+            return console.error("未指定要获取编辑数据的[url]")
         }
 
         let editContext = this.getEditContext();
 
         if(editContext.isPrimary) {
             if(url) {
+                // 默认以url的查询字符串作为参数
+                let query = SysUtils.resolverQueryOfUrl(url);
+                if(Object.keys(query).length == 0) {
+                    if(data) {
+                        let rowKey = this.getRowKey();
+                        url += `?${rowKey}=${data[rowKey]}`
+                    } else {
+                        return console.error("未指定要获取编辑数据的参数")
+                    }
+                }
+
                 editContext.asyncVisible().then(() => {
                     editContext.setLoading(true);
-                    TypeMethodMaps.Edit(url, data).then(({code, message, data}) => {
+                    TypeMethodMaps.Edit(url).then(({code, message, data}) => {
                         if(code == 200) {
                             editContext.getFormContext().setEditModel(data);
                         } else {
@@ -274,12 +293,21 @@ export function $View(context) {
         let searchContext = this.getSearchContext();
         if(!searchContext.isPrimary) return;
 
-        let queryUrl = url || searchContext.queryUrl;
+        let queryUrl = url
+        // 没有指定查询地址, 尝试从IvzFuncBtn获取地址
+        if(!queryUrl) {
+            let searchFunc = this.getSearchFunc('query');
+            if(searchFunc && searchFunc.getUrl()) {
+                queryUrl = searchFunc.getUrl();
+            } else {
+                queryUrl = searchContext.queryUrl;
+            }
+        } else {
+            searchContext.queryUrl = queryUrl;
+        }
+
         if(!queryUrl) {
             return console.error("未指定查询地址[url]")
-        } else {
-            // 保存查询地址
-            searchContext.queryUrl = queryUrl;
         }
 
         let tableContext = this.getTableContext();
@@ -583,7 +611,15 @@ export function SearchContext(viewContext) {
 
     // 获取功能组件配置
     this.getFunc = function (func) {
+        func = func.toUpperCase();
         let funcMeta = this.funcMetas[func];
+
+        // 遗留问题, query和view都代表查询
+        let isQuery = func == 'QUERY' || func == 'VIEW';
+        if(isQuery) {
+            funcMeta = this.funcMetas['QUERY'] || this.funcMetas['VIEW'];
+        }
+
         if(funcMeta) {
             return funcMeta;
         } else {
@@ -622,7 +658,7 @@ export function EditContext(viewContext) {
 
     // 获取功能组件配置
     this.getFunc = function (func) {
-        let funcMeta = this.funcMetas[func];
+        let funcMeta = this.funcMetas[func.toUpperCase()];
         if(funcMeta) {
             return funcMeta;
         } else {
@@ -721,7 +757,7 @@ export function TableContext(viewContext) {
 
     // 获取功能组件配置
     this.getFunc = function (func) {
-        let funcMeta = this.funcMetas[func];
+        let funcMeta = this.funcMetas[func.toUpperCase()];
         if(funcMeta) {
             return funcMeta;
         } else {
@@ -833,7 +869,7 @@ export function DetailContext(viewContext) {
 
     // 获取功能组件配置
     this.getFunc = function (func) {
-        let funcMeta = this.funcMetas[func];
+        let funcMeta = this.funcMetas[func.toUpperCase()];
         if(funcMeta) {
             return funcMeta;
         } else {
@@ -857,7 +893,7 @@ export function ViewContext () {
     this.name = ""; // 视图名称
     this.IdContextMaps = {}
 
-    this.funMetasContext = new FuncMetaContext(this);
+    this.funMetasContext = new FuncMetaContext();
 
     this.primaryEditContext = new EditContext(this);
     this.primaryTableContext = new TableContext(this);

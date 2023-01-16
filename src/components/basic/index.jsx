@@ -28,8 +28,7 @@ function funcClickHandle(context, props) {
                         return $view.batchDel(props.url)
                     }
 
-                    let data = [props.data[$view.getRowKey()]];
-                    return $view.del(props.url, data);
+                    return $view.del(props.url, props.data);
                 case "EDIT":
                     return $view.openForEdit(props.url, props.data);
                 case "QUERY":
@@ -90,6 +89,11 @@ export const IvzFuncTag = defineComponent({
                 }
             }
         }
+
+        context.regFunc(props.func.toUpperCase(), {
+            getUrl: () => props.url,
+            clickHandle: clickProxy
+        });
 
         return {clickProxy, context};
     },
@@ -152,11 +156,14 @@ export const IvzFuncBtn = defineComponent({
     },
     created() {
         if(this.typeCompute && this.context) {
-            this.context.regFunc(this.typeCompute, () => {
-                if(this.$attrs.onClick instanceof Function) {
-                    this.$attrs.onClick(this.typeCompute);
-                } else {
-                    this.clickProxy.onClick(this.typeCompute);
+            this.context.regFunc(this.typeCompute, {
+                getUrl: () => this.$props.url,
+                clickHandle: () => {
+                    if(this.$attrs.onClick instanceof Function) {
+                        this.$attrs.onClick(this.typeCompute);
+                    } else {
+                        this.clickProxy.onClick(this.typeCompute);
+                    }
                 }
             });
         }

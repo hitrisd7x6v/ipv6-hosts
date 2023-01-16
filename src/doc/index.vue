@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 16px">
+  <div style="padding: 16px; height: 600px; overflow: auto">
     <a-tabs v-model:activeKey="activeKey" tab-position="left">
       <a-tab-pane key="1" tab="关于ivzone">
         <p>ivzone它是一套基于vue3+antdv2实现的通用增删改查组件库</p>
@@ -15,7 +15,7 @@
         <h3>页级组件有哪些通用的api</h3>
       </a-tab-pane>
       <a-tab-pane key="2" tab="页级组件之 IvzBasicView"><BasicView /></a-tab-pane>
-      <a-tab-pane key="3" tab="页级组件之 IvzMenuView">待编写...</a-tab-pane>
+      <a-tab-pane key="3" tab="页级组件之 IvzMenuView"><MenuView /></a-tab-pane>
       <a-tab-pane key="5" tab="页级组件之 IvzFuncView">待编写...</a-tab-pane>
     </a-tabs>
   </div>
@@ -24,10 +24,11 @@
 <script>
 import 'vite-plugin-vuedoc/style.css'
 import {ref} from "vue";
+import MenuView from '@/doc/menu.doc.md'
 import BasicView from '@/doc/basic.doc.md'
 export default {
   name: "doc",
-  components: {BasicView},
+  components: {BasicView, MenuView},
   setup() {
     let activeKey = ref('1')
     return {activeKey}
@@ -35,7 +36,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .ivz-doc-title {
   list-style: none;
   padding-left: 36px;
@@ -47,4 +48,5 @@ export default {
 .ivz-doc-content {
   overflow: auto;
 }
+
 </style>

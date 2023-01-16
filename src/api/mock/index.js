@@ -1,4 +1,5 @@
 import Mock from 'mockjs'
+import '@/api/mock/doc'
 import '@/api/mock/user'
 import '@/api/mock/dept'
 import '@/api/mock/menu'

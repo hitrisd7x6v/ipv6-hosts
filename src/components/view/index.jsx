@@ -18,18 +18,13 @@ export const IvzPrimarySearch = defineComponent({
         let searchFunMetas = [];
         if(viewContext) {
             searchFunMetas = viewContext.funMetasContext['searchFunMetas'];
-            searchFunMetas.forEach(meta => {
-                // 功能点默认点击事件
-                initMetaCallback(meta, viewContext.__$View, 'search');
-            })
         }
 
-        return {searchFunMetas, viewContext};
+        return {searchFunMetas};
     },
     render() {
-        let props = mergeProps( {funMetas: this.searchFunMetas}, this.$attrs);
         return (<div class="ivz-view ivz-primary-search">
-            <IvzBreadSearch {...props} v-slots={this.$slots} primary/>
+            <IvzBreadSearch funMetas={this.searchFunMetas} {...this.$attrs} v-slots={this.$slots} primary/>
         </div>)
     }
 })
@@ -37,9 +32,18 @@ export const IvzPrimarySearch = defineComponent({
 export const IvzPrimaryModal = defineComponent({
     name: 'IvzPrimaryModal',
     components: {IvzMetaModal},
+    setup() {
+        let viewContext = inject(ViewContextKey);
+        let editFunMetas = [];
+        if(viewContext) {
+            editFunMetas = viewContext.funMetasContext['editFunMetas'];
+        }
+
+        return {editFunMetas}
+    },
     render() {
         return <div class="ivz-view ivz-primary-modal">
-            <IvzMetaModal {...this.$attrs} primary v-slots={this.$slots} />
+            <IvzMetaModal funMetas={this.editFunMetas} {...this.$attrs} primary v-slots={this.$slots} />
         </div>
     }
 })
@@ -47,9 +51,18 @@ export const IvzPrimaryModal = defineComponent({
 export const IvzPrimaryDrawer = defineComponent({
     name: 'IvzPrimaryDrawer',
     components: {IvzMetaDrawer},
+    setup() {
+        let viewContext = inject(ViewContextKey);
+        let editFunMetas = [];
+        if(viewContext) {
+            editFunMetas = viewContext.funMetasContext['editFunMetas'];
+        }
+
+        return {editFunMetas}
+    },
     render() {
         return <div class="ivz-view ivz-primary-drawer">
-            <IvzMetaDrawer {...this.$attrs} primary v-slots={this.$slots} />
+            <IvzMetaDrawer funMetas={this.editFunMetas} {...this.$attrs} primary v-slots={this.$slots} />
         </div>
     }
 })

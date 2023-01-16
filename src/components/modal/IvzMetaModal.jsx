@@ -8,10 +8,11 @@ export default defineComponent({
     name: 'IvzMetaModal',
     components: {IvzBasicModal, IvzFuncBtn},
     props: {
-        funMetas: {type: Array}
+        funMetas: {type: Array, default: () => []}
     },
     setup({funMetas}) {
         let funcBtnRef = ref([]);
+        let viewContext = inject(ViewContextKey);
         let initFunMetas = (funMetas) => {
             let funcBtn = [];
             funMetas.forEach(meta => {
@@ -22,16 +23,7 @@ export default defineComponent({
             funcBtnRef.value = funcBtn;
         }
 
-        let editFuncMetas = funMetas
-        let viewContext = inject(ViewContextKey);
-        if(editFuncMetas == null && viewContext != null) {
-            editFuncMetas = viewContext.funMetasContext.editFunMetas;
-            watch(() => viewContext.funMetasContext.editFunMetas, (newFunMetas) => {
-                initFunMetas(newFunMetas);
-            })
-        }
-
-        initFunMetas(editFuncMetas);
+        initFunMetas(funMetas);
         return {initFunMetas, funcBtnRef}
     },
     watch: {

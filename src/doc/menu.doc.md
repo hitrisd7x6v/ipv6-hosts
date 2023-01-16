@@ -1,6 +1,4 @@
-<h3>基础视图组件(IvzBasicView)</h3>
-<p>1. 一个增删改查视图页组件</p>
-<p>2. 一个增删改查视图页组件</p>
+<h3>页级视图组件之 IvzMenuView</h3>
 
 代码演示
 ---
@@ -10,21 +8,22 @@
   <IvzBasicView>
     <IvzBasicSearch primary>
       <IvzInput field="name" label="茶叶名称"/>
-      <AButton type="primary" @click="query">查询</AButton>&nbsp;
+      <IvzFuncBtn func='query' url='/doc/product/view'>查询</IvzFuncBtn>&nbsp;
       <AButton @click="add">新增</AButton>
     </IvzBasicSearch>
-    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+    <IvzPrimaryTable :bordered="true" :columns="columns" rowKey="id">
       <template #c_action="{record}">
+        <IvzFuncTag func='edit' :data='record' url='/doc/product/edit'>编辑</IvzFuncTag>
         <ATag color="blue" @click="add">新增</ATag>
         <ATag color="red" @click="() => del(record)">删除</ATag>
       </template>
-    </IvzBasicTable>
-    <IvzBasicModal primary>
+    </IvzPrimaryTable>
+    <IvzPrimaryModal>
       <IvzInput field="name" label="茶叶名称"/>
       <template #title="{model}">
         {{model.id ? '编辑产品' : '新增产品'}}
       </template>
-    </IvzBasicModal>
+    </IvzPrimaryModal>
   </IvzBasicView>
 </template>
 
@@ -37,20 +36,20 @@ export default {
       {field: 'type', title: '产品类型'},
       {field: 'action', type:'action', title: '操作'},
     ]
-    let dataSource = [
-      {id: 1, name: '清香秋茶', type: '清香型'}
-    ]
-    return {columns, dataSource}
+    return {columns}
+  },
+  mounted() {
+    this.$view.query();
   },
   methods: {
     add() {
       this.$view.openForAdd();
     },
     del(row) {
-      this.$view.del('/product/del', [row.id]);
+      this.$view.del('/doc/product/del', [row.id]);
     },
     query() {
-      this.$view.query('/product/list');
+      this.$view.query('/doc/product/view');
     }
   }
 }
