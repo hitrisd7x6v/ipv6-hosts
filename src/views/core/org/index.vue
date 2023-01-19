@@ -1,5 +1,5 @@
 <template>
-  <ivz-menu-view name="部门" :expand="true">
+  <IvzMenuView name="部门" :expand="true">
     <ivz-primary-search>
       <ivz-input field="name" label="部门名称"/>
       <ivz-input field="phone" label="手机号"/>
@@ -15,8 +15,13 @@
       <template #title="{model}">
         {{model.id != null ? '修改部门' : '新增部门'}}
       </template>
+      <template #footer>
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit">提交</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+      </template>
     </ivz-primary-modal>
-  </ivz-menu-view>
+  </IvzMenuView>
 </template>
 <!--部门管理-->
 <script>

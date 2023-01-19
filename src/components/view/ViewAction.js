@@ -1,6 +1,6 @@
 import {FormContext} from "@/components/form/basic/FormContext";
 import {confirm, msgError, msgSuccess, msgWarn} from "@/utils/message";
-import {MetaConst, TypeMethodMaps} from "@/utils/MetaUtils";
+import {FuncNameMeta, MetaConst, TypeMethodMaps} from "@/utils/MetaUtils";
 import SysUtils from "@/utils/SysUtils";
 
 function Unmount() {
@@ -296,8 +296,9 @@ export function $View(context) {
         let queryUrl = url
         // 没有指定查询地址, 尝试从IvzFuncBtn获取地址
         if(!queryUrl) {
-            let searchFunc = this.getSearchFunc('query');
-            if(searchFunc && searchFunc.getUrl()) {
+            // 获取功能元[IvzFuncBtn or IvzFuncTag]地址
+            let searchFunc = this.getSearchFunc(FuncNameMeta.QUERY);
+            if(searchFunc) {
                 queryUrl = searchFunc.getUrl();
             } else {
                 queryUrl = searchContext.queryUrl;
@@ -700,16 +701,17 @@ export function EditContext(viewContext) {
             this.getFormContext().validate().then(() => {
                 let model = this.getModel();
                 this.setLoading(true);
-                TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
+                TypeMethodMaps.Submit(url, model).then(resp => {
+                    let {code, message, data} = resp;
                     if(code == 200) {
+                        resolve(resp);
                         this.setVisible(false);
                         msgSuccess(message || "提交成功");
                     } else {
                         msgError(message);
                         reject(message);
                     }
-                }).catch(reason => reject(reason))
-                    .finally(() => this.setLoading(false))
+                }).catch(reason => reject(reason)).finally(() => this.setLoading(false))
             }).catch(reason => {})
         })
     }

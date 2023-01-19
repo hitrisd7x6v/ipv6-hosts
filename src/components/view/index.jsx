@@ -6,8 +6,8 @@ import IvzBasicTable from "@/components/table/IvzBasicTable.jsx";
 import IvzBreadSearch from "@/components/search/IvzBreadSearch.vue";
 import {initMetaCallback} from "@/utils/MetaUtils";
 import {defineComponent, inject, mergeProps} from "vue";
-import IvzMetaModal from "@/components/modal/IvzMetaModal";
-import IvzMetaDrawer from "@/components/drawer/IvzMetaDrawer";
+import IvzBasicModal from "@/components/modal/IvzBasicModal";
+import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export const IvzPrimarySearch = defineComponent({
@@ -31,38 +31,20 @@ export const IvzPrimarySearch = defineComponent({
 
 export const IvzPrimaryModal = defineComponent({
     name: 'IvzPrimaryModal',
-    components: {IvzMetaModal},
-    setup() {
-        let viewContext = inject(ViewContextKey);
-        let editFunMetas = [];
-        if(viewContext) {
-            editFunMetas = viewContext.funMetasContext['editFunMetas'];
-        }
-
-        return {editFunMetas}
-    },
+    components: {IvzBasicModal},
     render() {
         return <div class="ivz-view ivz-primary-modal">
-            <IvzMetaModal funMetas={this.editFunMetas} {...this.$attrs} primary v-slots={this.$slots} />
+            <IvzBasicModal {...this.$attrs} primary v-slots={this.$slots} />
         </div>
     }
 })
 
 export const IvzPrimaryDrawer = defineComponent({
     name: 'IvzPrimaryDrawer',
-    components: {IvzMetaDrawer},
-    setup() {
-        let viewContext = inject(ViewContextKey);
-        let editFunMetas = [];
-        if(viewContext) {
-            editFunMetas = viewContext.funMetasContext['editFunMetas'];
-        }
-
-        return {editFunMetas}
-    },
+    components: {IvzBasicDrawer},
     render() {
         return <div class="ivz-view ivz-primary-drawer">
-            <IvzMetaDrawer funMetas={this.editFunMetas} {...this.$attrs} primary v-slots={this.$slots} />
+            <IvzBasicDrawer {...this.$attrs} primary v-slots={this.$slots} />
         </div>
     }
 })

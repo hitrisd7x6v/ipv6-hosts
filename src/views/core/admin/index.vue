@@ -1,10 +1,15 @@
 <template>
-  <ivz-menu-view name="用户">
+  <IvzBasicView name="用户">
     <IvzPrimarySearch>
       <ivz-input field="name" label="用户昵称" />
       <ivz-input field="account" label="用户帐号" />
       <ivz-input field="phone" label="用户手机" />
       <ivz-radio field="status" label="用户状态" :options="status"/>
+      <template #func>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <IvzFuncBtn func="query" url="/core/admin/view">搜索</IvzFuncBtn>
+        <IvzFuncBtn func="add">新增</IvzFuncBtn>
+      </template>
     </IvzPrimarySearch>
     <IvzPrimaryDrawer width="860" layout="vertical" :rules="rules" placement="left">
       <template #default="{model}">
@@ -22,26 +27,38 @@
       <template #title="{model}">
         {{model.id != null ? '修改用户' : '新增用户'}}
       </template>
+      <template #footer>
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit" url="/core/admin/edit">提交</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+      </template>
     </IvzPrimaryDrawer>
-    <IvzPrimaryTable :columns="columns" :bordered="true" size="small" />
+    <IvzPrimaryTable :columns="columns" :bordered="true" size="small">
+      <template #c_action="{record}">
+        <IvzFuncTag func="add">新增</IvzFuncTag>
+        <IvzFuncTag func="edit" :data="record" url="/core/admin/edit">修改</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" url="/core/admin/del">删除</IvzFuncTag>
+        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/modPwd">修改密码</IvzFuncTag>
+      </template>
+    </IvzPrimaryTable>
     <!--  修改密码  -->
     <IvzBasicModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
       <ivz-input-password label="密码" field="password" />
       <ivz-input-password label="确认密码" field="surePwd" />
       <template #footer>
-        <a-button type="primary" @click="submit" :loading="loading">提交</a-button>
-        <a-button @click="cancelModPwd">取消</a-button>
+        <IvzFuncBtn func="submit" url="/core/admin/updatePwd">提交</IvzFuncBtn>
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
       </template>
     </IvzBasicModal>
-  </ivz-menu-view>
+  </IvzBasicView>
 </template>
 
 <script>
 
 import {ref} from "vue";
-import {msgSuccess} from "@/utils/message";
-import {IvzPrimaryTable, IvzPrimaryDrawer, IvzPrimarySearch} from "@/components/view";
+import {IvzPrimaryDrawer, IvzPrimarySearch, IvzPrimaryTable} from "@/components/view";
 import IvzBasicModal from "@/components/modal/IvzBasicModal";
+
 export default {
   name: "Admin",
   components: {IvzBasicModal, IvzPrimaryTable, IvzPrimarySearch, IvzPrimaryDrawer},
@@ -108,16 +125,6 @@ export default {
       }
     }
   },
-  methods: {
-    submit() {
-      let pwdMeta = this.$view.getTableMeta('Pwd');
-      this.$view.getEditContext("modPwd").submit(pwdMeta.url)
-    },
-
-    cancelModPwd() {
-      this.$view.getEditContext('modPwd').setVisible(false)
-    }
-  }
 }
 </script>
 

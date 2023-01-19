@@ -18,6 +18,12 @@ export default defineComponent({
         let $parent = this.$parent;
         $parent.$view = new $View(this.viewContext);
     },
+    mounted() {
+        let $view = this.$parent.$view;
+        if($view.getTableContext()) {
+            $view.query();
+        }
+    },
     render() {
         return <div class="ivz-page-view ivz-basic-view">
             {this.$slots.default ? this.$slots.default() : []}

@@ -9,6 +9,9 @@ export default defineComponent({
         editContext.setLoadingTip = this.setLoadingTip;
         editContext.getFormContext = this.getFormContext;
     },
+    unmounted() {
+
+    },
     mounted() {
         this.formRef = this.$refs['iemFormRef'];
     },

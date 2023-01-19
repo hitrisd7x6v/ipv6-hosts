@@ -32,7 +32,7 @@
           </a-breadcrumb>
         </a-col>
         <a-col style="text-align: center" span="16">
-          <slot name="fun" :metas="funMetas" :model="model">
+          <slot name="func" :metas="funMetas" :model="model">
             <a-space style="text-align: center; padding: 0px 16px">
               <template v-for="meta in funMetas" :key="meta.field">
                 <IvzFuncBtn :func="meta.field" :type="meta.props.type" @click="meta.props.onClick">{{meta.name}}</IvzFuncBtn>

@@ -1,7 +1,8 @@
-import {defineComponent, inject, mergeProps, provide, ref} from "vue";
+import {defineComponent, inject, mergeProps, provide, ref, computed} from "vue";
 import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
 import {msgError} from "@/utils/message";
-import {EditContext, SearchContext} from "@/components/view/ViewAction";
+import {EditContext, SearchContext, TableContext} from "@/components/view/ViewAction";
+import {FuncNameMeta, FunMetaMaps} from "@/utils/MetaUtils";
 
 export const IvzRow = defineComponent({
     name: 'IvzRow',
@@ -12,54 +13,92 @@ export const IvzRow = defineComponent({
         })
     },
     render() {
-        return <a-row {...this.$attrs} v-slots={this.$slots} />
+        return <ARow {...this.$attrs} v-slots={this.$slots} />
     }
 })
 function funcClickHandle(context, props) {
     if(context != null) {
         let $view = context.get$View();
-        let func = props.func.toUpperCase();
-        if(context.isPrimary) { // 使用默认操作
-            switch (func) {
-                case 'ADD':
-                    return $view.openForAdd();
-                case "DEL":
-                    if(context instanceof SearchContext) {
-                        return $view.batchDel(props.url)
-                    }
-
-                    return $view.del(props.url, props.data);
-                case "EDIT":
-                    return $view.openForEdit(props.url, props.data);
-                case "QUERY":
-                    return $view.query(props.url);
-                case "CANCEL":
-                    return $view.cancel();
-                case "RESET":
-                    if(context instanceof EditContext) {
-                        return $view.resetEditModel();
-                    } else if(context instanceof SearchContext) {
-                        return $view.resetSearchModel();
-                    } else {
-                        return console.error("错误的编辑模型");
-                    }
-                case "DETAIL":
-                    return $view.detail(props.url);
-                case "SUBMIT":
-                    return $view.submit(props.url).then(() => {
-                        let query = $view.getSearchContext().getFunc("QUERY");
-                        if(query instanceof Function) {
-                            query();
+        let split = props.func.split(':');
+        if(split.length == 1) {
+            let func = props.func.toUpperCase();
+            if(context.isPrimary) { // 主视图操作, 各个组件联动处理
+                switch (func) {
+                    case FuncNameMeta.ADD:
+                        return $view.openForAdd();
+                    case FuncNameMeta.DEL:
+                        if(context instanceof SearchContext) {
+                            return $view.batchDel(props.url)
                         }
-                    });
-                case "EXPAND":
-                    return $view.expanded(); // 展开所有行
-                default: console.error(`不支持的功能类型[${props.func}]`)
-            }
-        } else if(context.prefix){ // 各个组件操作
 
+                        return $view.del(props.url, props.data).catch(reason => null)
+                    case FuncNameMeta.EDIT:
+                        return $view.openForEdit(props.url, props.data);
+                    case FuncNameMeta.QUERY:
+                        return $view.query(props.url);
+                    case FuncNameMeta.CANCEL:
+                        return $view.cancel();
+                    case FuncNameMeta.RESET:
+                        if(context instanceof EditContext) {
+                            return $view.resetEditModel();
+                        } else if(context instanceof SearchContext) {
+                            $view.resetSearchModel()
+                            return $view.query();
+                        } else {
+                            return console.error("错误的编辑模型");
+                        }
+                    case FuncNameMeta.DETAIL:
+                        return $view.detail(props.url);
+                    case FuncNameMeta.SUBMIT:
+                        return $view.submit(props.url).then(() => {
+                            $view.query(); // 提交成功后重新搜索列表
+                        });
+                    case FuncNameMeta.EXPAND: return $view.expanded(); // 展开所有行
+                    default: console.error(`不支持功能类型[${props.func}]`)
+                }
+            } else { // 各个组件单独操作
+                if(context instanceof EditContext) {
+                    switch (func) {
+                        case FuncNameMeta.RESET: return context.reset();
+                        case FuncNameMeta.CANCEL:
+                            context.reset();
+                            context.setLoading(false)
+                            return context.cancel();
+                        case FuncNameMeta.SUBMIT: return context.submit(props.url);
+
+                        default: console.error(`编辑组件不支持功能类型[${props.func}]`)
+                    }
+                } else if(context instanceof TableContext) {
+                    switch (func) {
+                        case FuncNameMeta.ADD:
+                        // return $view.openForAdd();
+                        case FuncNameMeta.DEL:
+                            return context.del(props.url)
+                        case FuncNameMeta.EDIT:
+                        // return $view.openForEdit(props.url, props.data);
+                        case FuncNameMeta.DETAIL:
+                        // return context.detail(props.url);
+                        case FuncNameMeta.EXPAND:
+                            return context.expanded(); // 展开所有行
+                        default: console.error(`表组件不支持功能类型[${props.func}]`)
+                    }
+                } else {
+
+                }
+            }
         } else {
-            console.error(`不支持的操作[${props.func}]`)
+            let id = split[1];
+            let func = split[0].toUpperCase();
+            if(func == FuncNameMeta.ADD || func == FuncNameMeta.EDIT) {
+                let editContext = $view.getEditContext(id);
+                if(editContext instanceof EditContext) {
+                    if(func == FuncNameMeta.ADD) {
+                        editContext.setVisible(true)
+                    } else {
+                        editContext.asyncVisible().finally(() => null);
+                    }
+                }
+            }
         }
     }
 }
@@ -74,7 +113,7 @@ export const IvzFuncTag = defineComponent({
         url: String,
         color: String,
         data: {type: Object}, // 行数据
-        func: {type: String, default: 'def'}, // add, del, edit, query, import, export, cancel, detail, reset
+        func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset
         disabled: Function, // 是否禁用
         onClick: Function,
     },
@@ -90,17 +129,19 @@ export const IvzFuncTag = defineComponent({
             }
         }
 
-        context.regFunc(props.func.toUpperCase(), {
+        let typeCompute = computed(() => props.func.toUpperCase())
+
+        // 注册功能点
+        context.regFunc(typeCompute.value, {
             getUrl: () => props.url,
             clickHandle: clickProxy
         });
 
-        return {clickProxy, context};
+        return {clickProxy, context, typeCompute};
     },
     computed: {
         tagColor() {
-            let upperCase = this.func.toUpperCase();
-            return this.color || colorMaps[upperCase]
+            return this.color || colorMaps[this.typeCompute]
         },
         tagDisabled() {
             return this.disabled != null ? this.disabled(this.data) : false;
@@ -147,12 +188,19 @@ export const IvzFuncBtn = defineComponent({
             }
           }
         }
-        return {clickProxy, context};
-    },
-    computed: {
-        typeCompute() {
-            return this.func.toUpperCase();
+
+        let loading = ref(false);
+        let typeCompute = computed(() => props.func.toUpperCase())
+        if(context instanceof EditContext && typeCompute.value == FuncNameMeta.SUBMIT) {
+            // 设置按钮的加载状态
+            let loadingOri = context.setLoading;
+            // 代理设置加载状态方法, 新增按钮加载状态
+            context.setLoading = (status) => {
+                loadingOri(status);
+                loading.value = status;
+            }
         }
+        return {clickProxy, context, loading, typeCompute};
     },
     created() {
         if(this.typeCompute && this.context) {
@@ -177,7 +225,7 @@ export const IvzFuncBtn = defineComponent({
             props = mergeProps(type, this.clickProxy, this.$attrs);
         }
 
-        return <a-button {...props} v-slots={this.$slots} style="margin: 0px 3px"/>
+        return <a-button {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
     }
 })
 

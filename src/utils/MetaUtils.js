@@ -20,6 +20,9 @@ const FunMetaMaps = {
     }
 }
 
+export const FuncNameMeta = {ADD: 'ADD', DEL: 'DEL', EDIT: 'EDIT', QUERY: 'QUERY', IMPORT: 'IMPORT'
+    , EXPORT: 'EXPORT', CANCEL: 'CANCEL', RESET: 'RESET', EXPAND: 'EXPAND', SUBMIT: 'SUBMIT', DETAIL: 'DETAIL'}
+
 function buildModelFromMetas(metas) {
     let model = {};
     let doBuildModel = (model, items) => {

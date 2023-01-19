@@ -191,18 +191,21 @@ export default defineComponent({
         primary: {type: Boolean, default: false},
         dataSource: Array,
         rowSelection: {type: null}, // 不支持此选项
-        showTotal: {type: Function},
         columns: {type: Array, default: () => []},
-        total: {type: Number, default: 0}, // 总条数
-        pagination: {type: Boolean, default: true}, // 是否分页, 不支持使用对象
-        defaultPageSize: {type: Number, default: 10},
-        showSizeChanger: {type: Boolean, default: true},
-        showQuickJumper: {type: Boolean, default: true},
-        expandedRowKeys: {type: Array, default: null}, // 展开的行
-        pageSizeOptions: {type: Array, default: () => ['10', '20', '30', '50', '80']},
+        pagination: {
+            default: () => {
+                return {
+                    total: 0,
+                    defaultPageSize: 10,
+                    showQuickJumper: true,
+                    showSizeChanger: true,
+                    showTotal: (total, range) => `共 ${total}条`,
+                    pageSizeOptions: ['10', '20', '30', '50', '100']
+                }
+            }
+        }, // 是否分页, 不支持使用对象
     },
     setup(props, {slots, emit, attrs}) {
-        let page = reactive({});
         let selectedRows = ref([]);
         let selectedRowKeys = ref([]);
 
@@ -216,7 +219,7 @@ export default defineComponent({
         let tableContext = new TableContext(viewContext);
 
         // 监控展开行数据变化
-        watch(() => props.expandedRowKeys, (newVal) => {
+        watch(() => props['expandedRowKeys'], (newVal) => {
             unfoldRowKeys.value = newVal;
         })
 
@@ -247,28 +250,16 @@ export default defineComponent({
         }
 
         // 分页触发事件
-        page.onChange = (current, pageSize) => {
-            emit('pageChange', current, pageSize);
-            tableContext.pageChange(current, pageSize);
-        }
+        if(props.pagination instanceof Object) {
+            props.pagination.onChange = (current, pageSize) => {
+                emit('pageChange', current, pageSize);
+                tableContext.pageChange(current, pageSize);
+            }
 
-        // 每页条数改变事件
-        page.onShowSizeChange = (current, pageSize) => {
-            emit('sizeChange', current, pageSize);
-            tableContext.sizeChange(current, pageSize);
-        }
-
-        let mergePagination = ({pagination, total, showTotal, showSizeChanger, showQuickJumper, pageSizeOptions}) => {
-            if(pagination) {
-                page.total = total;
-                page.showQuickJumper = showQuickJumper;
-                page.showSizeChanger = showSizeChanger;
-                page.pageSizeOptions = pageSizeOptions;
-                page.showTotal = showTotal ? showTotal : (total, range) => `共 ${total} 条`
-
-                return page;
-            } else {
-                return false;
+            // 每页条数改变事件
+            props.pagination.onShowSizeChange = (current, pageSize) => {
+                emit('sizeChange', current, pageSize);
+                tableContext.sizeChange(current, pageSize);
             }
         }
 
@@ -285,8 +276,7 @@ export default defineComponent({
 
         let setLoading = (status) => loading.value = status;
         let setDataSource = (ds) => dataSourceRef.value = ds;
-        let setTotalRows = (total) => page.total = total;
-
+        let setTotalRows = (total) => props.pagination.total = total;
 
         if(viewContext) {
             if(props.primary) {
@@ -306,16 +296,16 @@ export default defineComponent({
                 tableContext['setTotalRows'] = setTotalRows;
                 tableContext['setDataSource'] = setDataSource;
 
-                if(props.pagination) { // 如果需要分页
+                if(props.pagination instanceof Object) { // 如果需要分页
                     tableContext['currentPage'] = 1;
-                    tableContext['pageSize'] = props.defaultPageSize
+                    tableContext['pageSize'] = props.pagination.defaultPageSize
                 }
             }
         }
 
         provide(FuncContextKey, tableContext);
         return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys
-            , mergePagination, updateColumns, unfoldRowKeys, loading, dataSourceRef
+            , updateColumns, unfoldRowKeys, loading, dataSourceRef
             , setDataSource, setLoading, setTotalRows, tableContext}
     },
     created() {
@@ -324,13 +314,10 @@ export default defineComponent({
         this.tableContext['getSelectedRowKeys'] = this.getSelectedRowKeys;
     },
     render() {
-        this.updateColumns();
-        let pagination = this.mergePagination(this.$props);
-
         return (
             <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
                 loading={this.loading} dataSource={this.dataSourceRef} ref="ATableRef"
-                     pagination={pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
+                 pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
                onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {
                         onClick: (event) => this.$emit('rowClick', row),       // 点击行
