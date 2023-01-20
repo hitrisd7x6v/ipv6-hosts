@@ -11,7 +11,7 @@
         <IvzFuncBtn func="add">新增</IvzFuncBtn>
       </template>
     </IvzPrimarySearch>
-    <IvzPrimaryDrawer width="860" layout="vertical" :rules="rules" placement="left">
+    <IvzViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
       <template #default="{model}">
         <IvzRow :gutter="16" span="8">
           <ivz-input field="name" label="用户昵称" />
@@ -32,15 +32,15 @@
         <IvzFuncBtn func="submit" url="/core/admin/edit">提交</IvzFuncBtn>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
       </template>
-    </IvzPrimaryDrawer>
-    <IvzPrimaryTable :columns="columns" :bordered="true" size="small">
+    </IvzViewDrawer>
+    <IvzViewTable :columns="columns" :bordered="true" size="small">
       <template #c_action="{record}">
         <IvzFuncTag func="add">新增</IvzFuncTag>
         <IvzFuncTag func="edit" :data="record" url="/core/admin/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/admin/del">删除</IvzFuncTag>
         <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/modPwd">修改密码</IvzFuncTag>
       </template>
-    </IvzPrimaryTable>
+    </IvzViewTable>
     <!--  修改密码  -->
     <IvzBasicModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
       <ivz-input-password label="密码" field="password" />
@@ -56,12 +56,12 @@
 <script>
 
 import {ref} from "vue";
-import {IvzPrimaryDrawer, IvzPrimarySearch, IvzPrimaryTable} from "@/components/view";
+import {IvzViewDrawer, IvzPrimarySearch, IvzViewTable} from "@/components/view";
 import IvzBasicModal from "@/components/modal/IvzBasicModal";
 
 export default {
   name: "Admin",
-  components: {IvzBasicModal, IvzPrimaryTable, IvzPrimarySearch, IvzPrimaryDrawer},
+  components: {IvzBasicModal},
   setup() {
     let sex = [
       {label: '男', value: 'man'},

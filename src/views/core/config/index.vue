@@ -23,10 +23,10 @@
 <!--系统配置管理-->
 <script>
 
-import {IvzPrimarySearch, IvzPrimaryModal, IvzPrimaryTable} from "@/components/view";
+import {IvzPrimarySearch, IvzPrimaryModal, IvzViewTable} from "@/components/view";
 export default {
   name: "Config",
-  components: {IvzPrimaryTable, IvzPrimarySearch, IvzPrimaryModal},
+  components: {IvzPrimaryTable: IvzViewTable, IvzPrimarySearch, IvzPrimaryModal},
   setup() {
     let type = [
       {label: '是', value:'sys'}, {label: '否', value: 'def'}

@@ -37,11 +37,11 @@
 import {FunMetaMaps} from "@/utils/MetaUtils";
 import {ref} from "vue";
 import {IvzRow} from "@/components/basic";
-import {IvzPrimarySearch, IvzPrimaryTable, IvzPrimaryDrawer} from "@/components/view";
+import {IvzPrimarySearch, IvzViewTable, IvzViewDrawer} from "@/components/view";
 
 export default {
   name: "Menu",
-  components: {IvzPrimaryDrawer, IvzPrimaryTable, IvzPrimarySearch, IvzRow},
+  components: {IvzPrimaryDrawer: IvzViewDrawer, IvzPrimaryTable: IvzViewTable, IvzPrimarySearch, IvzRow},
   setup() {
     let type = [
       {label: '目录', value: 'M'},

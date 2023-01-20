@@ -30,7 +30,7 @@ export const IvzPrimarySearch = defineComponent({
 })
 
 export const IvzPrimaryModal = defineComponent({
-    name: 'IvzPrimaryModal',
+    name: 'IvzViewModal',
     components: {IvzBasicModal},
     render() {
         return <div class="ivz-view ivz-primary-modal">
@@ -39,8 +39,8 @@ export const IvzPrimaryModal = defineComponent({
     }
 })
 
-export const IvzPrimaryDrawer = defineComponent({
-    name: 'IvzPrimaryDrawer',
+export const IvzViewDrawer = defineComponent({
+    name: 'IvzViewDrawer',
     components: {IvzBasicDrawer},
     render() {
         return <div class="ivz-view ivz-primary-drawer">
@@ -49,8 +49,8 @@ export const IvzPrimaryDrawer = defineComponent({
     }
 })
 
-export const IvzPrimaryTable = defineComponent({
-    name: 'IvzPrimaryTable',
+export const IvzViewTable = defineComponent({
+    name: 'IvzViewTable',
     components: {IvzBasicTable},
     setup(props, {attrs}) {
         let tableFunMetas = [];
@@ -90,8 +90,8 @@ export default {
         app.component(IvzFuncView.name, IvzFuncView);
         app.component(IvzBasicView.name, IvzBasicView);
         app.component(IvzPrimaryModal.name, IvzPrimaryModal);
-        app.component(IvzPrimaryTable.name, IvzPrimaryTable);
-        app.component(IvzPrimaryDrawer.name, IvzPrimaryDrawer);
+        app.component(IvzViewTable.name, IvzViewTable);
+        app.component(IvzViewDrawer.name, IvzViewDrawer);
         app.component(IvzPrimarySearch.name, IvzPrimarySearch);
     }
 }
