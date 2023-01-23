@@ -16,29 +16,31 @@
         <IvzRow :gutter="16" span="8">
           <ivz-input field="name" label="用户昵称" />
           <ivz-input field="account" label="用户帐号" :disabled="model.id != null"/>
-          <ivz-tree-select field="orgId" label="所属部门" treeNodeFilterProp="label" url="/core/org/parent" labelField="name" valueField="id"/>
+          <ivz-tree-select field="orgId" label="所属部门" treeNodeFilterProp="label"
+                           url="/core/org/parent" labelField="name" valueField="id"/>
           <ivz-input field="email" label="用户邮箱" />
           <ivz-radio field="status" label="用户状态" defaultValue="enabled" :options="status"/>
           <ivz-radio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
-          <ivz-checkbox field="roleIds" label="用户角色" url="/core/role/list" labelField="name" valueField="id" span="24"/>
+          <ivz-checkbox field="roleIds" label="用户角色" url="/core/role/list"
+                        labelField="name" valueField="id" span="24"/>
           <ivz-textarea field="remark" label="用户简介" span="24" />
         </IvzRow>
       </template>
       <template #title="{model}">
         {{model.id != null ? '修改用户' : '新增用户'}}
       </template>
-      <template #footer>
+      <template #footer="{model}">
         <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" url="/core/admin/edit">提交</IvzFuncBtn>
+        <IvzFuncBtn func="submit" :url="model.id ? '/core/admin/edit' : 'core/admin/add'">提交</IvzFuncBtn>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
       </template>
     </IvzViewDrawer>
     <IvzViewTable :columns="columns" :bordered="true" size="small">
       <template #c_action="{record}">
-        <IvzFuncTag func="add">新增</IvzFuncTag>
+        <IvzFuncTag func="add" v-auth:or="['core:admin:adda', 'core:admin:edit']">新增</IvzFuncTag>
         <IvzFuncTag func="edit" :data="record" url="/core/admin/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/admin/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/modPwd">修改密码</IvzFuncTag>
+        <IvzFuncTag func="edit:modPwd" :data="record">修改密码</IvzFuncTag>
       </template>
     </IvzViewTable>
     <!--  修改密码  -->
@@ -46,7 +48,7 @@
       <ivz-input-password label="密码" field="password" />
       <ivz-input-password label="确认密码" field="surePwd" />
       <template #footer>
-        <IvzFuncBtn func="submit" url="/core/admin/updatePwd">提交</IvzFuncBtn>
+        <IvzFuncBtn func="submit" url="/core/admin/pwd">提交</IvzFuncBtn>
         <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
       </template>
     </IvzBasicModal>
@@ -111,19 +113,6 @@ export default {
 
     let loading = ref(false);
     return {columns, rules, status, sex, pwdRules, loading, pwdModalRef}
-  },
-  mounted() {
-    this.pwdModalRef = this.$refs['pwdModalRef']
-    // 修改密码功能点
-    let pwdFunMeta = this.$view.getMetaContext().getTableMeta('Pwd');
-    if(pwdFunMeta) {
-      pwdFunMeta.callback = (row, meta) => {
-        this.$view.getEditContext("modPwd")
-            .asyncVisible().then(model => {
-          model.id = row.id;
-        })
-      }
-    }
   },
 }
 </script>

@@ -22,11 +22,9 @@
 </template>
 <!--字典管理-->
 <script>
-import {IvzPrimarySearch, IvzViewTable, IvzPrimaryModal} from "@/components/view";
 
 export default {
   name: "DictType",
-  components: {IvzPrimaryModal, IvzPrimaryTable: IvzViewTable, IvzPrimarySearch},
   setup() {
     let status = [
       {label: '启用', value: 'enabled'}, {label: '禁用', value: 'disabled'}

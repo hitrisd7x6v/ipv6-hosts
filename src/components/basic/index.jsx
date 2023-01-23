@@ -19,8 +19,8 @@ export const IvzRow = defineComponent({
 function funcClickHandle(context, props) {
     if(context != null) {
         let $view = context.get$View();
-        let split = props.func.split(':');
-        if(split.length == 1) {
+        let split = props.func.split(':'); // func:id e.g [edit:modPwd]
+        if(split.length == 1) { // 主功能：func e.g [edit]
             let func = props.func.toUpperCase();
             if(context.isPrimary) { // 主视图操作, 各个组件联动处理
                 switch (func) {
@@ -90,12 +90,19 @@ function funcClickHandle(context, props) {
             let id = split[1];
             let func = split[0].toUpperCase();
             if(func == FuncNameMeta.ADD || func == FuncNameMeta.EDIT) {
+                let rowKey = $view.getRowKey();
+
                 let editContext = $view.getEditContext(id);
                 if(editContext instanceof EditContext) {
                     if(func == FuncNameMeta.ADD) {
                         editContext.setVisible(true)
                     } else {
-                        editContext.asyncVisible().finally(() => null);
+                        editContext.asyncVisible().then(model => {
+                            if(props.data) {
+                                // 默认用rowKey作为功能的唯一字段
+                                model[rowKey] = props.data[rowKey];
+                            }
+                        }).finally(() => null);
                     }
                 }
             }
@@ -112,10 +119,10 @@ export const IvzFuncTag = defineComponent({
     props: {
         url: String,
         color: String,
-        data: {type: Object}, // 行数据
-        func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset
+        onClick: Function, // 自定义单击处理
         disabled: Function, // 是否禁用
-        onClick: Function,
+        data: {type: Object}, // 行数据
+        func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset, expand
     },
     setup(props, {attrs}) {
         let context = inject(FuncContextKey);
@@ -191,10 +198,11 @@ export const IvzFuncBtn = defineComponent({
 
         let loading = ref(false);
         let typeCompute = computed(() => props.func.toUpperCase())
-        if(context instanceof EditContext && typeCompute.value == FuncNameMeta.SUBMIT) {
+        if(context instanceof EditContext &&
+            typeCompute.value == FuncNameMeta.SUBMIT) {
             // 设置按钮的加载状态
             let loadingOri = context.setLoading;
-            // 代理设置加载状态方法, 新增按钮加载状态
+            // 代理loading方法 设置按钮加载状态
             context.setLoading = (status) => {
                 loadingOri(status);
                 loading.value = status;

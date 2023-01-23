@@ -428,9 +428,6 @@ export function $View(context) {
         searchContext.getFormContext().resetFields();
     }
 
-    // this.import = importAction;
-    // this.export = exportAction;
-
     /**
      * @param id 元素的唯一id 如果空将返回主搜索上下文对象
      * @return {SearchContext|*}
@@ -890,10 +887,10 @@ export function DetailContext(viewContext) {
  * 视图上下文
  * @constructor
  */
-export function ViewContext () {
-    this.rowKey = "id";
-    this.name = ""; // 视图名称
-    this.IdContextMaps = {}
+export function ViewContext (name, rowKey) {
+    this.name = name || ''; // 视图名称
+    this.IdContextMaps = {} // 声明id的上下文对象
+    this.rowKey = rowKey || "id";
 
     this.funMetasContext = new FuncMetaContext();
 

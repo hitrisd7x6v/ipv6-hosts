@@ -11,21 +11,27 @@ function resolveMenusBreadcrumb(menus) {
 }
 // 解析菜单映射
 function resolverMenuMaps(menus) {
-    let urlMenuMap = {}, idMenuMap = {};
+    let urlMenuMap = {}, idMenuMap = {}, authMenuMap = {};
     let doResolverMenuMaps = (menus) => {
         for(let i=0; i < menus.length; i++) {
             let menu = menus[i];
             idMenuMap[menu.id] = menu;
-            if (menu['type'] === 'V') {
+            if (menu['type'] === 'V') { // 视图类型
                 urlMenuMap[menu.url] = menu;
-            } else if (menu['children']) {
+            } else if(menu['type'] === 'A') { // 权限类型
+                if(menu['perms']) {
+                    authMenuMap[menu['perms']] = menu;
+                }
+            }
+
+            if (menu['children']) {
                 doResolverMenuMaps(menu['children'])
             }
         }
     }
 
     doResolverMenuMaps(menus)
-    return {urlMenuMap, idMenuMap};
+    return {urlMenuMap, idMenuMap, authMenuMap};
 }
 
 function resolverOptions(data, labelField, valueField, valueLabelMap) {
@@ -60,6 +66,7 @@ const registerSysModule = function (store) {
             optionsMaps: {}, // url | dict -> {options, valueLabelMap}
             idMenuMaps: {}, // id和菜单的映射
             selectedKeys: [], // 选中的菜单
+            authMenuMap: {}, // perms -> menu 权限
             urlMenuMaps: {}, // url -> menu 对象
             urlRouteMaps: {}, // url -> route taskBarData
             optionsInfo: {/*dict -> data | url -> data*/}, // 字典和url的数据信息
@@ -80,6 +87,8 @@ const registerSysModule = function (store) {
 
             // url -> menu 映射
             urlMenuMaps: state => state.urlMenuMaps,
+            // perms -> menu 映射
+            authMenuMap: state => state.authMenuMap,
             // 当前激活的视图
             activityView: state => state.activeView,
             // 当前激活的菜单
@@ -303,8 +312,9 @@ const registerSysModule = function (store) {
                  return getMenus().then(({data}) => {
                     state.views = data;
                     state.activeView = state.views[0];
-                    let {urlMenuMap, idMenuMap} = resolverMenuMaps(data);
+                    let {urlMenuMap, idMenuMap, authMenuMap} = resolverMenuMaps(data);
                     state.idMenuMaps = idMenuMap;
+                    state.authMenuMap = authMenuMap;
 
                     // 加入到菜单列表
                     if(urlMenuMap != null) {

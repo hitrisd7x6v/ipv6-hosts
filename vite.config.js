@@ -20,19 +20,21 @@ export default defineConfig((env)=>{
         libs: [{
           libraryName: 'ant-design-vue',
           esModule: true,
-          resolveStyle: (name) => {
-            return `ant-design-vue/es/${name}/style`;
-          },
-          resolveComponent: (name) => {
-            return `ant-design-vue/es/${name}`;
-          },
-        },{
-          libraryName: 'ivz-online',
-          esModule: true,
-          resolveStyle: (name) => {
-            return `ivz-online/dist/index.css`;
-          },
-        }]
+          // resolveStyle: (name) => {
+          //   return `ant-design-vue/es/${name}/style`;
+          // },
+          // resolveComponent: (name) => {
+          //   return `ant-design-vue/es/${name}`;
+          // },
+        },
+        // {
+        //   libraryName: 'ivz-online',
+        //   esModule: true,
+        //   resolveStyle: (name) => {
+        //     return `ivz-online/dist/index.css`;
+        //   },
+        // }
+        ]
       }),
       vitePluginChunk
     ],

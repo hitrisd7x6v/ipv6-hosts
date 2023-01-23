@@ -315,16 +315,16 @@ export default defineComponent({
     },
     render() {
         return (
-            <a-table {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
+            <ATable {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
                 loading={this.loading} dataSource={this.dataSourceRef} ref="ATableRef"
-                 pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
-               onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
+                pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
+                onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {
                         onClick: (event) => this.$emit('rowClick', row),       // 点击行
                         onDblclick: (event) => this.$emit('rowDblclick', row), // 行双击
                     }
                  }}>
-        </a-table>)
+            </ATable>)
     },
     methods: {
         getPagination() {

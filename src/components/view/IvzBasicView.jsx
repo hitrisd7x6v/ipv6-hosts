@@ -7,9 +7,10 @@ export default defineComponent({
     props: {
         // 功能名称 比如 用户管理
         name: {type: String, default: ''},
+        rowKey: {type: String, default: 'id'}
     },
-    setup() {
-        const viewContext = new ViewContext();
+    setup(props) {
+        const viewContext = new ViewContext(props.name, props.rowKey);
         provide(ViewContextKey, viewContext);
 
         return {viewContext}

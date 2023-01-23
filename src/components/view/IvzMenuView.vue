@@ -30,6 +30,8 @@ export default {
   mixins: [MixinConfigView],
   components: {IvzUploadModal, CloudUploadOutlined},
   props: {
+    name: {type: String, default: ''},
+    rowKey: {type: String, default: 'id'},
     // 是否显示展开/缩收按钮
     expand: {type: Boolean, default: false},
   },
@@ -88,7 +90,7 @@ export default {
     }
 
     // 提供视图信息给其视图子组件
-    const viewContext = new ViewContext();
+    const viewContext = new ViewContext(props.name, props.rowKey);
     let meta$View = new $View(viewContext);
 
     viewContext.funMetasContext = new FuncMetaContext
