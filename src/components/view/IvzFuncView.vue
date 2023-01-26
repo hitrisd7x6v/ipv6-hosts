@@ -27,8 +27,6 @@ export default {
   name: "IvzFuncView",
   mixins: [MixinMetaView],
   props: {
-    name: {type: String, default: 'id'},
-    rowKey: {type: String, default: 'id'},
     // 编辑组件功能点
     editFunMetas: {type: Array, default: () => []},
     // 表格组件功能点
@@ -73,7 +71,7 @@ export default {
     }
 
     // 提供视图信息给其视图子组件
-    const viewContext = new ViewContext(props.name, props.rowKey);
+    const viewContext = new ViewContext(props);
     let meta$View = new $View(viewContext);
 
     viewContext.funMetasContext = new FuncMetaContext

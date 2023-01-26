@@ -1,11 +1,22 @@
 <template>
-  <IvzMenuView name="部门" :expand="true">
-    <ivz-primary-search>
+  <IvzBasicView name="部门">
+    <IvzViewSearch>
       <ivz-input field="name" label="部门名称"/>
       <ivz-input field="phone" label="手机号"/>
-    </ivz-primary-search>
-    <ivz-primary-table :columns="columns" size="small" :pagination="false"/>
-    <ivz-primary-modal :span="[7, 15]" :rules="rules">
+      <template #func>
+        <IvzFuncBtn func="query" url="/core/org/view">搜索</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <IvzFuncBtn func="add" url="/core/org/add">新增</IvzFuncBtn>
+        <IvzFuncBtn func="expand">展开/缩收</IvzFuncBtn>
+      </template>
+    </IvzViewSearch>
+    <IvzViewTable :columns="columns" size="small" :pagination="false">
+      <template #c_action="{record}">
+        <IvzFuncTag func="edit" :data="record" url="/core/org/edit">修改</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" url="/core/org/del">删除</IvzFuncTag>
+      </template>
+    </IvzViewTable>
+    <IvzViewModal :span="[7, 15]" :rules="rules">
       <ivz-input field="name" label="部门名称"/>
       <ivz-tree-select field="pid" label="所属部门" valueField="id"
          :defaultValue="0" url="/core/org/parent" labelField="name"
@@ -15,13 +26,13 @@
       <template #title="{model}">
         {{model.id != null ? '修改部门' : '新增部门'}}
       </template>
-      <template #footer>
+      <template #footer="{model}">
         <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit">提交</IvzFuncBtn>
+        <IvzFuncBtn func="submit" :url="model.id ? '/core/org/edit' : '/core/org/add'">提交</IvzFuncBtn>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
       </template>
-    </ivz-primary-modal>
-  </IvzMenuView>
+    </IvzViewModal>
+  </IvzBasicView>
 </template>
 <!--部门管理-->
 <script>

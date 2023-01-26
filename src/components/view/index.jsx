@@ -10,8 +10,8 @@ import IvzBasicModal from "@/components/modal/IvzBasicModal";
 import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
-export const IvzPrimarySearch = defineComponent({
-    name: 'IvzPrimarySearch',
+export const IvzViewSearch = defineComponent({
+    name: 'IvzViewSearch',
     components: {IvzBreadSearch},
     setup() {
         let viewContext = inject(ViewContextKey);
@@ -29,7 +29,7 @@ export const IvzPrimarySearch = defineComponent({
     }
 })
 
-export const IvzPrimaryModal = defineComponent({
+export const IvzViewModal = defineComponent({
     name: 'IvzViewModal',
     components: {IvzBasicModal},
     render() {
@@ -89,9 +89,9 @@ export default {
         app.component(IvzMenuView.name, IvzMenuView);
         app.component(IvzFuncView.name, IvzFuncView);
         app.component(IvzBasicView.name, IvzBasicView);
-        app.component(IvzPrimaryModal.name, IvzPrimaryModal);
+        app.component(IvzViewModal.name, IvzViewModal);
         app.component(IvzViewTable.name, IvzViewTable);
         app.component(IvzViewDrawer.name, IvzViewDrawer);
-        app.component(IvzPrimarySearch.name, IvzPrimarySearch);
+        app.component(IvzViewSearch.name, IvzViewSearch);
     }
 }

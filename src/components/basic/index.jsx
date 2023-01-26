@@ -3,6 +3,7 @@ import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
 import {msgError} from "@/utils/message";
 import {EditContext, SearchContext, TableContext} from "@/components/view/ViewAction";
 import {FuncNameMeta, FunMetaMaps} from "@/utils/MetaUtils";
+import {mapGetters} from "vuex";
 
 export const IvzRow = defineComponent({
     name: 'IvzRow',
@@ -31,7 +32,7 @@ function funcClickHandle(context, props) {
                             return $view.batchDel(props.url)
                         }
 
-                        return $view.del(props.url, props.data).catch(reason => null)
+                        return $view.del(props.url, props.data)
                     case FuncNameMeta.EDIT:
                         return $view.openForEdit(props.url, props.data);
                     case FuncNameMeta.QUERY:
@@ -42,17 +43,14 @@ function funcClickHandle(context, props) {
                         if(context instanceof EditContext) {
                             return $view.resetEditModel();
                         } else if(context instanceof SearchContext) {
-                            $view.resetSearchModel()
-                            return $view.query();
+                            return $view.resetSearchModel()
                         } else {
-                            return console.error("错误的编辑模型");
+                            return console.error(`错误的编辑上线文[${context}]`);
                         }
                     case FuncNameMeta.DETAIL:
                         return $view.detail(props.url);
                     case FuncNameMeta.SUBMIT:
-                        return $view.submit(props.url).then(() => {
-                            $view.query(); // 提交成功后重新搜索列表
-                        });
+                        return $view.submit(props.url);
                     case FuncNameMeta.EXPAND: return $view.expanded(); // 展开所有行
                     default: console.error(`不支持功能类型[${props.func}]`)
                 }
@@ -66,6 +64,11 @@ function funcClickHandle(context, props) {
                             return context.cancel();
                         case FuncNameMeta.SUBMIT: return context.submit(props.url);
 
+                        default: console.error(`编辑组件不支持功能类型[${props.func}]`)
+                    }
+                } else if(context instanceof SearchContext) {
+                    switch (func) {
+                        case FuncNameMeta.RESET: return context.reset();
                         default: console.error(`编辑组件不支持功能类型[${props.func}]`)
                     }
                 } else if(context instanceof TableContext) {
@@ -87,8 +90,8 @@ function funcClickHandle(context, props) {
                 }
             }
         } else {
-            let id = split[1];
-            let func = split[0].toUpperCase();
+            let id = split[1]; // 组件的id属性
+            let func = split[0].toUpperCase(); // func大写
             if(func == FuncNameMeta.ADD || func == FuncNameMeta.EDIT) {
                 let rowKey = $view.getRowKey();
 
@@ -144,9 +147,13 @@ export const IvzFuncTag = defineComponent({
             clickHandle: clickProxy
         });
 
-        return {clickProxy, context, typeCompute};
+        let viewContext = context.get$View().getViewContext();
+        return {clickProxy, context, typeCompute, viewContext};
     },
     computed: {
+        ...mapGetters({
+            auth: 'sys/authMenuMap'
+        }),
         tagColor() {
             return this.color || colorMaps[this.typeCompute]
         },
@@ -155,9 +162,25 @@ export const IvzFuncTag = defineComponent({
         }
     },
     render() {
-        let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
-        return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
-                     color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
+        /**
+         * 1. 有传入url的才需要校验功能权限
+         * 2. 在视图组件声明 auth
+         * 3. 返回的权限列表里包含传入的 url
+         */
+        if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
+            if(this.auth[this.url]) { // 有权限
+                let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
+                return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
+                             color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
+            } else {
+                return <span></span>
+            }
+        } else {
+            let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
+            return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
+                         color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
+        }
+
     }
 })
 const typeMaps = {
@@ -208,7 +231,14 @@ export const IvzFuncBtn = defineComponent({
                 loading.value = status;
             }
         }
-        return {clickProxy, context, loading, typeCompute};
+
+        let viewContext = context.get$View().getViewContext();
+        return {clickProxy, context, loading, typeCompute, viewContext};
+    },
+    computed: {
+        ...mapGetters({
+            auth: 'sys/authMenuMap'
+        })
     },
     created() {
         if(this.typeCompute && this.context) {
@@ -225,15 +255,33 @@ export const IvzFuncBtn = defineComponent({
         }
     },
     render() {
-        let type = typeMaps[this.typeCompute], props;
-        // 如果自定义单击事件, 不做处理
-        if(this.$attrs.onClick instanceof Function) {
-            props = mergeProps(type, this.$attrs);
-        } else { // 使用代理单击事件
-            props = mergeProps(type, this.clickProxy, this.$attrs);
+        /**
+         * 1. 有传入url的才需要校验功能权限
+         * 2. 在视图组件声明 auth
+         * 3. 返回的权限列表里包含传入的 url
+         */
+        if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
+            if(this.auth[this.url]) { // 有权限
+                let props = this.handleProps();
+                return <AButton {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
+            } else {
+                return <span></span>
+            }
+        } else {
+            let props = this.handleProps();
+            return <AButton {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading} />
         }
-
-        return <a-button {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
+    },
+    methods: {
+        handleProps() {
+            let type = typeMaps[this.typeCompute], props;
+            // 如果自定义单击事件, 不做处理
+            if(this.$attrs.onClick instanceof Function) {
+                return mergeProps(type, this.$attrs);
+            } else { // 使用代理单击事件
+                return mergeProps(type, this.clickProxy, this.$attrs);
+            }
+        }
     }
 })
 

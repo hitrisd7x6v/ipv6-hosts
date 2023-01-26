@@ -7,10 +7,12 @@ export default defineComponent({
     props: {
         // 功能名称 比如 用户管理
         name: {type: String, default: ''},
-        rowKey: {type: String, default: 'id'}
+        // 功能点是否需要权限{@link IvzFuncBtn} {@link IvzFuncTag} 通过url判断是否显示
+        auth: {type: Boolean, default: false},
+        rowKey: {type: String, default: 'id'},
     },
     setup(props) {
-        const viewContext = new ViewContext(props.name, props.rowKey);
+        const viewContext = new ViewContext(props);
         provide(ViewContextKey, viewContext);
 
         return {viewContext}
@@ -21,7 +23,7 @@ export default defineComponent({
     },
     mounted() {
         let $view = this.$parent.$view;
-        if($view.getTableContext()) {
+        if($view.getTableContext().isPrimary) {
             $view.query();
         }
     },

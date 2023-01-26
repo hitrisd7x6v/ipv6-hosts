@@ -1,12 +1,22 @@
 <template>
-  <ivz-menu-view name="配置">
-    <IvzPrimarySearch>
+  <IvzBasicView name="配置">
+    <IvzViewSearch>
       <ivz-input field="name" label="配置名称"/>
       <ivz-input field="label" label="配置标识"/>
       <ivz-radio field="type" label="系统配置" :options="type"/>
-    </IvzPrimarySearch>
-    <IvzPrimaryTable :columns="columns" :bordered="true" size="small" />
-    <IvzPrimaryModal :span="[6, 15]" :rules="rules">
+      <template #func>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <IvzFuncBtn func="query" url="/core/config/view">搜索</IvzFuncBtn>
+        <IvzFuncBtn func="add" url="/core/config/add">新增</IvzFuncBtn>
+      </template>
+    </IvzViewSearch>
+    <IvzViewTable :columns="columns" :bordered="true" size="small">
+      <template #c_action="{record}">
+        <IvzFuncTag func="edit" :data="record" url="/core/config/edit">修改</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" url="/core/config/del">删除</IvzFuncTag>
+      </template>
+    </IvzViewTable>
+    <IvzViewModal :span="[6, 15]" :rules="rules">
       <template #default="{model}">
         <ivz-input field="name" label="配置名称"/>
         <ivz-input field="label" label="配置标识" :disabled="model.id != null"/>
@@ -17,16 +27,19 @@
       <template #title="{model}">
         {{model.id != null ? '修改配置' : '新增配置'}}
       </template>
-    </IvzPrimaryModal>
-  </ivz-menu-view>
+      <template #footer="{model}">
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit" :url="model.id ? '/core/config/edit' : '/core/config/add'">提交</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+      </template>
+    </IvzViewModal>
+  </IvzBasicView>
 </template>
 <!--系统配置管理-->
 <script>
 
-import {IvzPrimarySearch, IvzPrimaryModal, IvzViewTable} from "@/components/view";
 export default {
   name: "Config",
-  components: {IvzPrimaryTable: IvzViewTable, IvzPrimarySearch, IvzPrimaryModal},
   setup() {
     let type = [
       {label: '是', value:'sys'}, {label: '否', value: 'def'}

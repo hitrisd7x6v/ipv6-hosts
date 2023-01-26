@@ -20,22 +20,19 @@ function unIvzFuncTag() {
 export function $View(context) {
 
     this.context = context;
+
     if(!context) {
         return console.error("未传入视图上下文对象[ViewContext]")
     }
 
     this.context['__$View'] = this;
 
-    /**
-     * 用来做表格的唯一标识, 编辑框的唯一id 等 一般用表的自增主键或者唯一键
-     * @param rowKey 默认 id
-     */
-    this.setRowKey = function (rowKey) {
-        this.context.rowKey = rowKey;
+    this.getRowKey = function () {
+        return this.context.getRowKey();
     }
 
-    this.getRowKey = function () {
-        return this.context.rowKey
+    this.getViewContext = function () {
+        return this.context;
     }
 
     /**
@@ -155,17 +152,16 @@ export function $View(context) {
      * @param data 删除的数据 必填
      * @param confirmTitle 确认标题 非必填
      * @param confirmContext 确认内容 非必填
-     * @return Promise
+     * @return void
      */
     this.del = function (url, data, confirmTitle, confirmContext) {
         if(!url) {
-            return Promise.reject("未指定删除的地址[url]")
+            return console.warn("未指定删除的地址[url]")
         }
 
         let query = SysUtils.resolverQueryOfUrl(url);
         if(!data && Object.keys(query).length == 0) {
-            msgWarn("请选择要删除的记录")
-            return Promise.reject("未选择要删除的记录");
+            msgWarn("请选择要删除的记录"); return;
         }
 
         // 删除的默认参数是数组
@@ -175,40 +171,18 @@ export function $View(context) {
 
         let title = confirmTitle || "删除确认";
         let content = confirmContext || "确定删除数据吗？"
-        return new Promise((resolve, reject) => {
-            try {
-                confirm({
-                    title, content, onOk: () => {
-                        TypeMethodMaps.Del(url, data).then(({code, message, data}) => {
-                            if (code == 200) {
-                                resolve(data);
-                                msgSuccess(message || "删除成功");
-                            } else {
-                                reject(message)
-                                msgError(message);
-                            }
-                        }).catch(reason => {
-                            reject(reason);
-                        })
-                    }, onCancel: () => reject("取消")
-                })
-            } catch (e) {
-                reject(e);
-            }
+        confirm({title, content, onOk: () => {
+                TypeMethodMaps.Del(url, data).then(({code, message, data}) => {
+                    if (code == MetaConst.SuccessCode) {
+                        msgSuccess(message || "删除成功");
+                        this.query(); // 删除成功, 重新刷新列表
+                    } else {
+                        msgError(message);
+                    }
+                }).catch(reason => msgError(reason))
+            }, onCancel: () => null
         })
 
-    }
-
-    /**
-     *  通过{@link IvzFuncTag}删除按钮点击删除, 默认提交rowKey的数组
-     * @param url 删除地址 必填
-     * @param confirmTitle 确认标题 非必填
-     * @param confirmContext 确认内容 非必填
-     */
-    this.delByFuncTag = function (url, confirmTitle, confirmContext) {
-        let currentRow = this.getTableContext().getCurrentRow();
-
-        return this.del(url, currentRow, confirmTitle, confirmContext);
     }
 
     /**
@@ -220,11 +194,11 @@ export function $View(context) {
     this.batchDel = function (url, confirmTitle, confirmContext) {
         let tableContext = this.getTableContext();
         if(!tableContext.isPrimary) {
-            return Promise.reject("未声明标记为[primary]的表组件");
+            return;
         }
 
         let selectedRowKeys = tableContext.getSelectedRowKeys();
-        return this.del(url, selectedRowKeys, confirmTitle, confirmContext);
+        this.del(url, selectedRowKeys, confirmTitle, confirmContext);
     }
 
     /**
@@ -256,7 +230,7 @@ export function $View(context) {
                 editContext.asyncVisible().then(() => {
                     editContext.setLoading(true);
                     TypeMethodMaps.Edit(url).then(({code, message, data}) => {
-                        if(code == 200) {
+                        if(code == MetaConst.SuccessCode) {
                             editContext.getFormContext().setEditModel(data);
                         } else {
                             msgError(message);
@@ -322,7 +296,7 @@ export function $View(context) {
 
         tableContext.setLoading(true);
         TypeMethodMaps.View(queryUrl, model).then(({code, message, data}) => {
-            if(code == 200) {
+            if(code == MetaConst.SuccessCode) {
                 if(data instanceof Array){
                     tableContext.setDataSource(data)
                 } else if(data instanceof Object) { // 需要分页
@@ -370,42 +344,32 @@ export function $View(context) {
     /**
      * 提交主编辑表单
      * @param url 编辑地址
-     * @return Promise
+     * @return void
      */
     this.submit = function (url) {
         if(!url) {
-            return Promise.reject("未指定提交地址[url]");
+            return console.warn("未指定提交地址[url]");
         }
 
         let editContext = this.getEditContext();
         if(!editContext.isPrimary) {
-            return Promise.reject("获取不到[primary]编辑组件");
+            return;
         }
 
-        return new Promise((resolve, reject) => {
-            try {
-                editContext.getFormContext().validate().then(() => {
-                    let model = editContext.getModel();
-                    editContext.setLoading(true);
-                    TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
-                        if (code == 200) {
-                            msgSuccess("数据提交成功");
-                            editContext.setVisible(false);
-                            resolve(data);
-                        } else {
-                            msgError(message);
-                            reject(message);
-                        }
-                    }).catch(reason => {
-                        reject(reason)
-                    }).finally(() => editContext.setLoading(false))
-                }).catch(reason => {
-                    reject(reason)
-                })
-            } catch (e) {
-                reject(e);
-            }
-        })
+        editContext.getFormContext().validate().then(() => {
+            let model = editContext.getModel();
+            editContext.setLoading(true);
+            TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
+                if (code == MetaConst.SuccessCode) {
+                    msgSuccess("数据提交成功");
+                    editContext.setVisible(false);
+                    this.query(); // 提交数据之后重新刷新列表
+                } else {
+                    msgError(message);
+                }
+            }).catch(reason => msgError(reason))
+                .finally(() => editContext.setLoading(false))
+        }).catch(reason => null)
     }
 
     /**
@@ -426,6 +390,7 @@ export function $View(context) {
         if(!searchContext.isPrimary) return;
 
         searchContext.getFormContext().resetFields();
+        this.query(); // 重置之后, 重新刷新列表
     }
 
     /**
@@ -627,8 +592,16 @@ export function SearchContext(viewContext) {
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
     }
+
     this.getModel = function () {
         return this.getFormContext().getEditModel();
+    }
+
+    /**
+     * 重置当前表单
+     */
+    this.reset = function () {
+        this.getFormContext().resetFields();
     }
 
     this.getFormContext = () => new FormContext();
@@ -700,7 +673,7 @@ export function EditContext(viewContext) {
                 this.setLoading(true);
                 TypeMethodMaps.Submit(url, model).then(resp => {
                     let {code, message, data} = resp;
-                    if(code == 200) {
+                    if(code == MetaConst.SuccessCode) {
                         resolve(resp);
                         this.setVisible(false);
                         msgSuccess(message || "提交成功");
@@ -766,6 +739,7 @@ export function TableContext(viewContext) {
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
     }
+
     this.del = function (url, data) {}
 
     /**
@@ -887,17 +861,38 @@ export function DetailContext(viewContext) {
  * 视图上下文
  * @constructor
  */
-export function ViewContext (name, rowKey) {
-    this.name = name || ''; // 视图名称
+export function ViewContext (props) {
     this.IdContextMaps = {} // 声明id的上下文对象
-    this.rowKey = rowKey || "id";
-
     this.funMetasContext = new FuncMetaContext();
 
     this.primaryEditContext = new EditContext(this);
     this.primaryTableContext = new TableContext(this);
     this.primaryDetailContext = new DetailContext(this);
     this.primarySearchContext = new SearchContext(this);
+
+    /**
+     * 功能点权限校验
+     * @return {{default: boolean, type: BooleanConstructor}}
+     */
+    this.isAuth = function () {
+        return props.auth;
+    }
+
+    /**
+     * 获取视图名称
+     * @return {String}
+     */
+    this.getName = function () {
+        return props.name;
+    }
+
+    /**
+     * 返回此功能的唯一key
+     * @return {String}
+     */
+    this.getRowKey = function () {
+        return props.rowKey;
+    }
 
     /**
      * 获取元数的id获取对应上下文

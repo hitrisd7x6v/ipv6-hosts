@@ -1,11 +1,22 @@
 <template>
-  <ivz-menu-view :expand="true" name="菜单">
-    <IvzPrimarySearch>
+  <IvzBasicView name="菜单">
+    <IvzViewSearch>
       <ivz-input field="name" label="菜单名称" />
       <ivz-input field="msn" label="所属模块" />
-    </IvzPrimarySearch>
-    <IvzPrimaryTable :columns="columns" size="small" :pagination="false" />
-    <IvzPrimaryDrawer :rules="rules" width="868" layout="vertical" placement="left">
+      <template #func>
+        <IvzFuncBtn func="query" url="/core/menu/view">搜索</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <IvzFuncBtn func="add" url="/core/menu/add">新增</IvzFuncBtn>
+        <IvzFuncBtn func="expand">展开/缩收</IvzFuncBtn>
+      </template>
+    </IvzViewSearch>
+    <IvzViewTable :columns="columns" size="small" :pagination="false">
+      <template #c_action="{record}">
+        <IvzFuncTag func="edit" :data="record" url="/core/menu/edit">修改</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" url="/core/menu/del">删除</IvzFuncTag>
+      </template>
+    </IvzViewTable>
+    <IvzViewDrawer :rules="rules" width="868" layout="vertical" placement="left">
       <IvzRow :gutter="24" span="8">
         <ivz-input field="name" label="菜单名称" />
         <ivz-tree-select field="pid" label="父菜单" :defaultValue="0"
@@ -29,19 +40,24 @@
       <template #title="{model}">
         {{model.id != null ? '修改菜单' : '新增菜单'}}
       </template>
-    </IvzPrimaryDrawer>
-  </ivz-menu-view>
+      <template #footer="{model}">
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit" :url="model.id ? '/core/menu/edit' : '/core/menu/add'">提交</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+      </template>
+    </IvzViewDrawer>
+  </IvzBasicView>
 </template>
 
 <script>
 import {FunMetaMaps} from "@/utils/MetaUtils";
 import {ref} from "vue";
 import {IvzRow} from "@/components/basic";
-import {IvzPrimarySearch, IvzViewTable, IvzViewDrawer} from "@/components/view";
+import {IvzViewSearch, IvzViewTable, IvzViewDrawer} from "@/components/view";
 
 export default {
   name: "Menu",
-  components: {IvzPrimaryDrawer: IvzViewDrawer, IvzPrimaryTable: IvzViewTable, IvzPrimarySearch, IvzRow},
+  components: {IvzPrimaryDrawer: IvzViewDrawer, IvzPrimaryTable: IvzViewTable, IvzPrimarySearch: IvzViewSearch, IvzRow},
   setup() {
     let type = [
       {label: '目录', value: 'M'},

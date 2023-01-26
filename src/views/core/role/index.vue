@@ -1,10 +1,15 @@
 <template>
-  <ivz-menu-view name="角色管理">
-    <ivz-primary-search ref="ivzForm">
+  <IvzBasicView name="角色管理">
+    <IvzViewSearch ref="ivzForm">
       <ivz-input label="角色名称" field="name" />
       <ivz-radio label="状态" field="status" :options="status"/>
-    </ivz-primary-search>
-    <ivz-primary-modal :span="[5, 16]" :rules="rules">
+      <template #func>
+        <IvzFuncBtn func="query" url="/core/role/view">搜索</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <IvzFuncBtn func="add" url="/core/role/add">新增</IvzFuncBtn>
+      </template>
+    </IvzViewSearch>
+    <IvzViewModal :span="[5, 16]" :rules="rules">
       <ivz-input label="角色名称" field="name" />
       <ivz-radio label="状态" field="status" :options="status" defaultValue="enabled"/>
       <ivz-input-number label="排序" field="sort" :defaultValue="10"/>
@@ -12,8 +17,19 @@
       <template #title="{model}">
         {{model.id != null ? '修改角色' : '新增角色'}}
       </template>
-    </ivz-primary-modal>
-    <ivz-primary-table :columns="columns" :bordered="true" size="small"/>
+      <template #footer="{model}">
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit" :url="model.id ? '/core/role/edit' : '/core/role/add'">提交</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+      </template>
+    </IvzViewModal>
+    <IvzViewTable :columns="columns" :bordered="true" size="small">
+      <template #c_action="{record}">
+        <IvzFuncTag func="edit" :data="record" url="/core/role/edit">修改</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" url="/core/role/del">删除</IvzFuncTag>
+        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/del" color="grey">分配权限</IvzFuncTag>
+      </template>
+    </IvzViewTable>
     <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '360px', overflow: 'auto'}">
 
       &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
@@ -25,11 +41,11 @@
            showLine checkable :selectable="false" ref="funcMenus" />
       <template #footer>
         <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="submit" @click="submit">提交</IvzFuncBtn>
-        <IvzFuncBtn func="cancel" @click="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit" url="/core/role/perm">提交</IvzFuncBtn>
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
       </template>
     </IvzBasicModal>
-  </ivz-menu-view>
+  </IvzBasicView>
 </template>
 
 <script>
@@ -60,17 +76,6 @@ export default {
     return {columns, rules, status, selectedUrl, filterValue, checkedValue}
   },
 
-  mounted() {
-    let tableMeta = this.$view.getTableMeta('FuncPerm');
-    if(tableMeta != null) {
-      tableMeta.callback = (row) => {
-        this.$view.getEditContext("funcPerm").asyncVisible().then(model => {
-          model['id'] = row.id
-          this.selectedUrl = '/core/role/func?id=' + row.id;
-        })
-      }
-    }
-  },
   methods: {
     reset() {
       this.filterValue = '';

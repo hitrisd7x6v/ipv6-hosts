@@ -8,7 +8,7 @@
       <template #func>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
         <IvzFuncBtn func="query" url="/core/admin/view">搜索</IvzFuncBtn>
-        <IvzFuncBtn func="add">新增</IvzFuncBtn>
+        <IvzFuncBtn func="add" url="/core/admin/add">新增</IvzFuncBtn>
       </template>
     </IvzPrimarySearch>
     <IvzViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
@@ -31,16 +31,15 @@
       </template>
       <template #footer="{model}">
         <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" :url="model.id ? '/core/admin/edit' : 'core/admin/add'">提交</IvzFuncBtn>
+        <IvzFuncBtn func="submit" :url="model.id ? '/core/admin/edit' : '/core/admin/add'">提交</IvzFuncBtn>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
       </template>
     </IvzViewDrawer>
     <IvzViewTable :columns="columns" :bordered="true" size="small">
       <template #c_action="{record}">
-        <IvzFuncTag func="add" v-auth:or="['core:admin:adda', 'core:admin:edit']">新增</IvzFuncTag>
         <IvzFuncTag func="edit" :data="record" url="/core/admin/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/admin/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:modPwd" :data="record">修改密码</IvzFuncTag>
+        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">修改密码</IvzFuncTag>
       </template>
     </IvzViewTable>
     <!--  修改密码  -->
@@ -58,7 +57,7 @@
 <script>
 
 import {ref} from "vue";
-import {IvzViewDrawer, IvzPrimarySearch, IvzViewTable} from "@/components/view";
+import {IvzViewDrawer, IvzViewSearch, IvzViewTable} from "@/components/view";
 import IvzBasicModal from "@/components/modal/IvzBasicModal";
 
 export default {

@@ -276,7 +276,11 @@ export default defineComponent({
 
         let setLoading = (status) => loading.value = status;
         let setDataSource = (ds) => dataSourceRef.value = ds;
-        let setTotalRows = (total) => props.pagination.total = total;
+        let setTotalRows = (total) => {
+            if(props.pagination instanceof Object) {
+                props.pagination.total = total;
+            }
+        }
 
         if(viewContext) {
             if(props.primary) {

@@ -19,8 +19,12 @@ function resolverMenuMaps(menus) {
             if (menu['type'] === 'V') { // 视图类型
                 urlMenuMap[menu.url] = menu;
             } else if(menu['type'] === 'A') { // 权限类型
-                if(menu['perms']) {
+                if(menu['perms']) { // 通过权限字符串校验权限
                     authMenuMap[menu['perms']] = menu;
+                }
+
+                if(menu.url) { // 通过url校验权限
+                    authMenuMap[menu.url] = menu;
                 }
             }
 

@@ -116,6 +116,8 @@ const MetaConst = {
 
     DefaultLabelField: 'label',
     DefaultValueField: 'value',
+
+    SuccessCode: 200, // http请求成功码
 }
 const FunBtnConfig = {
     Add: {class: 'ivz-fm-add', color: '#2db7f5'},

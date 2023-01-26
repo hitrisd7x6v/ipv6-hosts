@@ -1,15 +1,24 @@
 <template>
   <ivz-menu-view>
-    <IvzPrimarySearch>
+    <IvzViewSearch>
       <ivz-input label="字典名称" field="name" />
       <ivz-select label="字典状态" field="status" :options="status" span="5"/>
-    </IvzPrimarySearch>
-    <IvzPrimaryTable :columns="columns" size="small" :bordered="true">
+      <template #func>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <IvzFuncBtn func="query" url="/core/dictType/view">搜索</IvzFuncBtn>
+        <IvzFuncBtn func="add" url="/core/dictType/add">新增</IvzFuncBtn>
+      </template>
+    </IvzViewSearch>
+    <IvzViewTable :columns="columns" size="small" :bordered="true">
       <template #c_type="{text}">
         <router-link :to="{path: '/dict/data', query: {type: text}}">{{text}}</router-link>
       </template>
-    </IvzPrimaryTable>
-    <IvzPrimaryModal :rules="rules" title="字典管理" :span="[6, 16]">
+      <template #c_action="{record}">
+        <IvzFuncTag func="edit" :data="record" url="/core/dictType/edit">修改</IvzFuncTag>
+        <IvzFuncTag func="del" :data="record" url="/core/dictType/del">删除</IvzFuncTag>
+      </template>
+    </IvzViewTable>
+    <IvzViewModal :rules="rules" title="字典管理" :span="[6, 16]">
       <ivz-input label="字典名称" field="name" />
       <ivz-input label="字典标识" field="type" />
       <ivz-radio label="字典状态" field="status" :options="status"/>
@@ -17,7 +26,12 @@
       <template #title="{model}">
         {{model.id != null ? '修改字典' : '新增字典'}}
       </template>
-    </IvzPrimaryModal>
+      <template #footer="{model}">
+        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <IvzFuncBtn func="submit" :url="model.id ? '/core/dictType/edit' : '/core/dictType/add'">提交</IvzFuncBtn>
+        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+      </template>
+    </IvzViewModal>
   </ivz-menu-view>
 </template>
 <!--字典管理-->

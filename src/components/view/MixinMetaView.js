@@ -3,8 +3,10 @@ import {FunMetaMaps} from "@/utils/MetaUtils";
 
 export default {
     props: {
-        // 显示重置按钮
-        reset: {type: Boolean, default: true},
+        // 功能点是否需要权限{@link IvzFuncBtn} {@link IvzFuncTag} 通过url判断是否显示
+        auth: {type: Boolean, default: false},
+        name: {type: String, default: 'id'},
+        rowKey: {type: String, default: 'id'},
     },
     created() {
         // 对于视图组件(IvzXxxView)必须作为页面的顶级组件
