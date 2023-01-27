@@ -56,22 +56,24 @@ export default {
 }
 </script>
 ```
-#### 其实还能更优雅、更简洁
+#### 更优雅、更简洁的写法
 ```
 <template>
   <IvzBasicView> // 基础视图页面
-    <IvzBasicSearch primary> // 基础搜索组件
+    <IvzViewSearch> // 基础搜索组件
       <IvzInput field="name" label="茶叶名称"/>
-      <IvzFuncBtn func='view' url='/product/list'>查询</AButton>&nbsp;
-      <IvzFuncBtn func="add">新增</AButton>
+      <template #func>
+        <IvzFuncBtn func='view' url='/product/list'>查询</IvzFuncBtn>&nbsp;
+        <IvzFuncBtn func="add" url='/product/add'>新增</IvzFuncBtn>
+      </template>
     </IvzBasicSearch> // 基础表组件
-    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+    <IvzViewTable :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
       <template #c_action="{record}">
-        <IvzFuncTag func='add'>新增</IvzFuncTag>
+        <IvzFuncTag func='edit' url='/product/edit'>修改</IvzFuncTag>
         <IvzFuncTag func="del" url='/product/del'>删除</IvzFuncTag>
       </template>
     </IvzBasicTable>
-    <IvzBasicModal primary>// 基础模态框编辑组件
+    <IvzViewModal>// 基础模态框编辑组件
       <IvzInput field="name" label="茶叶名称"/>
       <template #title="{model}">
         {{model.id ? '编辑产品' : '新增产品'}}
@@ -110,7 +112,7 @@ export default {
 4. 约定某些组件的层级关系, 比如组件IvzBasicTable必须作为IvzBasicView的子组件, 且IvzBasicView必须做顶级组件
 ##### 灵活(只做增强不做限制)
 1. api灵活：除了使用默认已经实现的api外，所有的功能都可以按照往常的方式开发
-2. 布局灵活：可以对组件实现任意布局, 不会因为通用而丧失布局的灵活性
+2. 布局灵活：可以对组件实现任意布局, 不会因为通用功能的存在而丧失布局的灵活性
 
 ### 核心功能
 1. 是一套简易美观的基础功能框架(基于antd2的ui组件库)，基本可以开箱即用
@@ -126,77 +128,6 @@ export default {
 11. 不依赖于后台框架的使用语言(java, php, c#等)， 友好的声明api接口和字段，可以方便的对接任何后台
 ### 增删改查视图组件
   将通用的，常用的，简单的一些操作合并到一个组件里面且提供完整的增删改查功能。对于每个通用的增删改查功能，最大的不同点在于操作的url不同，需要的功能点不同，所以我们只需要将每个功能点交由开发人员定义。下面主要是两个常用的增删改查视图组件的实现，先直观看一下菜单功能用增删改查组件的实现图片和对应的代码
-
-#### IvzFuncView视图
-IvzFuncView组件时增删改查的一种实现方式，通过显式自定义功能点来实现，如下：
-
-```
-<template>
-  <ivz-func-view :editFunMetas="editFunMetas" name="菜单"
-         :tableFunMetas="tableFunMetas" :searchFunMetas="searchFunMetas">
-    <ivz-view-search>
-      <ivz-input field="name" label="菜单名称" />
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small" :pagination="false" />
-    <ivz-view-drawer>
-      <ivz-input field="name" label="菜单名称" required/>
-      <ivz-tree-select field="pid" label="父菜单" required :defaultValue="0"/>
-      <ivz-input field="url" label="访问路径" required/>
-      <ivz-input field="perms" label="权限标识"/>
-      <ivz-select field="position" label="功能位置" dict="common_status"/>
-      <ivz-select field="permType" label="功能类型" :options="permType"/>
-      <ivz-input field="remark" label="备注" />
-    </ivz-view-drawer>
-  </ivz-func-view>
-</template>
-
-<script>
-import {FunMetaMaps} from "@/utils/SysUtils";
-
-export default {
-  name: "Menu",
-  setup() {
-    let permType = [
-      {label: '新增', value: 'Add'},
-      {label: '删除', value: 'Del'},
-    ]
-
-    let position = [
-      {label: '全部', value: 'AM'},
-      {label: '搜索栏', value: 'M'},
-      {label: '表格栏', value: 'T'},
-    ];
-
-    const columns = [
-      {field: 'name', title: '菜单名称', align: 'left'},
-      {field: 'url', title: '访问路径'},
-      {field: 'perms', title: '权限标识'},
-      {field: 'permType', title: '功能类型', options: permType},
-      {field: 'position', title: '功能位置', options: position},
-      {field: 'remark', title: '备注'},
-      {field: 'createTime', title: '创建时间', type: 'datetime'},
-      {field: 'action', title: '操作', type: 'action'},
-    ]
-    const editFunMetas = [
-      {field: FunMetaMaps.Reset, name: '重置'},
-      {field: FunMetaMaps.Submit, name: '提交'},
-      {field: FunMetaMaps.Cancel, name: '取消'},
-    ]
-    const tableFunMetas = [
-      {field: FunMetaMaps.Add, name: '新增', url: '/core/menu/add'},
-      {field: FunMetaMaps.Edit, name: '编辑', url: '/core/menu/edit'},
-      {field: FunMetaMaps.Del, name: '删除', url: '/core/menu/del'},
-    ]
-    const searchFunMetas = [
-      {field: FunMetaMaps.View, name: '搜索', url: '/core/menu/view'},
-      {field: FunMetaMaps.Add, name: '新增', url: '/core/menu/add'},
-      {field: FunMetaMaps.Expanded, name: '展开/折叠'},
-    ]
-    return {columns, permType, editFunMetas, tableFunMetas, searchFunMetas}
-  },
-}
-</script>
-```
 
 #### IvzMenuView视图
 IvzMenuView组件是增删改查的另一种实现方式， 通过后台菜单配置功能点实现 如下：
