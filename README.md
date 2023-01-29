@@ -213,16 +213,9 @@ const columns = [
 // selectedRowKeys 不支持， 通过方法提供
 this.$refs['tableRef'].getSelectedRowKeys();
 ```
-2. pagination不支持使用对象 只能使用true或者false
-
+2. 其他的属性全部支持
 ```
-// true 显示分页， false不显示分页
-<IvzBasicTable :pagination="true"></IvzBasicTable>
-// 分页的配置项直接通过props属性
-<IvzBasicTable :pagination="true" :showTotal="true" :showQuickJumper="true" :showSizeChanger="true"/>
-3. 其他的属性全部支持
-```
-##### 2.自定义列slot
+##### 自定义列slot
 ```
 // columns列不支持customRender， 通过slot方式提供
 // 展示通过slot实现自定义此列
@@ -233,7 +226,7 @@ const columns = [
 
 // 插槽名称规则：前缀 c_ + 字段名 = c_name
 // 如果是a.b的格式将'.'换成'_'即：c_a_b
-<IvzBasicTable :pagination="true">
+<IvzBasicTable rowKey="id">
     <template #c_name="{record}">
         <a>{{record.name}}</a>
     </template>
@@ -242,7 +235,7 @@ const columns = [
     </template>
 </IvzBasicTable>
 ```
-##### 3.字典和url
+##### 字典和url
 支持将value转成label 比如性别字段：数据库存的是值：man，表格需要展示：男
 
 ```
@@ -313,7 +306,7 @@ const columns = [
 
 #### 增强AForm组件
 ### 软件架构
-使用vue3+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库， 没有其余的强依赖
+使用vue3+vite2+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库
 
 
 ### 安装教程
