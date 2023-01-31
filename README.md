@@ -190,10 +190,86 @@ export default {
 //}
 ```
 ### 其他功能教程
-#### 功能点权限
+#### 功能组件
+功能组件主要是用来拓展和简化功能的操作方式
+##### IvzFuncBtn
+功能按钮：一般用在搜索组件和编辑组件
+
+```
+<IvzBasicView>
+    <IvzViewSearch>
+        <template #func={model}>
+            <IvzFuncBtn func='add'>新增</IvzFuncBtn> // 点击默认动作：将打开一个编辑框(IvzViewModal or IvzViewDrawer)
+            <IvzFuncBtn func='query' url="/project/query">搜索</IvzFuncBtn> // 点击默认动作：重新刷新列表
+            <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置搜索表单, 并且重新刷新列表(和表格组件联动)
+        </template>
+    </IvzViewSearch>
+    <IvzViewModal>
+       <template #footer={model}>
+          <IvzFuncBtn func='cancel'>取消</IvzFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
+          // 点击默认动作：校验表单是否通过, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
+          <IvzFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</IvzFuncBtn> 
+          <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置编辑表单
+       </tempalte>
+    </IvzViewSearch>
+</IvzBasicView>
+```
+##### IvzFuncTag
+功能tag：一般用于表格操作
+```
+<IvzBasicView rowKey="id">
+    <IvzViewTable>
+        <template #c_action={record}>
+            // 点击默认动作：打开编辑框, 并获取和渲染url对应的数据
+            <IvzFuncBtn func='edit' :data="record" url="/project/edit">编辑</IvzFuncBtn> 
+             // 点击默认动作：弹出删除确认框, 确定之后调用url对应的接口删除数据, 提交的参数是数组格式：[record[rowKey]]
+            <IvzFuncBtn func='del' :data="record" url="/project/del">删除</IvzFuncBtn>
+        </template>
+    </IvzViewSearch>
+</IvzBasicView>
+```
+#### 功能权限
+功能权限主要是用来控制页面是否需要显示对应的功能
 ##### v-auth指令
+// 后台使用shiro做权限校验
+```
+// 基础用法
+// 存在权限字符串就显示
+<AButton v-auth="'core:project:add'">新增</ABtton>
+
+// 高级用法
+// and参数, 必须满足数组里面的两个权限
+<AButton v-auth:and="['core:project:view', 'core:project:info']">详情</ABtton>
+// or参数, 只需满足数组里面的两个权限的任何一个
+<AButton v-auth:or="['core:project:view', 'core:project:info']">详情</ABtton>
+// and的简写
+<AButton v-auth="['core:project:view', 'core:project:info']">详情</ABtton>
+```
 ##### 使用url做权限判断
+url的控制方式是通过后台是否有返回功能组件[IvzFuncBtn or IvzFuncTag]对应的url
+
+```
+// 使用auth属性控制权限校验的开关
+// 比如回台返回的功能菜单包括 新增(/project/add)、编辑(/project/edit)、搜索(/project/query)
+<IvzBasicView auth>
+    <IvzViewSearch>
+        <template #func>
+            <IvzFuncBtn func='add' url='/project/add'>新增</IvzFuncBtn> // 显示
+            <IvzFuncBtn func='import' url='/project/import'>导入</IvzFuncBtn> // 不显示
+        </template>
+    </IvzViewSearch>
+    <IvzViewTable>
+        <template #c_action={record}>
+            <IvzFuncTag func='edit' url='/project/edit' :data="record">修改</IvzFuncTag > // 显示
+            <IvzFuncTag func='del' url='/project/del' :data="record">删除</IvzFuncTag > // 不显示
+        </template>
+    </IvzViewSearch>
+</IvzBasicView>
+```
+
 ### 视图子组件
+1. 以下的所有组件都只能用在页级组件(IvzBasicView、IvzMenuView)的子组件，组成一个完整的功能页面
+2. IvzViewModal、IvzVieDrawer、IvzViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
 #### IvzViewSearch 搜索组件
 #### IvzViewModal 模态框编辑组件
 #### IvzViewDrawer 抽屉编辑组件
