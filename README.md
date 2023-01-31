@@ -189,7 +189,10 @@ export default {
 //   ]
 //}
 ```
-
+### 其他功能教程
+#### 功能点权限
+##### v-auth指令
+##### 使用url做权限判断
 ### 视图子组件
 #### IvzViewSearch 搜索组件
 #### IvzViewModal 模态框编辑组件
