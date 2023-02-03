@@ -191,10 +191,10 @@ export default {
 ```
 ### 其他功能教程
 #### 功能组件
-功能组件主要是用来拓展和简化功能的操作方式
+1. 功能组件主要是用来拓展和简化功能的操作方式, 使用功能组件将提供一套默认的操作功能
+2. 提供的功能包括[add, del, edit, query, import, export, reset, cancel, submit, expand]以及混合联动操作
 ##### IvzFuncBtn
 功能按钮：一般用在搜索组件和编辑组件
-
 ```
 <IvzBasicView>
     <IvzViewSearch>
@@ -226,6 +226,28 @@ export default {
             <IvzFuncBtn func='del' :data="record" url="/project/del">删除</IvzFuncBtn>
         </template>
     </IvzViewSearch>
+</IvzBasicView>
+```
+##### 联动功能
+联动功能主要是用于点击功能按钮时操作对应的组件
+```
+<IvzBasicView rowKey="id">
+    <IvzViewTable>
+        <template #c_action={record}>
+            // 点击默认动作：打开id="modPwd"的编辑框, 并且设置编辑框: model[rowKey]=record[rowKey]
+            <IvzFuncBtn func='edit:modPwd' :data="record">修改密码</IvzFuncBtn> 
+        </template>
+    </IvzViewSearch>
+    // 修改密码编辑框
+    <IvzBasicModal id="modPwd" :rules="[自定义校验规则]">
+       <IvzPassword label="密码" field="password" />
+       <template #footer={model}>
+          <IvzFuncBtn func='cancel'>取消</IvzFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
+          // 点击默认动作：校验表单是否通过, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
+          <IvzFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</IvzFuncBtn> 
+          <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置编辑表单
+       </tempalte>
+    </IvzBasicSearch>
 </IvzBasicView>
 ```
 #### 功能权限
