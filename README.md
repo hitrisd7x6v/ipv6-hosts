@@ -189,7 +189,7 @@ export default {
 //   ]
 //}
 ```
-### 其他功能教程
+### 使用教程
 #### 功能组件
 1. 功能组件主要是用来拓展和简化功能的操作方式, 使用功能组件将提供一套默认的操作功能
 2. 提供的功能包括[add, del, edit, query, import, export, reset, cancel, submit, expand]以及混合联动操作
