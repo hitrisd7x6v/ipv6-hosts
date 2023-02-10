@@ -288,16 +288,15 @@ url的控制方式是通过后台是否有返回功能组件[IvzFuncBtn or IvzFu
     </IvzViewSearch>
 </IvzBasicView>
 ```
-
-### 视图子组件
+#### 视图子组件
 1. 以下的所有组件都只能用在页级组件(IvzBasicView、IvzMenuView)的子组件，组成一个完整的功能页面
 2. IvzViewModal、IvzVieDrawer、IvzViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
-#### IvzViewSearch 搜索组件
-#### IvzViewModal 模态框编辑组件
-#### IvzViewDrawer 抽屉编辑组件
-#### IvzViewTable 表格组件
-### antd2组件扩展
-#### <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">增强ATable组件</a>
+##### IvzViewSearch
+##### IvzViewModal
+##### IvzViewDrawer
+##### IvzViewTable
+#### antd2组件扩展
+##### <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">增强ATable组件</a>
 antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。IvzBasicTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
 ##### 1.不支持的属性
 1. rowSelection 此属性是ATable用来描述表格多选框的一个对象，在IvzBasicTable组件里面此对象直接放到columns属性里面，像这样：
