@@ -1,6 +1,6 @@
 <template>
   <IvzBasicView name="用户">
-    <IvzPrimarySearch>
+    <IvzViewSearch>
       <ivz-input field="name" label="用户昵称" />
       <ivz-input field="account" label="用户帐号" />
       <ivz-input field="phone" label="用户手机" />
@@ -10,7 +10,7 @@
         <IvzFuncBtn func="query" url="/core/admin/view">搜索</IvzFuncBtn>
         <IvzFuncBtn func="add" url="/core/admin/add">新增</IvzFuncBtn>
       </template>
-    </IvzPrimarySearch>
+    </IvzViewSearch>
     <IvzViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
       <template #default="{model}">
         <IvzRow :gutter="16" span="8">

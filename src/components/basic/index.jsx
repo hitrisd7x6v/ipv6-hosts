@@ -123,18 +123,28 @@ export const IvzFuncTag = defineComponent({
         url: String,
         color: String,
         onClick: Function, // 自定义单击处理
-        disabled: Function, // 是否禁用
         data: {type: Object}, // 行数据
+        disabled: {default: false}, // 是否禁用
         func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset, expand
     },
     setup(props, {attrs}) {
         let context = inject(FuncContextKey);
-        let clickProxy = (e) => {
-            if(props.onClick instanceof Function) {
-                props.onClick(props.data)
+        let disabled = computed(() => {
+            if(typeof props.disabled == 'function') {
+                return props.disabled(props.data);
             } else {
-                if(context != null) {
-                    funcClickHandle(context, props)
+                return props.disabled === true;
+            }
+        });
+
+        let clickProxy = (e) => {
+            if(!disabled.value) {
+                if(props.onClick instanceof Function) {
+                    props.onClick(props.data)
+                } else {
+                    if(context != null) {
+                        funcClickHandle(context, props)
+                    }
                 }
             }
         }
@@ -148,7 +158,7 @@ export const IvzFuncTag = defineComponent({
         });
 
         let viewContext = context.get$View().getViewContext();
-        return {clickProxy, context, typeCompute, viewContext};
+        return {clickProxy, context, typeCompute, viewContext, disabled};
     },
     computed: {
         ...mapGetters({
@@ -156,9 +166,6 @@ export const IvzFuncTag = defineComponent({
         }),
         tagColor() {
             return this.color || colorMaps[this.typeCompute]
-        },
-        tagDisabled() {
-            return this.disabled != null ? this.disabled(this.data) : false;
         }
     },
     render() {
@@ -169,14 +176,14 @@ export const IvzFuncTag = defineComponent({
          */
         if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
             if(this.auth[this.url]) { // 有权限
-                let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
+                let disabledClass = this.disabled ? 'ivz-func-disabled' : 'ivz-func-tag'
                 return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
                              color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
             } else {
                 return <span></span>
             }
         } else {
-            let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
+            let disabledClass = this.disabled ? 'ivz-func-disabled' : 'ivz-func-tag'
             return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
                          color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
         }

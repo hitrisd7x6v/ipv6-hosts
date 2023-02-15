@@ -18,6 +18,7 @@ export default defineComponent({
     primary: {type: Boolean, default: false},
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: false},
+    wrapClassName: {type: String, default: 'ivz-basic-modal'}
   },
   mixins: [MixinsEditItem],
   setup(props, {attrs, slots}) {

@@ -83,7 +83,9 @@ export default defineComponent({
                 <ivz-form {...this.$attrs} ref="iemFormRef" labelCol={this.labelCol} wrapperCol={this.wrapperCol}>
                     {this.$slots.default ? this.$slots.default({model, context}) : []}
                 </ivz-form>
-                {this.$slots.footer ? this.$slots.footer({model, context}) : []}
+                <div class="ivz-drawer-footer">
+                    {this.$slots.footer ? this.$slots.footer({model, context}) : []}
+                </div>
             </a-spin>
         </a-drawer>)
     }
