@@ -1,9 +1,11 @@
-import {defineComponent, inject, mergeProps, provide, ref, computed} from "vue";
+import {computed, defineComponent, inject, mergeProps, provide, ref, watch} from "vue";
 import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
-import {msgError} from "@/utils/message";
-import {EditContext, SearchContext, TableContext} from "@/components/view/ViewAction";
-import {FuncNameMeta, FunMetaMaps} from "@/utils/MetaUtils";
+import {msgError, msgSuccess, confirm} from "@/utils/message";
+import {EditContext, SearchContext, TableContext} from "@/components/view/Context";
+import {FuncNameMeta, TypeMethodMaps} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
+import CoreConsts from "@/components/CoreConsts";
+import SysUtils from "@/utils/SysUtils";
 
 export const IvzRow = defineComponent({
     name: 'IvzRow',
@@ -14,7 +16,7 @@ export const IvzRow = defineComponent({
         })
     },
     render() {
-        return <ARow {...this.$attrs} v-slots={this.$slots} />
+        return <ARow style="width: 100%;" {...this.$attrs} v-slots={this.$slots} />
     }
 })
 function funcClickHandle(context, props) {
@@ -26,7 +28,7 @@ function funcClickHandle(context, props) {
             if(context.isPrimary) { // 主视图操作, 各个组件联动处理
                 switch (func) {
                     case FuncNameMeta.ADD:
-                        return $view.openForAdd();
+                        return $view.openForAdd(props.data);
                     case FuncNameMeta.DEL:
                         if(context instanceof SearchContext) {
                             return $view.batchDel(props.url)
@@ -34,7 +36,7 @@ function funcClickHandle(context, props) {
 
                         return $view.del(props.url, props.data)
                     case FuncNameMeta.EDIT:
-                        return $view.openForEdit(props.url, props.data);
+                        return $view.openForEdit(null, props.data);
                     case FuncNameMeta.QUERY:
                         return $view.query(props.url);
                     case FuncNameMeta.CANCEL:
@@ -52,7 +54,39 @@ function funcClickHandle(context, props) {
                     case FuncNameMeta.SUBMIT:
                         return $view.submit(props.url);
                     case FuncNameMeta.EXPAND: return $view.expanded(); // 展开所有行
-                    default: console.error(`不支持功能类型[${props.func}]`)
+                    default: // 其他功能操作
+                        if(props.url) {
+                            if(context instanceof TableContext) {
+                                let submit = (resolve) => {
+                                    if(!resolve) context.setLoading(true)
+                                    TypeMethodMaps.POST(props.url, props.data).then(({code, message}) => {
+                                        if(resolve) resolve();
+
+                                        if(code == CoreConsts.SuccessCode) {
+                                            $view.query();
+                                            msgSuccess(message || CoreConsts.OtherOperaSuccessMsg)
+                                        } else {
+                                            msgError(message);
+                                        }
+                                    }).catch(reason => console.error(reason)).finally(() => {
+                                        if(resolve) {
+                                            resolve();
+                                        } else {
+                                            context.setLoading(false)
+                                        }
+                                    })
+                                }
+                                if(props.confirm) { // 需要确认
+                                    confirm({title: CoreConsts.ConfirmTitle
+                                        , content: CoreConsts.ConfirmContent, onOk: () => {
+                                            return new Promise((resolve, reject) => submit(resolve))
+                                        }
+                                    })
+                                } else {
+                                    submit(null);
+                                }
+                            }
+                        }
                 }
             } else { // 各个组件单独操作
                 if(context instanceof EditContext) {
@@ -90,24 +124,39 @@ function funcClickHandle(context, props) {
                 }
             }
         } else {
-            let id = split[1]; // 组件的id属性
+            let id = split[1]; // 组件的特殊属性
             let func = split[0].toUpperCase(); // func大写
             if(func == FuncNameMeta.ADD || func == FuncNameMeta.EDIT) {
                 let rowKey = $view.getRowKey();
 
-                let editContext = $view.getEditContext(id);
-                if(editContext instanceof EditContext) {
-                    if(func == FuncNameMeta.ADD) {
-                        editContext.setVisible(true)
-                    } else {
-                        editContext.asyncVisible().then(model => {
-                            if(props.data) {
-                                // 默认用rowKey作为功能的唯一字段
-                                model[rowKey] = props.data[rowKey];
+                // 增加子记录(只有主视图组件才支持)
+                if(id == 'child' && func == FuncNameMeta.ADD) {
+                    let editContext = $view.getEditContext();
+                    if(editContext.isPrimary) {
+                        // 打开编辑框并且是指pid
+                        editContext.asyncVisible(props.data, true).then(model => {
+                            if(props.data && model) {
+                                // 设置pid
+                                model[props.pid] = props.data[rowKey];
                             }
-                        }).finally(() => null);
+                        })
+                    }
+                } else {
+                    let editContext = $view.getEditContext(id);
+                    if(editContext instanceof EditContext) {
+                        if(func == FuncNameMeta.ADD) {
+                            editContext.asyncVisible(props.data).finally(() => null);
+                        } else {
+                            editContext.asyncVisible(props.data).then(model => {
+                                if(props.data) {
+                                    // 默认用rowKey作为功能的唯一字段
+                                    model[rowKey] = props.data[rowKey];
+                                }
+                            }).finally(() => null);
+                        }
                     }
                 }
+
             }
         }
     }
@@ -123,18 +172,30 @@ export const IvzFuncTag = defineComponent({
         url: String,
         color: String,
         onClick: Function, // 自定义单击处理
-        disabled: Function, // 是否禁用
         data: {type: Object}, // 行数据
+        disabled: {default: false}, // 是否禁用
         func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset, expand
+        confirm: {type: Boolean, default: false}, // 是否需要确认
+        pid: {type: String, default: CoreConsts.DefaultPID}, // 父id字段
     },
     setup(props, {attrs}) {
         let context = inject(FuncContextKey);
-        let clickProxy = (e) => {
-            if(props.onClick instanceof Function) {
-                props.onClick(props.data)
+        let disabled = computed(() => {
+            if(typeof props.disabled == 'function') {
+                return props.disabled(props.data);
             } else {
-                if(context != null) {
-                    funcClickHandle(context, props)
+                return props.disabled === true;
+            }
+        });
+
+        let clickProxy = (e) => {
+            if(!disabled.value) {
+                if(props.onClick instanceof Function) {
+                    props.onClick(props.data)
+                } else {
+                    if(context != null) {
+                        funcClickHandle(context, props)
+                    }
                 }
             }
         }
@@ -148,17 +209,14 @@ export const IvzFuncTag = defineComponent({
         });
 
         let viewContext = context.get$View().getViewContext();
-        return {clickProxy, context, typeCompute, viewContext};
+        return {clickProxy, context, typeCompute, viewContext, disabled};
     },
     computed: {
         ...mapGetters({
             auth: 'sys/authMenuMap'
         }),
         tagColor() {
-            return this.color || colorMaps[this.typeCompute]
-        },
-        tagDisabled() {
-            return this.disabled != null ? this.disabled(this.data) : false;
+            return this.color || colorMaps[this.typeCompute] || 'blue'
         }
     },
     render() {
@@ -168,17 +226,21 @@ export const IvzFuncTag = defineComponent({
          * 3. 返回的权限列表里包含传入的 url
          */
         if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
-            if(this.auth[this.url]) { // 有权限
-                let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
+            // 去除url的参数, 后台返回的url不能包含参数
+            let uri = SysUtils.cutUrlToUri(this.url);
+            if(this.auth[uri]) { // 有权限
+                let tagColor = this.disabled ? '#d8d8d8' : this.tagColor;
+                let disabledClass = this.disabled ? 'ivz-func-disabled' : 'ivz-func-tag'
                 return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
-                             color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
+                             color={tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
             } else {
                 return <span></span>
             }
         } else {
-            let disabledClass = this.tagDisabled ? 'ivz-func-disabled' : 'ivz-func-tag'
+            let tagColor = this.disabled ? '#d8d8d8' : this.tagColor;
+            let disabledClass = this.disabled ? 'ivz-func-disabled' : 'ivz-func-tag'
             return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
-                         color={this.tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
+                         color={tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
         }
 
     }
@@ -221,16 +283,6 @@ export const IvzFuncBtn = defineComponent({
 
         let loading = ref(false);
         let typeCompute = computed(() => props.func.toUpperCase())
-        if(context instanceof EditContext &&
-            typeCompute.value == FuncNameMeta.SUBMIT) {
-            // 设置按钮的加载状态
-            let loadingOri = context.setLoading;
-            // 代理loading方法 设置按钮加载状态
-            context.setLoading = (status) => {
-                loadingOri(status);
-                loading.value = status;
-            }
-        }
 
         let viewContext = context.get$View().getViewContext();
         return {clickProxy, context, loading, typeCompute, viewContext};
@@ -244,6 +296,7 @@ export const IvzFuncBtn = defineComponent({
         if(this.typeCompute && this.context) {
             this.context.regFunc(this.typeCompute, {
                 getUrl: () => this.$props.url,
+                setLoading: (status) => this.loading = status, // 设置按钮的加载状态
                 clickHandle: () => {
                     if(this.$attrs.onClick instanceof Function) {
                         this.$attrs.onClick(this.typeCompute);
@@ -261,7 +314,8 @@ export const IvzFuncBtn = defineComponent({
          * 3. 返回的权限列表里包含传入的 url
          */
         if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
-            if(this.auth[this.url]) { // 有权限
+            let uri = SysUtils.cutUrlToUri(this.url);
+            if(this.auth[uri]) { // 有权限
                 let props = this.handleProps();
                 return <AButton {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
             } else {
@@ -274,7 +328,7 @@ export const IvzFuncBtn = defineComponent({
     },
     methods: {
         handleProps() {
-            let type = typeMaps[this.typeCompute], props;
+            let type = typeMaps[this.typeCompute];
             // 如果自定义单击事件, 不做处理
             if(this.$attrs.onClick instanceof Function) {
                 return mergeProps(type, this.$attrs);
@@ -288,50 +342,52 @@ export const IvzFuncBtn = defineComponent({
 export const IvzTree = defineComponent({
     name: 'IvzTree',
     props: {
-        dataUrl: {type: String}, // 数据地址
+        url: {type: String}, // 数据地址
+        onCheck: {type: Function},
         checkedUrl: {type: String}, // 多选框的数据地址
         selectedUrl: {type: String}, // 选中的数据地址
-        replaceFields: {type: Object, default: {key: 'id', title: 'name', children:'children'}}
+        replaceFields: {type: Object, default: {key: CoreConsts.DefaultRowKey, title: 'name', children:'children'}}
     },
-    setup(props) {
+    setup(props, {emit}) {
         let allKeys = ref([]);
         let treeData = ref([]);
         let checkedKeys = ref([]);
         let expandedKeys = ref([]);
         let selectedKeys = ref([]);
+
         return {allKeys, treeData, selectedKeys, checkedKeys, expandedKeys}
     },
     watch: {
-        dataUrl(newUrl) {
+        url(newUrl) {
             this.loadingInitData(newUrl)
         },
         checkedUrl(newUrl) {
-            this.loadingCheckedData(newUrl)
+            this.loadingCheckedData(newUrl).finally(() => null)
         },
         selectedUrl(newUrl) {
-            this.loadingSelectedData(newUrl)
+            this.loadingSelectedData(newUrl).finally(() => null)
         }
     },
     created() {
-        if(this.dataUrl) {
-            this.loadingInitData(this.dataUrl);
+        if(this.url) {
+            this.loadingInitData(this.url);
         }
 
         if(this.checkedUrl) {
-            this.loadingCheckedData(this.checkedUrl)
+            this.loadingCheckedData(this.checkedUrl).finally(() => {})
         }
 
         if(this.selectedUrl) {
-            this.loadingSelectedData(this.selectedUrl);
+            this.loadingSelectedData(this.selectedUrl).finally(() => {})
         }
     },
     render() {
-        return <a-tree {...this.$attrs} v-models={[
+        return <ATree {...this.$attrs} v-models={[
                     [this.checkedKeys, 'checkedKeys', ["modifier"]],
                     [this.selectedKeys, 'selectedKeys', ["modifier"]],
                     [this.expandedKeys, 'expandedKeys', ["modifier"]]
                 ]} treeData={this.treeData} replaceFields={this.replaceFields}>
-            </a-tree>
+            </ATree>
     },
     methods: {
         loadingInitData(dataUrl) {
@@ -344,29 +400,42 @@ export const IvzTree = defineComponent({
                 }
             }).catch(reason => console.error(reason));
         },
-
+        /**
+         * @param selectedUrl
+         * @returns {Promise<AxiosResponse<any>>}
+         */
         loadingSelectedData(selectedUrl) {
-            this.$http.get(selectedUrl).then(({code, message, data}) => {
+            return this.$http.get(selectedUrl).then((resp) => {
+                let {code, message, data} = resp;
                 if(code == 200) {
                     this.selectedKeys = data;
                 } else {
                     msgError(message)
                 }
-            }).catch(reason => console.error(reason))
+                return resp;
+            }).catch(reason => console.error(reason));
         },
+        /**
+         * @param checkedUrl
+         * @returns {Promise<AxiosResponse<any>>}
+         */
         loadingCheckedData(checkedUrl) {
-            this.$http.get(checkedUrl).then(({code, message, data}) => {
+            return this.$http.get(checkedUrl).then((resp) => {
+                let {code, message, data} = resp;
                 if(code == 200) {
                     this.checkedKeys = data;
                 } else {
                     msgError(message)
                 }
-            }).catch(reason => console.error(reason))
+                return resp;
+            }).catch(reason => console.error(reason));
         },
+        /**
+         * @returns {Array}
+         */
         getSelectedKeys() {
             return this.selectedKeys;
         },
-
         setSelectedKeys(selectedKeys) {
             if(selectedKeys instanceof Array) {
                 this.selectedKeys = selectedKeys;
@@ -374,7 +443,9 @@ export const IvzTree = defineComponent({
                 this.selectedKeys = this.allKeys;
             }
         },
-
+        /**
+         * @returns {Array}
+         */
         getCheckedKeys() {
             return this.checkedKeys;
         },
@@ -382,6 +453,8 @@ export const IvzTree = defineComponent({
         setCheckedKeys(checkedKeys) {
             if(checkedKeys instanceof Array) {
                 this.checkedKeys = checkedKeys
+            } else if(checkedKeys == null) {
+                this.checkedKeys = [];
             } else {
                 this.checkedKeys = this.allKeys;
             }
