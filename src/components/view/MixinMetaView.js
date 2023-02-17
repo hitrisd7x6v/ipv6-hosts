@@ -1,12 +1,13 @@
 import {mapMutations} from "vuex";
 import {FunMetaMaps} from "@/utils/MetaUtils";
+import CoreConsts from "@/components/CoreConsts";
 
 export default {
     props: {
         // 功能点是否需要权限{@link IvzFuncBtn} {@link IvzFuncTag} 通过url判断是否显示
         auth: {type: Boolean, default: false},
-        name: {type: String, default: 'id'},
-        rowKey: {type: String, default: 'id'},
+        name: {type: String, default: ''},
+        rowKey: {type: String, default: CoreConsts.DefaultRowKey},
     },
     created() {
         // 对于视图组件(IvzXxxView)必须作为页面的顶级组件

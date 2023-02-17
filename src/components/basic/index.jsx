@@ -34,7 +34,7 @@ function funcClickHandle(context, props) {
 
                         return $view.del(props.url, props.data)
                     case FuncNameMeta.EDIT:
-                        return $view.openForEdit(props.url, props.data);
+                        return $view.openForEdit(null, props.data);
                     case FuncNameMeta.QUERY:
                         return $view.query(props.url);
                     case FuncNameMeta.CANCEL:

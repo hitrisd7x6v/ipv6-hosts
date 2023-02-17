@@ -6,6 +6,7 @@ import {defineComponent, h, inject, mergeProps, provide, reactive, ref, watch} f
 import {MetaConst} from "@/utils/MetaUtils";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {TableContext} from "@/components/view/ViewAction";
+import CoreConsts from "@/components/CoreConsts";
 
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
@@ -189,7 +190,7 @@ export default defineComponent({
     name: 'IvzBasicTable',
     props: {
         primary: {type: Boolean, default: false},
-        dataSource: Array,
+        dataSource: {type: Array},
         rowSelection: {type: null}, // 不支持此选项
         columns: {type: Array, default: () => []},
         pagination: {

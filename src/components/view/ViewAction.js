@@ -2,6 +2,7 @@ import {FormContext} from "@/components/form/basic/FormContext";
 import {confirm, msgError, msgSuccess, msgWarn} from "@/utils/message";
 import {FuncNameMeta, MetaConst, TypeMethodMaps} from "@/utils/MetaUtils";
 import SysUtils from "@/utils/SysUtils";
+import CoreConsts from "@/components/CoreConsts";
 
 function Unmount() {
     console.warn("此方法只能在组件挂载时才能使用");
@@ -128,6 +129,23 @@ export function $View(context) {
     }
 
     /**
+     * 返回编辑框获取数据需要的地址
+     * 注：可根据情况自行替换和修改
+     * @param model
+     * @return {String}
+     */
+    this.getEditUrl = function (model, editContext) {
+        let rowKey = this.getRowKey();
+        let editFunc = this.getTableFunc(FuncNameMeta.EDIT);
+        if(editFunc && model) {
+            return `${editFunc.getUrl()}?${rowKey}=${model[rowKey]}`;
+        } else {
+            console.warn('未指定编辑功能获取详情数据地址')
+            return null;
+        }
+    }
+
+    /**
      * 打开编辑框
      * @param callback 用来对数据进行处理
      */
@@ -169,12 +187,13 @@ export function $View(context) {
             data = [data[this.getRowKey()]];
         }
 
-        let title = confirmTitle || "删除确认";
-        let content = confirmContext || "确定删除数据吗？"
+        let title = confirmTitle || CoreConsts.DelConfirmTitle;
+        let content = confirmContext || CoreConsts.DelConfirmContent;
+
         confirm({title, content, onOk: () => {
                 TypeMethodMaps.Del(url, data).then(({code, message, data}) => {
                     if (code == MetaConst.SuccessCode) {
-                        msgSuccess(message || "删除成功");
+                        msgSuccess(message || CoreConsts.DelSuccessMsg);
                         this.query(); // 删除成功, 重新刷新列表
                     } else {
                         msgError(message);
@@ -208,25 +227,11 @@ export function $View(context) {
      * @param data 编辑数据
      */
     this.openForEdit = function (url, data) {
-        if(!url) {
-            return console.error("未指定要获取编辑数据的[url]")
-        }
-
         let editContext = this.getEditContext();
 
         if(editContext.isPrimary) {
+            url = url ? url : this.getEditUrl(data, editContext);
             if(url) {
-                // 默认以url的查询字符串作为参数
-                let query = SysUtils.resolverQueryOfUrl(url);
-                if(Object.keys(query).length == 0) {
-                    if(data) {
-                        let rowKey = this.getRowKey();
-                        url += `?${rowKey}=${data[rowKey]}`
-                    } else {
-                        return console.error("未指定要获取编辑数据的参数")
-                    }
-                }
-
                 editContext.asyncVisible().then(() => {
                     editContext.setLoading(true);
                     TypeMethodMaps.Edit(url).then(({code, message, data}) => {
@@ -236,10 +241,6 @@ export function $View(context) {
                             msgError(message);
                         }
                     }).finally(() => editContext.setLoading(false))
-                })
-            } else {
-                editContext.asyncVisible().then(() => {
-                    editContext.getFormContext().setEditModel(data);
                 })
             }
         }
@@ -361,7 +362,7 @@ export function $View(context) {
             editContext.setLoading(true);
             TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
                 if (code == MetaConst.SuccessCode) {
-                    msgSuccess("数据提交成功");
+                    msgSuccess(CoreConsts.SubmitSuccessMsg);
                     editContext.setVisible(false);
                     this.query(); // 提交数据之后重新刷新列表
                 } else {
@@ -379,7 +380,22 @@ export function $View(context) {
         let editContext = this.getEditContext();
         if(!editContext.isPrimary) return;
 
-        editContext.getFormContext().resetFields();
+        let editModel = editContext.getFormContext().getEditModel();
+        if(editModel && this.isEdit(editModel)) {
+            editContext.setLoading(true);
+            let url = this.getEditUrl(editModel, editContext);
+            if(!url) return;
+
+            TypeMethodMaps.Edit(url).then(({code, message, data}) => {
+                if(code == MetaConst.SuccessCode) {
+                    editContext.getFormContext().setEditModel(data);
+                } else {
+                    msgError(message);
+                }
+            }).finally(() => editContext.setLoading(false))
+        } else {
+            editContext.getFormContext().resetFields();
+        }
     }
 
     /**
