@@ -138,9 +138,15 @@ export function $View(context) {
         let rowKey = this.getRowKey();
         let editFunc = this.getTableFunc(FuncNameMeta.EDIT);
         if(editFunc && model) {
-            return `${editFunc.getUrl()}?${rowKey}=${model[rowKey]}`;
+            let url = editFunc.getUrl();
+            if(url) {
+                return `${url}?${rowKey}=${model[rowKey]}`;
+            } else {
+                console.warn('未指定编辑功能详情地址[url]')
+                return null;
+            }
         } else {
-            console.warn('未指定编辑功能获取详情数据地址')
+            console.warn('未指定编辑功能[IvzFuncTag]')
             return null;
         }
     }
