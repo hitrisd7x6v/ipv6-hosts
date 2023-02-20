@@ -288,6 +288,24 @@ url的控制方式是通过后台是否有返回功能组件[IvzFuncBtn or IvzFu
     </IvzViewSearch>
 </IvzBasicView>
 ```
+##### 编辑详情url
+```
+// 此处的url是获取编辑详情数据的url，但是并没有指定参数，也无需指定参数
+<IvzFuncTag func='edit' url='/project/edit' :data="record">修改</IvzFuncTag >
+// 默认获取编辑地址url的方法如下：ViewAction.js
+this.getEditUrl = function (model, editContext) {
+    let rowKey = this.getRowKey();
+    let editFunc = this.getTableFunc(FuncNameMeta.EDIT);
+    if(editFunc && model) {
+        return `${editFunc.getUrl()}?${rowKey}=${model[rowKey]}`;
+    } else {
+        console.warn('未指定编辑功能获取详情数据地址')
+        return null;
+    }
+}
+// 如果以上方法不能满足你获取url，可以在mount钩子里面覆盖掉此方法，重写
+```
+
 #### 视图子组件
 1. 以下的所有组件都只能用在页级组件(IvzBasicView、IvzMenuView)的子组件，组成一个完整的功能页面
 2. IvzViewModal、IvzVieDrawer、IvzViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
