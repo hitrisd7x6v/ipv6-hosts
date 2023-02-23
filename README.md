@@ -228,7 +228,7 @@ export default {
     </IvzViewSearch>
 </IvzBasicView>
 ```
-##### 联动功能
+##### 组件联动操作
 联动功能主要是用于点击功能按钮时操作对应的组件
 ```
 <IvzBasicView rowKey="id">
