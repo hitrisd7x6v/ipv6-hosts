@@ -698,12 +698,13 @@ export function EditContext(viewContext) {
                     if(code == MetaConst.SuccessCode) {
                         resolve(resp);
                         this.setVisible(false);
-                        msgSuccess(message || "提交成功");
+                        msgSuccess(message || CoreConsts.SubmitSuccessMsg);
                     } else {
                         msgError(message);
                         reject(message);
                     }
-                }).catch(reason => reject(reason)).finally(() => this.setLoading(false))
+                }).catch(reason => reject(reason))
+                    .finally(() => this.setLoading(false))
             }).catch(reason => {})
         })
     }

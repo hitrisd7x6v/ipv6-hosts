@@ -5,8 +5,8 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
 import vitePluginVueDoc, { vueDocFiles } from 'vite-plugin-vuedoc'
-import styleImport from 'vite-plugin-style-import';
 import {vitePluginChunk} from './IvzVitePlugins'
+// import ViteComponents, { AntDesignVueResolver } from 'vite-plugin-components';
 // https://vitejs.dev/config/
 export default defineConfig((env)=>{
   return {
@@ -16,26 +16,6 @@ export default defineConfig((env)=>{
         include: [...vueDocFiles]
       }),
       vueJsx(),
-      styleImport({
-        libs: [{
-          libraryName: 'ant-design-vue',
-          esModule: true,
-          // resolveStyle: (name) => {
-          //   return `ant-design-vue/es/${name}/style`;
-          // },
-          // resolveComponent: (name) => {
-          //   return `ant-design-vue/es/${name}`;
-          // },
-        },
-        // {
-        //   libraryName: 'ivz-online',
-        //   esModule: true,
-        //   resolveStyle: (name) => {
-        //     return `ivz-online/dist/index.css`;
-        //   },
-        // }
-        ]
-      }),
       vitePluginChunk
     ],
     resolve: {

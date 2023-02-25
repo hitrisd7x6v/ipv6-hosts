@@ -27,7 +27,7 @@
       <template #c_action="{record}">
         <IvzFuncTag func="edit" :data="record" url="/core/role/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/role/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/del" color="grey">分配权限</IvzFuncTag>
+        <IvzFuncTag func="edit:funcPerm" :data="record" :url="'/core/role/perm'" color="grey">分配权限</IvzFuncTag>
       </template>
     </IvzViewTable>
     <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '360px', overflow: 'auto'}">
@@ -37,11 +37,11 @@
 
       <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
 
-      <IvzTree dataUrl="/core/role/allMenus" :checkedUrl="selectedUrl"
+      <IvzTree dataUrl="/core/role/allMenus" :checkedUrl="'/core/role/func?id=1'"
            showLine checkable :selectable="false" ref="funcMenus" />
       <template #footer>
         <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="submit" url="/core/role/perm">提交</IvzFuncBtn>
+        <IvzFuncBtn func="submit" url="/core/role/perm" @click="submit">提交</IvzFuncBtn>
         <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
       </template>
     </IvzBasicModal>
@@ -88,9 +88,6 @@ export default {
 
       this.$view.getEditContext("funcPerm")
           .submit('/core/role/perm');
-    },
-    cancel() {
-      this.$view.getEditContext("funcPerm").cancel();
     },
     checked(e) {
       if(e.target.checked) {
