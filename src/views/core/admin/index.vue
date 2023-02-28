@@ -57,12 +57,9 @@
 <script>
 
 import {ref} from "vue";
-import {IvzViewDrawer, IvzViewSearch, IvzViewTable} from "@/components/view";
-import IvzBasicModal from "@/components/modal/IvzBasicModal";
 
 export default {
   name: "Admin",
-  components: {IvzBasicModal},
   setup() {
     let sex = [
       {label: '男', value: 'man'},

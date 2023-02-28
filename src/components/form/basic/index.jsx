@@ -258,12 +258,71 @@ export const IvzDateTime = defineComponent({
             </a-form-item>
         </a-col>
     }
-
 })
-
+export const IvzDatePicker = defineComponent({
+    name: 'IvzDatePicker',
+    mixins: [MixinsFormItem],
+    render() {
+        let props = this.getFormItemProps();
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                <ADatePicker {...this.getFormAttrs()} v-slots={this.$slots}/>
+            </a-form-item>
+        </a-col>
+    }
+})
+export const IvzMonthPicker = defineComponent({
+    name: 'IvzMonthPicker',
+    mixins: [MixinsFormItem],
+    render() {
+        let props = this.getFormItemProps();
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                <AMonthPicker {...this.getFormAttrs()} v-slots={this.$slots}/>
+            </a-form-item>
+        </a-col>
+    }
+})
+export const IvzWeekPicker = defineComponent({
+    name: 'IvzWeekPicker',
+    mixins: [MixinsFormItem],
+    render() {
+        let props = this.getFormItemProps();
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                <AWeekPicker {...this.getFormAttrs()} v-slots={this.$slots}/>
+            </a-form-item>
+        </a-col>
+    }
+})
+export const IvzRangePicker = defineComponent({
+    name: 'IvzRangePicker',
+    mixins: [MixinsFormItem],
+    render() {
+        let props = this.getFormItemProps();
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                <ARangePicker {...this.getFormAttrs()} v-slots={this.$slots}/>
+            </a-form-item>
+        </a-col>
+    }
+})
+export const IvzTimePicker = defineComponent({
+    name: 'IvzTimePicker',
+    mixins: [MixinsFormItem],
+    render() {
+        let props = this.getFormItemProps();
+        return <a-col {...props}>
+            <a-form-item {...props}>
+                <ATimePicker {...this.getFormAttrs()} v-slots={this.$slots}/>
+            </a-form-item>
+        </a-col>
+    }
+})
 const formComponents = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
     , IvzRate, IvzSlider, IvzInputNumber, IvzCascader, IvzAutoComplete, IvzInputPassword
-    , IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect, IvzTextarea, IvzInputGroup}
+    , IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect, IvzTextarea, IvzInputGroup
+    , IvzDatePicker, IvzMonthPicker, IvzRangePicker, IvzTimePicker, IvzWeekPicker}
 
 export default {
     install(app) {
