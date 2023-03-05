@@ -70,20 +70,8 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
     (response) => {
-
         const { data, config } = response
-        const { code, message } = data
-
-        // 是否操作正常
-        if (code == baseConfig.success) {
-            return data
-        } else {
-            if(config['autoMsg']) {
-                return handleResponse(code, message)
-            }
-
-            return response;
-        }
+        return data;
     },
     (error) => {
         const { response, message } = error

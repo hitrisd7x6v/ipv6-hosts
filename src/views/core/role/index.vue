@@ -27,18 +27,17 @@
       <template #c_action="{record}">
         <IvzFuncTag func="edit" :data="record" url="/core/role/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/role/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:funcPerm" :data="record" :url="'/core/role/perm'" color="grey">分配权限</IvzFuncTag>
+        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm" color="grey">分配权限</IvzFuncTag>
       </template>
     </IvzViewTable>
-    <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '360px', overflow: 'auto'}">
-
-      &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
-      &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
-
-      <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
-
-      <IvzTree dataUrl="/core/role/allMenus" :checkedUrl="'/core/role/func?id=1'"
-           showLine checkable :selectable="false" ref="funcMenus" />
+    <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
+      <template #default="{model}">
+        &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
+        &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
+        <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
+        <IvzTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)"
+                 showLine checkable :selectable="false" ref="funcMenus" />
+      </template>
       <template #footer>
         <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
         <IvzFuncBtn func="submit" url="/core/role/perm" @click="submit">提交</IvzFuncBtn>
@@ -80,7 +79,15 @@ export default {
     reset() {
       this.filterValue = '';
       this.checkedValue = false;
-      this.$refs['funcMenus'].loadingCheckedData(this.selectedUrl);
+      let editContext = this.$view.getEditContext("funcPerm");
+      editContext.setLoading(true)
+      let model = editContext.getModel();
+      this.$refs['funcMenus'].loadingCheckedData(this.getCheckedUrl(model))
+          .finally(() => editContext.setLoading(false));
+    },
+    getCheckedUrl(model) {
+      let param = model.id ? `?id=${model.id}` : ''
+      return '/core/role/func' + param;
     },
     submit() {
       let model = this.$view.getEditContext("funcPerm").getModel();

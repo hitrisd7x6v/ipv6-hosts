@@ -4,6 +4,7 @@ import {msgError} from "@/utils/message";
 import {EditContext, SearchContext, TableContext} from "@/components/view/ViewAction";
 import {FuncNameMeta, FunMetaMaps} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
+import CoreConsts from "@/components/CoreConsts";
 
 export const IvzRow = defineComponent({
     name: 'IvzRow',
@@ -295,10 +296,10 @@ export const IvzFuncBtn = defineComponent({
 export const IvzTree = defineComponent({
     name: 'IvzTree',
     props: {
-        dataUrl: {type: String}, // 数据地址
+        url: {type: String}, // 数据地址
         checkedUrl: {type: String}, // 多选框的数据地址
         selectedUrl: {type: String}, // 选中的数据地址
-        replaceFields: {type: Object, default: {key: 'id', title: 'name', children:'children'}}
+        replaceFields: {type: Object, default: {key: CoreConsts.DefaultRowKey, title: 'name', children:'children'}}
     },
     setup(props) {
         let allKeys = ref([]);
@@ -309,7 +310,7 @@ export const IvzTree = defineComponent({
         return {allKeys, treeData, selectedKeys, checkedKeys, expandedKeys}
     },
     watch: {
-        dataUrl(newUrl) {
+        url(newUrl) {
             this.loadingInitData(newUrl)
         },
         checkedUrl(newUrl) {
@@ -320,8 +321,8 @@ export const IvzTree = defineComponent({
         }
     },
     created() {
-        if(this.dataUrl) {
-            this.loadingInitData(this.dataUrl);
+        if(this.url) {
+            this.loadingInitData(this.url);
         }
 
         if(this.checkedUrl) {
@@ -351,29 +352,42 @@ export const IvzTree = defineComponent({
                 }
             }).catch(reason => console.error(reason));
         },
-
+        /**
+         * @param selectedUrl
+         * @returns {Promise<AxiosResponse<any>>}
+         */
         loadingSelectedData(selectedUrl) {
-            this.$http.get(selectedUrl).then(({code, message, data}) => {
+            return this.$http.get(selectedUrl).then((resp) => {
+                let {code, message, data} = resp;
                 if(code == 200) {
                     this.selectedKeys = data;
                 } else {
                     msgError(message)
                 }
-            }).catch(reason => console.error(reason))
+                return resp;
+            });
         },
+        /**
+         * @param checkedUrl
+         * @returns {Promise<AxiosResponse<any>>}
+         */
         loadingCheckedData(checkedUrl) {
-            this.$http.get(checkedUrl).then(({code, message, data}) => {
+            return this.$http.get(checkedUrl).then((resp) => {
+                let {code, message, data} = resp;
                 if(code == 200) {
                     this.checkedKeys = data;
                 } else {
                     msgError(message)
                 }
-            }).catch(reason => console.error(reason))
+                return resp;
+            });
         },
+        /**
+         * @returns {Array}
+         */
         getSelectedKeys() {
             return this.selectedKeys;
         },
-
         setSelectedKeys(selectedKeys) {
             if(selectedKeys instanceof Array) {
                 this.selectedKeys = selectedKeys;
@@ -381,7 +395,9 @@ export const IvzTree = defineComponent({
                 this.selectedKeys = this.allKeys;
             }
         },
-
+        /**
+         * @returns {Array}
+         */
         getCheckedKeys() {
             return this.checkedKeys;
         },

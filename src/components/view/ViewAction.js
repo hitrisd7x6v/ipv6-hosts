@@ -204,7 +204,7 @@ export function $View(context) {
                     } else {
                         msgError(message);
                     }
-                }).catch(reason => msgError(reason))
+                }).catch(reason => console.error(reason))
             }, onCancel: () => null
         })
 

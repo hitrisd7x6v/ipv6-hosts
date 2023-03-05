@@ -14,7 +14,7 @@ export default defineComponent({
     width: {default: 558},
     destroyOnClose: Boolean,
     getContainer: {type: Function},
-    maskClosable: {default: false},
+    maskClosable: {default: true},
     primary: {type: Boolean, default: false},
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: false},
@@ -48,7 +48,7 @@ export default defineComponent({
           editContext = context;
           context.isPrimary = true;
         } else {
-          console.warn(`当前视图[${viewContext.name}]已经包含声明为[primary]的编辑组件`)
+          console.warn(`当前视图[${viewContext.name}]已包含声明为[primary]的编辑组件`)
         }
       } else if(attrs['id']) {
         viewContext.addContextById(attrs['id'], editContext);
