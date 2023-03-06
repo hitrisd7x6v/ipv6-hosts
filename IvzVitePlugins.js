@@ -3,6 +3,9 @@ export const vitePluginChunk = {
     outputOptions: (options) => {
         options.manualChunks = (id, {getModuleInfo, getModuleIds}) => {
             if(id.includes('node_modules/ant-design-vue')) {
+                if(id.includes("dist/antd.css")) {
+                    return "antd.min.css";
+                }
                 return 'antd.min.esm'
             } else if(id.includes('@ant-design/icons-vue')) {
                 return 'antd.icons.esm'
@@ -17,12 +20,13 @@ export const vitePluginChunk = {
             } else if(id.includes('node_modules/mockjs')) {
                 return 'mockjs.esm'
             } else if(id.includes('node_modules')) {
+                console.log(id)
                 return 'vendor' // 其他第三方库
             }
         }
 
         options.assetFileNames = (chunk) => {
-            if(chunk.name.includes('antd')) {
+            if(chunk.name.includes('antd.min.css')) {
                 return `lib/antd.min.css`
             }
             return 'assets/[name].[hash].[ext]';

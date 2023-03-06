@@ -292,7 +292,7 @@ url的控制方式是通过后台是否有返回功能组件[IvzFuncBtn or IvzFu
 ```
 // 此处的url是获取编辑详情数据的url，但是并没有指定参数，也无需指定参数
 <IvzFuncTag func='edit' url='/project/edit' :data="record">修改</IvzFuncTag >
-// 默认获取编辑地址url的方法如下：ViewAction.js
+// 默认获取编辑地址url的方法如下：Context.js
 this.getEditUrl = function (model, editContext) {
     let rowKey = this.getRowKey();
     let editFunc = this.getTableFunc(FuncNameMeta.EDIT);

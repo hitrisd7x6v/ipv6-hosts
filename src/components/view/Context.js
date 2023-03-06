@@ -28,10 +28,20 @@ export function $View(context) {
 
     this.context['__$View'] = this;
 
+    /**
+     * 功能的唯一代表字段 - 比如：id
+     * @see CoreConsts#DefaultRowKey
+     * @return {String|Number}
+     */
     this.getRowKey = function () {
         return this.context.getRowKey();
     }
 
+    /**
+     * 当前视图(功能)页的上下文对象
+     * @see ViewContext
+     * @return {ViewContext}
+     */
     this.getViewContext = function () {
         return this.context;
     }
@@ -40,7 +50,7 @@ export function $View(context) {
      * 获取功能元上下文, 只能用于以下两种组件
      * @see IvzFuncView
      * @set IvzMenuView
-     * @return {void|FuncMetaContext|*}
+     * @return {void|FuncMetaContext}
      */
     this.getMetaContext = function () {
         if(!this.context.funMetasContext) {
@@ -53,7 +63,7 @@ export function $View(context) {
     /**
      * 获取编辑功能元数据
      * @param field
-     * @return {*}
+     * @return {void|Object}
      */
     this.getEditMeta = function (field) {
         return this.getMetaContext().getEditMeta(field);
@@ -62,7 +72,7 @@ export function $View(context) {
     /**
      * 获取表格功能元数据
      * @param field
-     * @return {*}
+     * @return {void|Object}
      */
     this.getTableMeta = function (field) {
         return this.getMetaContext().getTableMeta(field);
@@ -71,7 +81,7 @@ export function $View(context) {
     /**
      * 获取搜索功能元数据
      * @param field
-     * @return {*}
+     * @return {void|Object}
      */
     this.getSearchMeta = function (field) {
         return this.getMetaContext().getSearchMeta(field);
@@ -95,6 +105,7 @@ export function $View(context) {
     /**
      * 获取当前视图页的名称 eg: 用户管理、部门管理等
      * 需要在视图组件设置属性：name
+     * @return {String}
      */
     this.getFuncName = function () {
         return this.context.name;
@@ -132,7 +143,7 @@ export function $View(context) {
      * 返回编辑框获取数据需要的地址
      * 注：可根据情况自行替换和修改
      * @param model
-     * @return {String}
+     * @return {void | String}
      */
     this.getEditUrl = function (model, editContext) {
         let rowKey = this.getRowKey();
@@ -142,12 +153,10 @@ export function $View(context) {
             if(url) {
                 return `${url}?${rowKey}=${model[rowKey]}`;
             } else {
-                console.warn('未指定编辑功能详情地址[url]')
-                return null;
+                return console.warn('未指定编辑功能详情地址[url]')
             }
         } else {
-            console.warn('未指定编辑功能[IvzFuncTag]')
-            return null;
+            return console.warn('未指定编辑组件[<IvzFuncTag func="edit"/>]')
         }
     }
 
@@ -229,7 +238,7 @@ export function $View(context) {
     /**
      * 打开主编辑框
      * url > data
-     * @param url 编辑数据地址
+     * @param url 获取编辑数据地址
      * @param data 编辑数据
      */
     this.openForEdit = function (url, data) {
@@ -250,20 +259,6 @@ export function $View(context) {
                 })
             }
         }
-    }
-
-    /**
-     * 打开编辑框
-     * 注：必须使用{@link IvzFuncTag}组件单击打开
-     * @param url
-     * @param data 默认使用 rowKey值
-     */
-    this.openForEditByFuncTag = function (url) {
-        let rowKey = this.getRowKey(), data = {};
-        let currentRow = this.getTableContext().getCurrentRow();
-        data[rowKey] = currentRow[rowKey]
-
-        this.openForEdit(url, data);
     }
 
     /**
@@ -320,6 +315,10 @@ export function $View(context) {
         })
     }
 
+    /**
+     * 获取详情(暂时未实现此功能)
+     * @param url
+     */
     this.detail = function (url) {
 
     }
@@ -365,7 +364,17 @@ export function $View(context) {
 
         editContext.getFormContext().validate().then(() => {
             let model = editContext.getModel();
-            editContext.setLoading(true);
+
+            function setLoading(status) {
+                let submit = editContext.getFunc(FuncNameMeta.SUBMIT);
+                if(submit) {
+                    submit.setLoading(status);
+                }
+
+                editContext.setLoading(status)
+            }
+
+            setLoading(true);
             TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
                 if (code == MetaConst.SuccessCode) {
                     msgSuccess(CoreConsts.SubmitSuccessMsg);
@@ -375,7 +384,7 @@ export function $View(context) {
                     msgError(message);
                 }
             }).catch(reason => msgError(reason))
-                .finally(() => editContext.setLoading(false))
+                .finally(() => setLoading(false))
         }).catch(reason => null)
     }
 
@@ -387,19 +396,31 @@ export function $View(context) {
         if(!editContext.isPrimary) return;
 
         let editModel = editContext.getFormContext().getEditModel();
+        // 编辑时需要重新获取详情
         if(editModel && this.isEdit(editModel)) {
-            editContext.setLoading(true);
-            let url = this.getEditUrl(editModel, editContext);
-            if(!url) return;
 
+            let url = this.getEditUrl(editModel, editContext);
+            if(!url) {
+                return;
+            }
+
+            function setLoading(status) {
+                let reset = editContext.getFunc(FuncNameMeta.RESET);
+                if(reset) {
+                    // reset.setLoading(status);
+                }
+                editContext.setLoading(status)
+            }
+
+            setLoading(true);
             TypeMethodMaps.Edit(url).then(({code, message, data}) => {
                 if(code == MetaConst.SuccessCode) {
                     editContext.getFormContext().setEditModel(data);
                 } else {
                     msgError(message);
                 }
-            }).finally(() => editContext.setLoading(false))
-        } else {
+            }).finally(() => setLoading(false))
+        } else { // 新增的重置只需要重置字段
             editContext.getFormContext().resetFields();
         }
     }
@@ -710,9 +731,9 @@ export function EditContext(viewContext) {
     }
 
     // 修改加载状态
-    this.setLoading = (status) => {};
+    this.setLoading = (status) => {Unmount()};
     // 设置加载文本
-    this.setLoadingTip = (tip) => {};
+    this.setLoadingTip = (tip) => {Unmount()};
     // 修改弹框状态(模态框或者抽屉框)
     this.setVisible = (status) => {Unmount()};
     // 异步打开弹框(模态框或者抽屉框) 等表单初始化完成
@@ -910,7 +931,7 @@ export function ViewContext (props) {
     }
 
     /**
-     * 返回此功能的唯一key
+     * 返回功能的唯一key
      * @return {String}
      */
     this.getRowKey = function () {

@@ -1,5 +1,5 @@
 import {defineComponent, provide} from "vue";
-import {$View, ViewContext} from "@/components/view/ViewAction";
+import {$View, ViewContext} from "@/components/view/Context";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default defineComponent({

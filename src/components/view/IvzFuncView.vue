@@ -12,7 +12,7 @@ import {FunMetaMaps} from "@/utils/MetaUtils";
 import {mergeMetaOfDefault} from "@/utils/MetaUtils";
 import MixinMetaView from "@/components/view/MixinMetaView";
 import router from "@/router";
-import {$View, FuncMetaContext, ViewContext} from "@/components/view/ViewAction";
+import {$View, FuncMetaContext, ViewContext} from "@/components/view/Context";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 /**
  * 视图组件必须作为其父组件的顶级组件 如以下：

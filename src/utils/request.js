@@ -1,6 +1,6 @@
 import Qs from 'qs';
 import axios from 'axios'
-import {msgError} from "@/utils/message";
+
 let router;
 import('@/router').then(item => {
     router = item.default;
@@ -25,23 +25,18 @@ let baseConfig = {
 
 /**
  * @description 处理code异常
- * @param {*} code
- * @param {*} msg
+ * @param {*} data
+ * @param {*} config
  */
-const handleResponse = (code, msg) => {
+const handleResponse = (data, config) => {
+    let {code, message} = data
     switch (code) {
         case 401: // 未授权
             router.push({ path: '/login' }).finally(() => {});
             return null;
-        case 500:
-            msgError(msg)
-            return Promise.reject(msg);
         case 404:
-            msgError("资源没找到(404)")
             return Promise.reject('404');
-        default:
-            msgError(msg);
-            return Promise.reject(msg);
+        default: return data;
     }
 }
 
@@ -71,18 +66,14 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     (response) => {
         const { data, config } = response
-        return data;
+        return handleResponse(data, config);
     },
     (error) => {
         const { response, message } = error
 
         if (response && response.data) {
             const { status, data, config } = response
-            if(config['autoMsg']) {
-                return handleResponse(status, data.message || message)
-            }
-
-            return error
+            return handleResponse({code: status, message}, config)
         } else {
             let { message } = error
             if(message === 'Network Error') {
@@ -94,7 +85,7 @@ instance.interceptors.response.use(
                 message = `后端接口[${code}]异常`
             }
 
-            msgError(message || `后端接口异常`)
+            console.error(message || `后端接口异常`)
             return Promise.reject(error)
         }
     }

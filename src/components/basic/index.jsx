@@ -1,7 +1,7 @@
 import {defineComponent, inject, mergeProps, provide, ref, computed} from "vue";
 import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
 import {msgError} from "@/utils/message";
-import {EditContext, SearchContext, TableContext} from "@/components/view/ViewAction";
+import {EditContext, SearchContext, TableContext} from "@/components/view/Context";
 import {FuncNameMeta, FunMetaMaps} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
 import CoreConsts from "@/components/CoreConsts";
@@ -229,16 +229,6 @@ export const IvzFuncBtn = defineComponent({
 
         let loading = ref(false);
         let typeCompute = computed(() => props.func.toUpperCase())
-        if(context instanceof EditContext &&
-            typeCompute.value == FuncNameMeta.SUBMIT) {
-            // 设置按钮的加载状态
-            let loadingOri = context.setLoading;
-            // 代理loading方法 设置按钮加载状态
-            context.setLoading = (status) => {
-                loadingOri(status);
-                loading.value = status;
-            }
-        }
 
         let viewContext = context.get$View().getViewContext();
         return {clickProxy, context, loading, typeCompute, viewContext};
@@ -252,6 +242,7 @@ export const IvzFuncBtn = defineComponent({
         if(this.typeCompute && this.context) {
             this.context.regFunc(this.typeCompute, {
                 getUrl: () => this.$props.url,
+                setLoading: (status) => this.loading = status, // 设置按钮的加载状态
                 clickHandle: () => {
                     if(this.$attrs.onClick instanceof Function) {
                         this.$attrs.onClick(this.typeCompute);
@@ -282,7 +273,7 @@ export const IvzFuncBtn = defineComponent({
     },
     methods: {
         handleProps() {
-            let type = typeMaps[this.typeCompute], props;
+            let type = typeMaps[this.typeCompute];
             // 如果自定义单击事件, 不做处理
             if(this.$attrs.onClick instanceof Function) {
                 return mergeProps(type, this.$attrs);

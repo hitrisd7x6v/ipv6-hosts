@@ -1,6 +1,6 @@
 import {defineComponent, inject, provide, ref} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
-import {EditContext} from "@/components/view/ViewAction";
+import {EditContext} from "@/components/view/Context";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 
 export default defineComponent({

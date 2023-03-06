@@ -1,7 +1,7 @@
 import {defineComponent, inject, provide, ref} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
-import {EditContext} from "@/components/view/ViewAction";
+import {EditContext} from "@/components/view/Context";
 
 export default defineComponent({
   name: 'IvzBasicModal',

@@ -10,7 +10,7 @@
 import {inject, provide} from "vue";
 import IvzForm from "@/components/form/basic/IvzForm";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
-import {SearchContext} from "@/components/view/ViewAction";
+import {SearchContext} from "@/components/view/Context";
 
 export default {
   name: "IvzBasicSearch",

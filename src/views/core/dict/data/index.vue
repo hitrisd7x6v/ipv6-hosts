@@ -33,18 +33,8 @@
 
 <script>
 /*字典数据页面*/
-import IvzBasicView from "@/components/view/IvzBasicView";
-import IvzBasicTable from "@/components/table/IvzBasicTable";
-import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
-import {IvzInput} from "@/components/form/basic";
-import {IvzFuncBtn, IvzFuncTag} from "@/components/basic";
-import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
-
 export default {
   name: "DictData",
-  components: {
-    IvzBasicDrawer, IvzFuncBtn, IvzFuncTag, IvzInput
-    , IvzBasicSearch, IvzBasicTable, IvzBasicView},
   setup() {
     let status = [
       {label: '启用', value: 'enabled'},

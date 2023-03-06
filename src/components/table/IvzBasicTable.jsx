@@ -5,7 +5,7 @@ import {IvzFuncTag} from "@/components/basic";
 import {defineComponent, h, inject, mergeProps, provide, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
-import {TableContext} from "@/components/view/ViewAction";
+import {TableContext} from "@/components/view/Context";
 import CoreConsts from "@/components/CoreConsts";
 
 function getSlotName(dataIndex) {
