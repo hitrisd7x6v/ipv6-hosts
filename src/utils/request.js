@@ -55,7 +55,6 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
     (config) => {
-        config['autoMsg'] = true; // 自动提示消息
         return config
     },
     (error) => {
