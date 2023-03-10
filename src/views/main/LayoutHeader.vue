@@ -50,8 +50,12 @@
               </a-badge>
             </a-tooltip>
           </li>
-          <li class="ivz-opera-col">
-                <router-link to="/doc"><ivz-icon type="iz-icon-doc" :style="{fontSize: '18px'}"/> 文档教程</router-link>
+          <li class="ivz-opera-col" v-if="isDev">
+            <a target="_blank" href="/lcd">
+              <a-tooltip title="低代码设计">
+                <ivz-icon type="iz-icon-code" :style="{fontSize: '16px'}"/>
+              </a-tooltip>
+            </a>
           </li>
 <!--          <li class="ivz-opera-col" @click="switchTheme">-->
 <!--            <a-tooltip title="主题">-->
@@ -71,7 +75,7 @@
         <template v-for="menu in taskBarData" :key="menu.path">
           <a-tab-pane :closable="menu.meta.closable != false">
             <template #tab>
-              <ReloadOutlined class="ivz-tba-reload" @click="() => refresh(menu)"/>
+<!--              <ReloadOutlined class="ivz-tba-reload" @click="() => refresh(menu)"/>-->
               <span class="ivz-tba-dot"></span>
               <span class="ivz-tba-title">{{menu.name}}</span>
             </template>
@@ -105,7 +109,9 @@ export default {
     let msgCount = 0
     let waitCount = 0;
     let workMenu = {}
-    return {workMenu, msgCount, waitCount}
+    // 开发环境下展示低代码设计入口
+    let isDev = import.meta.env.DEV;
+    return {workMenu, msgCount, waitCount, isDev}
   },
   methods: {
     ...mapMutations({
@@ -290,7 +296,7 @@ export default {
 }
 .ivz-task-bar .ant-tabs-nav-container .ant-tabs-nav-wrap {
   margin-top: 0px;
-  padding-left: 32px;
+  padding-left: 56px;
 }
 .ivz-task-bar .ant-tabs-tab-prev,.ivz-task-bar .ant-tabs-tab-next {
   height: 100%;

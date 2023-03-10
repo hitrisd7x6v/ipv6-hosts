@@ -1,6 +1,6 @@
 <template>
-  <a-drawer :visible="visible" :width="'78%'" @close="closeHandle"
-      placement="right" :closable="false" :get-container="false"
+  <a-drawer :visible="visible" :width="'100%'" @close="closeHandle"
+      placement="left" closable :get-container="false" title="个人中心"
       :after-visible-change="afterVisibleChange" wrapClassName="ivz-user-info"
       :wrap-style="{ position: 'absolute' }" :bodyStyle="{height: '100%'}">
     <div class="ivz-ui-content">

@@ -1,8 +1,9 @@
 <template>
   <ivz-menu-view>
     <IvzViewSearch>
-      <ivz-input label="字典名称" field="name" />
-      <ivz-select label="字典状态" field="status" :options="status" span="5"/>
+      <IvzInput label="字典名称" field="name" />
+      <IvzInput label="字典类型" field="type"/>
+      <IvzSelect label="字典状态" field="status" :options="status" span="6"/>
       <template #func>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
         <IvzFuncBtn func="query" url="/core/dictType/view">搜索</IvzFuncBtn>

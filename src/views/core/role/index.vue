@@ -36,7 +36,7 @@
         &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
         <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
         <IvzTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)"
-                 showLine checkable :selectable="false" ref="funcMenus" />
+                 showLine checkable :selectable="true" ref="funcMenus" @change="change"/>
       </template>
       <template #footer>
         <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
@@ -109,6 +109,10 @@ export default {
       } else {
         this.$refs['funcMenus'].setExpandedKeys([])
       }
+    },
+    change(a, b) {
+      console.log(a)
+      console.log(b)
     }
   }
 }

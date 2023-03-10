@@ -162,19 +162,15 @@ export function $View(context) {
 
     /**
      * 打开编辑框
-     * @param callback 用来对数据进行处理
+     * @param row
      */
-    this.openForAdd = function (callback) {
+    this.openForAdd = function (row) {
         let editContext = this.getEditContext();
 
         if(editContext.isPrimary) {
-            editContext.asyncVisible().then((model) => {
-                let initModel = editContext.getFormContext().getInitModel();
-                if(callback instanceof Function) {
-                    callback(initModel);
-                }
-
-                editContext.getFormContext().setEditModel(initModel);
+            editContext.asyncVisible(row).then((model) => {
+                let formContext = editContext.getFormContext();
+                formContext.setEditModel(model);
             })
         }
     }
@@ -247,7 +243,7 @@ export function $View(context) {
         if(editContext.isPrimary) {
             url = url ? url : this.getEditUrl(data, editContext);
             if(url) {
-                editContext.asyncVisible().then(() => {
+                editContext.asyncVisible(data).then(() => {
                     editContext.setLoading(true);
                     TypeMethodMaps.Edit(url).then(({code, message, data}) => {
                         if(code == MetaConst.SuccessCode) {
@@ -737,7 +733,7 @@ export function EditContext(viewContext) {
     // 修改弹框状态(模态框或者抽屉框)
     this.setVisible = (status) => {Unmount()};
     // 异步打开弹框(模态框或者抽屉框) 等表单初始化完成
-    this.asyncVisible = () => Promise.reject("未挂载");
+    this.asyncVisible = (row) => Promise.reject("未挂载");
 
     // 必须在相应的地方重新初始化
     // 表单上下文对象

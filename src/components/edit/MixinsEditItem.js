@@ -43,49 +43,31 @@ export default defineComponent({
         },
 
         /**
-         * 打开编辑组件并且等待表单挂载完成
-         */
-        openEditAtFormInit() {
-            this.visible = true;
-            return new Promise((resolve, reject) => {
-                if(this.formRef) {
-                    resolve(this.getEditContext())
-                } else {
-                    this.$nextTick().then(() =>{
-                        if(!this.formRef) {
-                            this.$nextTick().then(() => {
-                                this.formRef = this.$refs['iemFormRef'];
-                                resolve(this.getEditContext())
-                            }).catch(reason => reject(reason))
-                        } else {
-                            this.formRef = this.$refs['iemFormRef'];
-                            resolve(this.getEditContext())
-                        }
-                    }).catch(reason => reject(reason))
-                }
-            })
-        },
-
-        /**
-         * 异步打开弹框
+         * 异步打开弹框, 表单初始化完成后会出发编辑事件
+         * @param row 编辑的行 非必填
          * @return {Promise<unknown>}
          */
-        openByAsync() {
+        openByAsync(row) {
             this.visible = true;
             return new Promise((resolve, reject) => {
                 if(this.formRef) {
-                    return resolve(this.getEditModel());
+                    let editModel = this.getEditModel();
+                    this.$emit("edit", editModel, row)
+                    return resolve(editModel);
                 }
 
                 this.$nextTick().then(() => {
                     this.formRef = this.$refs['iemFormRef']
                     if(!this.formRef) {
                         this.$nextTick().then(() => {
-                            this.formRef = this.$refs['iemFormRef']
-                            resolve(this.getEditModel());
+                            let editModel = this.getEditModel();
+                            this.$emit("edit", editModel, row)
+                            resolve(editModel);
                         })
                     } else {
-                        resolve(this.getEditModel());
+                        let editModel = this.getEditModel();
+                        this.$emit("edit", editModel, row)
+                        resolve(editModel);
                     }
                 })
             })

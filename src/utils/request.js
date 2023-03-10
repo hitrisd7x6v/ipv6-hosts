@@ -1,10 +1,10 @@
 import Qs from 'qs';
 import axios from 'axios'
-
-let router;
-import('@/router').then(item => {
-    router = item.default;
-});
+import router from '@/router'
+// let router;
+// import('@/router').then(item => {
+//     router = item.default;
+// });
 
 let baseURL = "/api";
 // 以下是生产环境配置

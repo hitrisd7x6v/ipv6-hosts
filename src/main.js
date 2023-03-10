@@ -5,7 +5,7 @@ import Router from './router'
 import EventBus from '@/event'
 import {http} from "@/utils/request"
 // import '@/doc' // 文档教程 不需要请注释掉
-import '@/api/mock' // 非数据模拟环境请注释
+// import '@/api/mock' // 非数据模拟环境请注释
 import IvzComponents from '@/components'
 import Authority from '@/components/directive/authority'
 import 'ant-design-vue/dist/antd.css'
