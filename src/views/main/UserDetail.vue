@@ -15,12 +15,12 @@
         <a-form-item label="手机号码" name="phone">
           <a-input v-model:value="user.phone" />
         </a-form-item>
-        <a-form-item label="所属部门">
-          {{user.deptName}}
-        </a-form-item>
-        <a-form-item label="所属角色">
-          {{user.roleName}}
-        </a-form-item>
+<!--        <a-form-item label="所属部门">-->
+<!--          {{user.deptName}}-->
+<!--        </a-form-item>-->
+<!--        <a-form-item label="所属角色">-->
+<!--          {{user.roleName}}-->
+<!--        </a-form-item>-->
         <a-form-item label="个人简介" name="remark">
           <a-textarea v-model:value="user.remark" />
         </a-form-item>
@@ -38,6 +38,7 @@
       </a-col>
     </a-row>
     <a-form-item label=" " :colon="false">
+      <a-button @click="refresh" :loading="resetLoading" style="margin-right: 5px">重置</a-button>
       <a-button type="primary" :loading="loading" @click="submit">提交</a-button>
     </a-form-item>
   </a-form>
@@ -46,10 +47,11 @@
 <!--用户资料-->
 <script>
 import {ref} from "vue";
-import {mapGetters, mapMutations} from "vuex";
+import {mapGetters, mapMutations, useStore} from "vuex";
 import {avatarUploadUri, editUser} from '@/api'
 import {UserOutlined} from "@ant-design/icons-vue"
 import {msgSuccess} from "@/utils/message";
+import CoreConsts from "@/components/CoreConsts";
 
 export default {
   name: "UserDetail",
@@ -66,27 +68,32 @@ export default {
       nickName: {required: true, message: '用户昵称必填'},
     });
 
-    let loading = ref(false);
-
     let fileList = ref([]);
-    return {rules, loading, fileList, avatarUploadUri}
+    let loading = ref(false);
+    let resetLoading = ref(false);
+    return {rules, loading, fileList, avatarUploadUri, resetLoading}
   },
   methods: {
     ...mapMutations({
+      initUser: 'sys/toggleUserVisible',
       toggleUserVisible: 'sys/toggleUserVisible'
     }),
     submit() {
       this.$refs['formRef'].validate().then(resp => {
         this.loading = true;
         editUser(this.user).then(({code, message}) => {
-          if(code == 200) {
-            msgSuccess(message || "修改成功");
-            this.toggleUserVisible({visible: false})
+          if(code == CoreConsts.SuccessCode) {
+            this.$msg.success(message || CoreConsts.SubmitSuccessMsg);
+            // this.toggleUserVisible({visible: false})
           } else {
-            msgError(message);
+            this.$msg.error(message);
           }
         }).finally(() => this.loading = false)
       });
+    },
+    refresh() {
+      this.resetLoading = true;
+      this.$store.dispatch('sys/initUser').finally(() => this.resetLoading = false)
     },
     handlePreview() {
 

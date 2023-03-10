@@ -156,7 +156,7 @@ function initTableColumns(oriColumns, slots) {
                 } else if(column.dict || column.url || column.options) {
                     columnSlot['customRender'] = getSlotName(dataIndex);
                     initColumnFormatterSlot(column, columnSlot['customRender'], slots);
-                } else if(column.type == 'datetime') {
+                } else if(column.type == 'date') {
                     columnSlot['customRender'] = getSlotName(dataIndex);
                     initDatetimeColumnSlot(column, columnSlot['customRender'], slots);
                 }
@@ -195,14 +195,14 @@ export default defineComponent({
         columns: {type: Array, default: () => []},
         pagination: {
             default: () => {
-                return {
+                return reactive({
                     total: 0,
                     defaultPageSize: 10,
                     showQuickJumper: true,
                     showSizeChanger: true,
                     showTotal: (total, range) => `共 ${total}条`,
                     pageSizeOptions: ['10', '20', '30', '50', '100']
-                }
+                })
             }
         }, // 是否分页, 不支持使用对象
     },
@@ -336,6 +336,10 @@ export default defineComponent({
           return this.$props.pagination ? this.page : false;
         },
 
+        /**
+         *
+         * @returns {UnwrapRef<TableContext>}
+         */
         getTableContext() {
             return this.tableContext;
         },

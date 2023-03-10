@@ -1,10 +1,12 @@
 <template>
   <IvzBasicView name="用户">
     <IvzViewSearch>
-      <ivz-input field="name" label="用户昵称" />
-      <ivz-input field="account" label="用户帐号" />
-      <ivz-input field="phone" label="用户手机" />
-      <ivz-radio field="status" label="用户状态" :options="status"/>
+      <IvzRow span="6">
+        <ivz-input field="name" label="用户昵称" />
+        <ivz-input field="account" label="用户帐号" />
+        <ivz-input field="phone" label="用户手机" />
+        <ivz-radio field="status" label="用户状态" :options="status"/>
+      </IvzRow>
       <template #func>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
         <IvzFuncBtn func="query" url="/core/admin/view">搜索</IvzFuncBtn>

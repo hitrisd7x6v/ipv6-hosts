@@ -31,7 +31,8 @@
         <IvzInput field="url" label="菜单URL"/>
         <IvzInput field="perms" label="权限标识" />
         <IvzInput field="icon" label="图标" />
-        <IvzInputNumber field="sort" label="排序" :defaultValue="80" />
+        <IvzInputNumber field="sort" label="排序" :defaultValue="68" />
+        <IvzRadio field="log" label="日志采集" :options="BooleanStatus" :defaultValue="true"/>
       </IvzRow>
       <template #title="{model}">
         {{model.id != null ? '修改菜单' : '新增菜单'}}
@@ -46,6 +47,7 @@
 </template>
 
 <script>
+import {BooleanStatus} from "@/utils/StatusConsts";
 import {FunMetaMaps} from "@/utils/MetaUtils";
 import {ref} from "vue";
 
@@ -56,16 +58,6 @@ export default {
       {label: '目录', value: 'M'},
       {label: '视图', value: 'V'},
       {label: '功能', value: 'A'},
-    ]
-    let permType = [
-      {label: '新增', value: FunMetaMaps.Add},
-      {label: '删除', value: FunMetaMaps.Del},
-      {label: '编辑', value: FunMetaMaps.Edit},
-      {label: '搜索', value: FunMetaMaps.View},
-      {label: '详情', value: FunMetaMaps.Detail},
-      {label: '导入', value: FunMetaMaps.Import},
-      {label: '导出', value: FunMetaMaps.Export},
-      {label: '自定义', value: ''},
     ]
 
     let position = [
@@ -93,7 +85,7 @@ export default {
     }
 
     let disabledPermType = ref(false);
-    return {columns, permType, rules, position, type, disabledPermType}
+    return {columns, rules, position, type, disabledPermType, BooleanStatus}
   },
   mounted() { },
   methods: {

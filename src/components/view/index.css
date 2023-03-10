@@ -2,7 +2,7 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    padding: 8px 16px;
+    padding: 2px 16px;
     background: #ffffff;
 }
 .ivz-page-view .ivz-view,.ivz-page-view.ivz-default-view {

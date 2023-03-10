@@ -69,13 +69,14 @@
     </div>
     <!--  任务栏  -->
     <div class="ivz-task-bar">
+      <div class="ivz-task-more" @click="() => refresh()">
+        <ReloadOutlined class="ivz-tba-reload" title="刷新"/>
+      </div>
       <a-tabs :active-key="$route.path" @change="switchTask" :hide-add="true"
               @edit="closeTask" type="editable-card" size="small">
-
         <template v-for="menu in taskBarData" :key="menu.path">
           <a-tab-pane :closable="menu.meta.closable != false">
             <template #tab>
-<!--              <ReloadOutlined class="ivz-tba-reload" @click="() => refresh(menu)"/>-->
               <span class="ivz-tba-dot"></span>
               <span class="ivz-tba-title">{{menu.name}}</span>
             </template>
@@ -121,7 +122,9 @@ export default {
       switchActiveViewTo: 'sys/switchActiveViewTo',
       pushAndSwitchTask: 'sys/pushAndSwitchTask'
     }),
-    refresh(route) {
+    refresh() {
+      let path = this.$route.path;
+      let route = this.taskBarData.find(route => route.path == path);
       this.reload(route);
     },
     switchTask (url) { // 切换任务菜单处理
@@ -243,6 +246,17 @@ export default {
   padding: 0px;
   position: relative;
 }
+.ivz-task-more {
+  left: 32px;
+  width: 29px;
+  height: 33px;
+  z-index: 10;
+  cursor: pointer;
+  text-align: center;
+  line-height: 36px;
+  position: absolute;
+  /*box-shadow: 2px 0px 2px 0px #a5a5a5;*/
+}
 .ivz-task-bar .ant-tabs-tab-active {
   box-shadow: 0px 0px 6px 0px #cbcbcb;
 }
@@ -255,7 +269,7 @@ export default {
 }
 .ivz-tba-title {
   color: #000000;
-  margin-left: 8px;
+  margin-left: 3px;
 }
 .ant-tabs-tab .ivz-tba-reload {
   display: none;
@@ -267,12 +281,7 @@ export default {
 .ant-tabs-tab-active .ivz-tba-title {
   color: #3e3e3e;
 }
-.ant-tabs-tab-active .ivz-tba-reload {
-  top: 7px;
-  left: -4px;
-  position: absolute;
-  display: inline-block;
-}
+
 .ivz-tba-reload:hover {
   transform: rotate(180deg);
   -webkit-transform: rotate(180deg)
@@ -296,7 +305,7 @@ export default {
 }
 .ivz-task-bar .ant-tabs-nav-container .ant-tabs-nav-wrap {
   margin-top: 0px;
-  padding-left: 56px;
+  padding-left: 65px;
 }
 .ivz-task-bar .ant-tabs-tab-prev,.ivz-task-bar .ant-tabs-tab-next {
   height: 100%;

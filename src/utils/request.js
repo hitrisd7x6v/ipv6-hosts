@@ -1,17 +1,8 @@
 import Qs from 'qs';
 import axios from 'axios'
 import router from '@/router'
-// let router;
-// import('@/router').then(item => {
-//     router = item.default;
-// });
 
-let baseURL = "/api";
-// 以下是生产环境配置
-if(import.meta.env.PROD) {
-    baseURL = "";
-}
-
+let baseURL = "/api"
 let baseConfig = {
     baseURL: baseURL,
     contentType: 'application/json;charset=UTF-8',
@@ -35,7 +26,7 @@ const handleResponse = (data, config) => {
             router.push({ path: '/login' }).finally(() => {});
             return null;
         case 404:
-            return Promise.reject('404');
+            return Promise.reject(data);
         default: return data;
     }
 }

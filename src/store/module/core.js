@@ -1,8 +1,9 @@
 /*系统模块相关配置*/
-import {getMenus, getDict, getUser} from "@/api";
+import {getDict, getMenus, getUser} from "@/api";
 import {reactive} from "vue";
 import {GET} from "@/utils/request";
 import router, {resolverMenuToRoutes} from "@/router";
+import CoreConsts from "@/components/CoreConsts";
 
 function resolveMenusBreadcrumb(menus) {
     if(menus instanceof Array) {
@@ -97,6 +98,8 @@ const registerSysModule = function (store) {
             activityView: state => state.activeView,
             // 当前激活的菜单
             activityMenu: state => state.activeMenu,
+            // 当前激活的路由
+            activeRoute: state => state.activeRoute,
             // 任务栏打开的任务列表
             taskBarData: state => state.taskBarData,
             // 选中的菜单
@@ -308,9 +311,17 @@ const registerSysModule = function (store) {
         },
         actions: {
             initUser: ({commit, state}) => {
-                getUser().then(({data}) => {
-                    state.user = data;
-                })
+                return getUser().then((resp) => {
+                    if(resp) {
+                        let {data, code, message} = resp;
+                        if(code == CoreConsts.SuccessCode) {
+                            state.user = data;
+                        } else {
+                            console.error(message || "获取用户失败");
+                        }
+                    }
+                    return resp;
+                });
             },
             initMenus: ({commit, state}) => {
                  return getMenus().then(({data}) => {
@@ -330,7 +341,7 @@ const registerSysModule = function (store) {
                     resolverMenuToRoutes(urlMenuMap);
                     state.init = true; // 声明路由信息已经初始化完成
                     return urlMenuMap;
-                })
+                });
             },
 
         }

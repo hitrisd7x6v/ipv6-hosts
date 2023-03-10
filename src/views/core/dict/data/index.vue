@@ -1,17 +1,18 @@
 <template>
   <IvzBasicView>
     <IvzBasicSearch primary>
-      <ivz-select label="字典类型" field="type" @change="loadDictData" span="5"
-                  url="/core/dictType/list" labelField="name" valueField="type"/>
-      <ivz-input label="名称" field="name" />
+      <ivz-select label="字典标识" field="type" @change="loadDictData" span="5"
+                  url="/core/dictType/list" labelField="name" valueField="type"
+                  :defaultValue="type"/>
+      <ivz-input label="数据名称" field="name" />
       <IvzFuncBtn func="query" url="/core/dictData/view">查询</IvzFuncBtn>&nbsp;
-      <IvzFuncBtn func="add" @click="add">新增</IvzFuncBtn>&nbsp;
+      <IvzFuncBtn func="add" url="/core/dictData/add">新增</IvzFuncBtn>&nbsp;
     </IvzBasicSearch>
-    <IvzBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules">
-        <IvzInput field="type" label="字典类型" disabled/>
-        <IvzInput field="label" label="字典标签" />
-        <IvzInput field="value" label="标签值" />
-        <IvzRadio field="status" label="状态" :options="status" :defaultValue="'enabled'"/>
+    <IvzBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules" @edit="edit">
+        <IvzInput field="type" label="字典标识" disabled/>
+        <IvzInput field="label" label="数据名称" />
+        <IvzInput field="value" label="数据值" />
+        <IvzRadio field="status" label="状态" dict="sys.status" :defaultValue="'enabled'"/>
         <IvzInputNumber field="sort" label="排序" :defaultValue="10"/>
       <template #footer="{model}">
         <div style="text-align: center">
@@ -33,19 +34,16 @@
 
 <script>
 /*字典数据页面*/
+import {useRouter} from "vue-router";
+
 export default {
   name: "DictData",
   setup() {
-    let status = [
-      {label: '启用', value: 'enabled'},
-      {label: '禁用', value: 'disabled'},
-    ]
-
     let columns = [
-      {title: '字典类型', field: 'type'},
-      {title: '字典标签', field: 'label'},
-      {title: '标签值', field: 'value'},
-      {title: '状态', field: 'status', options: status},
+      {title: '字典标识', field: 'type'},
+      {title: '数据名称', field: 'label'},
+      {title: '数据值', field: 'value'},
+      {title: '状态', field: 'status', dict: 'sys.status'},
       {title: '排序', field: 'sort'},
       {title: '备注', field: 'remark'},
       {title: '操作', field: 'action', type: 'action'},
@@ -55,8 +53,8 @@ export default {
       label: {required: true, message: '字典标签必填'},
       value: {required: true, message: '标签值必填'},
     }
-
-    return {columns, status, rules};
+    let type = useRouter().currentRoute.value.query.type;
+    return {columns, rules, type};
   },
   watch: {
     $route(to, form) {
@@ -70,23 +68,13 @@ export default {
       }
     }
   },
-  mounted() {
-    let model = this.$view.getSearchModel();
-    model.type = this.$route.query.type;
-
-    this.query();
-  },
   methods: {
     query() {
-      this.$view.query("/core/dictData/view");
+      this.$view.query();
     },
 
-    add() {
-      this.$view.openForAdd(model => model.type = this.$view.getSearchContext().getModel().type);
-    },
-
-    submit() {
-      this.$view.submit("/core/dictData/add").then(() => this.query());
+    edit(model) {
+      model.type = this.$route.query.type;
     },
 
     loadDictData() {

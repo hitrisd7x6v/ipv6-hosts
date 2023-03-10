@@ -168,7 +168,7 @@ export function $View(context) {
         let editContext = this.getEditContext();
 
         if(editContext.isPrimary) {
-            editContext.asyncVisible(row).then((model) => {
+            editContext.asyncVisible(row, true).then((model) => {
                 let formContext = editContext.getFormContext();
                 formContext.setEditModel(model);
             })
@@ -203,7 +203,7 @@ export function $View(context) {
 
         confirm({title, content, onOk: () => {
                 TypeMethodMaps.Del(url, data).then(({code, message, data}) => {
-                    if (code == MetaConst.SuccessCode) {
+                    if (code == CoreConsts.SuccessCode) {
                         msgSuccess(message || CoreConsts.DelSuccessMsg);
                         this.query(); // 删除成功, 重新刷新列表
                     } else {
@@ -246,7 +246,7 @@ export function $View(context) {
                 editContext.asyncVisible(data).then(() => {
                     editContext.setLoading(true);
                     TypeMethodMaps.Edit(url).then(({code, message, data}) => {
-                        if(code == MetaConst.SuccessCode) {
+                        if(code == CoreConsts.SuccessCode) {
                             editContext.getFormContext().setEditModel(data);
                         } else {
                             msgError(message);
@@ -268,7 +268,7 @@ export function $View(context) {
         let queryUrl = url
         // 没有指定查询地址, 尝试从IvzFuncBtn获取地址
         if(!queryUrl) {
-            // 获取功能元[IvzFuncBtn or IvzFuncTag]地址
+            // 获取功能元[IvzFuncBtn]地址
             let searchFunc = this.getSearchFunc(FuncNameMeta.QUERY);
             if(searchFunc) {
                 queryUrl = searchFunc.getUrl();
@@ -288,13 +288,13 @@ export function $View(context) {
 
         let model = searchContext.getModel();
         if(tableContext.pageSize && tableContext.currentPage) {
-            model[MetaConst.PageSize] = tableContext.pageSize;
-            model[MetaConst.PageCurrent] = tableContext.currentPage;
+            model[CoreConsts.PageSize] = tableContext.pageSize;
+            model[CoreConsts.PageCurrent] = tableContext.currentPage;
         }
 
         tableContext.setLoading(true);
         TypeMethodMaps.View(queryUrl, model).then(({code, message, data}) => {
-            if(code == MetaConst.SuccessCode) {
+            if(code == CoreConsts.SuccessCode) {
                 if(data instanceof Array){
                     tableContext.setDataSource(data)
                 } else if(data instanceof Object) { // 需要分页
@@ -372,7 +372,7 @@ export function $View(context) {
 
             setLoading(true);
             TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
-                if (code == MetaConst.SuccessCode) {
+                if (code == CoreConsts.SuccessCode) {
                     msgSuccess(CoreConsts.SubmitSuccessMsg);
                     editContext.setVisible(false);
                     this.query(); // 提交数据之后重新刷新列表
@@ -410,7 +410,7 @@ export function $View(context) {
 
             setLoading(true);
             TypeMethodMaps.Edit(url).then(({code, message, data}) => {
-                if(code == MetaConst.SuccessCode) {
+                if(code == CoreConsts.SuccessCode) {
                     editContext.getFormContext().setEditModel(data);
                 } else {
                     msgError(message);
@@ -712,7 +712,7 @@ export function EditContext(viewContext) {
                 this.setLoading(true);
                 TypeMethodMaps.Submit(url, model).then(resp => {
                     let {code, message, data} = resp;
-                    if(code == MetaConst.SuccessCode) {
+                    if(code == CoreConsts.SuccessCode) {
                         resolve(resp);
                         this.setVisible(false);
                         msgSuccess(message || CoreConsts.SubmitSuccessMsg);
@@ -733,7 +733,7 @@ export function EditContext(viewContext) {
     // 修改弹框状态(模态框或者抽屉框)
     this.setVisible = (status) => {Unmount()};
     // 异步打开弹框(模态框或者抽屉框) 等表单初始化完成
-    this.asyncVisible = (row) => Promise.reject("未挂载");
+    this.asyncVisible = (row, isResetToInit) => Promise.reject("未挂载");
 
     // 必须在相应的地方重新初始化
     // 表单上下文对象

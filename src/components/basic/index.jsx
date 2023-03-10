@@ -1,8 +1,8 @@
-import {defineComponent, inject, mergeProps, provide, ref, computed, watch} from "vue";
+import {computed, defineComponent, inject, mergeProps, provide, ref, watch} from "vue";
 import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
-import {msgError} from "@/utils/message";
+import {msgError, msgSuccess, confirm} from "@/utils/message";
 import {EditContext, SearchContext, TableContext} from "@/components/view/Context";
-import {FuncNameMeta, FunMetaMaps} from "@/utils/MetaUtils";
+import {FuncNameMeta, TypeMethodMaps} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
 import CoreConsts from "@/components/CoreConsts";
 
@@ -15,7 +15,7 @@ export const IvzRow = defineComponent({
         })
     },
     render() {
-        return <ARow {...this.$attrs} v-slots={this.$slots} />
+        return <ARow style="width: 100%;" {...this.$attrs} v-slots={this.$slots} />
     }
 })
 function funcClickHandle(context, props) {
@@ -53,7 +53,39 @@ function funcClickHandle(context, props) {
                     case FuncNameMeta.SUBMIT:
                         return $view.submit(props.url);
                     case FuncNameMeta.EXPAND: return $view.expanded(); // 展开所有行
-                    default: console.error(`不支持功能类型[${props.func}]`)
+                    default: // 其他功能操作
+                        if(props.url) {
+                            if(context instanceof TableContext) {
+                                let submit = (resolve) => {
+                                    if(!resolve) context.setLoading(true)
+                                    TypeMethodMaps.POST(props.url, props.data).then(({code, message}) => {
+                                        if(resolve) resolve();
+
+                                        if(code == CoreConsts.SuccessCode) {
+                                            $view.query();
+                                            msgSuccess(message || CoreConsts.OtherOperaSuccessMsg)
+                                        } else {
+                                            msgError(message);
+                                        }
+                                    }).catch(reason => console.error(reason)).finally(() => {
+                                        if(resolve) {
+                                            resolve();
+                                        } else {
+                                            context.setLoading(false)
+                                        }
+                                    })
+                                }
+                                if(props.confirm) { // 需要确认
+                                    confirm({title: CoreConsts.ConfirmTitle
+                                        , content: CoreConsts.ConfirmContent, onOk: () => {
+                                            return new Promise((resolve, reject) => submit(resolve))
+                                        }
+                                    })
+                                } else {
+                                    submit(null);
+                                }
+                            }
+                        }
                 }
             } else { // 各个组件单独操作
                 if(context instanceof EditContext) {
@@ -101,7 +133,7 @@ function funcClickHandle(context, props) {
                     let editContext = $view.getEditContext();
                     if(editContext.isPrimary) {
                         // 打开编辑框并且是指pid
-                        editContext.asyncVisible(props.data).then(model => {
+                        editContext.asyncVisible(props.data, true).then(model => {
                             if(props.data && model) {
                                 // 设置pid
                                 model[props.pid] = props.data[rowKey];
@@ -142,6 +174,7 @@ export const IvzFuncTag = defineComponent({
         data: {type: Object}, // 行数据
         disabled: {default: false}, // 是否禁用
         func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset, expand
+        confirm: {type: Boolean, default: false}, // 是否需要确认
         pid: {type: String, default: CoreConsts.DefaultPID}, // 父id字段
     },
     setup(props, {attrs}) {

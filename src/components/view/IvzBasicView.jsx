@@ -1,6 +1,7 @@
 import {defineComponent, provide} from "vue";
 import {$View, ViewContext} from "@/components/view/Context";
 import {ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncNameMeta} from "@/utils/MetaUtils";
 
 export default defineComponent({
     name: "IvzBasicView",
@@ -23,8 +24,10 @@ export default defineComponent({
     },
     mounted() {
         let $view = this.$parent.$view;
-        if($view.getTableContext().isPrimary) {
-            $view.query();
+        // 获取查询按钮
+        let queryFunc = $view.getSearchFunc(FuncNameMeta.QUERY);
+        if(queryFunc && $view.getTableContext().isPrimary) {
+            $view.query(queryFunc.getUrl());
         }
     },
     render() {

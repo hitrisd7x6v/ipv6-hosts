@@ -1,12 +1,9 @@
 <template>
-  <a-drawer :visible="visible" :width="'100%'" @close="closeHandle"
-      placement="left" closable :get-container="false" title="个人中心"
+  <a-drawer :visible="visible" :height="'100%'" @close="closeHandle"
+      placement="top" closable :get-container="false"
       :after-visible-change="afterVisibleChange" wrapClassName="ivz-user-info"
-      :wrap-style="{ position: 'absolute' }" :bodyStyle="{height: '100%'}">
-    <div class="ivz-ui-content">
-<!--      <div class="ivz-uic-profile">-->
-<!--        <UserProfile />-->
-<!--      </div>-->
+      :wrap-style="{ position: 'absolute' }" :bodyStyle="{height: '0%', padding: '0px'}">
+    <template #title>
       <div class="ivz-uic-info">
         <a-tabs :activeKey="activeKey" @change="tabChange">
           <a-tab-pane key="user">
@@ -29,7 +26,12 @@
           </a-tab-pane>
         </a-tabs>
       </div>
-    </div>
+    </template>
+<!--    <div class="ivz-ui-content">-->
+<!--&lt;!&ndash;      <div class="ivz-uic-profile">&ndash;&gt;-->
+<!--&lt;!&ndash;        <UserProfile />&ndash;&gt;-->
+<!--&lt;!&ndash;      </div>&ndash;&gt;-->
+<!--    </div>-->
   </a-drawer>
 </template>
 <!--用户中心-->

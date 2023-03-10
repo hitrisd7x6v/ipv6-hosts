@@ -19,12 +19,14 @@
 <script>
 import {editPwd} from "@/api";
 import {reactive, ref} from "vue";
+import CoreConsts from "@/components/CoreConsts";
+import {mapGetters} from "vuex";
 
 export default {
   name: "UserEditPwd",
   setup() {
     let loading = ref(false);
-    let pwdModel = reactive({oldPwd: '', password: '', surePwd: ''});
+    let pwdModel = reactive({id: null, oldPwd: '', password: '', surePwd: ''});
     let rules = reactive({
       oldPwd: {required: true, message: '请输入旧密码'},
       password: {required: true, message: '请输入新密码'},
@@ -39,10 +41,22 @@ export default {
     });
     return {pwdModel, loading, rules}
   },
+  computed: {
+    ...mapGetters({
+      user: "sys/user"
+    })
+  },
   methods: {
     submit() {
       this.loading = true;
-      editPwd(this.pwdModel).finally(() => this.loading = false)
+      this.pwdModel.id = this.user.id;
+      editPwd(this.pwdModel).then(({code, message})=>{
+        if(code == CoreConsts.SuccessCode) {
+          this.$msg.success("更新密码成功")
+        } else {
+          this.$msg.error(message)
+        }
+      }).finally(() => this.loading = false)
     },
   }
 }

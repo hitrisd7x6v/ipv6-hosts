@@ -5,7 +5,7 @@ import {DoubleLeftOutlined} from "@ant-design/icons-vue";
 
 const TypeMethodMaps = {
     Add: null, Edit: GET, Del: POST, View: GET,
-    Import: POST, Export: POST, Detail: GET, Submit: POST
+    Import: POST, Export: POST, Detail: GET, Submit: POST, POST
 }
 
 const FunMetaMaps = {
@@ -108,9 +108,6 @@ function clone(target) {
 }
 
 const MetaConst = {
-    PageSize: 'pageSize',
-    PageCurrent: 'current',
-
     EditFormType: 'edit',
     SearchFormType: 'search',
 

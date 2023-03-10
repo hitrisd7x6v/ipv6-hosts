@@ -1,5 +1,5 @@
 <template>
-  <ivz-menu-view>
+  <IvzBasicView>
     <IvzViewSearch>
       <IvzInput label="字典名称" field="name" />
       <IvzInput label="字典类型" field="type"/>
@@ -20,10 +20,12 @@
       </template>
     </IvzViewTable>
     <IvzViewModal :rules="rules" title="字典管理" :span="[6, 16]">
-      <ivz-input label="字典名称" field="name" />
-      <ivz-input label="字典标识" field="type" />
-      <ivz-radio label="字典状态" field="status" :options="status"/>
-      <ivz-input label="备注" field="remark" />
+      <template #default="{model}">
+        <ivz-input label="字典名称" field="name" />
+        <ivz-input label="字典标识" field="type" :disabled="model.id ? true : false" />
+        <ivz-radio label="字典状态" field="status" :options="status"/>
+        <ivz-input label="备注" field="remark" />
+      </template>
       <template #title="{model}">
         {{model.id != null ? '修改字典' : '新增字典'}}
       </template>
@@ -33,7 +35,7 @@
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
       </template>
     </IvzViewModal>
-  </ivz-menu-view>
+  </IvzBasicView>
 </template>
 <!--字典管理-->
 <script>
@@ -47,7 +49,7 @@ export default {
 
     let columns = [
       {field: 'name', title: '字典名称'},
-      {field: 'type', title: '字典类型'},
+      {field: 'type', title: '字典标识'},
       {field: 'status', title: '字典状态', options: status},
       {field: 'remark', title: '备注'},
       {field: 'createTime', title: '创建时间'},
