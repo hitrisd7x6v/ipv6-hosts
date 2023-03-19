@@ -1,63 +1,9 @@
 ### ivzone是一套基于vue3+vite2+antdv2+js实现的后台管理模板
-1. 它颠覆对增删改查模板的开发体验和使用方式,基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4最新技术，具有实现优雅、代码简洁、通俗易懂、开发效率高、代码量减少30%+等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动，只做增强不做限制)
+1. 它颠覆对增删改查模板的开发体验和使用方式,基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4最新技术，具有实现优雅、代码简洁、通俗易懂、开发效率高、代码量少等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动，只做增强不做限制)
 2. 提供一套后台管理常用功能模板(用户，角色，菜单，字典，机构，配置等)的实现
 3.  _优雅、好用、与众不同、易理解(请自行体验，交流群：616124620)_ 
 4. [项目预览地址](http://demo.iteaj.com/) 以及配套的 [java后端项目](https://gitee.com/iteaj/izone-sboot)
-#### 优雅、简洁、灵活的实现一个通用的增删改查功能
-```
-<template>
-  <IvzBasicView> // 基础视图页面
-    <IvzBasicSearch primary> // 基础搜索组件
-      <IvzInput field="name" label="茶叶名称"/>
-      <AButton type="primary" @click="query">查询</AButton>&nbsp;
-      <AButton @click="add">新增</AButton>
-    </IvzBasicSearch> // 基础表组件
-    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
-      <template #c_action="{record}">
-        <ATag color="blue" @click="add">新增</ATag>
-        <ATag color="red" @click="() => del(record)">删除</ATag>
-      </template>
-    </IvzBasicTable>
-    <IvzBasicModal primary>// 基础模态框编辑组件
-      <IvzInput field="name" label="茶叶名称"/>
-      <template #title="{model}">
-        {{model.id ? '编辑产品' : '新增产品'}}
-      </template>
-    </IvzBasicModal>
-  </IvzBasicView>
-</template>
-
-<script>
-export default {
-  name: "Demo",
-  setup() {
-    let columns = [
-      {field: 'name', title: '产品名称'},
-      {field: 'type', title: '产品类型'},
-      {field: 'action', type:'action', title: '操作'},
-    ]
-    let dataSource = [
-      {id: 1, name: '清香秋茶', type: '清香型'}
-    ]
-    return {columns, dataSource}
-  },
-  methods: {
-    // 默认实现的通用增删改查接口
-    add() {
-      this.$view.openForAdd(); // 打开一个新增的模态框
-    },
-    del(row) {
-      this.$view.del('/product/del', [row.id]); // 删除某一行
-    },
-    query() {
-      this.$view.query('/product/list'); // 查询列表
-    },
-//    ... edit,cancel,submit等等
-  }
-}
-</script>
-```
-#### 更优雅、更简洁的写法
+#### 简洁的写法
 ```
 <template>
   <IvzBasicView> // 基础视图页面
@@ -195,7 +141,7 @@ export default {
 1. 功能组件主要是用来拓展和简化功能的操作方式, 使用功能组件将提供一套默认的操作功能
 2. 提供的功能包括[add, del, edit, query, import, export, reset, cancel, submit, expand]以及混合联动操作
 ##### IvzFuncBtn
-功能按钮：一般用在搜索组件和编辑组件
+功能按钮：用在搜索组件和编辑组件
 ```
 <IvzBasicView>
     <IvzViewSearch>
@@ -216,7 +162,7 @@ export default {
 </IvzBasicView>
 ```
 ##### IvzFuncTag
-功能tag：一般用于表格操作
+功能tag：用于表格操作
 ```
 <IvzBasicView rowKey="id">
     <IvzViewTable>
@@ -229,6 +175,12 @@ export default {
     </IvzViewSearch>
 </IvzBasicView>
 ```
+##### 误操作确认
+有时候为了防止某些功能的误操作，将会在点击功能的时候弹框确认, 这时候可以使用：confirm属性
+```
+<IvzFuncBtn func='demo' :data="record" url="/project/demo" confirm>容易误操作</IvzFuncBtn>
+```
+
 ##### 组件联动操作
 联动功能主要是用于点击功能按钮时操作对应的组件
 ```
