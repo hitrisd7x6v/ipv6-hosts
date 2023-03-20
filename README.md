@@ -181,13 +181,14 @@ export default {
 <IvzFuncBtn func='demo' :data="record" url="/project/demo" confirm>容易误操作</IvzFuncBtn>
 ```
 
-##### 组件联动操作
-联动功能主要是用于点击功能按钮时操作对应的组件
+##### 与编辑框联动
+主要用于点击功能按钮时弹出对应的编辑框
+1. 打开其他的编辑框
 ```
 <IvzBasicView rowKey="id">
     <IvzViewTable>
         <template #c_action={record}>
-            // 点击默认动作：打开id="modPwd"的编辑框, 并且设置编辑框: model[rowKey]=record[rowKey]
+            // 默认动作：打开id="modPwd"的编辑框, 并且设置编辑框: model[rowKey]=record[rowKey]
             <IvzFuncBtn func='edit:modPwd' :data="record">修改密码</IvzFuncBtn> 
         </template>
     </IvzViewSearch>
@@ -196,13 +197,25 @@ export default {
        <IvzPassword label="密码" field="password" />
        <template #footer={model}>
           <IvzFuncBtn func='cancel'>取消</IvzFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
-          // 点击默认动作：校验表单是否通过, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
+          // 默认动作：校验表单, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
           <IvzFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</IvzFuncBtn> 
           <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置编辑表单
        </tempalte>
     </IvzBasicSearch>
 </IvzBasicView>
 ```
+2. 新增子记录(树形结构格式)
+```
+<IvzBasicView rowKey="id">
+    <IvzViewTable>
+        <template #c_action={record}>
+            // 打开新增的编辑框, 并且设置编辑框父id: model[pid]=record[rowKey]
+            <IvzFuncBtn func='add:child' :data="record">新增子菜单</IvzFuncBtn> 
+        </template>
+    </IvzViewSearch>
+</IvzBasicView>
+```
+
 #### 功能权限
 功能权限主要是用来控制页面是否需要显示对应的功能
 ##### v-auth指令
@@ -263,9 +276,28 @@ this.getEditUrl = function (model, editContext) {
 1. 以下的所有组件都只能用在页级组件(IvzBasicView、IvzMenuView)的子组件，组成一个完整的功能页面
 2. IvzViewModal、IvzVieDrawer、IvzViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
 ##### IvzViewSearch
+1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
+2. 属于页面可联动的搜索组件
 ##### IvzViewModal
+1. 支持[AForm组件](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[AModal组件](https://2x.antdv.com/components/modal-cn)的所有属性
+3. 新增属性[span] 作为AForm组件的labelCol和wrapperCol的简写， 格式 [6, 18]
+4. 属于页面可联动的编辑组件
 ##### IvzViewDrawer
+1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[ADrawerl](https://2x.antdv.com/components/drawer-cn)的所有属性
+3. 新增属性[span] 作为AForm组件的labelCol和wrapperCol的简写， 格式 [6, 18]
+4. 属于页面可联动编辑组件
 ##### IvzViewTable
+1. 支持[ATable](https://2x.antdv.com/components/table-cn)的所有属性
+##### IvzBasicModal
+1. 支持[AForm组件](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[AModal组件](https://2x.antdv.com/components/modal-cn)的所有属性
+3. 新增属性[primary] 用来声明此组件是可联动的组件
+##### IvzBasicDrawer
+1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[ADrawerl](https://2x.antdv.com/components/drawer-cn)的所有属性
+3. 新增属性[primary] 用来声明此组件是可联动的组件
 ### antd2组件扩展
 ##### <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">增强ATable组件</a>
 antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。IvzBasicTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
