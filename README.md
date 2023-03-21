@@ -271,7 +271,26 @@ this.getEditUrl = function (model, editContext) {
 }
 // 如果以上方法不能满足你获取url，可以在mount钩子里面覆盖掉此方法，重写
 ```
-
+#### 视图组件
+视图组件是用来组织视图子组件的容器, 再此容器内支持对所有的可联动的视图子组件做联动操作：比如点击搜索组件的查询按钮表格组件将发起查询接口获取数据
+1. IvzBasicView 基础的视图组件，此组件必须作为.vue页面的顶级组件
+```
+<template>
+   <IvzBasicView>
+       ...
+   </IvzBasicView>
+</template>
+<script>...</script>
+```
+ **使用url作为权限控制** 
+```
+<IvzBasicView auth>...</IvzBasicView>
+```
+ **指定功能的唯一键** 
+```
+<IvzBasicView rowKey="id">...</IvzBasicView>
+// 此属性将用来做表格、编辑与新增、新增子记录的判断
+```
 #### 视图子组件
 1. 以下的所有组件都只能用在页级组件(IvzBasicView、IvzMenuView)的子组件，组成一个完整的功能页面
 2. IvzViewModal、IvzVieDrawer、IvzViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
