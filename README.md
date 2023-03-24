@@ -73,69 +73,7 @@ export default {
 9. 提供基于antd2ui库封装的其他业务组件库
 10. 使用Mock对所有视图组件进行数据模拟
 11. 不依赖于后台框架的使用语言(java, php, c#等)， 友好的声明api接口和字段，可以方便的对接任何后台
-### 增删改查视图组件
-  将通用的，常用的，简单的一些操作合并到一个组件里面且提供完整的增删改查功能。对于每个通用的增删改查功能，最大的不同点在于操作的url不同，需要的功能点不同，所以我们只需要将每个功能点交由开发人员定义。下面主要是两个常用的增删改查视图组件的实现，先直观看一下菜单功能用增删改查组件的实现图片和对应的代码
 
-#### IvzMenuView视图
-IvzMenuView组件是增删改查的另一种实现方式， 通过后台菜单配置功能点实现 如下：
-
-```
-<template>
-  <ivz-menu-view :expand="true" name="菜单">
-    <ivz-view-search>
-      <ivz-input field="name" label="菜单名称" />
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small" :pagination="false" />
-    <ivz-view-drawer>
-      <ivz-input field="name" label="菜单名称" required/>
-      <ivz-tree-select field="pid" label="父菜单" required :defaultValue="0"/>
-      <ivz-input field="url" label="访问路径" required/>
-      <ivz-input field="perms" label="权限标识"/>
-      <ivz-select field="position" label="功能位置" dict="common_status"/>
-      <ivz-select field="permType" label="功能类型" :options="permType"/>
-      <ivz-input field="remark" label="备注" />
-    </ivz-view-drawer>
-  </ivz-menu-view>
-</template>
-
-<script>
-export default {
-  name: "Menu",
-  setup() {
-    let permType = [
-      {label: '新增', value: 'Add'},
-      {label: '删除', value: 'Del'},
-    ]
-
-    let position = [
-      {label: '全部', value: 'AM'},
-      {label: '搜索栏', value: 'M'},
-      {label: '表格栏', value: 'T'},
-    ];
-
-    const columns = [
-      {field: 'name', title: '菜单名称', align: 'left'},
-      {field: 'url', title: '访问路径'},
-      {field: 'perms', title: '权限标识'},
-      {field: 'permType', title: '功能类型', options: permType},
-      {field: 'position', title: '功能位置', options: position},
-      {field: 'remark', title: '备注'},
-      {field: 'createTime', title: '创建时间', type: 'datetime'},
-      {field: 'action', title: '操作', type: 'action'},
-    ]
-    return {columns, permType}
-  },
-}
-</script>
-// 后台返回的菜单列表
-// {id: 158, name: '菜单管理', url: '/core/menu', pid: 11, type: 'V', children: [
-//       {name: '新增', permType: 'Add', type: 'A', sort: 30, position: 'M', url: '/core/menu/add'},
-//       {name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/menu/view'},
-//       {name: '编辑', permType: 'Edit', type: 'A', sort: 50, position: 'T', url: '/core/menu/edit'},
-//       {name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/menu/del'},
-//   ]
-//}
-```
 ### 使用教程
 #### 功能组件
 1. 功能组件主要是用来拓展和简化功能的操作方式, 使用功能组件将提供一套默认的操作功能
@@ -272,8 +210,8 @@ this.getEditUrl = function (model, editContext) {
 // 如果以上方法不能满足你获取url，可以在mount钩子里面覆盖掉此方法，重写
 ```
 #### 视图组件
-视图组件是用来组织视图子组件的容器, 再此容器内支持对所有的可联动的视图子组件做联动操作：比如点击搜索组件的查询按钮表格组件将发起查询接口获取数据
-1. IvzBasicView 基础的视图组件，此组件必须作为.vue页面的顶级组件
+视图组件是用来组织视图子组件的容器且必须作为.vue页面的顶级组件。再此容器内支持对所有的可联动的视图子组件做联动操作：比如点击搜索组件的查询按钮表格组件将发起查询接口获
+##### IvzBasicView
 ```
 <template>
    <IvzBasicView>
