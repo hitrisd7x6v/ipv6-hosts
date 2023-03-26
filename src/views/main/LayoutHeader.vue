@@ -51,7 +51,7 @@
             </a-tooltip>
           </li>
           <li class="ivz-opera-col" v-if="isDev">
-            <a target="_blank" href="/lcd">
+            <a target="_blank" href="http://online.iteaj.com">
               <a-tooltip title="低代码设计">
                 <ivz-icon type="iz-icon-code" :style="{fontSize: '16px'}"/>
               </a-tooltip>
@@ -111,7 +111,7 @@ export default {
     let waitCount = 0;
     let workMenu = {}
     // 开发环境下展示低代码设计入口
-    let isDev = import.meta.env.DEV;
+    let isDev = true; //import.meta.env.DEV;
     return {workMenu, msgCount, waitCount, isDev}
   },
   methods: {

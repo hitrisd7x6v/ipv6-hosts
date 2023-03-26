@@ -8,13 +8,13 @@ export default defineComponent({
   props: {
     title: String,
     bodyStyle: Object,
-    centered: Boolean,
     span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
     afterClose: Function,
     width: {default: 558},
     destroyOnClose: Boolean,
     getContainer: {type: Function},
     maskClosable: {default: true},
+    centered: {type: Boolean, default: true},
     primary: {type: Boolean, default: false},
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: false},

@@ -1,7 +1,7 @@
 import {h, ref} from "vue";
-import {cloneDeep} from "lodash-es";
 import {GET, POST} from "@/utils/request";
 import {DoubleLeftOutlined} from "@ant-design/icons-vue";
+import SysUtils from "@/utils/SysUtils";
 
 const TypeMethodMaps = {
     Add: null, Edit: GET, Del: POST, View: GET,
@@ -99,12 +99,11 @@ function setMetaValue(keyPath, model, value) {
 }
 
 function cloneModel(model) {
-    let stringify = JSON.stringify(model);
-    return JSON.parse(stringify);
+    return SysUtils.clone(model);
 }
 
 function clone(target) {
-    return cloneDeep(target);
+    return SysUtils.clone(target);
 }
 
 const MetaConst = {

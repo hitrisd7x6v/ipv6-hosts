@@ -8,7 +8,10 @@ export default {
     isProd() {
         return import.meta.env.PROD
     },
-
+    clone(obj) {
+        let stringify = JSON.stringify(obj);
+        return JSON.parse(stringify);
+    },
     resolverQueryOfUrl(url) {
         let queryStr = url.split('?')[1];
         return qs.parse(queryStr);

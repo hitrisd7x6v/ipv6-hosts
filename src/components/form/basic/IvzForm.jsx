@@ -1,8 +1,8 @@
 import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
-import {cloneDeep} from "lodash-es";
 import {Form} from "ant-design-vue";
-import {createMetasMap, getMetaByProp, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
+import {createMetasMap, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
 import {FormContext} from "@/components/form/basic/FormContext";
+import SysUtils from "@/utils/SysUtils";
 
 const unMounted = () => console.log('IvzForm组件未完成挂载')
 export default defineComponent({
@@ -64,7 +64,7 @@ export default defineComponent({
         this.formContext.resetModel = () => this.setEditModel(this.getInitModel());
     },
     mounted() {
-        this.initModel = cloneDeep(this.proxy.editModel);
+        this.initModel = SysUtils.clone(this.proxy.editModel);
     },
     render() {
         let editModel = this.proxy.editModel;
@@ -109,7 +109,7 @@ export default defineComponent({
         },
 
         getInitModel() {
-            return cloneDeep(this.initModel);
+            return SysUtils.clone(this.initModel);
         },
 
         getEditModel() {
