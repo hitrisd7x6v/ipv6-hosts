@@ -365,15 +365,17 @@ const columns = [
 ```
 
 #### 增强AForm组件
-### 软件架构
-使用vue3+vite2+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库
-
 
 ### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. 安装[node](https://nodejs.org/zh-cn/) >= 12.0.0。
+2. 安装[vite2](https://cn.vitejs.dev/)
+```
+npm init vite@latest
+```
+3. clone项目或者使用ide直接导入
+```
+git clone https://gitee.com/iteaj/ivzone.git
+```
 
 ### 使用说明
 
