@@ -363,9 +363,6 @@ const columns = [
     {field: 'createTime', title: '创建时间', formatter: ({value,record,column}) => value}
 ]
 ```
-
-#### 增强AForm组件
-
 ### 安装教程
 1. 安装[node](https://nodejs.org/zh-cn/) >= 12.0.0。
 2. 安装[vite2](https://cn.vitejs.dev/)
