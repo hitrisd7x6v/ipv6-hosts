@@ -362,17 +362,26 @@ const columns = [
 ]
 ```
 ### 安装教程
-1. 安装[node](https://nodejs.org/zh-cn/) >= 12.0.0。
-2. 安装[vite2](https://cn.vitejs.dev/)
-```
-npm init vite@latest
-```
-3. clone项目或者使用ide直接导入
+1. [安装node](https://nodejs.org/zh-cn/) >= 12.0.0。
+2. clone项目或者使用ide直接导入
 ```
 git clone https://gitee.com/iteaj/ivzone.git
 ```
+3. 安装package.json依赖
+```
+// 进入项目目录然后执行命令
+npm install
+
+// 如果嫌国内速度慢可以切换到淘宝源
+npm install -g cnpm --registry=https://registry.npmmirror.com
+cnpm install
+```
+4. 正式环境打包
+```
+vite build
+```
 
 ### 使用说明
-
+1. [vite2使用教程](https://cn.vitejs.dev/)
 1.  如果使用过程有问题欢迎pr和提交bug
 2.  交流群：97235681
