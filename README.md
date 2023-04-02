@@ -274,7 +274,6 @@ const columns = [
 this.$refs['tableRef'].getSelectedRowKeys();
 ```
 2. 其他的属性全部支持
-```
 ##### 自定义列slot
 ```
 // columns列不支持customRender， 通过slot方式提供
@@ -297,7 +296,6 @@ const columns = [
 ```
 ##### 字典和url
 支持将value转成label 比如性别字段：数据库存的是值：man，表格需要展示：男
-
 ```
 // 通过本地变量sex
 const sex = [
