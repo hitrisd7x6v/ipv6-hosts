@@ -74,7 +74,7 @@ export default {
 10. 使用Mock对所有视图组件进行数据模拟
 11. 不依赖于后台框架的使用语言(java, php, c#等)， 友好的声明api接口和字段，可以方便的对接任何后台
 
-### 使用教程
+### 组件使用教程
 #### 功能组件
 1. 功能组件主要是用来拓展和简化功能的操作方式, 使用功能组件将提供一套默认的操作功能
 2. 提供的功能包括[add, del, edit, query, import, export, reset, cancel, submit, expand]以及混合联动操作
