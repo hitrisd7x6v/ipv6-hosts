@@ -376,7 +376,12 @@ npm install
 npm install -g cnpm --registry=https://registry.npmmirror.com
 cnpm install
 ```
-4. 正式环境打包
+4. 开发环境运行
+```
+vite dev
+```
+
+5. 正式环境打包
 ```
 vite build
 ```
