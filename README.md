@@ -387,6 +387,30 @@ vite build
 ```
 
 ### 使用说明
-1. [vite2使用教程](https://cn.vitejs.dev/)
+1. [请先下载并配置运行后端](https://gitee.com/iteaj/izone-sboot)
+2. 配置后端代理地址
+```
+// 修改文件 vite.config.js
+server: {
+  proxy: {
+    '^/api/.*': {
+      changeOrigin: true,
+      target: 'http://127.0.0.1:8085', // 后端地址
+      rewrite: (path) => path.replace(/^\/api/, '')
+    },
+  }
+}
+// 也可以使用线上地址
+server: {
+  proxy: {
+    '^/api/.*': {
+      changeOrigin: true,
+      target: 'http://demo.iteaj.com', // 后端地址
+    },
+  }
+}
+```
+2. 
+[vite2使用教程](https://cn.vitejs.dev/)
 1.  如果使用过程有问题欢迎pr和提交bug
 2.  交流群：97235681
