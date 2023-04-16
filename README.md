@@ -317,14 +317,14 @@ const columns = [
 如果是日期列，会默认将日期进行安装指定的格式进行格式化，可以用默认格式也可以自定义格式
 
 ```
-// 通过指定type='datetime'
+// 通过指定type='date'
 const columns = [
-    {field: 'createTime', title: '创建时间', type: 'datetime'}
+    {field: 'createTime', title: '创建时间', type: 'date'}
 ]
 // 默认格式 {datetime: 'YYYY-MM-DD HH:mm:ss', date: 'YYYY-MM-DD', month: 'MM', week: 'E', time: 'HH:mm:ss'}
 // 通过picker指定具体类型，不指定则默认使用datetime格式
 const columns = [
-    {field: 'createTime', title: '创建时间', type: 'datetime', picker: 'month'}
+    {field: 'createTime', title: '创建时间', type: 'date', picker: 'month'}
 ]
 ```
 ##### 5.操作列
