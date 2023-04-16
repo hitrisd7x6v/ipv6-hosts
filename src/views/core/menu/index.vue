@@ -90,11 +90,11 @@ export default {
   mounted() { },
   methods: {
     edit(model, row) {
-      if(row.type == 'V') { // 视图类型下面必须是功能
+      if(row && row.type == 'V') { // 视图类型下面必须是功能
         model.type = 'A';
       }
       // 使用当前编辑行的模块
-      if(row['msn']) {
+      if(row && row['msn']) {
         model['msn'] = row['msn'];
       }
     },

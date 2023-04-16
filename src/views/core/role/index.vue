@@ -27,7 +27,7 @@
       <template #c_action="{record}">
         <IvzFuncTag func="edit" :data="record" url="/core/role/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/role/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm" color="grey">分配权限</IvzFuncTag>
+        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm">分配权限</IvzFuncTag>
       </template>
     </IvzViewTable>
     <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
@@ -36,7 +36,7 @@
         &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
         <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
         <IvzTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)" :checkStrictly="false"
-                 showLine checkable :selectable="true" ref="funcMenus" @check="change"/>
+                 showLine checkable :selectable="true" ref="funcMenus"/>
       </template>
       <template #footer>
         <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
@@ -57,10 +57,10 @@ export default {
       {label: '启用', value: 'enabled'}, {label: '禁用', value: 'disabled'}
     ]
     let columns = [
-      {field: 'name', title: '名称'},
-      {field: 'status', title: '状态', options: status},
-      {field: 'sort', title: '排序'},
-      {field: 'remark', title: '备注'},
+      {field: 'name', title: '名称', width: 180},
+      {field: 'status', title: '状态', options: status, width: 56},
+      {field: 'sort', title: '排序', width: 56},
+      {field: 'remark', title: '备注', width: 320},
       {field: 'createTime', title: '创建时间', type: 'datetime', picker: 'date'},
       {field: 'action', title: '操作', type: 'action'}
     ]

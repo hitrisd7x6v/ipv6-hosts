@@ -18,6 +18,7 @@
             <a-dropdown placement="bottomCenter" class="ivz-opera-more">
               <div>
                 <a-avatar :src="user.avatar" :size="32" :load-error="loadError"></a-avatar>
+                <span style="margin-left: 3px; vertical-align: 2px">{{user.name}}</span>
               </div>
               <template #overlay>
                 <a-menu @click="quickOpera">
@@ -53,7 +54,14 @@
           <li class="ivz-opera-col" v-if="isDev">
             <a target="_blank" href="http://online.iteaj.com">
               <a-tooltip title="低代码设计">
-                <ivz-icon type="iz-icon-code" :style="{fontSize: '16px'}"/>
+                <ivz-icon type="iz-icon-code" :style="{fontSize: '16px', color: '#000000'}"/>
+              </a-tooltip>
+            </a>
+          </li>
+          <li class="ivz-opera-col" v-if="isDev">
+            <a target="_blank" href="http://doc.iteaj.com/izone" style="vertical-align: -1.7px">
+              <a-tooltip title="接口文档">
+                <ivz-icon type="iz-icon-devdoc" :style="{fontSize: '21px', color: '#000000'}"/>
               </a-tooltip>
             </a>
           </li>
@@ -222,7 +230,7 @@ export default {
 .ivz-opera-col {
   height: 45px;
   padding: 0px 12px;
-  line-height: 52px;
+  line-height: 50px;
 }
 .ivz-opera-col:hover {
   cursor: pointer;
