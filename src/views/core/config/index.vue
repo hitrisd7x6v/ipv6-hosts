@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView name="配置">
+  <IvzBasicView name="配置" auth>
     <IvzViewSearch>
       <ivz-input field="name" label="配置名称"/>
       <ivz-input field="label" label="配置标识"/>

@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView name="角色管理">
+  <IvzBasicView name="角色管理" auth>
     <IvzViewSearch ref="ivzForm">
       <ivz-input label="角色名称" field="name" />
       <ivz-radio label="状态" field="status" :options="status"/>
@@ -35,8 +35,8 @@
         &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
         &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
         <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
-        <IvzTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)"
-                 showLine checkable :selectable="true" ref="funcMenus" @change="change"/>
+        <IvzTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)" :checkStrictly="false"
+                 showLine checkable :selectable="true" ref="funcMenus" @check="change"/>
       </template>
       <template #footer>
         <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
@@ -93,8 +93,7 @@ export default {
       let model = this.$view.getEditContext("funcPerm").getModel();
       model['menuIds'] = this.$refs['funcMenus'].getCheckedKeys();
 
-      this.$view.getEditContext("funcPerm")
-          .submit('/core/role/perm');
+      this.$view.getEditContext("funcPerm").submit('/core/role/perm');
     },
     checked(e) {
       if(e.target.checked) {
@@ -109,10 +108,6 @@ export default {
       } else {
         this.$refs['funcMenus'].setExpandedKeys([])
       }
-    },
-    change(a, b) {
-      console.log(a)
-      console.log(b)
     }
   }
 }

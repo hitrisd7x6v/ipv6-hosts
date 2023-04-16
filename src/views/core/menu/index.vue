@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView name="菜单">
+  <IvzBasicView name="菜单" auth>
     <IvzViewSearch>
       <IvzRow span="6" style="width: 100%">
         <IvzInput field="name" label="菜单名称" :allowClear="true" />

@@ -76,7 +76,6 @@ const registerSysModule = function (store) {
             urlRouteMaps: {}, // url -> route taskBarData
             optionsInfo: {/*dict -> data | url -> data*/}, // 字典和url的数据信息
             pidBreadcrumbMaps: {}, // pid和面包屑菜单列表映射
-
         },
         getters: {
             // 标识菜单是否已经初始化完成
@@ -307,6 +306,21 @@ const registerSysModule = function (store) {
                 state.userKey = key || state.userKey;
                 state.userVisible = visible != null
                     ? visible : state.userVisible;
+            },
+            /**
+             * 注销
+             * 清除数据
+             * @param state
+             */
+            logout: (state) => {
+                state.init = false;
+                state.openKeys = [];
+                state.urlMenuMaps = {};
+                state.taskBarData = [];
+                state.urlRouteMaps = {};
+                state.selectedKeys = [];
+                state.activeRoute = null;
+                state.userVisible = false;
             }
         },
         actions: {
@@ -320,27 +334,32 @@ const registerSysModule = function (store) {
                             console.error(message || "获取用户失败");
                         }
                     }
-                    return resp;
+                    return {};
                 });
             },
             initMenus: ({commit, state}) => {
-                 return getMenus().then(({data}) => {
-                    state.views = data;
-                    state.activeView = state.views[0];
-                    let {urlMenuMap, idMenuMap, authMenuMap} = resolverMenuMaps(data);
-                    state.idMenuMaps = idMenuMap;
-                    state.authMenuMap = authMenuMap;
+                 return getMenus().then((resp) => {
+                     if(resp) {
+                         let {data} = resp;
+                         state.views = data;
+                         state.activeView = state.views[0];
+                         let {urlMenuMap, idMenuMap, authMenuMap} = resolverMenuMaps(data);
+                         state.idMenuMaps = idMenuMap;
+                         state.authMenuMap = authMenuMap;
 
-                    // 加入到菜单列表
-                    if(urlMenuMap != null) {
-                        Object.keys(urlMenuMap).forEach(key => {
-                            state.urlMenuMaps[key] = urlMenuMap[key];
-                        })
-                    }
+                         // 加入到菜单列表
+                         if(urlMenuMap != null) {
+                             Object.keys(urlMenuMap).forEach(key => {
+                                 state.urlMenuMaps[key] = urlMenuMap[key];
+                             })
+                         }
 
-                    resolverMenuToRoutes(urlMenuMap);
-                    state.init = true; // 声明路由信息已经初始化完成
-                    return urlMenuMap;
+                         resolverMenuToRoutes(urlMenuMap);
+                         state.init = true; // 声明路由信息已经初始化完成
+                         return urlMenuMap;
+                     }
+
+                    return {};
                 });
             },
 

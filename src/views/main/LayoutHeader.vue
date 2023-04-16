@@ -116,6 +116,7 @@ export default {
   },
   methods: {
     ...mapMutations({
+      logout: 'sys/logout',
       removeTask: 'sys/removeTask',
       switchTheme: 'sys/switchTheme',
       toggleUserVisible: 'sys/toggleUserVisible',
@@ -185,7 +186,10 @@ export default {
         // 注销动作
         logout().then(({code, message}) => {
           if(code == 200) {
-            this.$router.push('/login');
+            // 跳转到登录页面
+            this.$router.push('/login').then(resp=>{
+              this.logout(); // 注销成功回调处理
+            });
           } else {
             msgError(message);
           }

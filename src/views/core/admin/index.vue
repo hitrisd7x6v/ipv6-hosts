@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView name="用户">
+  <IvzBasicView name="用户" auth>
     <IvzViewSearch>
       <IvzRow span="6">
         <ivz-input field="name" label="用户昵称" />
@@ -41,7 +41,7 @@
       <template #c_action="{record}">
         <IvzFuncTag func="edit" :data="record" url="/core/admin/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/admin/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">修改密码</IvzFuncTag>
+        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">设置密码</IvzFuncTag>
       </template>
     </IvzViewTable>
     <!--  修改密码  -->

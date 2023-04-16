@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView>
+  <IvzBasicView auth>
     <IvzBasicSearch primary>
       <IvzInput label="操作用户" field="userName" span="5" />
       <IvzSelect label="功能" span="5" field="title" :options="permType"/>

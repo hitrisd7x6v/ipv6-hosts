@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView name="部门">
+  <IvzBasicView name="部门" auth>
     <IvzViewSearch>
       <ivz-input field="name" label="部门名称"/>
       <ivz-input field="phone" label="手机号"/>

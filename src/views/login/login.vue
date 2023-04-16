@@ -89,14 +89,14 @@ export default {
     const {validateInfos, validate, validateField} = Form.useForm(user, rules);
 
     const clickImg = () => {
-      loginModel.captchaImg = captchaUri + '?t' + new Date()
+      loginModel.captchaImg = captchaUri + '?t=' + new Date().getTime()
     }
 
 
     window.onkeydown = (ev) => {
       let code = ev.keyCode
       if (code === 13) {
-        submit()
+        this.submit()
       }
     }
     return {user, labelCol, wrapperCol, validateInfos, loginModel, clickImg, validate}

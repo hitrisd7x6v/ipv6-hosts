@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView>
+  <IvzBasicView auth>
     <IvzViewSearch>
       <IvzInput label="字典名称" field="name" />
       <IvzInput label="字典类型" field="type"/>

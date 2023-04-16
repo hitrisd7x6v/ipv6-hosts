@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView>
+  <IvzBasicView auth>
     <IvzBasicSearch primary>
       <ivz-select label="字典标识" field="type" @change="loadDictData" span="5"
                   url="/core/dictType/list" labelField="name" valueField="type"

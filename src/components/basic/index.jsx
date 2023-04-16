@@ -5,6 +5,7 @@ import {EditContext, SearchContext, TableContext} from "@/components/view/Contex
 import {FuncNameMeta, TypeMethodMaps} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
 import CoreConsts from "@/components/CoreConsts";
+import SysUtils from "@/utils/SysUtils";
 
 export const IvzRow = defineComponent({
     name: 'IvzRow',
@@ -225,7 +226,9 @@ export const IvzFuncTag = defineComponent({
          * 3. 返回的权限列表里包含传入的 url
          */
         if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
-            if(this.auth[this.url]) { // 有权限
+            // 去除url的参数, 后台返回的url不能包含参数
+            let uri = SysUtils.cutUrlToUri(this.url);
+            if(this.auth[uri]) { // 有权限
                 let tagColor = this.disabled ? '#d8d8d8' : this.tagColor;
                 let disabledClass = this.disabled ? 'ivz-func-disabled' : 'ivz-func-tag'
                 return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
@@ -311,7 +314,8 @@ export const IvzFuncBtn = defineComponent({
          * 3. 返回的权限列表里包含传入的 url
          */
         if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
-            if(this.auth[this.url]) { // 有权限
+            let uri = SysUtils.cutUrlToUri(this.url);
+            if(this.auth[uri]) { // 有权限
                 let props = this.handleProps();
                 return <AButton {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
             } else {
@@ -339,6 +343,7 @@ export const IvzTree = defineComponent({
     name: 'IvzTree',
     props: {
         url: {type: String}, // 数据地址
+        onCheck: {type: Function},
         checkedUrl: {type: String}, // 多选框的数据地址
         selectedUrl: {type: String}, // 选中的数据地址
         replaceFields: {type: Object, default: {key: CoreConsts.DefaultRowKey, title: 'name', children:'children'}}
@@ -349,9 +354,7 @@ export const IvzTree = defineComponent({
         let checkedKeys = ref([]);
         let expandedKeys = ref([]);
         let selectedKeys = ref([]);
-        watch(() => checkedKeys.value, (newVal, oldVal) => {
-            emit("change", newVal)
-        })
+
         return {allKeys, treeData, selectedKeys, checkedKeys, expandedKeys}
     },
     watch: {
@@ -383,7 +386,7 @@ export const IvzTree = defineComponent({
                     [this.checkedKeys, 'checkedKeys', ["modifier"]],
                     [this.selectedKeys, 'selectedKeys', ["modifier"]],
                     [this.expandedKeys, 'expandedKeys', ["modifier"]]
-                ]} treeData={this.treeData} replaceFields={this.replaceFields} onChange={this.setSelectedKeys}>
+                ]} treeData={this.treeData} replaceFields={this.replaceFields}>
             </ATree>
     },
     methods: {
@@ -434,7 +437,6 @@ export const IvzTree = defineComponent({
             return this.selectedKeys;
         },
         setSelectedKeys(selectedKeys) {
-            console.log(selectedKeys)
             if(selectedKeys instanceof Array) {
                 this.selectedKeys = selectedKeys;
             } else {

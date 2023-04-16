@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView>
+  <IvzBasicView auth>
     <IvzBasicSearch primary>
       <IvzInput label="登录用户" field="userNick" span="5" />
       <IvzSelect label="在线状态" field="status" span="5" :options="OnlineStatus"/>
