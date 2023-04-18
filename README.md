@@ -1,62 +1,9 @@
-### ivzone是一套基于vue3+vite2+antdv2+js实现的后台管理模板([预览地址 mock数据模拟](http://ivzone.iteaj.com/#/doc))
-1. 它颠覆对增删改查模板的开发体验和使用方式,基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4最新技术，具有实现优雅、代码简洁、通俗易懂、开发效率高、代码量减少30%+等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动，只做增强不做限制)
+### 关于ivzone
+1. 它颠覆对增删改查模板的开发体验和使用方式,基于vite2.0+vue3.0+antdv2+vuex4.0+vuerouter4最新技术，具有实现优雅、代码简洁、通俗易懂、开发效率高、代码量少等优点(核心思想：为通用操作提供一个默认的实现，并实现各组件之间的联动，只做增强不做限制)
 2. 提供一套后台管理常用功能模板(用户，角色，菜单，字典，机构，配置等)的实现
-3.  _优雅、好用、与众不同、易理解(请自行体验)_ 
-#### 优雅、简洁、灵活的实现一个通用的增删改查功能
-```
-<template>
-  <IvzBasicView> // 基础视图页面
-    <IvzBasicSearch primary> // 基础搜索组件
-      <IvzInput field="name" label="茶叶名称"/>
-      <AButton type="primary" @click="query">查询</AButton>&nbsp;
-      <AButton @click="add">新增</AButton>
-    </IvzBasicSearch> // 基础表组件
-    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
-      <template #c_action="{record}">
-        <ATag color="blue" @click="add">新增</ATag>
-        <ATag color="red" @click="() => del(record)">删除</ATag>
-      </template>
-    </IvzBasicTable>
-    <IvzBasicModal primary>// 基础模态框编辑组件
-      <IvzInput field="name" label="茶叶名称"/>
-      <template #title="{model}">
-        {{model.id ? '编辑产品' : '新增产品'}}
-      </template>
-    </IvzBasicModal>
-  </IvzBasicView>
-</template>
-
-<script>
-export default {
-  name: "Demo",
-  setup() {
-    let columns = [
-      {field: 'name', title: '产品名称'},
-      {field: 'type', title: '产品类型'},
-      {field: 'action', type:'action', title: '操作'},
-    ]
-    let dataSource = [
-      {id: 1, name: '清香秋茶', type: '清香型'}
-    ]
-    return {columns, dataSource}
-  },
-  methods: {
-    // 默认实现的通用增删改查接口
-    add() {
-      this.$view.openForAdd(); // 打开一个新增的模态框
-    },
-    del(row) {
-      this.$view.del('/product/del', [row.id]); // 删除某一行
-    },
-    query() {
-      this.$view.query('/product/list'); // 查询列表
-    },
-//    ... edit,cancel,submit等等
-  }
-}
-</script>
-```
-#### 更优雅、更简洁的写法
+3.  _优雅、好用、与众不同、易理解(请自行体验，交流群：616124620)_ 
+4. [项目预览地址](http://demo.iteaj.com/) 以及配套的 [java后端项目](https://gitee.com/iteaj/izone-sboot)
+#### 简洁的写法
 ```
 <template>
   <IvzBasicView> // 基础视图页面
@@ -126,75 +73,13 @@ export default {
 9. 提供基于antd2ui库封装的其他业务组件库
 10. 使用Mock对所有视图组件进行数据模拟
 11. 不依赖于后台框架的使用语言(java, php, c#等)， 友好的声明api接口和字段，可以方便的对接任何后台
-### 增删改查视图组件
-  将通用的，常用的，简单的一些操作合并到一个组件里面且提供完整的增删改查功能。对于每个通用的增删改查功能，最大的不同点在于操作的url不同，需要的功能点不同，所以我们只需要将每个功能点交由开发人员定义。下面主要是两个常用的增删改查视图组件的实现，先直观看一下菜单功能用增删改查组件的实现图片和对应的代码
 
-#### IvzMenuView视图
-IvzMenuView组件是增删改查的另一种实现方式， 通过后台菜单配置功能点实现 如下：
-
-```
-<template>
-  <ivz-menu-view :expand="true" name="菜单">
-    <ivz-view-search>
-      <ivz-input field="name" label="菜单名称" />
-    </ivz-view-search>
-    <ivz-view-table :columns="columns" size="small" :pagination="false" />
-    <ivz-view-drawer>
-      <ivz-input field="name" label="菜单名称" required/>
-      <ivz-tree-select field="pid" label="父菜单" required :defaultValue="0"/>
-      <ivz-input field="url" label="访问路径" required/>
-      <ivz-input field="perms" label="权限标识"/>
-      <ivz-select field="position" label="功能位置" dict="common_status"/>
-      <ivz-select field="permType" label="功能类型" :options="permType"/>
-      <ivz-input field="remark" label="备注" />
-    </ivz-view-drawer>
-  </ivz-menu-view>
-</template>
-
-<script>
-export default {
-  name: "Menu",
-  setup() {
-    let permType = [
-      {label: '新增', value: 'Add'},
-      {label: '删除', value: 'Del'},
-    ]
-
-    let position = [
-      {label: '全部', value: 'AM'},
-      {label: '搜索栏', value: 'M'},
-      {label: '表格栏', value: 'T'},
-    ];
-
-    const columns = [
-      {field: 'name', title: '菜单名称', align: 'left'},
-      {field: 'url', title: '访问路径'},
-      {field: 'perms', title: '权限标识'},
-      {field: 'permType', title: '功能类型', options: permType},
-      {field: 'position', title: '功能位置', options: position},
-      {field: 'remark', title: '备注'},
-      {field: 'createTime', title: '创建时间', type: 'datetime'},
-      {field: 'action', title: '操作', type: 'action'},
-    ]
-    return {columns, permType}
-  },
-}
-</script>
-// 后台返回的菜单列表
-// {id: 158, name: '菜单管理', url: '/core/menu', pid: 11, type: 'V', children: [
-//       {name: '新增', permType: 'Add', type: 'A', sort: 30, position: 'M', url: '/core/menu/add'},
-//       {name: '搜索', permType: 'View', type: 'A', sort: 10, position: 'M', url: '/core/menu/view'},
-//       {name: '编辑', permType: 'Edit', type: 'A', sort: 50, position: 'T', url: '/core/menu/edit'},
-//       {name: '删除', permType: 'Del', type: 'A', sort: 80, position: 'T', url: '/core/menu/del'},
-//   ]
-//}
-```
-### 使用教程
+### 组件使用教程
 #### 功能组件
 1. 功能组件主要是用来拓展和简化功能的操作方式, 使用功能组件将提供一套默认的操作功能
 2. 提供的功能包括[add, del, edit, query, import, export, reset, cancel, submit, expand]以及混合联动操作
 ##### IvzFuncBtn
-功能按钮：一般用在搜索组件和编辑组件
+功能按钮：用在搜索组件和编辑组件
 ```
 <IvzBasicView>
     <IvzViewSearch>
@@ -215,7 +100,7 @@ export default {
 </IvzBasicView>
 ```
 ##### IvzFuncTag
-功能tag：一般用于表格操作
+功能tag：用于表格操作
 ```
 <IvzBasicView rowKey="id">
     <IvzViewTable>
@@ -228,13 +113,20 @@ export default {
     </IvzViewSearch>
 </IvzBasicView>
 ```
-##### 联动功能
-联动功能主要是用于点击功能按钮时操作对应的组件
+##### 误操作确认
+有时候为了防止某些功能的误操作，将会在点击功能的时候弹框确认, 这时候可以使用：confirm属性
+```
+<IvzFuncBtn func='demo' :data="record" url="/project/demo" confirm>容易误操作</IvzFuncBtn>
+```
+
+##### 与编辑框联动
+主要用于点击功能按钮时弹出对应的编辑框
+1. 打开其他的编辑框
 ```
 <IvzBasicView rowKey="id">
     <IvzViewTable>
         <template #c_action={record}>
-            // 点击默认动作：打开id="modPwd"的编辑框, 并且设置编辑框: model[rowKey]=record[rowKey]
+            // 默认动作：打开id="modPwd"的编辑框, 并且设置编辑框: model[rowKey]=record[rowKey]
             <IvzFuncBtn func='edit:modPwd' :data="record">修改密码</IvzFuncBtn> 
         </template>
     </IvzViewSearch>
@@ -243,13 +135,25 @@ export default {
        <IvzPassword label="密码" field="password" />
        <template #footer={model}>
           <IvzFuncBtn func='cancel'>取消</IvzFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
-          // 点击默认动作：校验表单是否通过, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
+          // 默认动作：校验表单, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
           <IvzFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</IvzFuncBtn> 
           <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置编辑表单
        </tempalte>
     </IvzBasicSearch>
 </IvzBasicView>
 ```
+2. 新增子记录(树形结构格式)
+```
+<IvzBasicView rowKey="id">
+    <IvzViewTable>
+        <template #c_action={record}>
+            // 打开新增的编辑框, 并且设置编辑框父id: model[pid]=record[rowKey]
+            <IvzFuncBtn func='add:child' :data="record">新增子菜单</IvzFuncBtn> 
+        </template>
+    </IvzViewSearch>
+</IvzBasicView>
+```
+
 #### 功能权限
 功能权限主要是用来控制页面是否需要显示对应的功能
 ##### v-auth指令
@@ -288,13 +192,69 @@ url的控制方式是通过后台是否有返回功能组件[IvzFuncBtn or IvzFu
     </IvzViewSearch>
 </IvzBasicView>
 ```
+##### 编辑详情url
+```
+// 此处的url是获取编辑详情数据的url，但是并没有指定参数，也无需指定参数
+<IvzFuncTag func='edit' url='/project/edit' :data="record">修改</IvzFuncTag >
+// 默认获取编辑地址url的方法如下：Context.js
+this.getEditUrl = function (model, editContext) {
+    let rowKey = this.getRowKey();
+    let editFunc = this.getTableFunc(FuncNameMeta.EDIT);
+    if(editFunc && model) {
+        return `${editFunc.getUrl()}?${rowKey}=${model[rowKey]}`;
+    } else {
+        console.warn('未指定编辑功能获取详情数据地址')
+        return null;
+    }
+}
+// 如果以上方法不能满足你获取url，可以在mount钩子里面覆盖掉此方法，重写
+```
+#### 视图组件
+视图组件是用来组织视图子组件的容器且必须作为.vue页面的顶级组件。再此容器内支持对所有的可联动的视图子组件做联动操作：比如点击搜索组件的查询按钮表格组件将发起查询接口获
+##### IvzBasicView
+```
+<template>
+   <IvzBasicView>
+       ...
+   </IvzBasicView>
+</template>
+<script>...</script>
+```
+ **使用url作为权限控制** 
+```
+<IvzBasicView auth>...</IvzBasicView>
+```
+ **指定功能的唯一键** 
+```
+<IvzBasicView rowKey="id">...</IvzBasicView>
+// 此属性将用来做表格、编辑与新增、新增子记录的判断
+```
 #### 视图子组件
 1. 以下的所有组件都只能用在页级组件(IvzBasicView、IvzMenuView)的子组件，组成一个完整的功能页面
 2. IvzViewModal、IvzVieDrawer、IvzViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
 ##### IvzViewSearch
+1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
+2. 属于页面可联动的搜索组件
 ##### IvzViewModal
+1. 支持[AForm组件](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[AModal组件](https://2x.antdv.com/components/modal-cn)的所有属性
+3. 新增属性[span] 作为AForm组件的labelCol和wrapperCol的简写， 格式 [6, 18]
+4. 属于页面可联动的编辑组件
 ##### IvzViewDrawer
+1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[ADrawerl](https://2x.antdv.com/components/drawer-cn)的所有属性
+3. 新增属性[span] 作为AForm组件的labelCol和wrapperCol的简写， 格式 [6, 18]
+4. 属于页面可联动编辑组件
 ##### IvzViewTable
+1. 支持[ATable](https://2x.antdv.com/components/table-cn)的所有属性
+##### IvzBasicModal
+1. 支持[AForm组件](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[AModal组件](https://2x.antdv.com/components/modal-cn)的所有属性
+3. 新增属性[primary] 用来声明此组件是可联动的组件
+##### IvzBasicDrawer
+1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
+2. 支持[ADrawerl](https://2x.antdv.com/components/drawer-cn)的所有属性
+3. 新增属性[primary] 用来声明此组件是可联动的组件
 ### antd2组件扩展
 ##### <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">增强ATable组件</a>
 antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。IvzBasicTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
@@ -314,7 +274,6 @@ const columns = [
 this.$refs['tableRef'].getSelectedRowKeys();
 ```
 2. 其他的属性全部支持
-```
 ##### 自定义列slot
 ```
 // columns列不支持customRender， 通过slot方式提供
@@ -337,7 +296,6 @@ const columns = [
 ```
 ##### 字典和url
 支持将value转成label 比如性别字段：数据库存的是值：man，表格需要展示：男
-
 ```
 // 通过本地变量sex
 const sex = [
@@ -359,14 +317,14 @@ const columns = [
 如果是日期列，会默认将日期进行安装指定的格式进行格式化，可以用默认格式也可以自定义格式
 
 ```
-// 通过指定type='datetime'
+// 通过指定type='date'
 const columns = [
-    {field: 'createTime', title: '创建时间', type: 'datetime'}
+    {field: 'createTime', title: '创建时间', type: 'date'}
 ]
 // 默认格式 {datetime: 'YYYY-MM-DD HH:mm:ss', date: 'YYYY-MM-DD', month: 'MM', week: 'E', time: 'HH:mm:ss'}
 // 通过picker指定具体类型，不指定则默认使用datetime格式
 const columns = [
-    {field: 'createTime', title: '创建时间', type: 'datetime', picker: 'month'}
+    {field: 'createTime', title: '创建时间', type: 'date', picker: 'month'}
 ]
 ```
 ##### 5.操作列
@@ -403,19 +361,56 @@ const columns = [
     {field: 'createTime', title: '创建时间', formatter: ({value,record,column}) => value}
 ]
 ```
-
-#### 增强AForm组件
-### 软件架构
-使用vue3+vite2+antd2+vuex4+vuerouter4+moment+qs框架以及ui组件库
-
-
 ### 安装教程
+1. [安装node](https://nodejs.org/zh-cn/) >= 12.0.0。
+2. clone项目或者使用ide直接导入
+```
+git clone https://gitee.com/iteaj/ivzone.git
+```
+3. 安装package.json依赖
+```
+// 进入项目目录然后执行命令
+npm install
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+// 如果嫌国内速度慢可以切换到淘宝源
+npm install -g cnpm --registry=https://registry.npmmirror.com
+cnpm install
+```
+4. 开发环境运行
+```
+vite dev
+```
+
+5. 正式环境打包
+```
+vite build
+```
 
 ### 使用说明
-
+1. [请先下载并配置运行后端](https://gitee.com/iteaj/izone-sboot)
+2. 配置后端代理地址
+```
+// 修改文件 vite.config.js
+server: {
+  proxy: {
+    '^/api/.*': {
+      changeOrigin: true,
+      target: 'http://127.0.0.1:8085', // 后端地址
+      rewrite: (path) => path.replace(/^\/api/, '')
+    },
+  }
+}
+// 也可以使用线上地址
+server: {
+  proxy: {
+    '^/api/.*': {
+      changeOrigin: true,
+      target: 'http://demo.iteaj.com', // 后端地址
+    },
+  }
+}
+```
+2. 
+[vite2使用教程](https://cn.vitejs.dev/)
 1.  如果使用过程有问题欢迎pr和提交bug
 2.  交流群：97235681

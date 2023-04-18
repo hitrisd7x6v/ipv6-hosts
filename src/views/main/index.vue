@@ -95,7 +95,8 @@ export default {
   height: 100%;
 }
 .ivz-opera-more {
-  margin-right: 12px;
+  margin-right: -6px;
+  line-height: 46px;
 }
 .ivz-opera-more .ant-avatar {
   vertical-align: -9px;

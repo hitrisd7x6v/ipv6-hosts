@@ -1,8 +1,8 @@
 import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
-import {cloneDeep} from "lodash-es";
 import {Form} from "ant-design-vue";
-import {createMetasMap, getMetaByProp, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
+import {createMetasMap, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
 import {FormContext} from "@/components/form/basic/FormContext";
+import SysUtils from "@/utils/SysUtils";
 
 const unMounted = () => console.log('IvzForm组件未完成挂载')
 export default defineComponent({
@@ -23,7 +23,7 @@ export default defineComponent({
         metas: {type: Array, required: false, default: () => []},
     },
     setup({metas, rules}) {
-        const resetModel = {}, initModel = {};
+        const initModel = {};
         const metasMap = createMetasMap(metas);
 
         let formRef;
@@ -48,7 +48,7 @@ export default defineComponent({
         formContext['setFieldValue'] = (namePath, value) => setMetaValue(namePath, proxy.editModel, value);
 
         provide('formContext', formContext);
-        return {resetModel, metasMap, formContext, formRef, proxy, initModel}
+        return {metasMap, formContext, formRef, proxy, initModel}
     },
     created() {
         this.formRef = this.$refs['formRef']
@@ -58,14 +58,13 @@ export default defineComponent({
         this.formContext.getEditModel = this.getEditModel;
         this.formContext.setEditModel = this.setEditModel;
         this.formContext.getInitModel = this.getInitModel;
-        this.formContext.getResetModel = this.getResetModel;
         this.formContext.scrollToField = this.scrollToField;
         this.formContext.clearValidate = this.clearValidate;
         this.formContext.validateFields = this.validateFields;
+        this.formContext.resetModel = () => this.setEditModel(this.getInitModel());
     },
     mounted() {
-        this.initModel = cloneDeep(this.proxy.editModel);
-        this.resetModel = cloneDeep(this.proxy.editModel);
+        this.initModel = SysUtils.clone(this.proxy.editModel);
     },
     render() {
         let editModel = this.proxy.editModel;
@@ -95,8 +94,7 @@ export default defineComponent({
         },
         resetFields() {
             this.getFormRef().resetFields();
-            let model = this.getResetModel();
-            this.proxy.editModel = reactive(model);
+            this.setEditModel(this.getInitModel())
         },
         scrollToField() {
             this.getFormRef().scrollToField();
@@ -111,11 +109,7 @@ export default defineComponent({
         },
 
         getInitModel() {
-            return cloneDeep(this.initModel);
-        },
-
-        getResetModel() {
-            return cloneDeep(this.resetModel);
+            return SysUtils.clone(this.initModel);
         },
 
         getEditModel() {
@@ -128,8 +122,6 @@ export default defineComponent({
             }else {
                 this.proxy.editModel = editModel;
             }
-
-            this.resetModel = cloneDeep(editModel);
         }
     }
 })

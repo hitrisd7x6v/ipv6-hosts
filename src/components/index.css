@@ -7,11 +7,20 @@
 }
 .ivz-func-disabled {
     cursor: not-allowed;
-    background: #cbcbcb!important;
 }
 
 /*功能 footer*/
 .ivz-func-footer {
     padding: 8px;
+    text-align: center;
+}
+
+/* ivz-basic-drawer组件 */
+.ivz-drawer-footer {
+    text-align: center;
+}
+
+/* ant-vue style */
+.ivz-basic-modal .ant-modal-footer {
     text-align: center;
 }

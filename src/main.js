@@ -5,9 +5,10 @@ import Router from './router'
 import EventBus from '@/event'
 import {http} from "@/utils/request"
 // import '@/doc' // 文档教程 不需要请注释掉
-import '@/api/mock' // 非数据模拟环境请注释
+// import '@/api/mock' // 非数据模拟环境请注释
 import IvzComponents from '@/components'
 import Authority from '@/components/directive/authority'
+import 'ant-design-vue/dist/antd.css'
 import Antd, {message, notification} from 'ant-design-vue'
 import {createFromIconfontCN} from '@ant-design/icons-vue';
 
@@ -17,11 +18,6 @@ const IvzIcon = createFromIconfontCN({
     // https://www.iconfont.cn/
     scriptUrl: '//at.alicdn.com/t/font_1174643_moy3ilu84wm.js',
 });
-
-// 开发环境需要导入的库文件
-if(import.meta.env.DEV) {
-    import('ant-design-vue/dist/antd.css')
-}
 
 let app = createApp(App).use(Router).use(Antd).use(store).use(EventBus)
     .use(IvzComponents).component("ivz-icon", IvzIcon)

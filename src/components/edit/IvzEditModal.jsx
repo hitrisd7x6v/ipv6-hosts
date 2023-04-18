@@ -1,6 +1,6 @@
 import {defineComponent, mergeProps, ref} from "vue";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
-import {EditContext} from "@/components/view/ViewAction";
+import {EditContext} from "@/components/view/Context";
 import IvzBasicModal from "@/components/modal/IvzBasicModal";
 
 export default defineComponent({

@@ -3,8 +3,12 @@ export const vitePluginChunk = {
     outputOptions: (options) => {
         options.manualChunks = (id, {getModuleInfo, getModuleIds}) => {
             if(id.includes('node_modules/ant-design-vue')) {
+                if(id.includes("dist/antd.css")) {
+                    return "antd.min.css";
+                }
                 return 'antd.min.esm'
-            } else if(id.includes('@ant-design/icons-vue')) {
+            } else if(id.includes('@ant-design/icons-vue')
+                || id.includes('@ant-design/icons-svg')) {
                 return 'antd.icons.esm'
             } else if(id.includes('node_modules/moment')) {
                 return 'moment.min.esm'
@@ -14,6 +18,9 @@ export const vitePluginChunk = {
                 return 'vue-router.esm'
             } else if(id.includes('node_modules/vuex/')) {
                 return 'vuex.esm'
+            } else if(id.includes('node_modules/axios'
+                || id.includes('node_modules/qs'))) {
+                return 'axios.qs.esm'
             } else if(id.includes('node_modules/mockjs')) {
                 return 'mockjs.esm'
             } else if(id.includes('node_modules')) {
@@ -22,7 +29,7 @@ export const vitePluginChunk = {
         }
 
         options.assetFileNames = (chunk) => {
-            if(chunk.name.includes('antd')) {
+            if(chunk.name.includes('antd.min.css')) {
                 return `lib/antd.min.css`
             }
             return 'assets/[name].[hash].[ext]';

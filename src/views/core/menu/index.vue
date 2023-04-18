@@ -1,8 +1,11 @@
 <template>
-  <IvzBasicView name="菜单">
+  <IvzBasicView name="菜单" auth>
     <IvzViewSearch>
-      <ivz-input field="name" label="菜单名称" />
-      <ivz-input field="msn" label="所属模块" />
+      <IvzRow span="6" style="width: 100%">
+        <IvzInput field="name" label="菜单名称" :allowClear="true" />
+        <IvzSelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
+        <IvzSelect field="msn" label="所属模块" :allowClear="true" url="/core/msn" labelField="name" valueField="msn"/>
+      </IvzRow>
       <template #func>
         <IvzFuncBtn func="query" url="/core/menu/view">搜索</IvzFuncBtn>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
@@ -12,30 +15,24 @@
     </IvzViewSearch>
     <IvzViewTable :columns="columns" size="small" :pagination="false">
       <template #c_action="{record}">
+        <IvzFuncTag func="add:child" :data="record" url="/core/menu/add" :disabled="disabled(record)">新增子菜单</IvzFuncTag>
         <IvzFuncTag func="edit" :data="record" url="/core/menu/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/menu/del">删除</IvzFuncTag>
       </template>
     </IvzViewTable>
-    <IvzViewDrawer :rules="rules" width="868" layout="vertical" placement="left">
+    <IvzViewDrawer :rules="rules" width="780" layout="vertical" placement="left" @edit="edit">
       <IvzRow :gutter="24" span="8">
-        <ivz-input field="name" label="菜单名称" />
-        <ivz-tree-select field="pid" label="父菜单" :defaultValue="0"
+        <IvzInput field="name" label="菜单名称" />
+        <IvzTreeSelect field="pid" label="父菜单" :defaultValue="0"
              url="/core/menu/parent" labelField="name" valueField="id"
              treeNodeFilterProp="label"/>
-        <ivz-select field="type" label="菜单类型" :options="type" @change="typeHandle"/>
-<!--        <ivz-select field="msn" label="所属模块" url="/core/msn" labelField="name" valueField="msn"/>-->
-        <ivz-input field="url" label="菜单地址"/>
-        <ivz-input-group label="功能点" compact field="permType">
-          <template #default="model">
-            <a-select :options="permType" defaultValue style="width: 38%" @change="permTypeChange"/>
-            <a-input style="width: 62%" v-model:value="model.permType"
-                     :readonly="disabledPermType" placeholder="请输入功能点" ref="permTypeRef"/>
-          </template>
-        </ivz-input-group>
-        <ivz-select field="position" label="功能位置" :options="position"/>
-        <ivz-input field="perms" label="权限标识" />
-        <ivz-input field="icon" label="图标" />
-        <ivz-input-number field="sort" label="排序" :defaultValue="80" />
+        <IvzSelect field="type" label="菜单类型" :options="type"/>
+        <IvzSelect field="msn" label="所属模块" url="/core/msn" labelField="name" valueField="msn"/>
+        <IvzInput field="url" label="菜单URL"/>
+        <IvzInput field="perms" label="权限标识" />
+        <IvzInput field="icon" label="图标" />
+        <IvzInputNumber field="sort" label="排序" :defaultValue="68" />
+        <IvzRadio field="log" label="日志采集" :options="BooleanStatus" :defaultValue="true"/>
       </IvzRow>
       <template #title="{model}">
         {{model.id != null ? '修改菜单' : '新增菜单'}}
@@ -50,29 +47,17 @@
 </template>
 
 <script>
+import {BooleanStatus} from "@/utils/StatusConsts";
 import {FunMetaMaps} from "@/utils/MetaUtils";
 import {ref} from "vue";
-import {IvzRow} from "@/components/basic";
-import {IvzViewSearch, IvzViewTable, IvzViewDrawer} from "@/components/view";
 
 export default {
   name: "Menu",
-  components: {IvzPrimaryDrawer: IvzViewDrawer, IvzPrimaryTable: IvzViewTable, IvzPrimarySearch: IvzViewSearch, IvzRow},
   setup() {
     let type = [
       {label: '目录', value: 'M'},
       {label: '视图', value: 'V'},
       {label: '功能', value: 'A'},
-    ]
-    let permType = [
-      {label: '新增', value: FunMetaMaps.Add},
-      {label: '删除', value: FunMetaMaps.Del},
-      {label: '编辑', value: FunMetaMaps.Edit},
-      {label: '搜索', value: FunMetaMaps.View},
-      {label: '详情', value: FunMetaMaps.Detail},
-      {label: '导入', value: FunMetaMaps.Import},
-      {label: '导出', value: FunMetaMaps.Export},
-      {label: '自定义', value: ''},
     ]
 
     let position = [
@@ -83,69 +68,38 @@ export default {
 
     const columns = [
       {field: 'name', title: '菜单名称', align: 'left'},
-      {field: 'url', title: '访问路径'},
+      {field: 'url', title: '菜单URL'},
       {field: 'type', title: '菜单类型', options: type},
-      // {field: 'msn', title: '所属模块',  url: "/core/msn", labelField: 'name', valueField: 'msn'},
+      {field: 'msn', title: '所属模块',  url: "/core/msn", labelField: 'name', valueField: 'msn'},
       {field: 'perms', title: '权限标识'},
-      {field: 'permType', title: '功能点', options: permType},
-      {field: 'position', title: '功能位置', options: position},
+      // {field: 'permType', title: '功能点', options: permType},
+      // {field: 'position', title: '功能位置', options: position},
       {field: 'createTime', title: '创建时间', type: 'datetime'},
-      {field: 'action', title: '操作', type: 'action'},
+      {field: 'action', title: '操作', type: 'action', width: 210},
     ]
     let rules = {
       pid: {type: 'number', required: true},
       name: {required: true, message: '菜单名称'},
+      msn: {required: true, message: '所属模块必填'},
       type: {required: true, message: '菜单类型必填'},
-      position: {required: false, message: '功能位置必填'},
     }
 
     let disabledPermType = ref(false);
-    return {columns, permType, rules, position, type, disabledPermType}
+    return {columns, rules, position, type, disabledPermType, BooleanStatus}
   },
-  mounted() {
-    let addFunMeta = this.$view.getTableMeta(FunMetaMaps.Add);
-
-    if(addFunMeta) {
-      addFunMeta.name = "新增子菜单"
-      // 覆盖表格新增功能点的默认实现
-      addFunMeta.callback = (row, meta) => {
-        this.$view.openForAdd((model) => {
-          model['pid'] = row.id
-          if(row.type == 'V') {
-            model.type = 'A'
-          }
-        })
-      }
-
-      addFunMeta.disabled = (row) => {
-        if(row['type'] == 'A') {
-          return true;
-        }
-        return false;
-      }
-    }
-  },
+  mounted() { },
   methods: {
-    typeHandle(val) {
-      let {validate} = this.$view.getEditContext().getFormContext();
-
-      if(val == 'A') {
-        this.rules['position'].required = true;
-      } else {
-        this.rules['position'].required = false;
+    edit(model, row) {
+      if(row && row.type == 'V') { // 视图类型下面必须是功能
+        model.type = 'A';
       }
-
-      validate('position');
+      // 使用当前编辑行的模块
+      if(row && row['msn']) {
+        model['msn'] = row['msn'];
+      }
     },
-    permTypeChange(val) {
-      let editModel = this.$view.getEditContext().getModel();
-      editModel['permType'] = val;
-      if(val == '') {
-        this.disabledPermType = false;
-        this.$refs['permTypeRef'].focus();
-      } else {
-        this.disabledPermType = true;
-      }
+    disabled(record) {
+      return record.type == 'A';
     }
   }
 }

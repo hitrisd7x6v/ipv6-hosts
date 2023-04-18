@@ -52,7 +52,7 @@ import IvzForm from "@/components/form/basic/IvzForm";
 import {mapMutations, useStore} from "vuex";
 import {inject, provide} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
-import {SearchContext} from "@/components/view/ViewAction";
+import {SearchContext} from "@/components/view/Context";
 import {initMetaCallback} from "@/utils/MetaUtils";
 
 export default {

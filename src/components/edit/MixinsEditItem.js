@@ -43,49 +43,37 @@ export default defineComponent({
         },
 
         /**
-         * 打开编辑组件并且等待表单挂载完成
-         */
-        openEditAtFormInit() {
-            this.visible = true;
-            return new Promise((resolve, reject) => {
-                if(this.formRef) {
-                    resolve(this.getEditContext())
-                } else {
-                    this.$nextTick().then(() =>{
-                        if(!this.formRef) {
-                            this.$nextTick().then(() => {
-                                this.formRef = this.$refs['iemFormRef'];
-                                resolve(this.getEditContext())
-                            }).catch(reason => reject(reason))
-                        } else {
-                            this.formRef = this.$refs['iemFormRef'];
-                            resolve(this.getEditContext())
-                        }
-                    }).catch(reason => reject(reason))
-                }
-            })
-        },
-
-        /**
-         * 异步打开弹框
+         * 异步打开弹框, 表单初始化完成后会出发编辑事件
+         * @param row 编辑的行 非必填
+         * @param isResetToInit {Boolean} 是否重置编辑模型 非必填
          * @return {Promise<unknown>}
          */
-        openByAsync() {
+        openByAsync(row, isResetToInit) {
             this.visible = true;
             return new Promise((resolve, reject) => {
                 if(this.formRef) {
-                    return resolve(this.getEditModel());
+                    if(isResetToInit) {
+                        // 重置到初始化时的数据
+                        this.getFormContext().resetModel();
+                    }
+
+                    let editModel = this.getEditModel();
+                    this.$emit("edit", editModel, row)
+                    return resolve(editModel);
                 }
 
                 this.$nextTick().then(() => {
                     this.formRef = this.$refs['iemFormRef']
                     if(!this.formRef) {
                         this.$nextTick().then(() => {
-                            this.formRef = this.$refs['iemFormRef']
-                            resolve(this.getEditModel());
+                            let editModel = this.getEditModel();
+                            this.$emit("edit", editModel, row)
+                            resolve(editModel);
                         })
                     } else {
-                        resolve(this.getEditModel());
+                        let editModel = this.getEditModel();
+                        this.$emit("edit", editModel, row)
+                        resolve(editModel);
                     }
                 })
             })
@@ -100,6 +88,9 @@ export default defineComponent({
             }
         },
 
+        /**
+         * @returns {FormContext|null}
+         */
         getFormContext() {
             // 可能出现获取的时候form还未初始化, 自行判断
             if(this.formRef) {

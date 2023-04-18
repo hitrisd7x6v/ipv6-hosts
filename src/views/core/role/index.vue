@@ -1,5 +1,5 @@
 <template>
-  <IvzBasicView name="角色管理">
+  <IvzBasicView name="角色管理" auth>
     <IvzViewSearch ref="ivzForm">
       <ivz-input label="角色名称" field="name" />
       <ivz-radio label="状态" field="status" :options="status"/>
@@ -27,21 +27,20 @@
       <template #c_action="{record}">
         <IvzFuncTag func="edit" :data="record" url="/core/role/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/role/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/del" color="grey">分配权限</IvzFuncTag>
+        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm">分配权限</IvzFuncTag>
       </template>
     </IvzViewTable>
-    <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '360px', overflow: 'auto'}">
-
-      &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
-      &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
-
-      <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
-
-      <IvzTree dataUrl="/core/role/allMenus" :checkedUrl="selectedUrl"
-           showLine checkable :selectable="false" ref="funcMenus" />
+    <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
+      <template #default="{model}">
+        &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
+        &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
+        <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
+        <IvzTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)" :checkStrictly="false"
+                 showLine checkable :selectable="true" ref="funcMenus"/>
+      </template>
       <template #footer>
         <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="submit" url="/core/role/perm">提交</IvzFuncBtn>
+        <IvzFuncBtn func="submit" url="/core/role/perm" @click="submit">提交</IvzFuncBtn>
         <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
       </template>
     </IvzBasicModal>
@@ -58,10 +57,10 @@ export default {
       {label: '启用', value: 'enabled'}, {label: '禁用', value: 'disabled'}
     ]
     let columns = [
-      {field: 'name', title: '名称'},
-      {field: 'status', title: '状态', options: status},
-      {field: 'sort', title: '排序'},
-      {field: 'remark', title: '备注'},
+      {field: 'name', title: '名称', width: 180},
+      {field: 'status', title: '状态', options: status, width: 56},
+      {field: 'sort', title: '排序', width: 56},
+      {field: 'remark', title: '备注', width: 320},
       {field: 'createTime', title: '创建时间', type: 'datetime', picker: 'date'},
       {field: 'action', title: '操作', type: 'action'}
     ]
@@ -80,17 +79,21 @@ export default {
     reset() {
       this.filterValue = '';
       this.checkedValue = false;
-      this.$refs['funcMenus'].loadingCheckedData(this.selectedUrl);
+      let editContext = this.$view.getEditContext("funcPerm");
+      editContext.setLoading(true)
+      let model = editContext.getModel();
+      this.$refs['funcMenus'].loadingCheckedData(this.getCheckedUrl(model))
+          .finally(() => editContext.setLoading(false));
+    },
+    getCheckedUrl(model) {
+      let param = model.id ? `?id=${model.id}` : ''
+      return '/core/role/func' + param;
     },
     submit() {
       let model = this.$view.getEditContext("funcPerm").getModel();
       model['menuIds'] = this.$refs['funcMenus'].getCheckedKeys();
 
-      this.$view.getEditContext("funcPerm")
-          .submit('/core/role/perm');
-    },
-    cancel() {
-      this.$view.getEditContext("funcPerm").cancel();
+      this.$view.getEditContext("funcPerm").submit('/core/role/perm');
     },
     checked(e) {
       if(e.target.checked) {

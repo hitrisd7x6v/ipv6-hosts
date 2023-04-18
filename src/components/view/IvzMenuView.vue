@@ -12,7 +12,7 @@ import MixinConfigView from "@/components/view/MixinMetaView";
 import IvzUploadModal from "@/components/modal/IvzUploadModal.vue";
 import {FunMetaMaps, mergeMetaOfDefault} from "@/utils/MetaUtils";
 import router from "@/router";
-import {$View, FuncMetaContext, ViewContext} from "@/components/view/ViewAction";
+import {$View, FuncMetaContext, ViewContext} from "@/components/view/Context";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 /**

@@ -1,23 +1,24 @@
 import {defineComponent, inject, provide, ref} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
-import {EditContext} from "@/components/view/ViewAction";
+import {EditContext} from "@/components/view/Context";
 
 export default defineComponent({
   name: 'IvzBasicModal',
   props: {
     title: String,
     bodyStyle: Object,
-    centered: Boolean,
     span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
     afterClose: Function,
     width: {default: 558},
     destroyOnClose: Boolean,
     getContainer: {type: Function},
-    maskClosable: {default: false},
+    maskClosable: {default: true},
+    centered: {type: Boolean, default: true},
     primary: {type: Boolean, default: false},
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: false},
+    wrapClassName: {type: String, default: 'ivz-basic-modal'}
   },
   mixins: [MixinsEditItem],
   setup(props, {attrs, slots}) {
@@ -47,7 +48,7 @@ export default defineComponent({
           editContext = context;
           context.isPrimary = true;
         } else {
-          console.warn(`当前视图[${viewContext.name}]已经包含声明为[primary]的编辑组件`)
+          console.warn(`当前视图[${viewContext.name}]已包含声明为[primary]的编辑组件`)
         }
       } else if(attrs['id']) {
         viewContext.addContextById(attrs['id'], editContext);

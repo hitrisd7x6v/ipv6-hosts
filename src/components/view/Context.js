@@ -2,6 +2,7 @@ import {FormContext} from "@/components/form/basic/FormContext";
 import {confirm, msgError, msgSuccess, msgWarn} from "@/utils/message";
 import {FuncNameMeta, MetaConst, TypeMethodMaps} from "@/utils/MetaUtils";
 import SysUtils from "@/utils/SysUtils";
+import CoreConsts from "@/components/CoreConsts";
 
 function Unmount() {
     console.warn("此方法只能在组件挂载时才能使用");
@@ -27,10 +28,20 @@ export function $View(context) {
 
     this.context['__$View'] = this;
 
+    /**
+     * 功能的唯一代表字段 - 比如：id
+     * @see CoreConsts#DefaultRowKey
+     * @return {String|Number}
+     */
     this.getRowKey = function () {
         return this.context.getRowKey();
     }
 
+    /**
+     * 当前视图(功能)页的上下文对象
+     * @see ViewContext
+     * @return {ViewContext}
+     */
     this.getViewContext = function () {
         return this.context;
     }
@@ -39,7 +50,7 @@ export function $View(context) {
      * 获取功能元上下文, 只能用于以下两种组件
      * @see IvzFuncView
      * @set IvzMenuView
-     * @return {void|FuncMetaContext|*}
+     * @return {void|FuncMetaContext}
      */
     this.getMetaContext = function () {
         if(!this.context.funMetasContext) {
@@ -52,7 +63,7 @@ export function $View(context) {
     /**
      * 获取编辑功能元数据
      * @param field
-     * @return {*}
+     * @return {void|Object}
      */
     this.getEditMeta = function (field) {
         return this.getMetaContext().getEditMeta(field);
@@ -61,7 +72,7 @@ export function $View(context) {
     /**
      * 获取表格功能元数据
      * @param field
-     * @return {*}
+     * @return {void|Object}
      */
     this.getTableMeta = function (field) {
         return this.getMetaContext().getTableMeta(field);
@@ -70,7 +81,7 @@ export function $View(context) {
     /**
      * 获取搜索功能元数据
      * @param field
-     * @return {*}
+     * @return {void|Object}
      */
     this.getSearchMeta = function (field) {
         return this.getMetaContext().getSearchMeta(field);
@@ -94,6 +105,7 @@ export function $View(context) {
     /**
      * 获取当前视图页的名称 eg: 用户管理、部门管理等
      * 需要在视图组件设置属性：name
+     * @return {String}
      */
     this.getFuncName = function () {
         return this.context.name;
@@ -128,20 +140,37 @@ export function $View(context) {
     }
 
     /**
-     * 打开编辑框
-     * @param callback 用来对数据进行处理
+     * 返回编辑框获取数据需要的地址
+     * 注：可根据情况自行替换和修改
+     * @param model
+     * @return {void | String}
      */
-    this.openForAdd = function (callback) {
+    this.getEditUrl = function (model, editContext) {
+        let rowKey = this.getRowKey();
+        let editFunc = this.getTableFunc(FuncNameMeta.EDIT);
+        if(editFunc && model) {
+            let url = editFunc.getUrl();
+            if(url) {
+                return `${url}?${rowKey}=${model[rowKey]}`;
+            } else {
+                return console.warn('未指定编辑功能详情地址[url]')
+            }
+        } else {
+            return console.warn('未指定编辑组件[<IvzFuncTag func="edit"/>]')
+        }
+    }
+
+    /**
+     * 打开编辑框
+     * @param row
+     */
+    this.openForAdd = function (row) {
         let editContext = this.getEditContext();
 
         if(editContext.isPrimary) {
-            editContext.asyncVisible().then((model) => {
-                let initModel = editContext.getFormContext().getInitModel();
-                if(callback instanceof Function) {
-                    callback(initModel);
-                }
-
-                editContext.getFormContext().setEditModel(initModel);
+            editContext.asyncVisible(row, true).then((model) => {
+                let formContext = editContext.getFormContext();
+                formContext.setEditModel(model);
             })
         }
     }
@@ -169,17 +198,18 @@ export function $View(context) {
             data = [data[this.getRowKey()]];
         }
 
-        let title = confirmTitle || "删除确认";
-        let content = confirmContext || "确定删除数据吗？"
+        let title = confirmTitle || CoreConsts.DelConfirmTitle;
+        let content = confirmContext || CoreConsts.DelConfirmContent;
+
         confirm({title, content, onOk: () => {
                 TypeMethodMaps.Del(url, data).then(({code, message, data}) => {
-                    if (code == MetaConst.SuccessCode) {
-                        msgSuccess(message || "删除成功");
+                    if (code == CoreConsts.SuccessCode) {
+                        msgSuccess(message || CoreConsts.DelSuccessMsg);
                         this.query(); // 删除成功, 重新刷新列表
                     } else {
                         msgError(message);
                     }
-                }).catch(reason => msgError(reason))
+                }).catch(reason => console.error(reason))
             }, onCancel: () => null
         })
 
@@ -204,59 +234,27 @@ export function $View(context) {
     /**
      * 打开主编辑框
      * url > data
-     * @param url 编辑数据地址
+     * @param url 获取编辑数据地址
      * @param data 编辑数据
      */
     this.openForEdit = function (url, data) {
-        if(!url) {
-            return console.error("未指定要获取编辑数据的[url]")
-        }
-
         let editContext = this.getEditContext();
 
         if(editContext.isPrimary) {
+            url = url ? url : this.getEditUrl(data, editContext);
             if(url) {
-                // 默认以url的查询字符串作为参数
-                let query = SysUtils.resolverQueryOfUrl(url);
-                if(Object.keys(query).length == 0) {
-                    if(data) {
-                        let rowKey = this.getRowKey();
-                        url += `?${rowKey}=${data[rowKey]}`
-                    } else {
-                        return console.error("未指定要获取编辑数据的参数")
-                    }
-                }
-
-                editContext.asyncVisible().then(() => {
+                editContext.asyncVisible(data).then(() => {
                     editContext.setLoading(true);
                     TypeMethodMaps.Edit(url).then(({code, message, data}) => {
-                        if(code == MetaConst.SuccessCode) {
+                        if(code == CoreConsts.SuccessCode) {
                             editContext.getFormContext().setEditModel(data);
                         } else {
                             msgError(message);
                         }
                     }).finally(() => editContext.setLoading(false))
                 })
-            } else {
-                editContext.asyncVisible().then(() => {
-                    editContext.getFormContext().setEditModel(data);
-                })
             }
         }
-    }
-
-    /**
-     * 打开编辑框
-     * 注：必须使用{@link IvzFuncTag}组件单击打开
-     * @param url
-     * @param data 默认使用 rowKey值
-     */
-    this.openForEditByFuncTag = function (url) {
-        let rowKey = this.getRowKey(), data = {};
-        let currentRow = this.getTableContext().getCurrentRow();
-        data[rowKey] = currentRow[rowKey]
-
-        this.openForEdit(url, data);
     }
 
     /**
@@ -270,7 +268,7 @@ export function $View(context) {
         let queryUrl = url
         // 没有指定查询地址, 尝试从IvzFuncBtn获取地址
         if(!queryUrl) {
-            // 获取功能元[IvzFuncBtn or IvzFuncTag]地址
+            // 获取功能元[IvzFuncBtn]地址
             let searchFunc = this.getSearchFunc(FuncNameMeta.QUERY);
             if(searchFunc) {
                 queryUrl = searchFunc.getUrl();
@@ -290,13 +288,13 @@ export function $View(context) {
 
         let model = searchContext.getModel();
         if(tableContext.pageSize && tableContext.currentPage) {
-            model[MetaConst.PageSize] = tableContext.pageSize;
-            model[MetaConst.PageCurrent] = tableContext.currentPage;
+            model[CoreConsts.PageSize] = tableContext.pageSize;
+            model[CoreConsts.PageCurrent] = tableContext.currentPage;
         }
 
         tableContext.setLoading(true);
         TypeMethodMaps.View(queryUrl, model).then(({code, message, data}) => {
-            if(code == MetaConst.SuccessCode) {
+            if(code == CoreConsts.SuccessCode) {
                 if(data instanceof Array){
                     tableContext.setDataSource(data)
                 } else if(data instanceof Object) { // 需要分页
@@ -313,6 +311,10 @@ export function $View(context) {
         })
     }
 
+    /**
+     * 获取详情(暂时未实现此功能)
+     * @param url
+     */
     this.detail = function (url) {
 
     }
@@ -358,17 +360,27 @@ export function $View(context) {
 
         editContext.getFormContext().validate().then(() => {
             let model = editContext.getModel();
-            editContext.setLoading(true);
+
+            function setLoading(status) {
+                let submit = editContext.getFunc(FuncNameMeta.SUBMIT);
+                if(submit) {
+                    submit.setLoading(status);
+                }
+
+                editContext.setLoading(status)
+            }
+
+            setLoading(true);
             TypeMethodMaps.Submit(url, model).then(({code, message, data}) => {
-                if (code == MetaConst.SuccessCode) {
-                    msgSuccess("数据提交成功");
+                if (code == CoreConsts.SuccessCode) {
+                    msgSuccess(CoreConsts.SubmitSuccessMsg);
                     editContext.setVisible(false);
                     this.query(); // 提交数据之后重新刷新列表
                 } else {
                     msgError(message);
                 }
             }).catch(reason => msgError(reason))
-                .finally(() => editContext.setLoading(false))
+                .finally(() => setLoading(false))
         }).catch(reason => null)
     }
 
@@ -379,7 +391,34 @@ export function $View(context) {
         let editContext = this.getEditContext();
         if(!editContext.isPrimary) return;
 
-        editContext.getFormContext().resetFields();
+        let editModel = editContext.getFormContext().getEditModel();
+        // 编辑时需要重新获取详情
+        if(editModel && this.isEdit(editModel)) {
+
+            let url = this.getEditUrl(editModel, editContext);
+            if(!url) {
+                return;
+            }
+
+            function setLoading(status) {
+                let reset = editContext.getFunc(FuncNameMeta.RESET);
+                if(reset) {
+                    // reset.setLoading(status);
+                }
+                editContext.setLoading(status)
+            }
+
+            setLoading(true);
+            TypeMethodMaps.Edit(url).then(({code, message, data}) => {
+                if(code == CoreConsts.SuccessCode) {
+                    editContext.getFormContext().setEditModel(data);
+                } else {
+                    msgError(message);
+                }
+            }).finally(() => setLoading(false))
+        } else { // 新增的重置只需要重置字段
+            editContext.getFormContext().resetFields();
+        }
     }
 
     /**
@@ -673,27 +712,28 @@ export function EditContext(viewContext) {
                 this.setLoading(true);
                 TypeMethodMaps.Submit(url, model).then(resp => {
                     let {code, message, data} = resp;
-                    if(code == MetaConst.SuccessCode) {
+                    if(code == CoreConsts.SuccessCode) {
                         resolve(resp);
                         this.setVisible(false);
-                        msgSuccess(message || "提交成功");
+                        msgSuccess(message || CoreConsts.SubmitSuccessMsg);
                     } else {
                         msgError(message);
                         reject(message);
                     }
-                }).catch(reason => reject(reason)).finally(() => this.setLoading(false))
+                }).catch(reason => reject(reason))
+                    .finally(() => this.setLoading(false))
             }).catch(reason => {})
         })
     }
 
     // 修改加载状态
-    this.setLoading = (status) => {};
+    this.setLoading = (status) => {Unmount()};
     // 设置加载文本
-    this.setLoadingTip = (tip) => {};
+    this.setLoadingTip = (tip) => {Unmount()};
     // 修改弹框状态(模态框或者抽屉框)
     this.setVisible = (status) => {Unmount()};
     // 异步打开弹框(模态框或者抽屉框) 等表单初始化完成
-    this.asyncVisible = () => Promise.reject("未挂载");
+    this.asyncVisible = (row, isResetToInit) => Promise.reject("未挂载");
 
     // 必须在相应的地方重新初始化
     // 表单上下文对象
@@ -887,7 +927,7 @@ export function ViewContext (props) {
     }
 
     /**
-     * 返回此功能的唯一key
+     * 返回功能的唯一key
      * @return {String}
      */
     this.getRowKey = function () {

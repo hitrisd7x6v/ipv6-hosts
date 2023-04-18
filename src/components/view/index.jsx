@@ -72,7 +72,7 @@ export const IvzViewTable = defineComponent({
                 }
             })
         }
-        let rowKey = viewContext.__$View.getRowKey();
+        let rowKey = viewContext.getRowKey();
         return {viewContext, rowKey}
     },
     render() {

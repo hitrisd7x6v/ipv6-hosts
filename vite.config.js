@@ -1,11 +1,10 @@
 const path = require('path');
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 // https://github.com/vuejs/jsx-next#syntax
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
-import vitePluginVueDoc, { vueDocFiles } from 'vite-plugin-vuedoc'
-import styleImport from 'vite-plugin-style-import';
+import vitePluginVueDoc, {vueDocFiles} from 'vite-plugin-vuedoc'
 import {vitePluginChunk} from './IvzVitePlugins'
 // https://vitejs.dev/config/
 export default defineConfig((env)=>{
@@ -16,26 +15,6 @@ export default defineConfig((env)=>{
         include: [...vueDocFiles]
       }),
       vueJsx(),
-      styleImport({
-        libs: [{
-          libraryName: 'ant-design-vue',
-          esModule: true,
-          // resolveStyle: (name) => {
-          //   return `ant-design-vue/es/${name}/style`;
-          // },
-          // resolveComponent: (name) => {
-          //   return `ant-design-vue/es/${name}`;
-          // },
-        },
-        // {
-        //   libraryName: 'ivz-online',
-        //   esModule: true,
-        //   resolveStyle: (name) => {
-        //     return `ivz-online/dist/index.css`;
-        //   },
-        // }
-        ]
-      }),
       vitePluginChunk
     ],
     resolve: {
@@ -48,8 +27,11 @@ export default defineConfig((env)=>{
       proxy: {
         '^/api/.*': {
           changeOrigin: true,
-          target: 'http://192.168.43.197:8085',
-          rewrite: (path) => path.replace(/^\/api/, '')
+          // 线上测试地址, 只支持浏览数据
+          target: 'http://demo.iteaj.com',
+          // 本地开发地址, 需要运行对应的java后端[https://gitee.com/iteaj/izone-sboot]
+          // target: 'http://127.0.0.1:8085',
+          // rewrite: (path) => path.replace(/^\/api/, '')
         },
       }
     },

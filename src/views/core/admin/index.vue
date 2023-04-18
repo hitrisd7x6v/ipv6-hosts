@@ -1,16 +1,18 @@
 <template>
-  <IvzBasicView name="用户">
-    <IvzPrimarySearch>
-      <ivz-input field="name" label="用户昵称" />
-      <ivz-input field="account" label="用户帐号" />
-      <ivz-input field="phone" label="用户手机" />
-      <ivz-radio field="status" label="用户状态" :options="status"/>
+  <IvzBasicView name="用户" auth>
+    <IvzViewSearch>
+      <IvzRow span="6">
+        <ivz-input field="name" label="用户昵称" />
+        <ivz-input field="account" label="用户帐号" />
+        <ivz-input field="phone" label="用户手机" />
+        <ivz-radio field="status" label="用户状态" :options="status"/>
+      </IvzRow>
       <template #func>
         <IvzFuncBtn func="reset">重置</IvzFuncBtn>
         <IvzFuncBtn func="query" url="/core/admin/view">搜索</IvzFuncBtn>
         <IvzFuncBtn func="add" url="/core/admin/add">新增</IvzFuncBtn>
       </template>
-    </IvzPrimarySearch>
+    </IvzViewSearch>
     <IvzViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
       <template #default="{model}">
         <IvzRow :gutter="16" span="8">
@@ -39,7 +41,7 @@
       <template #c_action="{record}">
         <IvzFuncTag func="edit" :data="record" url="/core/admin/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/admin/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">修改密码</IvzFuncTag>
+        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">设置密码</IvzFuncTag>
       </template>
     </IvzViewTable>
     <!--  修改密码  -->
@@ -57,12 +59,9 @@
 <script>
 
 import {ref} from "vue";
-import {IvzViewDrawer, IvzViewSearch, IvzViewTable} from "@/components/view";
-import IvzBasicModal from "@/components/modal/IvzBasicModal";
 
 export default {
   name: "Admin",
-  components: {IvzBasicModal},
   setup() {
     let sex = [
       {label: '男', value: 'man'},

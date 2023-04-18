@@ -5,7 +5,8 @@ import {IvzFuncTag} from "@/components/basic";
 import {defineComponent, h, inject, mergeProps, provide, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
-import {TableContext} from "@/components/view/ViewAction";
+import {TableContext} from "@/components/view/Context";
+import CoreConsts from "@/components/CoreConsts";
 
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
@@ -155,7 +156,7 @@ function initTableColumns(oriColumns, slots) {
                 } else if(column.dict || column.url || column.options) {
                     columnSlot['customRender'] = getSlotName(dataIndex);
                     initColumnFormatterSlot(column, columnSlot['customRender'], slots);
-                } else if(column.type == 'datetime') {
+                } else if(column.type == 'date') {
                     columnSlot['customRender'] = getSlotName(dataIndex);
                     initDatetimeColumnSlot(column, columnSlot['customRender'], slots);
                 }
@@ -189,19 +190,19 @@ export default defineComponent({
     name: 'IvzBasicTable',
     props: {
         primary: {type: Boolean, default: false},
-        dataSource: Array,
+        dataSource: {type: Array},
         rowSelection: {type: null}, // 不支持此选项
         columns: {type: Array, default: () => []},
         pagination: {
             default: () => {
-                return {
+                return reactive({
                     total: 0,
                     defaultPageSize: 10,
                     showQuickJumper: true,
                     showSizeChanger: true,
                     showTotal: (total, range) => `共 ${total}条`,
                     pageSizeOptions: ['10', '20', '30', '50', '100']
-                }
+                })
             }
         }, // 是否分页, 不支持使用对象
     },
@@ -335,6 +336,10 @@ export default defineComponent({
           return this.$props.pagination ? this.page : false;
         },
 
+        /**
+         *
+         * @returns {UnwrapRef<TableContext>}
+         */
         getTableContext() {
             return this.tableContext;
         },

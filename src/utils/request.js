@@ -1,17 +1,8 @@
 import Qs from 'qs';
 import axios from 'axios'
-import {msgError} from "@/utils/message";
-let router;
-import('@/router').then(item => {
-    router = item.default;
-});
+import router from '@/router'
 
-let baseURL = "/api";
-// 以下是生产环境配置
-if(import.meta.env.PROD) {
-    baseURL = "";
-}
-
+let baseURL = "/api"
 let baseConfig = {
     baseURL: baseURL,
     contentType: 'application/json;charset=UTF-8',
@@ -25,23 +16,18 @@ let baseConfig = {
 
 /**
  * @description 处理code异常
- * @param {*} code
- * @param {*} msg
+ * @param {*} data
+ * @param {*} config
  */
-const handleResponse = (code, msg) => {
+const handleResponse = (data, config) => {
+    let {code, message} = data
     switch (code) {
         case 401: // 未授权
             router.push({ path: '/login' }).finally(() => {});
             return null;
-        case 500:
-            msgError(msg)
-            return Promise.reject(msg);
         case 404:
-            msgError("资源没找到(404)")
-            return Promise.reject('404');
-        default:
-            msgError(msg);
-            return Promise.reject(msg);
+            return Promise.reject(data);
+        default: return data;
     }
 }
 
@@ -60,7 +46,6 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
     (config) => {
-        config['autoMsg'] = true; // 自动提示消息
         return config
     },
     (error) => {
@@ -70,31 +55,15 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
     (response) => {
-
         const { data, config } = response
-        const { code, message } = data
-
-        // 是否操作正常
-        if (code == baseConfig.success) {
-            return data
-        } else {
-            if(config['autoMsg']) {
-                return handleResponse(code, message)
-            }
-
-            return response;
-        }
+        return handleResponse(data, config);
     },
     (error) => {
         const { response, message } = error
 
         if (response && response.data) {
             const { status, data, config } = response
-            if(config['autoMsg']) {
-                return handleResponse(status, data.message || message)
-            }
-
-            return error
+            return handleResponse({code: status, message}, config)
         } else {
             let { message } = error
             if(message === 'Network Error') {
@@ -106,7 +75,7 @@ instance.interceptors.response.use(
                 message = `后端接口[${code}]异常`
             }
 
-            msgError(message || `后端接口异常`)
+            console.error(message || `后端接口异常`)
             return Promise.reject(error)
         }
     }

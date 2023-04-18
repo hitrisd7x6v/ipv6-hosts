@@ -57,6 +57,7 @@ import {reactive} from 'vue'
 import {Form} from 'ant-design-vue'
 import {useRoute} from "vue-router";
 import {captchaUri, login, oauth2} from '@/api'
+import CoreConsts from "@/components/CoreConsts";
 
 export default {
   name: 'login',
@@ -72,7 +73,7 @@ export default {
     const user = reactive({
       userName: 'admin',
       password: 'admin123456',
-      captcha: 168});
+      captcha: null});
     const rules = reactive({
       userName: [{type: 'string', required: true, message: ''}],
       password: [{type: 'string', required: true, message: ''}],
@@ -88,14 +89,14 @@ export default {
     const {validateInfos, validate, validateField} = Form.useForm(user, rules);
 
     const clickImg = () => {
-      loginModel.captchaImg = captchaUri + '?t' + new Date()
+      loginModel.captchaImg = captchaUri + '?t=' + new Date().getTime()
     }
 
 
     window.onkeydown = (ev) => {
       let code = ev.keyCode
       if (code === 13) {
-        submit()
+        this.submit()
       }
     }
     return {user, labelCol, wrapperCol, validateInfos, loginModel, clickImg, validate}
@@ -107,13 +108,17 @@ export default {
     submit() {
       this.validate().then(res => {
         this.loginModel.loading = true;
-        login(this.user).then(resp=>{
-          this.$router.push("/").finally();
+        login(this.user).then(({code, message})=>{
+          if(code == CoreConsts.SuccessCode) {
+            this.$router.push("/").finally();
+          } else {
+            this.clickImg();
+            this.loginModel.errMsg = message;
+          }
         }).catch(reason => {
           this.clickImg();
-          this.loginModel.loading = false;
-        });
-      }).finally()
+        }).finally(() => this.loginModel.loading = false);
+      })
     }
   }
 }

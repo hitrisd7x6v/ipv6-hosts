@@ -1,6 +1,6 @@
 import {defineComponent, inject, provide, ref} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
-import {EditContext} from "@/components/view/ViewAction";
+import {EditContext} from "@/components/view/Context";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 
 export default defineComponent({
@@ -83,7 +83,9 @@ export default defineComponent({
                 <ivz-form {...this.$attrs} ref="iemFormRef" labelCol={this.labelCol} wrapperCol={this.wrapperCol}>
                     {this.$slots.default ? this.$slots.default({model, context}) : []}
                 </ivz-form>
-                {this.$slots.footer ? this.$slots.footer({model, context}) : []}
+                <div class="ivz-drawer-footer">
+                    {this.$slots.footer ? this.$slots.footer({model, context}) : []}
+                </div>
             </a-spin>
         </a-drawer>)
     }
