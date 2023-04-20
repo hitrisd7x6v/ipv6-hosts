@@ -374,11 +374,11 @@ export const IvzTree = defineComponent({
         }
 
         if(this.checkedUrl) {
-            this.loadingCheckedData(this.checkedUrl).finally(() => null)
+            this.loadingCheckedData(this.checkedUrl).finally(() => {})
         }
 
         if(this.selectedUrl) {
-            this.loadingSelectedData(this.selectedUrl).finally(() => null);
+            this.loadingSelectedData(this.selectedUrl).finally(() => {})
         }
     },
     render() {
@@ -413,7 +413,7 @@ export const IvzTree = defineComponent({
                     msgError(message)
                 }
                 return resp;
-            });
+            }).catch(reason => console.error(reason));
         },
         /**
          * @param checkedUrl
@@ -428,7 +428,7 @@ export const IvzTree = defineComponent({
                     msgError(message)
                 }
                 return resp;
-            });
+            }).catch(reason => console.error(reason));
         },
         /**
          * @returns {Array}
@@ -453,6 +453,8 @@ export const IvzTree = defineComponent({
         setCheckedKeys(checkedKeys) {
             if(checkedKeys instanceof Array) {
                 this.checkedKeys = checkedKeys
+            } else if(checkedKeys == null) {
+                this.checkedKeys = [];
             } else {
                 this.checkedKeys = this.allKeys;
             }
