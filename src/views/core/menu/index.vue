@@ -4,7 +4,7 @@
       <IvzRow span="6" style="width: 100%">
         <IvzInput field="name" label="菜单名称" :allowClear="true" />
         <IvzSelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
-        <IvzSelect field="msn" label="所属模块" :allowClear="true" url="/core/msn" labelField="name" valueField="msn"/>
+        <IvzSelect field="msn" label="所属模块" :allowClear="true" url="/core/msn" labelField="msn" valueField="msn"/>
       </IvzRow>
       <template #func>
         <IvzFuncBtn func="query" url="/core/menu/view">搜索</IvzFuncBtn>
@@ -27,7 +27,7 @@
              url="/core/menu/parent" labelField="name" valueField="id"
              treeNodeFilterProp="label"/>
         <IvzSelect field="type" label="菜单类型" :options="type"/>
-        <IvzSelect field="msn" label="所属模块" url="/core/msn" labelField="name" valueField="msn"/>
+        <IvzAutoComplete field="msn" label="所属模块" url="/core/msn" labelField="msn" valueField="msn"/>
         <IvzInput field="url" label="菜单URL"/>
         <IvzInput field="perms" label="权限标识" />
         <IvzInput field="icon" label="图标" />
@@ -70,7 +70,7 @@ export default {
       {field: 'name', title: '菜单名称', align: 'left'},
       {field: 'url', title: '菜单URL'},
       {field: 'type', title: '菜单类型', options: type},
-      {field: 'msn', title: '所属模块',  url: "/core/msn", labelField: 'name', valueField: 'msn'},
+      {field: 'msn', title: '所属模块',  url: "/core/msn", labelField: 'msn', valueField: 'msn'},
       {field: 'perms', title: '权限标识'},
       // {field: 'permType', title: '功能点', options: permType},
       // {field: 'position', title: '功能位置', options: position},

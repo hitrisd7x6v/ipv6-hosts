@@ -161,7 +161,7 @@ export const IvzCascader = defineComponent({
 
         return <a-col {...props}>
             <a-form-item {...props}>
-                {<a-cascader {...this.getFormAttrs()} v-slots={this.$slots}></a-cascader>}
+                {<a-cascader {...this.getFormAttrs({options: this.dataSource})} v-slots={this.$slots}></a-cascader>}
             </a-form-item>
         </a-col>
     }
@@ -169,13 +169,13 @@ export const IvzCascader = defineComponent({
 })
 export const IvzAutoComplete = defineComponent({
     name: 'IvzAutoComplete',
-    mixins: [MixinsFormItem],
+    mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
 
         return <a-col {...props}>
             <a-form-item {...props}>
-                {<a-auto-complete {...this.getFormAttrs()} v-slots={this.$slots}></a-auto-complete>}
+                {<a-auto-complete {...this.getFormAttrs({options: this.dataSource})} v-slots={this.$slots}></a-auto-complete>}
             </a-form-item>
         </a-col>
     }
