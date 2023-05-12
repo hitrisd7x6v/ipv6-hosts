@@ -8,9 +8,9 @@
 6. 不管是学习如何编写vue组件还是直接在项目上使用ivzone都是一个好的选择(交流群：616124620) 
 ### 项目展示
 #### 低代码设计器
-![搜索和列表](https://images.gitee.com/uploads/images/2021/1023/214942_63a874dc_1230742.png "1634996840(1).png")
-![表单设计](https://images.gitee.com/uploads/images/2021/1023/214953_cd9986e6_1230742.png "1634996883(1).png")
-![sql生成](https://images.gitee.com/uploads/images/2021/1023/215004_38067306_1230742.png "1634996899(1).png")
+![搜索和列表](https://images.gitee.com/uploads/images/2021/1023/214942_63a874dc_1230742.png "搜索和列表.png")
+![表单设计](https://images.gitee.com/uploads/images/2021/1023/214953_cd9986e6_1230742.png "表单设计.png")
+![sql生成](https://images.gitee.com/uploads/images/2021/1023/215004_38067306_1230742.png "sql生成.png")
 #### 增删改查页面
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/1023/214102_5a12869d_1230742.png "1634996335.png")
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/1023/214117_54443c1c_1230742.png "1634996357.png")
