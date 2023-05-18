@@ -1,12 +1,9 @@
-### 关于ivzone
+### 关于ivzone(交流群：616124620)
  **核心功能：支持在线做功能(页面)设计, 通过拖拽的方式生成一个 _完整(增删改查)_ 的功能页面(包括sql,java代码，vue代码)** 
 1. 首先此框架基于vite2+vue3+antdv2+vuex4+vuerouter4等最新技术
 2. 其次它包含一套通用的增删改查模板, 能够让使用者更加专注业务
 3. 然后在此基础上又实现了一套后台管理常用功能(用户，角色，菜单，字典，机构，配置等)的实现
-4. 基于java开发的功能强大的代码生成器, 支持生成此框架的vue页面，entity, mapper, service, serviceImpl,controller,xml等，支持预览待生成的源码
-5.  **基于antdv的在线表单设计，支持设计一整个完整的功能页； 注意：支持通过前端设计从而生成sql表** [代码生成器预览](http://online.iteaj.com)
-5. [项目预览地址](http://demo.iteaj.com/) 以及配套的 [java后端项目](https://gitee.com/iteaj/izone-sboot)
-6. 不管是学习如何编写vue组件还是直接在项目上使用ivzone都是一个好的选择(交流群：616124620) 
+4. [项目预览地址](http://demo.iteaj.com/) 以及配套的 [java后端项目](https://gitee.com/iteaj/izone-sboot)
 ### 项目展示
 #### [低代码设计器](http://online.iteaj.com)
 1. 生成的java实体类支持字段检验和excel注解，支持lombok
