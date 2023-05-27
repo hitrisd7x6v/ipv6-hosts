@@ -6,12 +6,12 @@
 5. [项目预览地址](http://demo.iteaj.com/) 以及配套的 [java后端项目](https://gitee.com/iteaj/izone-sboot)
 ### 项目展示
 #### [低代码设计器](http://online.iteaj.com)
-1. 生成的java实体类支持字段检验和excel注解，支持lombok
-2. 生成的mybatis xml配置文件支持一对一和一对多(待开发)
-3. 支持关联关系是一对一以及一对多的接口设计
-4. 生成的ivzone vue页面是一个完整的功能页包括 增、删、改、查
-5. 其他方面支持生成dto类、功能菜单直接导入到菜单表、源码预览、
-6. 生成的代码类型包括 java、vue、sql表、mybatis
+1. 生成的java实体类支持字段检验和excel注解，支持lombok(已完成)
+2. 生成的mybatis xml配置文件自动生成详情记录和详细分页记录接口(已完成)
+3. 支持自动生成具有外键关系(一对一和一对多)的接口(已完成)
+4. 生成的ivzone vue页面是一个完整的功能页包括 增、删、改、查(已完成)
+5. 其他方面支持生成dto类、功能菜单直接导入到菜单表、源码预览、(已完成)
+6. 生成的代码类型包括 java、vue、sql表、mybatis(已完成)
  **总之对于通用的系统可以减少80%的代码量, 一些简单的系统甚至可以直接使用而无需修改** 
 ![搜索和列表](https://images.gitee.com/uploads/images/2021/1023/214942_63a874dc_1230742.png "搜索和列表.png")
 ![表单设计](https://images.gitee.com/uploads/images/2021/1023/214953_cd9986e6_1230742.png "表单设计.png")
