@@ -12,7 +12,7 @@
 4. 生成的ivzone vue页面是一个完整的功能页包括 增、删、改、查(已完成)
 5. 其他方面支持生成dto类、功能菜单直接导入到菜单表、源码预览、(已完成)
 6. 生成的代码类型包括 java、vue、sql表、mybatis(已完成)
- **总之对于通用的系统可以减少80%的代码量, 一些简单的系统甚至可以直接使用而无需修改** 
+7. **总之对于通用的系统可以减少80%的代码量, 一些简单的系统甚至可以直接使用而无需修改** 
 ![搜索和列表](https://images.gitee.com/uploads/images/2021/1023/214942_63a874dc_1230742.png "搜索和列表.png")
 ![表单设计](https://images.gitee.com/uploads/images/2021/1023/214953_cd9986e6_1230742.png "表单设计.png")
 ![sql生成](https://images.gitee.com/uploads/images/2021/1023/215004_38067306_1230742.png "sql生成.png")
