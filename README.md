@@ -14,7 +14,9 @@
 6. 生成的代码类型包括 java、vue、sql表、mybatis(已完成)
 7. **总之对于通用的系统可以减少80%的代码量, 一些简单的系统甚至可以直接使用而无需修改** 
 ![搜索和列表](https://images.gitee.com/uploads/images/2021/1023/214942_63a874dc_1230742.png "搜索和列表.png")
+vue功能页面设计
 ![表单设计](https://images.gitee.com/uploads/images/2021/1023/214953_cd9986e6_1230742.png "表单设计.png")
+mysql配置
 ![sql生成](https://images.gitee.com/uploads/images/2021/1023/215004_38067306_1230742.png "sql生成.png")
 #### 增删改查页面
 ![输入图片说明](https://images.gitee.com/uploads/images/2021/1023/214102_5a12869d_1230742.png "1634996335.png")
