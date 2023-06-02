@@ -13,6 +13,24 @@
 5. 其他方面支持生成dto类、功能菜单直接导入到菜单表、源码预览、(已完成)
 6. 生成的代码类型包括 java、vue、sql表、mybatis(已完成)
 7. **总之对于通用的系统可以减少80%的代码量, 一些简单的系统甚至可以直接使用而无需修改** 
+#### 仓库目录说明
+| 目录 | 说明  |  典型  |
+|---|---|---|
+|  src/components/basic | 常用的基础组件  |  暂无  |
+|  src/components/directive |  vue指令 |  权限控制指令  |
+|  src/components/drawer| 可编辑的基础抽屉组件 | 暂无 |
+|  src/components/modal| 可编辑的基础模态框组件 | 暂无  |
+|  src/components/edit| 可编辑视图组件 |  编辑模态框和编辑抽屉视图组件  |
+|  src/components/form| antdv表单组件封装 |  包含antdv2包含的可编辑组件  |
+|  src/components/functional| vue functional组件 |  暂无    |
+|  src/components/list| 列表视图组件 |  暂无  |
+|  src/components/view| 页面视图相关组件 |  IvzBasicView  |
+|  src/event| 全局事件 | |
+|  src/router| 路由信息 | |
+|  src/store| vuex信息 | |
+|  src/theme| 主题 | |
+|  src/utils| 基础工具库 | |
+|  src/views| 自定义的功能视图页 | 后台管理(用户、字典、角色、配置、组织等)视图 |
 ![搜索和列表](https://images.gitee.com/uploads/images/2021/1023/214942_63a874dc_1230742.png "搜索和列表.png")
 vue功能页面设计
 ![表单设计](https://images.gitee.com/uploads/images/2021/1023/214953_cd9986e6_1230742.png "表单设计.png")
