@@ -4,6 +4,24 @@
 3. 然后在此基础上又实现了一套后台管理常用功能(用户，角色，菜单，字典，机构，配置等)的实现
 4. 支持使用低代码设计平台在线设计功能包括sql表
 5. [项目预览地址](http://demo.iteaj.com/) 以及配套的 [java后端项目](https://gitee.com/iteaj/izone-sboot)
+#### 仓库目录说明
+| 目录 | 说明  |  典型  |
+|---|---|---|
+|  src/components/basic | 常用的基础组件  |  暂无  |
+|  src/components/directive |  vue指令 |  权限控制指令  |
+|  src/components/drawer | 可编辑的基础抽屉组件 | 暂无 |
+|  src/components/modal | 可编辑的基础模态框组件 | 暂无  |
+|  src/components/edit | 可编辑视图组件 |  编辑模态框和编辑抽屉视图组件  |
+|  src/components/form | antdv表单组件封装 |  包含antdv2包含的可编辑组件  |
+|  src/components/functional | vue functional组件 |  暂无    |
+|  src/components/list | 列表视图组件 |  暂无  |
+|  src/components/view | 页面视图相关组件 |  IvzBasicView  |
+|  src/event  | 全局事件 | |
+|  src/router  | 路由信息 | |
+|  src/store  | vuex信息 | |
+|  src/theme  | 主题 | |
+|  src/utils  | 基础工具库 | |
+|  src/views  | 自定义的功能视图页 | 后台管理(用户、字典、角色、配置、组织等)视图 |
 ### 项目展示
 #### [低代码设计器](http://online.iteaj.com)
 1. 生成的java实体类支持字段检验和excel注解，支持lombok(已完成)
@@ -13,24 +31,7 @@
 5. 其他方面支持生成dto类、功能菜单直接导入到菜单表、源码预览、(已完成)
 6. 生成的代码类型包括 java、vue、sql表、mybatis(已完成)
 7. **总之对于通用的系统可以减少80%的代码量, 一些简单的系统甚至可以直接使用而无需修改** 
-#### 仓库目录说明
-| 目录 | 说明  |  典型  |
-|---|---|---|
-|  src/components/basic | 常用的基础组件  |  暂无  |
-|  src/components/directive |  vue指令 |  权限控制指令  |
-|  src/components/drawer| 可编辑的基础抽屉组件 | 暂无 |
-|  src/components/modal| 可编辑的基础模态框组件 | 暂无  |
-|  src/components/edit| 可编辑视图组件 |  编辑模态框和编辑抽屉视图组件  |
-|  src/components/form| antdv表单组件封装 |  包含antdv2包含的可编辑组件  |
-|  src/components/functional| vue functional组件 |  暂无    |
-|  src/components/list| 列表视图组件 |  暂无  |
-|  src/components/view| 页面视图相关组件 |  IvzBasicView  |
-|  src/event| 全局事件 | |
-|  src/router| 路由信息 | |
-|  src/store| vuex信息 | |
-|  src/theme| 主题 | |
-|  src/utils| 基础工具库 | |
-|  src/views| 自定义的功能视图页 | 后台管理(用户、字典、角色、配置、组织等)视图 |
+
 ![搜索和列表](https://images.gitee.com/uploads/images/2021/1023/214942_63a874dc_1230742.png "搜索和列表.png")
 vue功能页面设计
 ![表单设计](https://images.gitee.com/uploads/images/2021/1023/214953_cd9986e6_1230742.png "表单设计.png")
