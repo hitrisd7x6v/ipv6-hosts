@@ -18,7 +18,7 @@ export default defineComponent({
         keyboard: {default: true},
         placement: {default: 'right'},
         maskClosable: {default: true},
-        afterVisibleChange: {type: Function},
+        // afterVisibleChange: {type: Function},
         primary: {type: Boolean, default: false},
         forceRender: {type: Boolean, default: false},
     },
@@ -76,7 +76,7 @@ export default defineComponent({
             this.formRef = this.$refs['iemFormRef'];
         }
 
-        return(<a-drawer v-model={[this.visible, 'visible', ["modifier"]]} wrapStyle={{position: 'absolute'}}
+        return(<a-drawer v-model={[this.visible, 'visible', ["modifier"]]} style={{position: 'absolute'}}
                          {...this.$props} closable={false} v-slots={this.titleSlots}
                          getContainer=".ivz-main-container" ref="ADrawerRef">
             <a-spin size="small" tip={this.spinTip} spinning={this.spinning}>

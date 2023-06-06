@@ -5,7 +5,6 @@ import router from '@/router'
 let baseURL = "/api"
 let baseConfig = {
     baseURL: baseURL,
-    contentType: 'application/json;charset=UTF-8',
     // 成功响应码
     success: 200,
     //消息框消失时间
@@ -35,9 +34,8 @@ const instance = axios.create({
     baseURL: baseConfig.baseURL,
     timeout: baseConfig.timeout,
     headers: {
-        Authorization: 'session', // 授权类型为 session
-        'x-requested-with': 'XMLHttpRequest', // 是否是ajax请求
-        'Content-Type': baseConfig.contentType,
+        'x-requested-with': 'XMLHttpRequest', // 声明是ajax请求
+        'Content-Type': 'application/json; charset=UTF-8',
     },
     paramsSerializer: (params) => {
         return Qs.stringify(params, {arrayFormat: 'indices', allowDots: true})

@@ -1,5 +1,5 @@
 import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
-import {Form} from "ant-design-vue";
+import {Form, FormItem} from "ant-design-vue";
 import {createMetasMap, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
 import {FormContext} from "@/components/form/basic/FormContext";
 import SysUtils from "@/utils/SysUtils";
@@ -76,9 +76,9 @@ export default defineComponent({
 
         let props = mergeProps(this.$props, {model: editModel, labelCol, wrapperCol});
         return (
-            <a-form {...props} ref="formRef">
+            <AForm {...props} ref="formRef">
                 {this.$slots.default({model: editModel})}
-            </a-form>)
+            </AForm>)
     },
     methods: {
         // 元表单引用对象

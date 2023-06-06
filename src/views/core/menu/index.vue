@@ -19,8 +19,11 @@
         <IvzFuncTag func="edit" :data="record" url="/core/menu/edit">修改</IvzFuncTag>
         <IvzFuncTag func="del" :data="record" url="/core/menu/del">删除</IvzFuncTag>
       </template>
+      <template #type="{record}">
+        <a>{{record.type}}</a>
+      </template>
     </IvzViewTable>
-    <IvzViewDrawer :rules="rules" width="780" layout="vertical" placement="left" @edit="edit">
+    <IvzViewDrawer :rules="rules" v-model:value="model" width="780" layout="vertical" placement="left" @edit="edit">
       <IvzRow :gutter="24" span="8">
         <IvzInput field="name" label="菜单名称" />
         <IvzTreeSelect field="pid" label="父菜单" :defaultValue="0"
@@ -84,8 +87,9 @@ export default {
       type: {required: true, message: '菜单类型必填'},
     }
 
+    let model = {}
     let disabledPermType = ref(false);
-    return {columns, rules, position, type, disabledPermType, BooleanStatus}
+    return {columns, rules, position, type, disabledPermType, BooleanStatus, model}
   },
   mounted() { },
   methods: {

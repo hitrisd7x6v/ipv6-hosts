@@ -1,4 +1,3 @@
-import moment from 'moment'
 import {useStore} from "vuex";
 import {Tag} from 'ant-design-vue'
 import {IvzFuncTag} from "@/components/basic";
@@ -7,14 +6,17 @@ import {MetaConst} from "@/utils/MetaUtils";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {TableContext} from "@/components/view/Context";
 import CoreConsts from "@/components/CoreConsts";
+import dayjs from "dayjs";
 
 function getSlotName(dataIndex) {
     let fieldPath = dataIndex.split('.');
     fieldPath.splice(0, 0, 'c');
     return fieldPath.join('_');
 }
-
-function initColumnActionSlot(column, slotName, slots) {
+function getFieldName(dataIndex) {
+    return dataIndex instanceof Array ? null : null;
+}
+function initColumnActionSlot(column) {
     let funMetas = column['funMetas'];
     if(funMetas instanceof Array) {
         funMetas.forEach(meta => {
@@ -32,7 +34,7 @@ function initColumnActionSlot(column, slotName, slots) {
             }
         })
 
-        slots[slotName] = ({record}) => {
+        column['__slot'] = ({record}) => {
             let children = []
             funMetas.forEach(meta => {
                 if(meta.view(record, meta)) {
@@ -42,12 +44,12 @@ function initColumnActionSlot(column, slotName, slots) {
 
             return <div>{() => children}</div>
         }
-
-
     }
 }
 
 function initOptionsLabel(column) {
+    if(column['__valueLabelMap']) return;
+
     let labelField = column.labelField || MetaConst.DefaultLabelField;
     let valueField = column.valueField || MetaConst.DefaultValueField;
 
@@ -99,7 +101,7 @@ function initDatetimeColumnSlot(column, slotName, slots) {
             try {
                 if (value) {
                     let picker = column.picker || 'datetime';
-                    return moment(value).format(column.format || typeFormatMaps[picker]);
+                    return dayjs(value).format(column.format || typeFormatMaps[picker]);
                 } else {
                     return '';
                 }
@@ -113,7 +115,27 @@ function initDatetimeColumnSlot(column, slotName, slots) {
         return column.formatter({value: text, record, column})
     }
 }
+function initColumn(column, slots) {
+    let columnSlot = {}
+    column.align = column.align || 'center';
+    column.dataIndex = column.dataIndex || column.field;
 
+    let dataIndex = column.dataIndex;
+
+    if(column.type == 'action') {
+        // 操作列的默认对齐方式为居中对齐
+        column['align'] = column['align'] || 'center';
+
+        columnSlot['customRender'] = getSlotName(dataIndex);
+        initColumnActionSlot(column, columnSlot['customRender'], slots)
+    } else if(column.dict || column.url || column.options) {
+        columnSlot['customRender'] = getSlotName(dataIndex);
+        initColumnFormatterSlot(column, columnSlot['customRender'], slots);
+    } else if(column.type == 'date') {
+        columnSlot['customRender'] = getSlotName(dataIndex);
+        initDatetimeColumnSlot(column, columnSlot['customRender'], slots);
+    }
+}
 function initTableColumns(oriColumns, slots) {
     let slotNameMaps = {}, columns = [];
 
@@ -128,42 +150,9 @@ function initTableColumns(oriColumns, slots) {
 
     if(oriColumns instanceof Array) {
         oriColumns.forEach(column => {
-
-            // 多选列无需处理
-            if(column.type == 'selection') return;
-            columns.push(column);
-
-            // 声明此列已经初始化
-            if(column['__init']) return;
-            else column['__init'] = true;
-
-            let columnSlot = {}
-            column.align = column.align || 'center';
-            column.dataIndex = column.dataIndex || column.field;
-
-            let dataIndex = column.dataIndex;
-
-            let slotName = slotNameMaps[dataIndex];
-            if(slotName) {
-                columnSlot['customRender'] = slotName
-            } else {
-                if(column.type == 'action') {
-                    // 操作列的默认对齐方式为居中对齐
-                    column['align'] = column['align'] || 'center';
-
-                    columnSlot['customRender'] = getSlotName(dataIndex);
-                    initColumnActionSlot(column, columnSlot['customRender'], slots)
-                } else if(column.dict || column.url || column.options) {
-                    columnSlot['customRender'] = getSlotName(dataIndex);
-                    initColumnFormatterSlot(column, columnSlot['customRender'], slots);
-                } else if(column.type == 'date') {
-                    columnSlot['customRender'] = getSlotName(dataIndex);
-                    initDatetimeColumnSlot(column, columnSlot['customRender'], slots);
-                }
+            if(!column['__init']) {
+                initColumn(column, slots)
             }
-
-            // 合并slots信息
-            column['slots'] = column['slots'] == null ? columnSlot : {...column['slots'], ...columnSlot}
         })
     }
 
@@ -329,6 +318,7 @@ export default defineComponent({
                         onDblclick: (event) => this.$emit('rowDblclick', row), // 行双击
                     }
                  }}>
+
             </ATable>)
     },
     methods: {
