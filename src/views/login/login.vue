@@ -4,8 +4,8 @@
       <a-card :bordered="false">
         <img slot="title" src="/img/login_logo.png" style="margin-bottom: 12px"/>
         <a-form layout="horizontal" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-item has-feedback v-bind="validateInfos.userName">
-            <a-input placeholder="用户名" size="large" v-model:value="user.userName">
+          <a-form-item has-feedback v-bind="validateInfos.username">
+            <a-input placeholder="用户名" size="large" v-model:value="user.username">
               <ivz-icon slot="prefix" type="iz-icon-account"></ivz-icon>
             </a-input>
           </a-form-item>
@@ -71,11 +71,11 @@ export default {
     let labelCol = {span: 0};
     let wrapperCol = {span: 24};
     const user = reactive({
-      userName: 'admin',
+      username: 'admin',
       password: 'admin123456',
       captcha: null});
     const rules = reactive({
-      userName: [{type: 'string', required: true, message: ''}],
+      username: [{type: 'string', required: true, message: ''}],
       password: [{type: 'string', required: true, message: ''}],
     });
 

@@ -51,25 +51,6 @@
               </a-badge>
             </a-tooltip>
           </li>
-          <li class="ivz-opera-col" v-if="isDev">
-            <a target="_blank" href="http://online.iteaj.com">
-              <a-tooltip title="低代码设计">
-                <ivz-icon type="iz-icon-code" :style="{fontSize: '16px', color: '#000000'}"/>
-              </a-tooltip>
-            </a>
-          </li>
-          <li class="ivz-opera-col" v-if="isDev">
-            <a target="_blank" href="http://doc.iteaj.com/izone" style="vertical-align: -1.7px">
-              <a-tooltip title="接口文档">
-                <ivz-icon type="iz-icon-devdoc" :style="{fontSize: '21px', color: '#000000'}"/>
-              </a-tooltip>
-            </a>
-          </li>
-<!--          <li class="ivz-opera-col" @click="switchTheme">-->
-<!--            <a-tooltip title="主题">-->
-<!--                <ivz-icon type="iz-icon-theme" :style="{fontSize: '18px'}"/>-->
-<!--            </a-tooltip>-->
-<!--          </li>-->
           <li style="clear: both"></li>
         </ul>
       </div>
@@ -169,7 +150,7 @@ export default {
         this.taskBarData.splice(start, this.taskBarData.length)
       } else { // 关闭除当前激活的任务以外的所有任务
         let position = 1
-        for(let index=0; index < this.taskBarData.length; main++) {
+        for(let index=0; index < this.taskBarData.length; index++) {
           let item = this.taskBarData[index];
           if (item === this.activityMenu) {
             position = index; break;

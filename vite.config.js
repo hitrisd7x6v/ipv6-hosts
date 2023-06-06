@@ -25,7 +25,7 @@ export default defineConfig((env)=>{
     },
     server: {
       proxy: {
-        '^/api/.*': {
+        '^/api/*': {
           changeOrigin: true,
           // 线上测试地址, 只支持浏览数据
           target: 'http://demo.iteaj.com',
@@ -36,7 +36,7 @@ export default defineConfig((env)=>{
       }
     },
     optimizeDeps: {
-      include: ["@ant-design/icons-vue"],
+      include: [],
     },
     css: {
       preprocessorOptions: {
@@ -47,6 +47,7 @@ export default defineConfig((env)=>{
     },
     build: {
       cssCodeSplit: true,
+      polyfillModulePreload: false
     }
   }
 })

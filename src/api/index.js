@@ -2,7 +2,7 @@ import {GET, POST, baseURL} from '@/utils/request'
 
 // 图像验证码url
 const menuUri = "/core/menus"
-const loginUri = "/core/center/login"
+const loginUri = "/core/login"
 const captchaUri = `${baseURL}/valid/captcha`
 const avatarUploadUri = "/core/center/avatar"
 
@@ -51,7 +51,7 @@ export function login(user) {
 
 // 注销系统
 export function logout() {
-    return POST('/core/center/logout')
+    return POST('/core/logout')
 }
 
 // oauth2授权认证

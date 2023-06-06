@@ -23,6 +23,17 @@ export const vitePluginChunk = {
                 return 'axios.qs.esm'
             } else if(id.includes('node_modules/mockjs')) {
                 return 'mockjs.esm'
+            } else if(id.includes('node_modules/tinymce')) {
+                if(id.includes("tinymce.js")) {
+                    return 'tinymce.esm'
+                } else if(id.includes("themes")) {
+                    return 'themes/index'
+                } else if(id.includes("plugins")) {
+                    return 'plugins/index'
+                } else if(id.includes("icons")) {
+                    return 'icons/index'
+                }
+                return null// 'tinymce.esm'
             } else if(id.includes('node_modules')) {
                 return 'vendor' // 其他第三方库
             }
@@ -40,6 +51,8 @@ export const vitePluginChunk = {
                 return 'lib/[name].js'
             } else if(chunk.name == 'vendor') {
                 return 'assets/[name].js'
+            } else if(chunk.name.includes('tinymce')) {
+                return 'tinymce/[name].js'
             }
 
             return 'assets/[name].[hash].js';
