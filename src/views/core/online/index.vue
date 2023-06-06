@@ -1,22 +1,22 @@
 <template>
-  <IvzBasicView auth>
-    <IvzBasicSearch primary>
-      <IvzInput label="登录用户" field="userNick" span="5" />
-      <IvzSelect label="在线状态" field="status" span="5" :options="OnlineStatus"/>
-      <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-      <IvzFuncBtn func="query" url="/core/onlineUser/view">搜索</IvzFuncBtn>
-    </IvzBasicSearch>
-    <IvzViewTable :columns="columns" size="small" :bordered="true" :scroll="{x: '100%'}">
+  <UView auth>
+    <USearch primary>
+      <UInput label="登录用户" field="userNick" span="5" />
+      <USelect label="在线状态" field="status" span="5" :options="OnlineStatus"/>
+      <UFuncBtn func="reset">重置</UFuncBtn>
+      <UFuncBtn func="query" url="/core/onlineUser/view">搜索</UFuncBtn>
+    </USearch>
+    <UViewTable :columns="columns" size="small" :bordered="true" :scroll="{x: '100%'}">
       <template #c_status="{record}">
         <ABadge v-if="record.status=='Online'" status="processing" text="在线" />
         <ABadge v-else status="default" text="掉线" />
       </template>
       <template #c_action="{record}">
-        <IvzFuncTag func="del" :data="record" url="/core/onlineUser/del">删除</IvzFuncTag>
-        <IvzFuncTag func="offline" :data="record" url="/core/onlineUser/offline" confirm>下线</IvzFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/onlineUser/del">删除</UFuncTag>
+        <UFuncTag func="offline" :data="record" url="/core/onlineUser/offline" confirm>下线</UFuncTag>
       </template>
-    </IvzViewTable>
-  </IvzBasicView>
+    </UViewTable>
+  </UView>
 </template>
 
 <script>

@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import {commonFormData} from "./IvzFormMixin";
+import {commonFormData} from "./FormMixin";
 
 export default {
-  name: "IvzBasicForm",
+  name: "UBasicForm",
   props: ['meta', 'model'],
   mixins: [commonFormData]
 }

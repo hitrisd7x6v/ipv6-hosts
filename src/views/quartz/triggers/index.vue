@@ -1,13 +1,13 @@
 <template>
-    <IvzBasicView rowKey="jobName">
-        <IvzViewSearch>
-            <IvzInput label="作业名" field="jobName" />
+    <UView rowKey="jobName">
+        <UViewSearch>
+            <UInput label="作业名" field="jobName" />
             <template #func>
-                <IvzFuncBtn func="query" url="/quartz/triggers/view">查询</IvzFuncBtn>
-                <IvzFuncBtn func="add" url="/quartz/triggers/add">新增</IvzFuncBtn>
+                <UFuncBtn func="query" url="/quartz/triggers/view">查询</UFuncBtn>
+                <UFuncBtn func="add" url="/quartz/triggers/add">新增</UFuncBtn>
             </template>
-        </IvzViewSearch>
-        <IvzViewTable :bordered="true" size="small" :columns="columns" :scroll="{ x: '100%'}">
+        </UViewSearch>
+        <UViewTable :bordered="true" size="small" :columns="columns" :scroll="{ x: '100%'}">
             <template #c_triggerState="{record}">
                 <ABadge v-if="record.triggerState=='PAUSED'" color="purple" text="暂停" />
                 <ABadge v-else-if="record.triggerState=='COMPLETE'" status="success" text="完成" />
@@ -21,32 +21,32 @@
                 </ATooltip>
             </template>
             <template #c_action="{record}">
-                <IvzFuncTag func="edit" url="/quartz/triggers/edit" :data="record">修改</IvzFuncTag>
-                <IvzFuncTag func="del" url="/quartz/triggers/del" :data="record">删除</IvzFuncTag>
-                <IvzFuncTag func="paused" :url="`/quartz/triggers/${record.triggerState=='PAUSED' ? 'resume' : 'paused'}`" :data="record">
+                <UFuncTag func="edit" url="/quartz/triggers/edit" :data="record">修改</UFuncTag>
+                <UFuncTag func="del" url="/quartz/triggers/del" :data="record">删除</UFuncTag>
+                <UFuncTag func="paused" :url="`/quartz/triggers/${record.triggerState=='PAUSED' ? 'resume' : 'paused'}`" :data="record">
                     {{ record.triggerState=='PAUSED' ? '恢复' : '暂停' }}
-                </IvzFuncTag>
-                <IvzFuncTag func="run" url="/quartz/triggers/run" :data="record">执行一次</IvzFuncTag>
+                </UFuncTag>
+                <UFuncTag func="run" url="/quartz/triggers/run" :data="record">执行一次</UFuncTag>
             </template>
-        </IvzViewTable>
-        <IvzViewModal :span="[6, 16]" :rules="rules" width="500px">
+        </UViewTable>
+        <UViewModal :span="[6, 16]" :rules="rules" width="500px">
             <template #default="{model}">
-                <IvzInput field="jobName" label="作业名" :disabled="model.schedName ? true : false" />
-                <IvzInput field="cron" label="cron" />
-                <IvzRadio field="concurrent" label="是否并发" :defaultValue="true" :options="BooleanStatus" help="指同一任务是否允许同时执行" />
-                <IvzInput field="params.expression" label="执行方法" :disabled="model.schedName ? true : false" />
-                <IvzTextarea field="description" label="说明" span="24" />
+                <UInput field="jobName" label="作业名" :disabled="model.schedName ? true : false" />
+                <UInput field="cron" label="cron" />
+                <URadio field="concurrent" label="是否并发" :defaultValue="true" :options="BooleanStatus" help="指同一任务是否允许同时执行" />
+                <UInput field="params.expression" label="执行方法" :disabled="model.schedName ? true : false" />
+                <UTextarea field="description" label="说明" span="24" />
             </template>
             <template #title="{model}">
                 <span>新增作业</span>
             </template>
             <template #footer="{model}">
-                <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-                <IvzFuncBtn func="submit" :url="model.schedName?'/quartz/triggers/edit':'/quartz/triggers/add'">提交</IvzFuncBtn>
-                <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+                <UFuncBtn func="cancel">取消</UFuncBtn>
+                <UFuncBtn func="submit" :url="model.schedName?'/quartz/triggers/edit':'/quartz/triggers/add'">提交</UFuncBtn>
+                <UFuncBtn func="reset">重置</UFuncBtn>
             </template>
-        </IvzViewModal>
-    </IvzBasicView>
+        </UViewModal>
+    </UView>
 </template>
 
 <script>

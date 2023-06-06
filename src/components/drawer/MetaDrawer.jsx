@@ -1,15 +1,15 @@
 import {computed, defineComponent, inject, mergeProps, ref, watch} from "vue";
-import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
+import UBasicDrawer from "@/components/drawer/BasicDrawer";
 import {initMetaCallback} from "@/utils/MetaUtils";
-import {IvzFuncBtn} from "@/components/basic";
+import {USearch} from "@/components/basic";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default defineComponent({
-    name: 'IvzMetaDrawer',
+    name: 'UMetaDrawer',
     props: {
         funMetas: {type: Array, default: () => []}
     },
-    components: {IvzBasicDrawer, IvzFuncBtn},
+    components: {UBasicDrawer, UFuncBtn},
     setup({funMetas}) {
         let funcBtnRef = ref([]);
         let viewContext = inject(ViewContextKey);
@@ -17,7 +17,7 @@ export default defineComponent({
             let funcBtn = [];
             funMetas.forEach(meta => {
                 initMetaCallback(meta, viewContext.__$View, 'edit');
-                funcBtn.push(<IvzFuncBtn {...meta.props} func={meta.field}>{meta.name}</IvzFuncBtn>)
+                funcBtn.push(<UFuncBtn {...meta.props} func={meta.field}>{meta.name}</UFuncBtn>)
             })
 
             funcBtnRef.value = funcBtn;
@@ -34,6 +34,6 @@ export default defineComponent({
     render() {
         let footerSlots = { footer: () => <div class="ivz-func-footer">{this.funcBtnRef}</div>}
         let slots = mergeProps(footerSlots, this.$slots);
-        return <IvzBasicDrawer class="ivz-metas-drawer" {...this.$attrs} v-slots={slots}/>
+        return <UBasicDrawer class="ivz-metas-drawer" {...this.$attrs} v-slots={slots}/>
     }
 })

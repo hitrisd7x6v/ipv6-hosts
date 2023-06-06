@@ -4,11 +4,11 @@ import {ViewContextKey} from "@/utils/ProvideKeys";
 import {FuncNameMeta} from "@/utils/MetaUtils";
 
 export default defineComponent({
-    name: "IvzBasicView",
+    name: "UView",
     props: {
         // 功能名称 比如 用户管理
         name: {type: String, default: ''},
-        // 功能点是否需要权限{@link IvzFuncBtn} {@link IvzFuncTag} 通过url判断是否显示
+        // 功能点是否需要权限{@link UFuncBtn} {@link UFuncTag} 通过url判断是否显示
         auth: {type: Boolean, default: false},
         rowKey: {type: String, default: 'id'},
     },

@@ -1,11 +1,11 @@
 import {defineComponent, inject, ref} from "vue";
-import IvzBasicTable from "@/components/table/IvzBasicTable";
+import UTable from "@/components/table/BasicTable";
 import {initMetaCallback} from "@/utils/MetaUtils";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default defineComponent({
-    name: 'IvzMetasTable',
-    components: {IvzBasicTable},
+    name: 'UMetasTable',
+    components: {UTable},
     props: {
         rowSelection: null, // 不支持
     },
@@ -13,7 +13,7 @@ export default defineComponent({
         let viewInfo = inject("IvzViewInfo");
         let viewContext = inject(ViewContextKey);
         if(!viewInfo) {
-            throw new Error(`IvzViewTable组件只能作为IvzXxxView等视图组件的子组件`);
+            throw new Error(`UViewTable组件只能作为IvzXxxView等视图组件的子组件`);
         }
 
         let ibtRef = ref();
@@ -46,7 +46,7 @@ export default defineComponent({
 
         return (
             <div class="ivz-view ivz-view-table">
-                <IvzBasicTable {...this.$attrs} dataSource={this.dataRef} ref="ibtRef" primary
+                <UTable {...this.$attrs} dataSource={this.dataRef} ref="ibtRef" primary
                    rowKey={rowKey} v-slots={this.$slots}/>
             </div>)
     }

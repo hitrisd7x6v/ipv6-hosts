@@ -1,35 +1,35 @@
 <template>
-  <IvzBasicView auth>
-    <IvzBasicSearch primary>
-      <ivz-select label="字典标识" field="type" @change="loadDictData" span="5"
+  <UView auth>
+    <USearch primary>
+      <USelect label="字典标识" field="type" @change="loadDictData" span="5"
                   url="/core/dictType/list" labelField="name" valueField="type"
                   :defaultValue="type"/>
-      <ivz-input label="数据名称" field="name" />
-      <IvzFuncBtn func="query" url="/core/dictData/view">查询</IvzFuncBtn>&nbsp;
-      <IvzFuncBtn func="add" url="/core/dictData/add">新增</IvzFuncBtn>&nbsp;
-    </IvzBasicSearch>
-    <IvzBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules" @edit="edit">
-        <IvzInput field="type" label="字典标识" disabled/>
-        <IvzInput field="label" label="数据名称" />
-        <IvzInput field="value" label="数据值" />
-        <IvzRadio field="status" label="状态" dict="sys.status" :defaultValue="'enabled'"/>
-        <IvzInputNumber field="sort" label="排序" :defaultValue="10"/>
+      <UInput label="数据名称" field="name" />
+      <UFuncBtn func="query" url="/core/dictData/view">查询</UFuncBtn>&nbsp;
+      <UFuncBtn func="add" url="/core/dictData/add">新增</UFuncBtn>&nbsp;
+    </USearch>
+    <UBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules" @edit="edit">
+        <UInput field="type" label="字典标识" disabled/>
+        <UInput field="label" label="数据名称" />
+        <UInput field="value" label="数据值" />
+        <URadio field="status" label="状态" dict="sys.status" :defaultValue="'enabled'"/>
+        <UInputNumber field="sort" label="排序" :defaultValue="10"/>
       <template #footer="{model}">
         <div style="text-align: center">
-          <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-          <IvzFuncBtn func="submit" :url="model.id ? '/core/dictData/edit' : '/core/dictData/add'">提交</IvzFuncBtn>&nbsp;
-          <IvzFuncBtn func="reset">重置</IvzFuncBtn>&nbsp;
+          <UFuncBtn func="cancel">取消</UFuncBtn>
+          <UFuncBtn func="submit" :url="model.id ? '/core/dictData/edit' : '/core/dictData/add'">提交</UFuncBtn>&nbsp;
+          <UFuncBtn func="reset">重置</UFuncBtn>&nbsp;
         </div>
       </template>
-    </IvzBasicDrawer>
-    <IvzBasicTable :columns="columns" size="small" rowKey="id"
+    </UBasicDrawer>
+    <UTable :columns="columns" size="small" rowKey="id"
              :bordered="true" primary :pagination="false">
       <template #c_action="{record}">
-        <IvzFuncTag func="edit" :data="record" url="/core/dictData/edit">编辑</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" url="/core/dictData/del">删除</IvzFuncTag>
+        <UFuncTag func="edit" :data="record" url="/core/dictData/edit">编辑</UFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/dictData/del">删除</UFuncTag>
       </template>
-    </IvzBasicTable>
-  </IvzBasicView>
+    </UTable>
+  </UView>
 </template>
 
 <script>

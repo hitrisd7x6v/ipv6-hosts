@@ -8,7 +8,7 @@ function  unMountedTable() {
     console.warn('表格组件未挂载或不存在');
 }
 function unMoundedEdit() {
-    console.warn('组件未挂载完成或者缺少编辑视图组件 IvzViewModal, IvzViewDrawer等');
+    console.warn('组件未挂载完成或者缺少编辑视图组件 UViewModal, UViewDrawer等');
 }
 // 解析视图菜单下面的功能点
 function resolverFunMetas(menu) {

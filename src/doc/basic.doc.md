@@ -1,29 +1,29 @@
-<h2>IvzBasicView视图组件 -- 一款可以灵活自定义功能的通用增删改查视图组件</h2>
+<h2>UView视图组件 -- 一款可以灵活自定义功能的通用增删改查视图组件</h2>
 
 代码演示
 ---
 
 ```vue demo
 <template>
-  <IvzBasicView>
-    <IvzBasicSearch primary>
-      <IvzInput field="name" label="茶叶名称"/>
+  <UView>
+    <USearch primary>
+      <UInput field="name" label="茶叶名称"/>
       <AButton type="primary" @click="query">查询</AButton>&nbsp;
       <AButton @click="add">新增</AButton>
-    </IvzBasicSearch>
-    <IvzBasicTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+    </USearch>
+    <UTable primary :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
       <template #c_action="{record}">
         <ATag color="blue" @click="add">新增</ATag>
         <ATag color="red" @click="() => del(record)">删除</ATag>
       </template>
-    </IvzBasicTable>
-    <IvzBasicModal primary>
-      <IvzInput field="name" label="茶叶名称"/>
+    </UTable>
+    <UBasicModal primary>
+      <UInput field="name" label="茶叶名称"/>
       <template #title="{model}">
         {{model.id ? '编辑产品' : '新增产品'}}
       </template>
-    </IvzBasicModal>
-  </IvzBasicView>
+    </UBasicModal>
+  </UView>
 </template>
 
 <script>

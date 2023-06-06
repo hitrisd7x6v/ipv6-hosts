@@ -1,39 +1,39 @@
 <template>
-  <IvzBasicView name="部门" auth>
-    <IvzViewSearch>
-      <ivz-input field="name" label="部门名称"/>
-      <ivz-input field="phone" label="手机号"/>
+  <UView name="部门" auth>
+    <UViewSearch>
+      <UInput field="name" label="部门名称"/>
+      <UInput field="phone" label="手机号"/>
       <template #func>
-        <IvzFuncBtn func="query" url="/core/org/view">搜索</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="add" url="/core/org/add">新增</IvzFuncBtn>
-        <IvzFuncBtn func="expand">展开/缩收</IvzFuncBtn>
+        <UFuncBtn func="query" url="/core/org/view">搜索</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
+        <UFuncBtn func="add" url="/core/org/add">新增</UFuncBtn>
+        <UFuncBtn func="expand">展开/缩收</UFuncBtn>
       </template>
-    </IvzViewSearch>
-    <IvzViewTable :columns="columns" size="small" :pagination="false">
+    </UViewSearch>
+    <UViewTable :columns="columns" size="small" :pagination="false">
       <template #c_action="{record}">
-        <IvzFuncTag func="add:child" :data="record" url="/core/org/add">新增子部门</IvzFuncTag>
-        <IvzFuncTag func="edit" :data="record" url="/core/org/edit">修改</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" url="/core/org/del">删除</IvzFuncTag>
+        <UFuncTag func="add:child" :data="record" url="/core/org/add">新增子部门</UFuncTag>
+        <UFuncTag func="edit" :data="record" url="/core/org/edit">修改</UFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/org/del">删除</UFuncTag>
       </template>
-    </IvzViewTable>
-    <IvzViewModal :span="[7, 15]" :rules="rules">
-      <ivz-tree-select field="pid" label="上级部门" valueField="id"
+    </UViewTable>
+    <UViewModal :span="[7, 15]" :rules="rules">
+      <UTreeSelect field="pid" label="上级部门" valueField="id"
            :defaultValue="0" url="/core/org/parent" labelField="name"
            treeNodeFilterProp="label"/>
-      <ivz-input field="name" label="部门名称"/>
-      <ivz-input field="leader" label="部门负责人"/>
-      <ivz-input field="phone" label="负责人手机号"/>
+      <UInput field="name" label="部门名称"/>
+      <UInput field="leader" label="部门负责人"/>
+      <UInput field="phone" label="负责人手机号"/>
       <template #title="{model}">
         {{model.id != null ? '修改部门' : '新增部门'}}
       </template>
       <template #footer="{model}">
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" :url="model.id ? '/core/org/edit' : '/core/org/add'">提交</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
+        <UFuncBtn func="submit" :url="model.id ? '/core/org/edit' : '/core/org/add'">提交</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
-    </IvzViewModal>
-  </IvzBasicView>
+    </UViewModal>
+  </UView>
 </template>
 <!--部门管理-->
 <script>

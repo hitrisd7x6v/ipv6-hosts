@@ -1,12 +1,12 @@
 import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
-import {Form, FormItem} from "ant-design-vue";
+import {Form} from "ant-design-vue";
 import {createMetasMap, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
 import {FormContext} from "@/components/form/basic/FormContext";
 import SysUtils from "@/utils/SysUtils";
 
 const unMounted = () => console.log('IvzForm组件未完成挂载')
 export default defineComponent({
-    name: 'IvzForm',
+    name: 'UForm',
     props: {
         rules: Object,
         name: String,

@@ -7,13 +7,13 @@ import CoreConsts from "@/components/CoreConsts";
 function Unmount() {
     console.warn("此方法只能在组件挂载时才能使用");
 }
-function unIvzFuncTag() {
-    console.warn("需使用[IvzFuncTag]作为表格按钮")
+function unUFuncTag() {
+    console.warn("需使用[UFuncTag]作为表格按钮")
 }
 
 /**
  * 视图组件提供的操作接口
- * @see IvzBasicView
+ * @see UView
  * @see IvzFuncView
  * @see IvzMenuView
  * @param context 视图组件的上下文对象{@link ViewContext}
@@ -156,7 +156,7 @@ export function $View(context) {
                 return console.warn('未指定编辑功能详情地址[url]')
             }
         } else {
-            return console.warn('未指定编辑组件[<IvzFuncTag func="edit"/>]')
+            return console.warn('未指定编辑组件[<UFuncTag func="edit"/>]')
         }
     }
 
@@ -266,9 +266,9 @@ export function $View(context) {
         if(!searchContext.isPrimary) return;
 
         let queryUrl = url
-        // 没有指定查询地址, 尝试从IvzFuncBtn获取地址
+        // 没有指定查询地址, 尝试从UFuncBtn获取地址
         if(!queryUrl) {
-            // 获取功能元[IvzFuncBtn]地址
+            // 获取功能元[UFuncBtn]地址
             let searchFunc = this.getSearchFunc(FuncNameMeta.QUERY);
             if(searchFunc) {
                 queryUrl = searchFunc.getUrl();
@@ -608,7 +608,7 @@ export function SearchContext(viewContext) {
     this.isPrimary = false;
     // 查询地址
     this.queryUrl = null;
-    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
     // 获取功能组件配置
@@ -663,7 +663,7 @@ export function EditContext(viewContext) {
     this.prefix = '';
     // 是否是主上下文
     this.isPrimary = false;
-    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
     // 获取功能组件配置
@@ -759,12 +759,12 @@ export function TableContext(viewContext) {
 
     // 是否是主上下文
     this.isPrimary = false;
-    // 在使用IvzFuncTag#data组件时, 将可以获取该值
+    // 在使用UFuncTag#data组件时, 将可以获取该值
     this.CurrentRow = null;
 
     this.pageSize = null;
     this.currentPage = null;
-    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
     // 获取功能组件配置
@@ -805,10 +805,10 @@ export function TableContext(viewContext) {
     /**
      * 获取当前点击的行
      * 使用此方法必须在表格的操作栏里面使用以下组件作为功能按钮
-     * @see IvzFuncTag 必须设置data属性
+     * @see UFuncTag 必须设置data属性
      */
     this.getCurrentRow = function () {
-        return this.CurrentRow || unIvzFuncTag();
+        return this.CurrentRow || unUFuncTag();
     }
 
     /**
@@ -877,7 +877,7 @@ export function DetailContext(viewContext) {
     this.prefix = '';
     // 是否是主上下文
     this.isPrimary = false;
-    // 存储IvzFuncBtn和IvzFuncTag组件的信息
+    // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
     // 获取功能组件配置

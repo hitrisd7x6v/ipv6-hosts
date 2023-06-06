@@ -1,39 +1,39 @@
 <template>
-  <IvzBasicView name="配置" auth>
-    <IvzViewSearch>
-      <ivz-input field="name" label="配置名称"/>
-      <ivz-input field="label" label="配置标识"/>
-      <ivz-radio field="type" label="系统配置" :options="type"/>
+  <UView name="配置" auth>
+    <UViewSearch>
+      <UInput field="name" label="配置名称"/>
+      <UInput field="label" label="配置标识"/>
+      <URadio field="type" label="系统配置" :options="type"/>
       <template #func>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="query" url="/core/config/view">搜索</IvzFuncBtn>
-        <IvzFuncBtn func="add" url="/core/config/add">新增</IvzFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
+        <UFuncBtn func="query" url="/core/config/view">搜索</UFuncBtn>
+        <UFuncBtn func="add" url="/core/config/add">新增</UFuncBtn>
       </template>
-    </IvzViewSearch>
-    <IvzViewTable :columns="columns" :bordered="true" size="small">
+    </UViewSearch>
+    <UViewTable :columns="columns" :bordered="true" size="small">
       <template #c_action="{record}">
-        <IvzFuncTag func="edit" :data="record" url="/core/config/edit">修改</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" url="/core/config/del">删除</IvzFuncTag>
+        <UFuncTag func="edit" :data="record" url="/core/config/edit">修改</UFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/config/del">删除</UFuncTag>
       </template>
-    </IvzViewTable>
-    <IvzViewModal :span="[6, 15]" :rules="rules">
+    </UViewTable>
+    <UViewModal :span="[6, 15]" :rules="rules">
       <template #default="{model}">
-        <ivz-input field="name" label="配置名称"/>
-        <ivz-input field="label" label="配置标识" :disabled="model.id != null"/>
-        <ivz-input field="value" label="配置值" />
-        <ivz-radio field="type" label="系统配置" :options="type" defaultValue="def"/>
-        <ivz-textarea field="remark" label="配置说明" />
+        <UInput field="name" label="配置名称"/>
+        <UInput field="label" label="配置标识" :disabled="model.id != null"/>
+        <UInput field="value" label="配置值" />
+        <URadio field="type" label="系统配置" :options="type" defaultValue="def"/>
+        <UTextarea field="remark" label="配置说明" />
       </template>
       <template #title="{model}">
         {{model.id != null ? '修改配置' : '新增配置'}}
       </template>
       <template #footer="{model}">
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" :url="model.id ? '/core/config/edit' : '/core/config/add'">提交</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
+        <UFuncBtn func="submit" :url="model.id ? '/core/config/edit' : '/core/config/add'">提交</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
-    </IvzViewModal>
-  </IvzBasicView>
+    </UViewModal>
+  </UView>
 </template>
 <!--系统配置管理-->
 <script>

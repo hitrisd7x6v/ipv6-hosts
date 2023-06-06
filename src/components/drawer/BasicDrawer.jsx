@@ -4,7 +4,7 @@ import {EditContext} from "@/components/view/Context";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 
 export default defineComponent({
-    name: 'IvzBasicDrawer',
+    name: 'UBasicDrawer',
     props: {
         title: String,
         bodyStyle: Object,
@@ -80,9 +80,9 @@ export default defineComponent({
                          {...this.$props} closable={false} v-slots={this.titleSlots}
                          getContainer=".ivz-main-container" ref="ADrawerRef">
             <a-spin size="small" tip={this.spinTip} spinning={this.spinning}>
-                <ivz-form {...this.$attrs} ref="iemFormRef" labelCol={this.labelCol} wrapperCol={this.wrapperCol}>
+                <UForm {...this.$attrs} ref="iemFormRef" labelCol={this.labelCol} wrapperCol={this.wrapperCol}>
                     {this.$slots.default ? this.$slots.default({model, context}) : []}
-                </ivz-form>
+                </UForm>
                 <div class="ivz-drawer-footer">
                     {this.$slots.footer ? this.$slots.footer({model, context}) : []}
                 </div>

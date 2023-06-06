@@ -1,18 +1,18 @@
 <template>
-  <IvzBasicView auth>
-    <IvzBasicSearch primary>
-      <IvzInput label="操作用户" field="userName" span="5" />
-      <IvzSelect label="状态" span="5" field="status" :options="SuccessStatus"/>
-      <IvzInputNumber label="执行时间>(ms)" span="5" field="millis" />
-      <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-      <IvzFuncBtn func="query" url="/core/log/view">搜索</IvzFuncBtn>
-    </IvzBasicSearch>
-    <IvzViewTable :columns="columns" size="small" :bordered="true">
+  <UView auth>
+    <USearch primary>
+      <UInput label="操作用户" field="userName" span="5" />
+      <USelect label="状态" span="5" field="status" :options="SuccessStatus"/>
+      <UInputNumber label="执行时间>(ms)" span="5" field="millis" />
+      <UFuncBtn func="reset">重置</UFuncBtn>
+      <UFuncBtn func="query" url="/core/log/view">搜索</UFuncBtn>
+    </USearch>
+    <UViewTable :columns="columns" size="small" :bordered="true">
       <template #c_action="{record}">
-        <IvzFuncTag func="del" :data="record" url="/core/log/del">删除</IvzFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/log/del">删除</UFuncTag>
       </template>
-    </IvzViewTable>
-  </IvzBasicView>
+    </UViewTable>
+  </UView>
 </template>
 
 <script>

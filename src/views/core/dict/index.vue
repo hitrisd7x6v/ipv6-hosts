@@ -1,41 +1,41 @@
 <template>
-  <IvzBasicView auth>
-    <IvzViewSearch>
-      <IvzInput label="字典名称" field="name" />
-      <IvzInput label="字典类型" field="type"/>
-      <IvzSelect label="字典状态" field="status" :options="status" span="6"/>
+  <UView auth>
+    <UViewSearch>
+      <UInput label="字典名称" field="name" />
+      <UInput label="字典类型" field="type"/>
+      <USelect label="字典状态" field="status" :options="status" span="6"/>
       <template #func>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="query" url="/core/dictType/view">搜索</IvzFuncBtn>
-        <IvzFuncBtn func="add" url="/core/dictType/add">新增</IvzFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
+        <UFuncBtn func="query" url="/core/dictType/view">搜索</UFuncBtn>
+        <UFuncBtn func="add" url="/core/dictType/add">新增</UFuncBtn>
       </template>
-    </IvzViewSearch>
-    <IvzViewTable :columns="columns" size="small" :bordered="true">
+    </UViewSearch>
+    <UViewTable :columns="columns" size="small" :bordered="true">
       <template #c_type="{text}">
         <router-link :to="{path: '/dict/data', query: {type: text}}">{{text}}</router-link>
       </template>
       <template #c_action="{record}">
-        <IvzFuncTag func="edit" :data="record" url="/core/dictType/edit">修改</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" url="/core/dictType/del">删除</IvzFuncTag>
+        <UFuncTag func="edit" :data="record" url="/core/dictType/edit">修改</UFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/dictType/del">删除</UFuncTag>
       </template>
-    </IvzViewTable>
-    <IvzViewModal :rules="rules" title="字典管理" :span="[6, 16]">
+    </UViewTable>
+    <UViewModal :rules="rules" title="字典管理" :span="[6, 16]">
       <template #default="{model}">
-        <ivz-input label="字典名称" field="name" />
-        <ivz-input label="字典标识" field="type" :disabled="model.id ? true : false" />
-        <ivz-radio label="字典状态" field="status" :options="status"/>
-        <ivz-input label="备注" field="remark" />
+        <UInput label="字典名称" field="name" />
+        <UInput label="字典标识" field="type" :disabled="model.id ? true : false" />
+        <URadio label="字典状态" field="status" :options="status"/>
+        <UInput label="备注" field="remark" />
       </template>
       <template #title="{model}">
         {{model.id != null ? '修改字典' : '新增字典'}}
       </template>
       <template #footer="{model}">
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" :url="model.id ? '/core/dictType/edit' : '/core/dictType/add'">提交</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
+        <UFuncBtn func="submit" :url="model.id ? '/core/dictType/edit' : '/core/dictType/add'">提交</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
-    </IvzViewModal>
-  </IvzBasicView>
+    </UViewModal>
+  </UView>
 </template>
 <!--字典管理-->
 <script>

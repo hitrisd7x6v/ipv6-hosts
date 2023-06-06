@@ -1,10 +1,10 @@
 import {defineComponent, mergeProps, ref} from "vue";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 import {EditContext} from "@/components/view/Context";
-import IvzBasicModal from "@/components/modal/IvzBasicModal";
+import UBasicModal from "@/components/modal/BasicModal";
 
 export default defineComponent({
-    name: 'IvzEditModal',
+    name: 'UEditModal',
     props: ['funMetas'],
     setup({funMetas}) {
         let formRef = ref(null);
@@ -14,7 +14,7 @@ export default defineComponent({
                 funMetas.forEach(meta => {
                     let oriClickEvent = meta.props.onClick;
                     if(!oriClickEvent && import.meta.env.DEV) {
-                        console.warn(`组件[IvzEditModal]的功能[${meta.field}]没有监听点击事件`)
+                        console.warn(`组件[UEditModal]的功能[${meta.field}]没有监听点击事件`)
                     }
 
                     meta.props.onClick = () => {
@@ -23,7 +23,7 @@ export default defineComponent({
                         if(oriClickEvent) {
                             oriClickEvent(editModel, meta, formContext);
                         } else {
-                            console.error(`组件[IvzEditModal]的功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
+                            console.error(`组件[UEditModal]的功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
                         }
                     }
                 })
@@ -51,6 +51,6 @@ export default defineComponent({
             footer: () => this.$slots.fun ? this.$slots.fun({model, context})
                 : <div class="ivz-func ivz-iem-func">{fun}</div>,
         })
-        return <IvzBasicModal {...this.$attrs} v-slots={slots} ref="basicModalRef"></IvzBasicModal>
+        return <UBasicModal {...this.$attrs} v-slots={slots} ref="basicModalRef"></UBasicModal>
     }
 })

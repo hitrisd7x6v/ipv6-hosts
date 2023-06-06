@@ -1,50 +1,50 @@
 <template>
-  <IvzBasicView name="角色管理" auth>
-    <IvzViewSearch ref="ivzForm">
-      <ivz-input label="角色名称" field="name" />
-      <ivz-radio label="状态" field="status" :options="status"/>
+  <UView name="角色管理" auth>
+    <UViewSearch ref="ivzForm">
+      <UInput label="角色名称" field="name" />
+      <URadio label="状态" field="status" :options="status"/>
       <template #func>
-        <IvzFuncBtn func="query" url="/core/role/view">搜索</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="add" url="/core/role/add">新增</IvzFuncBtn>
+        <UFuncBtn func="query" url="/core/role/view">搜索</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
+        <UFuncBtn func="add" url="/core/role/add">新增</UFuncBtn>
       </template>
-    </IvzViewSearch>
-    <IvzViewModal :span="[5, 16]" :rules="rules">
-      <ivz-input label="角色名称" field="name" />
-      <ivz-radio label="状态" field="status" :options="status" defaultValue="enabled"/>
-      <ivz-input-number label="排序" field="sort" :defaultValue="10"/>
-      <ivz-textarea label="备注" field="remark" />
+    </UViewSearch>
+    <UViewModal :span="[5, 16]" :rules="rules">
+      <UInput label="角色名称" field="name" />
+      <URadio label="状态" field="status" :options="status" defaultValue="enabled"/>
+      <UInputNumber label="排序" field="sort" :defaultValue="10"/>
+      <UTextarea label="备注" field="remark" />
       <template #title="{model}">
         {{model.id != null ? '修改角色' : '新增角色'}}
       </template>
       <template #footer="{model}">
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" :url="model.id ? '/core/role/edit' : '/core/role/add'">提交</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
+        <UFuncBtn func="submit" :url="model.id ? '/core/role/edit' : '/core/role/add'">提交</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
-    </IvzViewModal>
-    <IvzViewTable :columns="columns" :bordered="true" size="small">
+    </UViewModal>
+    <UViewTable :columns="columns" :bordered="true" size="small">
       <template #c_action="{record}">
-        <IvzFuncTag func="edit" :data="record" url="/core/role/edit">修改</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" url="/core/role/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm">分配权限</IvzFuncTag>
+        <UFuncTag func="edit" :data="record" url="/core/role/edit">修改</UFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/role/del">删除</UFuncTag>
+        <UFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm">分配权限</UFuncTag>
       </template>
-    </IvzViewTable>
-    <IvzBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
+    </UViewTable>
+    <UBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
       <template #default="{model}">
         &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
         &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
         <a-checkbox style="float: right" v-model:checked="checkedValue" @change="checked">全选</a-checkbox>
-        <IvzTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)" :checkStrictly="false"
+        <UTree url="/core/role/allMenus" :checkedUrl="getCheckedUrl(model)" :checkStrictly="false"
                  showLine checkable :selectable="true" ref="funcMenus"/>
       </template>
       <template #footer>
-        <IvzFuncBtn func="reset" @click="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="submit" url="/core/role/perm" @click="submit">提交</IvzFuncBtn>
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <UFuncBtn func="reset" @click="reset">重置</UFuncBtn>
+        <UFuncBtn func="submit" url="/core/role/perm" @click="submit">提交</UFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
       </template>
-    </IvzBasicModal>
-  </IvzBasicView>
+    </UBasicModal>
+  </UView>
 </template>
 
 <script>

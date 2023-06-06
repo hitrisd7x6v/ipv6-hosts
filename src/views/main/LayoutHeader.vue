@@ -15,7 +15,7 @@
       <div class="ivz-header-col ivz-header-col-right">
         <ul style="list-style: none; padding: 0px; margin: 0px">
           <li class="ivz-opera-col">
-            <a-dropdown placement="bottomCenter" class="ivz-opera-more">
+            <a-dropdown placement="bottom" class="ivz-opera-more">
               <div>
                 <a-avatar :src="user.avatar" :size="32" :load-error="loadError"></a-avatar>
                 <span style="margin-left: 3px; vertical-align: 2px">{{user.name}}</span>

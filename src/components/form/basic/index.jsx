@@ -1,10 +1,10 @@
 import {defineComponent, h, resolveComponent} from "vue";
-import IvzForm from "@/components/form/basic/IvzForm";
+import UForm from "@/components/form/basic/Form.jsx";
 import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
 import MixinsOptionsItem from "@/components/form/basic/MixinsOptionsItem";
 
-export const IvzInput = defineComponent({
-    name: 'IvzInput',
+export const UInput = defineComponent({
+    name: 'UInput',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -17,8 +17,8 @@ export const IvzInput = defineComponent({
 
 })
 
-export const IvzInputNumber = defineComponent({
-    name: 'IvzInputNumber',
+export const UInputNumber = defineComponent({
+    name: 'UInputNumber',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -30,8 +30,8 @@ export const IvzInputNumber = defineComponent({
     }
 
 })
-export const IvzInputPassword = defineComponent({
-    name: 'IvzInputPassword',
+export const UInputPassword = defineComponent({
+    name: 'UInputPassword',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -43,8 +43,8 @@ export const IvzInputPassword = defineComponent({
     }
 })
 
-export const IvzInputGroup = defineComponent({
-    name: 'IvzInputGroup',
+export const UInputGroup = defineComponent({
+    name: 'UInputGroup',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -59,8 +59,8 @@ export const IvzInputGroup = defineComponent({
     }
 })
 
-export const IvzTextarea = defineComponent({
-    name: 'IvzTextarea',
+export const UTextarea = defineComponent({
+    name: 'UTextarea',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -73,8 +73,8 @@ export const IvzTextarea = defineComponent({
 
 })
 
-export const IvzCheckbox = defineComponent({
-    name: 'IvzCheckbox',
+export const UCheckbox = defineComponent({
+    name: 'UCheckbox',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     setup(props, {slots}) {
         let defaultSlots
@@ -98,8 +98,8 @@ export const IvzCheckbox = defineComponent({
 
 })
 
-export const IvzSwitch = defineComponent({
-    name: 'IvzSwitch',
+export const USwitch = defineComponent({
+    name: 'USwitch',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -112,8 +112,8 @@ export const IvzSwitch = defineComponent({
 
 })
 
-export const IvzRate = defineComponent({
-    name: 'IvzRate',
+export const URate = defineComponent({
+    name: 'URate',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -126,8 +126,8 @@ export const IvzRate = defineComponent({
 
 })
 
-export const IvzSelect = defineComponent({
-    name: 'IvzSelect',
+export const USelect = defineComponent({
+    name: 'USelect',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
@@ -139,8 +139,8 @@ export const IvzSelect = defineComponent({
     }
 })
 
-export const IvzSlider = defineComponent({
-    name: 'IvzSlider',
+export const USlider = defineComponent({
+    name: 'USlider',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -153,8 +153,8 @@ export const IvzSlider = defineComponent({
     }
 
 })
-export const IvzCascader = defineComponent({
-    name: 'IvzCascader',
+export const UCascader = defineComponent({
+    name: 'UCascader',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
@@ -167,8 +167,8 @@ export const IvzCascader = defineComponent({
     }
 
 })
-export const IvzAutoComplete = defineComponent({
-    name: 'IvzAutoComplete',
+export const UAutoComplete = defineComponent({
+    name: 'UAutoComplete',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
@@ -182,8 +182,8 @@ export const IvzAutoComplete = defineComponent({
 
 })
 
-export const IvzRadio = defineComponent({
-    name: 'IvzRadio',
+export const URadio = defineComponent({
+    name: 'URadio',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let slots = this.$slots.default ? () => {
@@ -201,8 +201,8 @@ export const IvzRadio = defineComponent({
     }
 
 })
-export const IvzMentions = defineComponent({
-    name: 'IvzMentions',
+export const UMentions = defineComponent({
+    name: 'UMentions',
     mixins: [MixinsFormItem],
     render() {
 
@@ -227,8 +227,8 @@ export const IvzMentions = defineComponent({
     }
 
 })
-export const IvzTreeSelect = defineComponent({
-    name: 'IvzTreeSelect',
+export const UTreeSelect = defineComponent({
+    name: 'UTreeSelect',
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
@@ -244,8 +244,8 @@ export const IvzTreeSelect = defineComponent({
 
 const typeMaps = {date: 'a-date-picker', month: 'a-month-picker'
     , range: 'a-range-picker', week: 'a-week-picker', time: 'a-time-picker'}
-export const IvzDateTime = defineComponent({
-    name: 'IvzDateTime',
+export const UDateTime = defineComponent({
+    name: 'UDateTime',
     props: ['picker'],
     mixins: [MixinsFormItem],
     render() {
@@ -259,8 +259,8 @@ export const IvzDateTime = defineComponent({
         </a-col>
     }
 })
-export const IvzDatePicker = defineComponent({
-    name: 'IvzDatePicker',
+export const UDatePicker = defineComponent({
+    name: 'UDatePicker',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -271,8 +271,8 @@ export const IvzDatePicker = defineComponent({
         </a-col>
     }
 })
-export const IvzMonthPicker = defineComponent({
-    name: 'IvzMonthPicker',
+export const UMonthPicker = defineComponent({
+    name: 'UMonthPicker',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -283,8 +283,8 @@ export const IvzMonthPicker = defineComponent({
         </a-col>
     }
 })
-export const IvzWeekPicker = defineComponent({
-    name: 'IvzWeekPicker',
+export const UWeekPicker = defineComponent({
+    name: 'UWeekPicker',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -295,8 +295,8 @@ export const IvzWeekPicker = defineComponent({
         </a-col>
     }
 })
-export const IvzRangePicker = defineComponent({
-    name: 'IvzRangePicker',
+export const URangePicker = defineComponent({
+    name: 'URangePicker',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -307,8 +307,8 @@ export const IvzRangePicker = defineComponent({
         </a-col>
     }
 })
-export const IvzTimePicker = defineComponent({
-    name: 'IvzTimePicker',
+export const UTimePicker = defineComponent({
+    name: 'UTimePicker',
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
@@ -319,10 +319,10 @@ export const IvzTimePicker = defineComponent({
         </a-col>
     }
 })
-const formComponents = {IvzForm, IvzInput, IvzSelect, IvzCheckbox, IvzSwitch
-    , IvzRate, IvzSlider, IvzInputNumber, IvzCascader, IvzAutoComplete, IvzInputPassword
-    , IvzRadio, IvzMentions, IvzDateTime, IvzTreeSelect, IvzTextarea, IvzInputGroup
-    , IvzDatePicker, IvzMonthPicker, IvzRangePicker, IvzTimePicker, IvzWeekPicker}
+const formComponents = {UForm, UInput, USelect, UCheckbox, USwitch
+    , URate, USlider, UInputNumber, UCascader, UAutoComplete, UInputPassword
+    , URadio, UMentions, UDateTime, UTreeSelect, UTextarea, UInputGroup
+    , UDatePicker, UMonthPicker, URangePicker, UTimePicker, UWeekPicker}
 
 export default {
     install(app) {

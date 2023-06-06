@@ -47,13 +47,13 @@ export default {
         useStore().dispatch('sys/initUser')
 
         /**
-         * IvzRow组件将覆盖此对象, 使用在表单组件(表单组件使用了ACol)
+         * URow组件将覆盖此对象, 使用在表单组件(表单组件使用了ACol)
          */
         provide(RowContextKey, {});
 
         /**
          * 视图组件使用的上下文
-         * @see IvzBasicView.jsx
+         * @see UView.jsx
          * @see IvzFuncView.vue
          * @see IvzMenuView.vue
          * @param value 必须为 null

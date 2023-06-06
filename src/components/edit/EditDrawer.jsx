@@ -1,8 +1,8 @@
 import {defineComponent, ref} from "vue";
-import IvzBasicDrawer from "@/components/drawer/IvzBasicDrawer";
+import UBasicDrawer from "@/components/drawer/BasicDrawer";
 
 export default defineComponent({
-    name: 'IvzEditDrawer',
+    name: 'UEditDrawer',
     props: {
         title: String,
         bodyStyle: Object,
@@ -30,7 +30,7 @@ export default defineComponent({
             funMetas.forEach(meta => {
                 let oriClickEvent = meta.props.onClick;
                 if(!oriClickEvent && import.meta.env.DEV) {
-                    console.warn(`组件[IvzEditDrawer]的功能[${meta.field}]没有监听点击事件`)
+                    console.warn(`组件[UEditDrawer]的功能[${meta.field}]没有监听点击事件`)
                 }
 
                 meta.props.onClick = () => {
@@ -39,7 +39,7 @@ export default defineComponent({
                     if(oriClickEvent) {
                         oriClickEvent(editModel, meta, formContext);
                     } else {
-                        console.error(`组件[IvzEditDrawer]的功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
+                        console.error(`组件[UEditDrawer]的功能[${meta.field}]没有监听点击事件[meta.props.onClick=undefined]`)
                     }
                 }
             })
@@ -77,6 +77,6 @@ export default defineComponent({
             title: () => this.$slots.title ? this.$slots.title() : <span>{this.title}</span>
         }
 
-        return <IvzBasicDrawer {...this.$attrs} v-slots={this.$slots} primary></IvzBasicDrawer>
+        return <UBasicDrawer {...this.$attrs} v-slots={this.$slots} primary></UBasicDrawer>
     }
 })

@@ -5,26 +5,26 @@
 
 ```vue demo
 <template>
-  <IvzBasicView>
-    <IvzBasicSearch primary>
-      <IvzInput field="name" label="茶叶名称"/>
-      <IvzFuncBtn func='query' url='/doc/product/view'>查询</IvzFuncBtn>&nbsp;
+  <UView>
+    <USearch primary>
+      <UInput field="name" label="茶叶名称"/>
+      <UFuncBtn func='query' url='/doc/product/view'>查询</UFuncBtn>&nbsp;
       <AButton @click="add">新增</AButton>
-    </IvzBasicSearch>
+    </USearch>
     <IvzPrimaryTable :bordered="true" :columns="columns" rowKey="id">
       <template #c_action="{record}">
-        <IvzFuncTag func='edit' :data='record' url='/doc/product/edit'>编辑</IvzFuncTag>
+        <UFuncTag func='edit' :data='record' url='/doc/product/edit'>编辑</UFuncTag>
         <ATag color="blue" @click="add">新增</ATag>
         <ATag color="red" @click="() => del(record)">删除</ATag>
       </template>
     </IvzPrimaryTable>
     <IvzPrimaryModal>
-      <IvzInput field="name" label="茶叶名称"/>
+      <UInput field="name" label="茶叶名称"/>
       <template #title="{model}">
         {{model.id ? '编辑产品' : '新增产品'}}
       </template>
     </IvzPrimaryModal>
-  </IvzBasicView>
+  </UView>
 </template>
 
 <script>

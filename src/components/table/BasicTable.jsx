@@ -1,49 +1,24 @@
 import {useStore} from "vuex";
-import {Tag} from 'ant-design-vue'
-import {IvzFuncTag} from "@/components/basic";
-import {defineComponent, h, inject, mergeProps, provide, reactive, ref, watch} from "vue";
+import dayjs from "dayjs";
+import {defineComponent, inject, provide, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {TableContext} from "@/components/view/Context";
-import CoreConsts from "@/components/CoreConsts";
-import dayjs from "dayjs";
 
-function getSlotName(dataIndex) {
-    let fieldPath = dataIndex.split('.');
-    fieldPath.splice(0, 0, 'c');
-    return fieldPath.join('_');
-}
-function getFieldName(dataIndex) {
-    return dataIndex instanceof Array ? null : null;
-}
-function initColumnActionSlot(column) {
-    let funMetas = column['funMetas'];
-    if(funMetas instanceof Array) {
-        funMetas.forEach(meta => {
-            let oriClickEvent = meta.props.onClick;
-            if(!oriClickEvent && import.meta.env.DEV) {
-                console.warn(`组件[IvzBasicTable]的操作功能[${meta.field}]没有监听点击事件`)
-            }
+function initSlot(column, slots) {
+    let slotName = "";
+    if (column.dataIndex instanceof Array) {
+        slotName = column.dataIndex.join("_");
+    } else if (column.dataIndex instanceof String) {
+        slotName = column.dataIndex;
+    } else {
+        slotName = column.field.split('.').join("_");
+    }
 
-            if(!meta.render) {
-                delete meta.props.onClick; // 删除原先的事件
-                meta.render = (row, meta) => {
-                    return <IvzFuncTag func={meta.field} onClick={oriClickEvent}
-                        data={row} disabled={meta.disabled}>{meta.name}</IvzFuncTag>
-                }
-            }
-        })
-
-        column['__slot'] = ({record}) => {
-            let children = []
-            funMetas.forEach(meta => {
-                if(meta.view(record, meta)) {
-                    children.push(meta.render(record, meta))
-                }
-            })
-
-            return <div>{() => children}</div>
-        }
+    if (slots['c_' + slotName]) {
+        column['__slot'] = slots['c_' + slotName]
+    } else if (slots[slotName]) {
+        column['__slot'] = slots[slotName]
     }
 }
 
@@ -72,115 +47,95 @@ function initOptionsLabel(column) {
     }
 }
 
-function initColumnFormatterSlot(column, slotName, slots) {
+function initColumnFormatterSlot(column) {
     initOptionsLabel(column);
 
     let formatter = column.formatter;
     if(formatter instanceof Function) {
         // 对formatter创建代理, 新增返回label值
-        column.formatter = ({value, record, column}) => {
-            let label = column['__valueLabelMap'][value];
-            return formatter({value, record, column, label})
+        column.formatter = ({text, record, column}) => {
+            let label = column['__valueLabelMap'][text];
+            return formatter({text, record, column, label})
         }
     } else {
-        column.formatter = ({value, record, column}) => {
-            return column['__valueLabelMap'][value];
+        column.formatter = ({text, record, column}) => {
+            return column['__valueLabelMap'][text];
         }
     }
 
-    slots[slotName] = ({text, record}) => {
-        return column.formatter({value: text, record, column})
+    let proxySlot = column['__slot']
+    if(proxySlot) {
+        column['__slot'] = (args) => {
+            args['value'] = column.formatter(args);
+            return proxySlot(args);
+        }
+    } else {
+        column['__slot'] = column.formatter;
     }
+
 }
 
 const typeFormatMaps = {datetime: 'YYYY-MM-DD HH:mm:ss', date: 'YYYY-MM-DD', month: 'MM', week: 'E', time: 'HH:mm:ss'}
-function initDatetimeColumnSlot(column, slotName, slots) {
+function initDatetimeColumnSlot(column) {
     let formatter = column.formatter;
     if(!(formatter instanceof Function)) {
-        column.formatter = ({value, row, column}) => {
+        column.formatter = ({text, record, column}) => {
             try {
-                if (value) {
+                if (text) {
                     let picker = column.picker || 'datetime';
-                    return dayjs(value).format(column.format || typeFormatMaps[picker]);
+                    return dayjs(text).format(column.format || typeFormatMaps[picker]);
                 } else {
                     return '';
                 }
             } catch (e) {
                 console.error(e);
+                return ''
             }
         }
     }
 
-    slots[slotName] = ({text, record}) => {
-        return column.formatter({value: text, record, column})
+    let proxySlot = column['__slot']
+    if(proxySlot) {
+        column['__slot'] = (args) => {
+            args['value'] = column.formatter(args);
+            return proxySlot(args);
+        }
+    } else {
+        column['__slot'] = column.formatter;
     }
 }
 function initColumn(column, slots) {
-    let columnSlot = {}
     column.align = column.align || 'center';
-    column.dataIndex = column.dataIndex || column.field;
+    column.dataIndex = column.dataIndex || column.field.split(".");
 
-    let dataIndex = column.dataIndex;
+    initSlot(column, slots); // 初始化插槽
 
-    if(column.type == 'action') {
-        // 操作列的默认对齐方式为居中对齐
-        column['align'] = column['align'] || 'center';
-
-        columnSlot['customRender'] = getSlotName(dataIndex);
-        initColumnActionSlot(column, columnSlot['customRender'], slots)
-    } else if(column.dict || column.url || column.options) {
-        columnSlot['customRender'] = getSlotName(dataIndex);
-        initColumnFormatterSlot(column, columnSlot['customRender'], slots);
+    if(column.dict || column.url || column.options) {
+        initColumnFormatterSlot(column);
     } else if(column.type == 'date') {
-        columnSlot['customRender'] = getSlotName(dataIndex);
-        initDatetimeColumnSlot(column, columnSlot['customRender'], slots);
+        initDatetimeColumnSlot(column);
     }
 }
-function initTableColumns(oriColumns, slots) {
-    let slotNameMaps = {}, columns = [];
-
-    Object.keys(slots).forEach(name => {
-        if(name.startsWith('c_')) {
-            let dataIndex = name.split('_')
-                .filter(key => key != 'c').join('.');
-
-            slotNameMaps[dataIndex] = name;
-        }
-    });
-
-    if(oriColumns instanceof Array) {
-        oriColumns.forEach(column => {
-            if(!column['__init']) {
-                initColumn(column, slots)
+function initTableColumns(columns, slots) {
+    slots = {...slots};
+    columns.forEach(column => {
+        if(!column['__init']) {
+            initColumn(column, slots);
+            if(column['__slot'] && !slots['bodyCell']) {
+                slots['bodyCell'] = (args) => {
+                    return args.column['__slot'] ? args.column['__slot'](args) : args.text;
+                }
             }
-        })
-    }
-
-    return {slots, columns};
-}
-
-function getTableRowSelection(columns) {
-    if(columns.length > 0) {
-        let firstColumn = columns[0];
-        if(firstColumn.type == 'selection') {
-            let selectionRow = {...firstColumn};
-            selectionRow.type = 'checkbox';
-            selectionRow.columnWidth = firstColumn.columnWidth || firstColumn.width;
-            selectionRow.columnTitle = firstColumn.columnTitle || firstColumn.title;
-            return selectionRow;
         }
-
-        return null;
-    } else {
-        return null;
-    }
+    })
+    return slots;
 }
+
 export default defineComponent({
-    name: 'IvzBasicTable',
+    name: 'UTable',
     props: {
         primary: {type: Boolean, default: false},
         dataSource: {type: Array},
-        rowSelection: {type: null}, // 不支持此选项
         columns: {type: Array, default: () => []},
         pagination: {
             default: () => {
@@ -199,11 +154,10 @@ export default defineComponent({
         let selectedRows = ref([]);
         let selectedRowKeys = ref([]);
 
-        let loading = ref(false);
+        let loading = reactive({spinning: false, tip: '数据加载中...'});
         let dataSourceRef = ref(props.dataSource);
         let {columns, expandedRowKeys} = props;
         let unfoldRowKeys = ref(expandedRowKeys);
-        let rowSelection = getTableRowSelection(columns);
 
         let viewContext = inject(ViewContextKey);
         let tableContext = new TableContext(viewContext);
@@ -217,25 +171,16 @@ export default defineComponent({
         watch(() => props.dataSource, (newVal) => {
             dataSourceRef.value = newVal;
         })
-        if(rowSelection) {
-            rowSelection = reactive(rowSelection);
 
-            rowSelection.onChange = (selectedKeys, rows) => {
+        // 代理选中改变事件
+        if(attrs.rowSelection) {
+            let proxyChangeEvent = attrs.rowSelection.onChange;
+            attrs.rowSelection.onChange = (selectedKeys, rows) => {
                 selectedRows.value = rows;
                 selectedRowKeys.value = selectedKeys;
-                emit('selectChange', selectedKeys, rows);
-            }
-
-            rowSelection.onSelect = (record, selected, selectedRows) => {
-                emit('select', record, selected, selectedRows)
-            }
-
-            rowSelection.onSelectAll = (selected, selectedRows, changeRows) => {
-                emit('selectAll', selected, selectedRows, changeRows)
-            }
-
-            rowSelection.onSelectInvert = (selectedRows) => {
-                emit('selectInvert', selectedRows)
+                if(proxyChangeEvent instanceof Function) {
+                    proxyChangeEvent(selectedKeys, rows);
+                }
             }
         }
 
@@ -253,18 +198,13 @@ export default defineComponent({
             }
         }
 
-        let tableInfo = initTableColumns(columns, {...slots});
-        let slotsRef = ref(tableInfo.slots);
-        let columnsRef = ref(tableInfo.columns)
+        // 更新列改变
+        let slotsRef = ref(initTableColumns(columns, slots));
 
-        // 刷新列数据
-        let updateColumns = () => {
-            let tableInfo = initTableColumns(columns, slotsRef.value);
-            slotsRef.value = tableInfo.slots;
-            columnsRef.value = tableInfo.columns
+        let setLoading = (status, tip) => {
+            loading.spinning = status;
+            loading.tip = tip || '数据加载中...';
         }
-
-        let setLoading = (status) => loading.value = status;
         let setDataSource = (ds) => dataSourceRef.value = ds;
         let setTotalRows = (total) => {
             if(props.pagination instanceof Object) {
@@ -298,8 +238,8 @@ export default defineComponent({
         }
 
         provide(FuncContextKey, tableContext);
-        return {slotsRef, columnsRef, selectedRows, rowSelection, selectedRowKeys
-            , updateColumns, unfoldRowKeys, loading, dataSourceRef
+        return {slotsRef, selectedRows, selectedRowKeys
+            , unfoldRowKeys, loading, dataSourceRef
             , setDataSource, setLoading, setTotalRows, tableContext}
     },
     created() {
@@ -309,16 +249,15 @@ export default defineComponent({
     },
     render() {
         return (
-            <ATable {...this.$attrs} columns={this.columnsRef} rowSelection={this.rowSelection}
-                loading={this.loading} dataSource={this.dataSourceRef} ref="ATableRef"
+            <ATable {...this.$attrs} columns={this.columns} ref="ATableRef"
+                loading={this.loading} dataSource={this.dataSourceRef}
                 pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
                 onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {
-                        onClick: (event) => this.$emit('rowClick', row),       // 点击行
-                        onDblclick: (event) => this.$emit('rowDblclick', row), // 行双击
+                        onClick: (e) => this.$emit('rowClick', {e, row}),       // 点击行
+                        onDblclick: (e) => this.$emit('rowDblclick', {e, row}), // 行双击
                     }
                  }}>
-
             </ATable>)
     },
     methods: {

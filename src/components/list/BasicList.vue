@@ -1,21 +1,21 @@
 <template>
   <div class="ivz-basic-list">
-    <ivz-basic-search layout="inline">
+    <USearch layout="inline">
       <template #default="{model}">
         <slot name="search" :model="model"></slot>
       </template>
       <template #fun="{metas}">
         <slot name="fun" :metas="metas"></slot>
       </template>
-    </ivz-basic-search>
+    </USearch>
   </div>
 </template>
 
 <script>
-import IvzBasicSearch from "@/components/search/IvzBasicSearch.vue";
+import USearch from "@/components/search/BasicSearch.vue";
 export default {
-  name: "IvzBasicList",
-  components: {IvzBasicSearch},
+  name: "UBasicList",
+  components: {USearch},
 }
 </script>
 

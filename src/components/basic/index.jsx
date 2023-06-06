@@ -7,8 +7,8 @@ import {mapGetters} from "vuex";
 import CoreConsts from "@/components/CoreConsts";
 import SysUtils from "@/utils/SysUtils";
 
-export const IvzRow = defineComponent({
-    name: 'IvzRow',
+export const URow = defineComponent({
+    name: 'URow',
     props: ['span'],
     setup(props) {
         provide(RowContextKey, {
@@ -166,8 +166,8 @@ const colorMaps = {
     , EXPORT: 'orange',CANCEL: 'red', DETAIL: '#87d068', RESET: 'warning', DEF: 'default'
     , SUBMIT: 'blue', VIEW: '#108ee9'
 }
-export const IvzFuncTag = defineComponent({
-    name: 'IvzFuncTag',
+export const UFuncTag = defineComponent({
+    name: 'UFuncTag',
     props: {
         url: String,
         color: String,
@@ -266,8 +266,8 @@ const typeMaps = {
  * 注：只适用于编辑组件包括不限于(搜索组件, 编辑组件)等编辑组件
  * @type {DefineComponent<{func: {default: string, type: StringConstructor}, meta: {default: (function(): {}), type: ObjectConstructor}, url: {type: StringConstructor}}, unknown, unknown, {typeCompute(): *}, {}, ComponentOptionsMixin, ComponentOptionsMixin, Record<string, any>, string>}
  */
-export const IvzFuncBtn = defineComponent({
-    name: 'IvzFuncBtn',
+export const UFuncBtn = defineComponent({
+    name: 'UFuncBtn',
     props: {
         url: {type: String}, // 功能地址
         func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
@@ -339,8 +339,8 @@ export const IvzFuncBtn = defineComponent({
     }
 })
 
-export const IvzTree = defineComponent({
-    name: 'IvzTree',
+export const UTree = defineComponent({
+    name: 'UTree',
     props: {
         url: {type: String}, // 数据地址
         onCheck: {type: Function},
@@ -493,9 +493,9 @@ export const IvzTree = defineComponent({
 
 export default {
     install(app) {
-        app.component(IvzRow.name, IvzRow)
-        app.component(IvzTree.name, IvzTree)
-        app.component(IvzFuncBtn.name, IvzFuncBtn)
-        app.component(IvzFuncTag.name, IvzFuncTag)
+        app.component(URow.name, URow)
+        app.component(UTree.name, UTree)
+        app.component(UFuncBtn.name, UFuncBtn)
+        app.component(UFuncTag.name, UFuncTag)
     }
 }

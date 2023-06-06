@@ -4,7 +4,7 @@ import MixinsEditItem from "@/components/edit/MixinsEditItem";
 import {EditContext} from "@/components/view/Context";
 
 export default defineComponent({
-  name: 'IvzBasicModal',
+  name: 'UBasicModal',
   props: {
     title: String,
     bodyStyle: Object,
@@ -73,9 +73,9 @@ export default defineComponent({
 
     return <AModal v-model={[this.visible, 'visible', ["modifier"]]} {...this.$props} v-slots={slots} ref="iemRef">
       <ASpin size="small" tip={this.spinTip} spinning={this.spinning}>
-        <IvzForm {...this.$attrs} labelCol={this.labelCol} wrapperCol={this.wrapperCol} ref="iemFormRef">
+        <UForm {...this.$attrs} labelCol={this.labelCol} wrapperCol={this.wrapperCol} ref="iemFormRef">
           {this.$slots.default ? this.$slots.default({model, context}) : []}
-        </IvzForm>
+        </UForm>
       </ASpin>
     </AModal>
   }

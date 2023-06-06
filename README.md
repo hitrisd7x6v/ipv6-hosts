@@ -15,7 +15,7 @@
 |  src/components/form | antdv表单组件封装 |  包含antdv2包含的可编辑组件  |
 |  src/components/functional | vue functional组件 |  暂无    |
 |  src/components/list | 列表视图组件 |  暂无  |
-|  src/components/view | 页面视图相关组件 |  IvzBasicView  |
+|  src/components/view | 页面视图相关组件 |  UView  |
 |  src/event  | 全局事件 | |
 |  src/router  | 路由信息 | |
 |  src/store  | vuex信息 | |
@@ -47,32 +47,32 @@ mysql配置
 #### 简洁的写法
 ```
 <template>
-  <IvzBasicView> // 基础视图页面
-    <IvzViewSearch> // 基础搜索组件
-      <IvzInput field="name" label="茶叶名称"/>
+  <UView> // 基础视图页面
+    <UViewSearch> // 基础搜索组件
+      <UInput field="name" label="茶叶名称"/>
       <template #func>
-        <IvzFuncBtn func='view' url='/product/list'>查询</IvzFuncBtn>&nbsp;
-        <IvzFuncBtn func="add" url='/product/add'>新增</IvzFuncBtn>
+        <UFuncBtn func='view' url='/product/list'>查询</UFuncBtn>&nbsp;
+        <UFuncBtn func="add" url='/product/add'>新增</UFuncBtn>
       </template>
-    </IvzBasicSearch> // 基础表组件
-    <IvzViewTable :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
+    </USearch> // 基础表组件
+    <UViewTable :bordered="true" :columns="columns" :dataSource="dataSource" rowKey="id">
       <template #c_action="{record}">
-        <IvzFuncTag func='edit' url='/product/edit'>修改</IvzFuncTag>
-        <IvzFuncTag func="del" url='/product/del'>删除</IvzFuncTag>
+        <UFuncTag func='edit' url='/product/edit'>修改</UFuncTag>
+        <UFuncTag func="del" url='/product/del'>删除</UFuncTag>
       </template>
-    </IvzBasicTable>
-    <IvzViewModal>// 基础模态框编辑组件
-      <IvzInput field="name" label="茶叶名称"/>
+    </UTable>
+    <UViewModal>// 基础模态框编辑组件
+      <UInput field="name" label="茶叶名称"/>
       <template #title="{model}">
         {{model.id ? '编辑产品' : '新增产品'}}
       </template>
       <template #footer>
-        <IvzFuncBtn func='cancel'>取消</IvzFuncBtn>
-        <IvzFuncBtn func='submit' url='/product/add'>提交</IvzFuncBtn>
-        <IvzFuncBtn func='reset'>重置</IvzFuncBtn>
+        <UFuncBtn func='cancel'>取消</UFuncBtn>
+        <UFuncBtn func='submit' url='/product/add'>提交</UFuncBtn>
+        <UFuncBtn func='reset'>重置</UFuncBtn>
       </template>
-    </IvzBasicModal>
-  </IvzBasicView>
+    </UBasicModal>
+  </UView>
 </template>
 
 <script>
@@ -97,7 +97,7 @@ export default {
 1. 约定一个功能页面包含大于0 的增删改查组件，并将组件划分和关联
 2. 约定每个页面可能包含 增、删、改、查、导入、导出、删除、重置、取消、展开、提交的某几个功能
 3. 约定通用功能的实现逻辑具有通用性(比如提交表单的逻辑是先校验表单然后提交到后台，如果提交失败提示失败信息，如果成功关闭编辑框并且刷新列表) 
-4. 约定某些组件的层级关系, 比如组件IvzBasicTable必须作为IvzBasicView的子组件, 且IvzBasicView必须做顶级组件
+4. 约定某些组件的层级关系, 比如组件UTable必须作为UView的子组件, 且UView必须做顶级组件
 ##### 灵活(只做增强不做限制)
 1. api灵活：除了使用默认已经实现的api外，所有的功能都可以按照往常的方式开发
 2. 布局灵活：可以对组件实现任意布局, 不会因为通用功能的存在而丧失布局的灵活性
@@ -119,80 +119,80 @@ export default {
 #### 功能组件
 1. 功能组件主要是用来拓展和简化功能的操作方式, 使用功能组件将提供一套默认的操作功能
 2. 提供的功能包括[add, del, edit, query, import, export, reset, cancel, submit, expand]以及混合联动操作
-##### IvzFuncBtn
+##### UFuncBtn
 功能按钮：用在搜索组件和编辑组件
 ```
-<IvzBasicView>
-    <IvzViewSearch>
+<UView>
+    <UViewSearch>
         <template #func={model}>
-            <IvzFuncBtn func='add'>新增</IvzFuncBtn> // 点击默认动作：将打开一个编辑框(IvzViewModal or IvzViewDrawer)
-            <IvzFuncBtn func='query' url="/project/query">搜索</IvzFuncBtn> // 点击默认动作：重新刷新列表
-            <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置搜索表单, 并且重新刷新列表(和表格组件联动)
+            <UFuncBtn func='add'>新增</UFuncBtn> // 点击默认动作：将打开一个编辑框(UViewModal or UViewDrawer)
+            <UFuncBtn func='query' url="/project/query">搜索</UFuncBtn> // 点击默认动作：重新刷新列表
+            <UFuncBtn func='reset'>重置</UFuncBtn> // 点击默认动作：重置搜索表单, 并且重新刷新列表(和表格组件联动)
         </template>
-    </IvzViewSearch>
-    <IvzViewModal>
+    </UViewSearch>
+    <UViewModal>
        <template #footer={model}>
-          <IvzFuncBtn func='cancel'>取消</IvzFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
+          <UFuncBtn func='cancel'>取消</UFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
           // 点击默认动作：校验表单是否通过, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
-          <IvzFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</IvzFuncBtn> 
-          <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置编辑表单
+          <UFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</UFuncBtn> 
+          <UFuncBtn func='reset'>重置</UFuncBtn> // 点击默认动作：重置编辑表单
        </tempalte>
-    </IvzViewSearch>
-</IvzBasicView>
+    </UViewSearch>
+</UView>
 ```
-##### IvzFuncTag
+##### UFuncTag
 功能tag：用于表格操作
 ```
-<IvzBasicView rowKey="id">
-    <IvzViewTable>
+<UView rowKey="id">
+    <UViewTable>
         <template #c_action={record}>
             // 点击默认动作：打开编辑框, 并获取和渲染url对应的数据
-            <IvzFuncBtn func='edit' :data="record" url="/project/edit">编辑</IvzFuncBtn> 
+            <UFuncBtn func='edit' :data="record" url="/project/edit">编辑</UFuncBtn> 
              // 点击默认动作：弹出删除确认框, 确定之后调用url对应的接口删除数据, 提交的参数是数组格式：[record[rowKey]]
-            <IvzFuncBtn func='del' :data="record" url="/project/del">删除</IvzFuncBtn>
+            <UFuncBtn func='del' :data="record" url="/project/del">删除</UFuncBtn>
         </template>
-    </IvzViewSearch>
-</IvzBasicView>
+    </UViewSearch>
+</UView>
 ```
 ##### 误操作确认
 有时候为了防止某些功能的误操作，将会在点击功能的时候弹框确认, 这时候可以使用：confirm属性
 ```
-<IvzFuncBtn func='demo' :data="record" url="/project/demo" confirm>容易误操作</IvzFuncBtn>
+<UFuncBtn func='demo' :data="record" url="/project/demo" confirm>容易误操作</UFuncBtn>
 ```
 
 ##### 与编辑框联动
 主要用于点击功能按钮时弹出对应的编辑框
 1. 打开其他的编辑框
 ```
-<IvzBasicView rowKey="id">
-    <IvzViewTable>
+<UView rowKey="id">
+    <UViewTable>
         <template #c_action={record}>
             // 默认动作：打开id="modPwd"的编辑框, 并且设置编辑框: model[rowKey]=record[rowKey]
-            <IvzFuncBtn func='edit:modPwd' :data="record">修改密码</IvzFuncBtn> 
+            <UFuncBtn func='edit:modPwd' :data="record">修改密码</UFuncBtn> 
         </template>
-    </IvzViewSearch>
+    </UViewSearch>
     // 修改密码编辑框
-    <IvzBasicModal id="modPwd" :rules="[自定义校验规则]">
+    <UBasicModal id="modPwd" :rules="[自定义校验规则]">
        <IvzPassword label="密码" field="password" />
        <template #footer={model}>
-          <IvzFuncBtn func='cancel'>取消</IvzFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
+          <UFuncBtn func='cancel'>取消</UFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
           // 默认动作：校验表单, 然后提交表单, 开启表单的提交动画, 开启提交按钮的提交动画(防止多次提交) 
-          <IvzFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</IvzFuncBtn> 
-          <IvzFuncBtn func='reset'>重置</IvzFuncBtn> // 点击默认动作：重置编辑表单
+          <UFuncBtn func='submit' :url="model.id ? '/project/edit':'/project/add'">提交</UFuncBtn> 
+          <UFuncBtn func='reset'>重置</UFuncBtn> // 点击默认动作：重置编辑表单
        </tempalte>
-    </IvzBasicSearch>
-</IvzBasicView>
+    </USearch>
+</UView>
 ```
 2. 新增子记录(树形结构格式)
 ```
-<IvzBasicView rowKey="id">
-    <IvzViewTable>
+<UView rowKey="id">
+    <UViewTable>
         <template #c_action={record}>
             // 打开新增的编辑框, 并且设置编辑框父id: model[pid]=record[rowKey]
-            <IvzFuncBtn func='add:child' :data="record">新增子菜单</IvzFuncBtn> 
+            <UFuncBtn func='add:child' :data="record">新增子菜单</UFuncBtn> 
         </template>
-    </IvzViewSearch>
-</IvzBasicView>
+    </UViewSearch>
+</UView>
 ```
 
 #### 功能权限
@@ -213,30 +213,30 @@ export default {
 <AButton v-auth="['core:project:view', 'core:project:info']">详情</ABtton>
 ```
 ##### 使用url做权限判断
-url的控制方式是通过后台是否有返回功能组件[IvzFuncBtn or IvzFuncTag]对应的url
+url的控制方式是通过后台是否有返回功能组件[UFuncBtn or UFuncTag]对应的url
 
 ```
 // 使用auth属性控制权限校验的开关
 // 比如回台返回的功能菜单包括 新增(/project/add)、编辑(/project/edit)、搜索(/project/query)
-<IvzBasicView auth>
-    <IvzViewSearch>
+<UView auth>
+    <UViewSearch>
         <template #func>
-            <IvzFuncBtn func='add' url='/project/add'>新增</IvzFuncBtn> // 显示
-            <IvzFuncBtn func='import' url='/project/import'>导入</IvzFuncBtn> // 不显示
+            <UFuncBtn func='add' url='/project/add'>新增</UFuncBtn> // 显示
+            <UFuncBtn func='import' url='/project/import'>导入</UFuncBtn> // 不显示
         </template>
-    </IvzViewSearch>
-    <IvzViewTable>
+    </UViewSearch>
+    <UViewTable>
         <template #c_action={record}>
-            <IvzFuncTag func='edit' url='/project/edit' :data="record">修改</IvzFuncTag > // 显示
-            <IvzFuncTag func='del' url='/project/del' :data="record">删除</IvzFuncTag > // 不显示
+            <UFuncTag func='edit' url='/project/edit' :data="record">修改</UFuncTag > // 显示
+            <UFuncTag func='del' url='/project/del' :data="record">删除</UFuncTag > // 不显示
         </template>
-    </IvzViewSearch>
-</IvzBasicView>
+    </UViewSearch>
+</UView>
 ```
 ##### 编辑详情url
 ```
 // 此处的url是获取编辑详情数据的url，但是并没有指定参数，也无需指定参数
-<IvzFuncTag func='edit' url='/project/edit' :data="record">修改</IvzFuncTag >
+<UFuncTag func='edit' url='/project/edit' :data="record">修改</UFuncTag >
 // 默认获取编辑地址url的方法如下：Context.js
 this.getEditUrl = function (model, editContext) {
     let rowKey = this.getRowKey();
@@ -252,55 +252,55 @@ this.getEditUrl = function (model, editContext) {
 ```
 #### 视图组件
 视图组件是用来组织视图子组件的容器且必须作为.vue页面的顶级组件。再此容器内支持对所有的可联动的视图子组件做联动操作：比如点击搜索组件的查询按钮表格组件将发起查询接口获
-##### IvzBasicView
+##### UView
 ```
 <template>
-   <IvzBasicView>
+   <UView>
        ...
-   </IvzBasicView>
+   </UView>
 </template>
 <script>...</script>
 ```
  **使用url作为权限控制** 
 ```
-<IvzBasicView auth>...</IvzBasicView>
+<UView auth>...</UView>
 ```
  **指定功能的唯一键** 
 ```
-<IvzBasicView rowKey="id">...</IvzBasicView>
+<UView rowKey="id">...</UView>
 // 此属性将用来做表格、编辑与新增、新增子记录的判断
 ```
 #### 视图子组件
-1. 以下的所有组件都只能用在页级组件(IvzBasicView、IvzMenuView)的子组件，组成一个完整的功能页面
-2. IvzViewModal、IvzVieDrawer、IvzViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
-##### IvzViewSearch
+1. 以下的所有组件都只能用在页级组件(UView、IvzMenuView)的子组件，组成一个完整的功能页面
+2. UViewModal、IvzVieDrawer、UViewTable视图组件只做功能增加，可以使用原生组件的任何属性, 少数不能用的属性会做说明
+##### UViewSearch
 1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
 2. 属于页面可联动的搜索组件
-##### IvzViewModal
+##### UViewModal
 1. 支持[AForm组件](https://2x.antdv.com/components/form-cn)的所有属性
 2. 支持[AModal组件](https://2x.antdv.com/components/modal-cn)的所有属性
 3. 新增属性[span] 作为AForm组件的labelCol和wrapperCol的简写， 格式 [6, 18]
 4. 属于页面可联动的编辑组件
-##### IvzViewDrawer
+##### UViewDrawer
 1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
 2. 支持[ADrawerl](https://2x.antdv.com/components/drawer-cn)的所有属性
 3. 新增属性[span] 作为AForm组件的labelCol和wrapperCol的简写， 格式 [6, 18]
 4. 属于页面可联动编辑组件
-##### IvzViewTable
+##### UViewTable
 1. 支持[ATable](https://2x.antdv.com/components/table-cn)的所有属性
-##### IvzBasicModal
+##### UBasicModal
 1. 支持[AForm组件](https://2x.antdv.com/components/form-cn)的所有属性
 2. 支持[AModal组件](https://2x.antdv.com/components/modal-cn)的所有属性
 3. 新增属性[primary] 用来声明此组件是可联动的组件
-##### IvzBasicDrawer
+##### UBasicDrawer
 1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
 2. 支持[ADrawerl](https://2x.antdv.com/components/drawer-cn)的所有属性
 3. 新增属性[primary] 用来声明此组件是可联动的组件
 ### antd2组件扩展
 ##### <a href="https://2x.antdv.com/components/table-cn#API" target="_blank">增强ATable组件</a>
-antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。IvzBasicTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
+antd的表格组件说实话如果没有去认证研究和实践真的很难看得懂，而且很多功能都要自己实现，比如单击和双击、表格和多选等等， 没有一定的使用经验确实会感觉难用，所以提供了IvzBaiscTable表格增强组件。UTable组件支持ATable组件的大部分属性，下面主要看一下不支持的属性和增强的功能
 ##### 1.不支持的属性
-1. rowSelection 此属性是ATable用来描述表格多选框的一个对象，在IvzBasicTable组件里面此对象直接放到columns属性里面，像这样：
+1. rowSelection 此属性是ATable用来描述表格多选框的一个对象，在UTable组件里面此对象直接放到columns属性里面，像这样：
 
 ```
 const columns = [
@@ -309,8 +309,8 @@ const columns = [
   {type: 'selection', title: '多选'},
   {field: 'name', title: '菜单名称', align: 'left'}
 ]
-// onChange、onSelect、onSelectAll、onSelectInvert方法将直接支持在IvzBasicTable组件上使用事件
-<IvzBasicTable ref="tableRef" @selectChange="xx" @select="xx" @selectAll="xx" @selectInvert="xx"></IvzBasicTable>
+// onChange、onSelect、onSelectAll、onSelectInvert方法将直接支持在UTable组件上使用事件
+<UTable ref="tableRef" @selectChange="xx" @select="xx" @selectAll="xx" @selectInvert="xx"></UTable>
 // selectedRowKeys 不支持， 通过方法提供
 this.$refs['tableRef'].getSelectedRowKeys();
 ```
@@ -326,14 +326,14 @@ const columns = [
 
 // 插槽名称规则：前缀 c_ + 字段名 = c_name
 // 如果是a.b的格式将'.'换成'_'即：c_a_b
-<IvzBasicTable rowKey="id">
+<UTable rowKey="id">
     <template #c_name="{record}">
         <a>{{record.name}}</a>
     </template>
     <template #c_user_name="{record}">
         <a>{{record.user.name}}</a>
     </template>
-</IvzBasicTable>
+</UTable>
 ```
 ##### 字典和url
 支持将value转成label 比如性别字段：数据库存的是值：man，表格需要展示：男
@@ -369,7 +369,7 @@ const columns = [
 ]
 ```
 ##### 5.操作列
-IvzBasicTable组件支持使用两种方式定义操作列
+UTable组件支持使用两种方式定义操作列
 第一 使用功能点列表
 
 ```
@@ -395,7 +395,7 @@ const columns = [
 ]
 ```
 ##### 6.数据格式化
-除了上面的自定义slot，日期格式化，字典url，IvzBasicTable组件还支持自定义格式化数据
+除了上面的自定义slot，日期格式化，字典url，UTable组件还支持自定义格式化数据
 
 ```
 const columns = [

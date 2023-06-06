@@ -1,20 +1,20 @@
 <template>
-  <ivz-form class="ivz-bs-search" ref="ivzBasicForm" layout="inline">
+  <UForm class="ivz-bs-search" ref="ivzBasicForm" layout="inline">
     <template #default="{model}">
       <slot :model="model"></slot>
     </template>
-  </ivz-form>
+  </UForm>
 </template>
 <!-- 基础搜索组件 -->
 <script>
 import {inject, provide} from "vue";
-import IvzForm from "@/components/form/basic/IvzForm";
+import UForm from "@/components/form/basic/Form";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {SearchContext} from "@/components/view/Context";
 
 export default {
-  name: "IvzBasicSearch",
-  components: {IvzForm},
+  name: "USearch",
+  components: {UForm},
   props: {
     primary: {type: Boolean}
   },

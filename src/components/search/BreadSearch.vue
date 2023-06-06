@@ -1,5 +1,5 @@
 <template>
-  <ivz-form class="ivz-search ivz-bread-search" ref="ivzBsForm" layout="inline">
+  <UForm class="ivz-search ivz-bread-search" ref="ivzBsForm" layout="inline">
     <template #default="{model}">
       <slot :model="model"></slot>
       <a-row class="ivz-is-fun" align="middle">
@@ -35,20 +35,20 @@
           <slot name="func" :metas="funMetas" :model="model">
             <a-space style="text-align: center; padding: 0px 16px">
               <template v-for="meta in funMetas" :key="meta.field">
-                <IvzFuncBtn :func="meta.field" :type="meta.props.type" @click="meta.props.onClick">{{meta.name}}</IvzFuncBtn>
+                <UFuncBtn :func="meta.field" :type="meta.props.type" @click="meta.props.onClick">{{meta.name}}</UFuncBtn>
               </template>
             </a-space>
           </slot>
         </a-col>
       </a-row>
     </template>
-  </ivz-form>
+  </UForm>
 </template>
 
 <!-- 面包屑搜索 -->
 <script>
 import {DownOutlined, HomeFilled} from '@ant-design/icons-vue'
-import IvzForm from "@/components/form/basic/IvzForm";
+import UForm from "@/components/form/basic/Form";
 import {mapMutations, useStore} from "vuex";
 import {inject, provide} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
@@ -57,7 +57,7 @@ import {initMetaCallback} from "@/utils/MetaUtils";
 
 export default {
   name: "IvzBreadSearch",
-  components: {IvzForm, DownOutlined, HomeFilled},
+  components: {UForm, DownOutlined, HomeFilled},
   props: {
     primary: {type: Boolean},
     funMetas: {type: Array, default: () => []},

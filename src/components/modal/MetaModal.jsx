@@ -1,12 +1,12 @@
 import {defineComponent, inject, mergeProps, ref, watch} from "vue";
 import {initMetaCallback} from "@/utils/MetaUtils";
-import IvzBasicModal from "@/components/modal/IvzBasicModal";
-import {IvzFuncBtn} from "@/components/basic";
+import UBasicModal from "@/components/modal/BasicModal";
+import {UFuncBtn} from "@/components/basic";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default defineComponent({
-    name: 'IvzMetaModal',
-    components: {IvzBasicModal, IvzFuncBtn},
+    name: 'UMetaModal',
+    components: {UBasicModal, UFuncBtn},
     props: {
         funMetas: {type: Array, default: () => []}
     },
@@ -17,7 +17,7 @@ export default defineComponent({
             let funcBtn = [];
             funMetas.forEach(meta => {
                 initMetaCallback(meta, viewContext.__$View, 'edit');
-                funcBtn.push(<IvzFuncBtn {...meta.props} func={meta.field}>{meta.name}</IvzFuncBtn>)
+                funcBtn.push(<UFuncBtn {...meta.props} func={meta.field}>{meta.name}</UFuncBtn>)
             })
 
             funcBtnRef.value = funcBtn;
@@ -34,6 +34,6 @@ export default defineComponent({
     render() {
         let footerSlots = { footer: () => this.funcBtnRef}
         let slots = mergeProps(footerSlots, this.$slots);
-        return <IvzBasicModal class="ivz-metas-modal" {...this.$attrs} v-slots={slots}></IvzBasicModal>
+        return <UBasicModal class="ivz-metas-modal" {...this.$attrs} v-slots={slots}></UBasicModal>
     }
 })

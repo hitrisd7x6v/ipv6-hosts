@@ -1,59 +1,59 @@
 <template>
-  <IvzBasicView name="用户" auth>
-    <IvzViewSearch>
-      <IvzRow span="6">
-        <ivz-input field="name" label="用户昵称" />
-        <ivz-input field="account" label="用户帐号" />
-        <ivz-input field="phone" label="用户手机" />
-        <ivz-radio field="status" label="用户状态" :options="status"/>
-      </IvzRow>
+  <UView name="用户" auth>
+    <UViewSearch>
+      <URow span="6">
+        <UInput field="name" label="用户昵称" />
+        <UInput field="account" label="用户帐号" />
+        <UInput field="phone" label="用户手机" />
+        <URadio field="status" label="用户状态" :options="status"/>
+      </URow>
       <template #func>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="query" url="/core/admin/view">搜索</IvzFuncBtn>
-        <IvzFuncBtn func="add" url="/core/admin/add">新增</IvzFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
+        <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>
+        <UFuncBtn func="add" url="/core/admin/add">新增</UFuncBtn>
       </template>
-    </IvzViewSearch>
-    <IvzViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
+    </UViewSearch>
+    <UViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
       <template #default="{model}">
-        <IvzRow :gutter="16" span="8">
-          <ivz-input field="name" label="用户昵称" />
-          <ivz-input field="account" label="用户帐号" :disabled="model.id != null"/>
-          <ivz-tree-select field="orgId" label="所属部门" treeNodeFilterProp="label"
+        <URow :gutter="16" span="8">
+          <UInput field="name" label="用户昵称" />
+          <UInput field="account" label="用户帐号" :disabled="model.id != null"/>
+          <UTreeSelect field="orgId" label="所属部门" treeNodeFilterProp="label"
                            url="/core/org/parent" labelField="name" valueField="id"/>
-          <ivz-input field="email" label="用户邮箱" />
-          <ivz-radio field="status" label="用户状态" defaultValue="enabled" :options="status"/>
-          <ivz-radio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
-          <ivz-checkbox field="roleIds" label="用户角色" url="/core/role/list"
+          <UInput field="email" label="用户邮箱" />
+          <URadio field="status" label="用户状态" defaultValue="enabled" :options="status"/>
+          <URadio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
+          <UCheckbox field="roleIds" label="用户角色" url="/core/role/list"
                         labelField="name" valueField="id" span="24"/>
-          <ivz-textarea field="remark" label="用户简介" span="24" />
-        </IvzRow>
+          <UTextarea field="remark" label="用户简介" span="24" />
+        </URow>
       </template>
       <template #title="{model}">
         {{model.id != null ? '修改用户' : '新增用户'}}
       </template>
       <template #footer="{model}">
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" :url="model.id ? '/core/admin/edit' : '/core/admin/add'">提交</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
+        <UFuncBtn func="submit" :url="model.id ? '/core/admin/edit' : '/core/admin/add'">提交</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
-    </IvzViewDrawer>
-    <IvzViewTable :columns="columns" :bordered="true" size="small">
+    </UViewDrawer>
+    <UViewTable :columns="columns" :bordered="true" size="small">
       <template #c_action="{record}">
-        <IvzFuncTag func="edit" :data="record" url="/core/admin/edit">修改</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" url="/core/admin/del">删除</IvzFuncTag>
-        <IvzFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">设置密码</IvzFuncTag>
+        <UFuncTag func="edit" :data="record" url="/core/admin/edit">修改</UFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/admin/del">删除</UFuncTag>
+        <UFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">设置密码</UFuncTag>
       </template>
-    </IvzViewTable>
+    </UViewTable>
     <!--  修改密码  -->
-    <IvzBasicModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
-      <ivz-input-password label="密码" field="password" />
-      <ivz-input-password label="确认密码" field="surePwd" />
+    <UBasicModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
+      <UInputPassword label="密码" field="password" />
+      <UInputPassword label="确认密码" field="surePwd" />
       <template #footer>
-        <IvzFuncBtn func="submit" url="/core/admin/pwd">提交</IvzFuncBtn>
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
+        <UFuncBtn func="submit" url="/core/admin/pwd">提交</UFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
       </template>
-    </IvzBasicModal>
-  </IvzBasicView>
+    </UBasicModal>
+  </UView>
 </template>
 
 <script>

@@ -11,17 +11,17 @@
         <h2>什么是页级组件</h2>
         <p style="text-indent: 28px">一个页级别组件就是一个功能页面, 主要提供一套增删改查功能的api和子组件</p>
         <h2>有哪些页级组件</h2>
-        <p style="text-indent: 28px">主要有三种 1. IvzBasicView 2. IvzMenuView 3. IvzFuncView</p>
+        <p style="text-indent: 28px">主要有三种 1. UView 2. IvzMenuView 3. IvzFuncView</p>
         <h3>页级组件有哪些通用的api</h3>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="IvzBasicView 视图"><BasicView /></a-tab-pane>
+      <a-tab-pane key="2" tab="UView 视图"><BasicView /></a-tab-pane>
       <a-tab-pane key="3" tab="IvzMenuView 视图"><MenuView /></a-tab-pane>
       <a-tab-pane key="5" tab="IvzFuncView 视图">待编写...</a-tab-pane>
-      <a-tab-pane key="6" tab="IvzBasicSearch组件">待编写...</a-tab-pane>
-      <a-tab-pane key="7" tab="IvzBasicModal组件">待编写...</a-tab-pane>
+      <a-tab-pane key="6" tab="USearch组件">待编写...</a-tab-pane>
+      <a-tab-pane key="7" tab="UBasicModal组件">待编写...</a-tab-pane>
       <a-tab-pane key="8" tab="options类型组件">待编写...</a-tab-pane>
-      <a-tab-pane key="9" tab="IvzFuncBtn功能点组件">待编写...</a-tab-pane>
-      <a-tab-pane key="10" tab="IvzFuncTag功能点组件">待编写...</a-tab-pane>
+      <a-tab-pane key="9" tab="UFuncBtn功能点组件">待编写...</a-tab-pane>
+      <a-tab-pane key="10" tab="UFuncTag功能点组件">待编写...</a-tab-pane>
     </a-tabs>
   </div>
 </template>
