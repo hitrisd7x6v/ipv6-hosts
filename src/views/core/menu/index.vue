@@ -1,52 +1,49 @@
 <template>
-  <IvzBasicView name="菜单" auth>
-    <IvzViewSearch>
-      <IvzRow span="6" style="width: 100%">
-        <IvzInput field="name" label="菜单名称" :allowClear="true" />
-        <IvzSelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
-        <IvzSelect field="msn" label="所属模块" :allowClear="true" url="/core/msn" labelField="msn" valueField="msn"/>
-      </IvzRow>
+  <UView name="菜单" auth>
+    <UViewSearch>
+      <URow span="6" style="width: 100%">
+        <UInput field="name" label="菜单名称" :allowClear="true" />
+        <USelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
+        <USelect field="msn" label="所属模块" :allowClear="true" url="/core/msn" labelField="msn" valueField="msn"/>
+      </URow>
       <template #func>
-        <IvzFuncBtn func="query" url="/core/menu/view">搜索</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
-        <IvzFuncBtn func="add" url="/core/menu/add">新增</IvzFuncBtn>
-        <IvzFuncBtn func="expand">展开/缩收</IvzFuncBtn>
+        <UFuncBtn func="query" url="/core/menu/view">搜索</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
+        <UFuncBtn func="add" url="/core/menu/add">新增</UFuncBtn>
+        <UFuncBtn func="expand">展开/缩收</UFuncBtn>
       </template>
-    </IvzViewSearch>
-    <IvzViewTable :columns="columns" size="small" :pagination="false">
-      <template #c_action="{record}">
-        <IvzFuncTag func="add:child" :data="record" url="/core/menu/add" :disabled="disabled(record)">新增子菜单</IvzFuncTag>
-        <IvzFuncTag func="edit" :data="record" url="/core/menu/edit">修改</IvzFuncTag>
-        <IvzFuncTag func="del" :data="record" url="/core/menu/del">删除</IvzFuncTag>
+    </UViewSearch>
+    <UViewTable :columns="columns" size="small" :pagination="false" :rowSelection="{}">
+      <template #action="{record}">
+        <UFuncTag func="add:child" :data="record" url="/core/menu/add" :disabled="disabled(record)">新增子菜单</UFuncTag>
+        <UFuncTag func="edit" :data="record" url="/core/menu/edit">修改</UFuncTag>
+        <UFuncTag func="del" :data="record" url="/core/menu/del">删除</UFuncTag>
       </template>
-      <template #type="{record}">
-        <a>{{record.type}}</a>
-      </template>
-    </IvzViewTable>
-    <IvzViewDrawer :rules="rules" v-model:value="model" width="780" layout="vertical" placement="left" @edit="edit">
-      <IvzRow :gutter="24" span="8">
-        <IvzInput field="name" label="菜单名称" />
-        <IvzTreeSelect field="pid" label="父菜单" :defaultValue="0"
+    </UViewTable>
+    <UViewDrawer :rules="rules" v-model:value="model" width="780" layout="vertical" placement="left" @edit="edit">
+      <URow :gutter="24" span="8">
+        <UInput field="name" label="菜单名称" />
+        <UTreeSelect field="pid" label="父菜单" :defaultValue="0"
              url="/core/menu/parent" labelField="name" valueField="id"
              treeNodeFilterProp="label"/>
-        <IvzSelect field="type" label="菜单类型" :options="type"/>
-        <IvzAutoComplete field="msn" label="所属模块" url="/core/msn" labelField="msn" valueField="msn"/>
-        <IvzInput field="url" label="菜单URL"/>
-        <IvzInput field="perms" label="权限标识" />
-        <IvzInput field="icon" label="图标" />
-        <IvzInputNumber field="sort" label="排序" :defaultValue="68" />
-        <IvzRadio field="log" label="日志采集" :options="BooleanStatus" :defaultValue="true"/>
-      </IvzRow>
+        <USelect field="type" label="菜单类型" :options="type"/>
+        <UAutoComplete field="msn" label="所属模块" url="/core/msn" labelField="msn" valueField="msn"/>
+        <UInput field="url" label="菜单URL"/>
+        <UInput field="perms" label="权限标识" />
+        <UInput field="icon" label="图标" />
+        <UInputNumber field="sort" label="排序" :defaultValue="68" />
+        <URadio field="log" label="日志采集" :options="BooleanStatus" :defaultValue="true"/>
+      </URow>
       <template #title="{model}">
         {{model.id != null ? '修改菜单' : '新增菜单'}}
       </template>
       <template #footer="{model}">
-        <IvzFuncBtn func="cancel">取消</IvzFuncBtn>
-        <IvzFuncBtn func="submit" :url="model.id ? '/core/menu/edit' : '/core/menu/add'">提交</IvzFuncBtn>
-        <IvzFuncBtn func="reset">重置</IvzFuncBtn>
+        <UFuncBtn func="cancel">取消</UFuncBtn>
+        <UFuncBtn func="submit" :url="model.id ? '/core/menu/edit' : '/core/menu/add'">提交</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
-    </IvzViewDrawer>
-  </IvzBasicView>
+    </UViewDrawer>
+  </UView>
 </template>
 
 <script>
@@ -94,6 +91,7 @@ export default {
   mounted() { },
   methods: {
     edit(model, row) {
+      this.columns.push({title: 'sdf', field: 'test'})
       if(row && row.type == 'V') { // 视图类型下面必须是功能
         model.type = 'A';
       }
