@@ -45,14 +45,14 @@
       </template>
     </UViewTable>
     <!--  修改密码  -->
-    <UBasicModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
+    <UFormModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
       <UInputPassword label="密码" field="password" />
       <UInputPassword label="确认密码" field="surePwd" />
       <template #footer>
         <UFuncBtn func="submit" url="/core/admin/pwd">提交</UFuncBtn>
         <UFuncBtn func="cancel">取消</UFuncBtn>
       </template>
-    </UBasicModal>
+    </UFormModal>
   </UView>
 </template>
 

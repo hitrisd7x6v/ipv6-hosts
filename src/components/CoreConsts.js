@@ -15,4 +15,44 @@ export default {
     DelConfirmContent: '确定删除此记录吗？', // 默认删除提示框内容
     SubmitSuccessMsg: '数据提交成功', // 默认数据提交成功提示
     OtherOperaSuccessMsg: '操作成功', // 其他动作操作成功的提示
+
+    PrimaryUid: 'primary', // 主要视图标识(UViewDrawer、UViewModal、UTable、USearch)
+    PrimaryEditRef: 'PrimaryEditRef',
+    PrimaryTableRef: 'PrimaryTableRef',
+    PrimarySearchRef: 'PrimarySearchRef',
+
+    // 功能标识
+    FuncNameMeta: {ADD: 'ADD', DEL: 'DEL', EDIT: 'EDIT', QUERY: 'QUERY', IMPORT: 'IMPORT', EXPORT: 'EXPORT'
+        , CANCEL: 'CANCEL', RESET: 'RESET', EXPAND: 'EXPAND', SUBMIT: 'SUBMIT', DETAIL: 'DETAIL'},
+
+    FuncBtnTypeMaps: { // 功能按钮的默认配置
+        ADD: {type: 'dashed'},
+        DEL: {danger: true},
+        EDIT: {type: '#3b5999'},
+        QUERY: {type: 'primary'}, // 查询
+        VIEW: {type: 'primary'}, // 查询 和query选其一
+        IMPORT: {type: 'default'},
+        EXPORT: {type: 'orange'},
+        EXPAND: {type: 'primary', ghost: true},
+        CANCEL: {type: 'default'},
+        DETAIL: {type: '#87d068'},
+        RESET: {type: 'primary', ghost: true},
+        DEFAULT: {type: 'default'},
+        SUBMIT: {type: 'primary'}
+    },
+    FuncTagColorMaps: { // 功能Tag默认颜色配置
+        ADD: '#2db7f5',
+        DEL: '#f50',
+        EDIT: '#3b5999',
+        QUERY: '#108ee9',
+        IMPORT: 'default',
+        EXPORT: 'orange',
+        CANCEL: 'red',
+        DETAIL: '#87d068',
+        RESET: 'warning',
+        DEF: 'default',
+        SUBMIT: 'blue',
+        VIEW: '#108ee9'
+    }
+
 }

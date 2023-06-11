@@ -1,37 +1,33 @@
 import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
 import {Form} from "ant-design-vue";
-import {createMetasMap, getMetaValue, setMetaValue} from "@/utils/MetaUtils";
+import {createMetasMap, getMetaValue, setMetaValue, initMetaValue} from "@/utils/MetaUtils";
 import {FormContext} from "@/components/form/basic/FormContext";
 import SysUtils from "@/utils/SysUtils";
 
-const unMounted = () => console.log('IvzForm组件未完成挂载')
+
 export default defineComponent({
     name: 'UForm',
     props: {
-        rules: Object,
-        name: String,
         span: Array, // labelCol wrapperCol eg: [3, 21]
-        labelCol: Object,
-        wrapperCol: Object,
-        hideRequiredMark: Boolean,
-        colon: {type: Boolean, default: true},
-        validateTrigger: {type: String | Array},
-        labelAlign: {type: String, default: 'right'},
-        layout: {type: String, default: 'horizontal'},
-        scrollToFirstError: {type: Boolean, default: false},
-        validateOnRuleChange: {type: Boolean, default: true},
         metas: {type: Array, required: false, default: () => []},
+        // 和AForm不同的是model必须双向绑定的方式即：v-model="model"
+        'onUpdate:modelValue': {type: Function},
+        modelValue: {type: Object, default: () => { return {}}}
     },
-    setup({metas, rules}) {
-        const initModel = {};
+    setup({metas, rules, modelValue}, {attrs}) {
+        if(attrs.model) {
+            console.warn("UForm不支持[:model] 请使用[v-model]替代")
+        }
+
         const metasMap = createMetasMap(metas);
 
         let formRef;
-        let editModel = reactive({});
+        let initModel = modelValue;
+        let editModel = modelValue;
         let formContext = new FormContext();
-
         provide('initModel', (namePath, value) =>
-            setMetaValue(namePath, editModel, value))
+            initMetaValue(namePath, initModel, value))
+        provide('formContext', formContext);
 
         let proxy = reactive({editModel});
         if(rules instanceof Object) {
@@ -47,7 +43,6 @@ export default defineComponent({
         formContext['getFieldValue'] = (namePath) => getMetaValue(namePath, proxy.editModel);
         formContext['setFieldValue'] = (namePath, value) => setMetaValue(namePath, proxy.editModel, value);
 
-        provide('formContext', formContext);
         return {metasMap, formContext, formRef, proxy, initModel}
     },
     created() {
@@ -64,19 +59,19 @@ export default defineComponent({
         this.formContext.resetModel = () => this.setEditModel(this.getInitModel());
     },
     mounted() {
-        this.initModel = SysUtils.clone(this.proxy.editModel);
+        this.proxy.editModel = this.getInitModel();
     },
     render() {
         let editModel = this.proxy.editModel;
-        let labelCol = this.labelCol, wrapperCol = this.wrapperCol;
+        let labelCol = this.$attrs.labelCol, wrapperCol = this.$attrs.wrapperCol;
         if(this.span instanceof Array) {
-            labelCol = {span: this.span[0]};
-            wrapperCol = {span: this.span[1]}
+            labelCol = labelCol || {span: this.span[0]};
+            wrapperCol = wrapperCol || {span: this.span[1]}
         }
 
-        let props = mergeProps(this.$props, {model: editModel, labelCol, wrapperCol});
         return (
-            <AForm {...props} ref="formRef">
+            <AForm {...this.$attrs} model={editModel}
+                   labelCol={labelCol} wrapperCol={wrapperCol} ref="formRef">
                 {this.$slots.default({model: editModel})}
             </AForm>)
     },
@@ -117,6 +112,7 @@ export default defineComponent({
         },
 
         setEditModel(editModel) {
+            this.$emit('update:modelValue', editModel);
             if(!isProxy(editModel)) {
                 this.proxy.editModel = reactive(editModel);
             }else {

@@ -1,12 +1,12 @@
 import {defineComponent, inject, mergeProps, ref, watch} from "vue";
 import {initMetaCallback} from "@/utils/MetaUtils";
-import UBasicModal from "@/components/modal/BasicModal";
+import UFormModal from "@/components/modal/FormModal";
 import {UFuncBtn} from "@/components/basic";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 
 export default defineComponent({
     name: 'UMetaModal',
-    components: {UBasicModal, UFuncBtn},
+    components: {UFormModal, UFuncBtn},
     props: {
         funMetas: {type: Array, default: () => []}
     },
@@ -34,6 +34,6 @@ export default defineComponent({
     render() {
         let footerSlots = { footer: () => this.funcBtnRef}
         let slots = mergeProps(footerSlots, this.$slots);
-        return <UBasicModal class="ivz-metas-modal" {...this.$attrs} v-slots={slots}></UBasicModal>
+        return <UFormModal class="ivz-metas-modal" {...this.$attrs} v-slots={slots}></UFormModal>
     }
 })

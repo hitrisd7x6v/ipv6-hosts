@@ -83,7 +83,7 @@ function getMetaValue(keyPath, model) {
 
 function setMetaValue(keyPath, model, value) {
     if(keyPath.length == 0) {
-        return;
+        return console.error("参数必须是数组类型")
     }
 
     let temp = model;
@@ -98,6 +98,24 @@ function setMetaValue(keyPath, model, value) {
     temp[keyPath[keyPath.length - 1]] = value;
 }
 
+function initMetaValue(keyPath, model, value) {
+    if(keyPath.length == 0) {
+        return console.error("参数必须是数组类型")
+    }
+
+    let temp = model;
+    for(let i=0; i < keyPath.length - 1; i++) {
+        if(!temp[keyPath[i]]) {
+            temp = temp[keyPath[i]] = {}
+        } else {
+            temp = temp[keyPath[i]];
+        }
+    }
+
+    if(temp[keyPath[keyPath.length - 1]] == null) {
+        temp[keyPath[keyPath.length - 1]] = value;
+    }
+}
 function cloneModel(model) {
     return SysUtils.clone(model);
 }
@@ -330,5 +348,5 @@ function initMetaCallback(meta, $view, type) {
     callback(meta, $view, type);
 }
 
-export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue,TypeMethodMaps, FunMetaMaps
-    , setMetaValue, createFormMetaInfo, getMetaByProp, clone, MetaConst, mergeMetaOfDefault, initMetaCallback}
+export {buildModelFromMetas, cloneModel, createMetasMap, getMetaValue,TypeMethodMaps, FunMetaMaps, initMetaValue
+    , setMetaValue,  createFormMetaInfo, getMetaByProp, clone, MetaConst, mergeMetaOfDefault, initMetaCallback}

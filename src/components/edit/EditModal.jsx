@@ -1,7 +1,7 @@
 import {defineComponent, mergeProps, ref} from "vue";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 import {EditContext} from "@/components/view/Context";
-import UBasicModal from "@/components/modal/BasicModal";
+import UFormModal from "@/components/modal/FormModal";
 
 export default defineComponent({
     name: 'UEditModal',
@@ -51,6 +51,6 @@ export default defineComponent({
             footer: () => this.$slots.fun ? this.$slots.fun({model, context})
                 : <div class="ivz-func ivz-iem-func">{fun}</div>,
         })
-        return <UBasicModal {...this.$attrs} v-slots={slots} ref="basicModalRef"></UBasicModal>
+        return <UFormModal {...this.$attrs} v-slots={slots} ref="basicModalRef"></UFormModal>
     }
 })

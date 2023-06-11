@@ -17,12 +17,12 @@
         <ATag color="red" @click="() => del(record)">删除</ATag>
       </template>
     </UTable>
-    <UBasicModal primary>
+    <UFormModal primary>
       <UInput field="name" label="茶叶名称"/>
       <template #title="{model}">
         {{model.id ? '编辑产品' : '新增产品'}}
       </template>
-    </UBasicModal>
+    </UFormModal>
   </UView>
 </template>
 

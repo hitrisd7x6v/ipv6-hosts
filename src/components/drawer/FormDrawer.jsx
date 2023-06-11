@@ -4,7 +4,7 @@ import {EditContext} from "@/components/view/Context";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 
 export default defineComponent({
-    name: 'UBasicDrawer',
+    name: 'UFormDrawer',
     props: {
         title: String,
         bodyStyle: Object,
@@ -18,8 +18,8 @@ export default defineComponent({
         keyboard: {default: true},
         placement: {default: 'right'},
         maskClosable: {default: true},
-        // afterVisibleChange: {type: Function},
         primary: {type: Boolean, default: false},
+        // afterVisibleChange: {type: Function},
         forceRender: {type: Boolean, default: false},
     },
     mixins: [MixinsEditItem],
@@ -49,18 +49,9 @@ export default defineComponent({
 
         let viewContext = inject(ViewContextKey);
         let editContext = new EditContext(viewContext);
-        if(viewContext) {
-            if(props.primary) {
-                let context = viewContext['primaryEditContext'];
-                if(!context.isPrimary) {
-                    editContext = context;
-                    context.isPrimary = true;
-                } else {
-                    console.warn(`当前视图[${viewContext.name}]已经包含声明为[primary]的编辑组件`)
-                }
-            } else if(attrs['id']) {
-                viewContext.addContextById(attrs['id'], editContext);
-            }
+        if(attrs.uid && viewContext) {
+            editContext.uid = attrs.uid;
+            viewContext.addContextByUid(attrs.uid, editContext);
         }
 
         provide(FuncContextKey, editContext);
@@ -75,7 +66,6 @@ export default defineComponent({
         } else {
             this.formRef = this.$refs['iemFormRef'];
         }
-
         return(<a-drawer v-model={[this.visible, 'visible', ["modifier"]]} style={{position: 'absolute'}}
                          {...this.$props} closable={false} v-slots={this.titleSlots}
                          getContainer=".ivz-main-container" ref="ADrawerRef">

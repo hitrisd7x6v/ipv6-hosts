@@ -1,5 +1,5 @@
 import {computed, defineComponent, inject, mergeProps, ref, watch} from "vue";
-import UBasicDrawer from "@/components/drawer/BasicDrawer";
+import UFormDrawer from "@/components/drawer/FormDrawer";
 import {initMetaCallback} from "@/utils/MetaUtils";
 import {USearch} from "@/components/basic";
 import {ViewContextKey} from "@/utils/ProvideKeys";
@@ -9,7 +9,7 @@ export default defineComponent({
     props: {
         funMetas: {type: Array, default: () => []}
     },
-    components: {UBasicDrawer, UFuncBtn},
+    components: {UFormDrawer, UFuncBtn},
     setup({funMetas}) {
         let funcBtnRef = ref([]);
         let viewContext = inject(ViewContextKey);
@@ -34,6 +34,6 @@ export default defineComponent({
     render() {
         let footerSlots = { footer: () => <div class="ivz-func-footer">{this.funcBtnRef}</div>}
         let slots = mergeProps(footerSlots, this.$slots);
-        return <UBasicDrawer class="ivz-metas-drawer" {...this.$attrs} v-slots={slots}/>
+        return <UFormDrawer class="ivz-metas-drawer" {...this.$attrs} v-slots={slots}/>
     }
 })

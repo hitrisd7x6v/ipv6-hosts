@@ -18,7 +18,7 @@
       <a-tab-pane key="3" tab="IvzMenuView 视图"><MenuView /></a-tab-pane>
       <a-tab-pane key="5" tab="IvzFuncView 视图">待编写...</a-tab-pane>
       <a-tab-pane key="6" tab="USearch组件">待编写...</a-tab-pane>
-      <a-tab-pane key="7" tab="UBasicModal组件">待编写...</a-tab-pane>
+      <a-tab-pane key="7" tab="UFormModal组件">待编写...</a-tab-pane>
       <a-tab-pane key="8" tab="options类型组件">待编写...</a-tab-pane>
       <a-tab-pane key="9" tab="UFuncBtn功能点组件">待编写...</a-tab-pane>
       <a-tab-pane key="10" tab="UFuncTag功能点组件">待编写...</a-tab-pane>

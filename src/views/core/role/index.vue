@@ -30,7 +30,7 @@
         <UFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm">分配权限</UFuncTag>
       </template>
     </UViewTable>
-    <UBasicModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
+    <UFormModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
       <template #default="{model}">
         &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
         &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
@@ -43,7 +43,7 @@
         <UFuncBtn func="submit" url="/core/role/perm" @click="submit">提交</UFuncBtn>
         <UFuncBtn func="cancel">取消</UFuncBtn>
       </template>
-    </UBasicModal>
+    </UFormModal>
   </UView>
 </template>
 
@@ -79,7 +79,7 @@ export default {
     reset() {
       this.filterValue = '';
       this.checkedValue = false;
-      let editContext = this.$view.getEditContext("funcPerm");
+      let editContext = this.$view.getPrimaryEditContext("funcPerm");
       editContext.setLoading(true)
       let model = editContext.getModel();
       this.$refs['funcMenus'].loadingCheckedData(this.getCheckedUrl(model))
@@ -90,10 +90,10 @@ export default {
       return '/core/role/func' + param;
     },
     submit() {
-      let model = this.$view.getEditContext("funcPerm").getModel();
+      let model = this.$view.getPrimaryEditContext("funcPerm").getModel();
       model['menuIds'] = this.$refs['funcMenus'].getCheckedKeys();
 
-      this.$view.getEditContext("funcPerm").submit('/core/role/perm');
+      this.$view.getPrimaryEditContext("funcPerm").submit('/core/role/perm');
     },
     checked(e) {
       if(e.target.checked) {

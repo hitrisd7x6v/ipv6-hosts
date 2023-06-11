@@ -71,7 +71,7 @@ mysql配置
         <UFuncBtn func='submit' url='/product/add'>提交</UFuncBtn>
         <UFuncBtn func='reset'>重置</UFuncBtn>
       </template>
-    </UBasicModal>
+    </UFormModal>
   </UView>
 </template>
 
@@ -172,7 +172,7 @@ export default {
         </template>
     </UViewSearch>
     // 修改密码编辑框
-    <UBasicModal id="modPwd" :rules="[自定义校验规则]">
+    <UFormModal id="modPwd" :rules="[自定义校验规则]">
        <IvzPassword label="密码" field="password" />
        <template #footer={model}>
           <UFuncBtn func='cancel'>取消</UFuncBtn> // 点击默认动作：关闭当前编辑框, 关闭提交动画关闭提交按钮动作
@@ -288,11 +288,11 @@ this.getEditUrl = function (model, editContext) {
 4. 属于页面可联动编辑组件
 ##### UViewTable
 1. 支持[ATable](https://2x.antdv.com/components/table-cn)的所有属性
-##### UBasicModal
+##### UFormModal
 1. 支持[AForm组件](https://2x.antdv.com/components/form-cn)的所有属性
 2. 支持[AModal组件](https://2x.antdv.com/components/modal-cn)的所有属性
 3. 新增属性[primary] 用来声明此组件是可联动的组件
-##### UBasicDrawer
+##### UFormDrawer
 1. 支持[AForm](https://2x.antdv.com/components/form-cn)的所有属性
 2. 支持[ADrawerl](https://2x.antdv.com/components/drawer-cn)的所有属性
 3. 新增属性[primary] 用来声明此组件是可联动的组件

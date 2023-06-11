@@ -1,5 +1,5 @@
 import {defineComponent, ref} from "vue";
-import UBasicDrawer from "@/components/drawer/BasicDrawer";
+import UFormDrawer from "@/components/drawer/FormDrawer";
 
 export default defineComponent({
     name: 'UEditDrawer',
@@ -77,6 +77,6 @@ export default defineComponent({
             title: () => this.$slots.title ? this.$slots.title() : <span>{this.title}</span>
         }
 
-        return <UBasicDrawer {...this.$attrs} v-slots={this.$slots} primary></UBasicDrawer>
+        return <UFormDrawer {...this.$attrs} v-slots={this.$slots} primary></UFormDrawer>
     }
 })

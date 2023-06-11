@@ -4,7 +4,7 @@ import MixinsEditItem from "@/components/edit/MixinsEditItem";
 import {EditContext} from "@/components/view/Context";
 
 export default defineComponent({
-  name: 'UBasicModal',
+  name: 'UFormModal',
   props: {
     title: String,
     bodyStyle: Object,
@@ -15,7 +15,6 @@ export default defineComponent({
     getContainer: {type: Function},
     maskClosable: {default: true},
     centered: {type: Boolean, default: true},
-    primary: {type: Boolean, default: false},
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: false},
     wrapClassName: {type: String, default: 'ivz-basic-modal'}
@@ -41,18 +40,9 @@ export default defineComponent({
 
     let viewContext = inject(ViewContextKey);
     let editContext = new EditContext(viewContext);
-    if(viewContext) {
-      if(props.primary) {
-        let context = viewContext['primaryEditContext'];
-        if(!context.isPrimary) {
-          editContext = context;
-          context.isPrimary = true;
-        } else {
-          console.warn(`当前视图[${viewContext.name}]已包含声明为[primary]的编辑组件`)
-        }
-      } else if(attrs['id']) {
-        viewContext.addContextById(attrs['id'], editContext);
-      }
+    if(attrs.uid && viewContext) {
+      editContext.uid = attrs.uid;
+      viewContext.addContextByUid(attrs.uid, editContext);
     }
 
     provide(FuncContextKey, editContext);

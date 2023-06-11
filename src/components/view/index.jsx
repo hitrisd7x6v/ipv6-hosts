@@ -6,9 +6,10 @@ import UTable from "@/components/table/BasicTable.jsx";
 import UBreadSearch from "@/components/search/BreadSearch.vue";
 import {initMetaCallback} from "@/utils/MetaUtils";
 import {defineComponent, inject, mergeProps} from "vue";
-import UBasicModal from "@/components/modal/BasicModal";
-import UBasicDrawer from "@/components/drawer/BasicDrawer";
+import UFormModal from "@/components/modal/FormModal";
+import UFormDrawer from "@/components/drawer/FormDrawer";
 import {ViewContextKey} from "@/utils/ProvideKeys";
+import CoreConsts from "@/components/CoreConsts";
 
 export const UViewSearch = defineComponent({
     name: 'UViewSearch',
@@ -24,27 +25,27 @@ export const UViewSearch = defineComponent({
     },
     render() {
         return (<div class="ivz-view ivz-primary-search">
-            <UBreadSearch funMetas={this.searchFunMetas} {...this.$attrs} v-slots={this.$slots} primary/>
+            <UBreadSearch funMetas={this.searchFunMetas} {...this.$attrs} v-slots={this.$slots} uid={CoreConsts.PrimarySearchRef}/>
         </div>)
     }
 })
 
 export const UViewModal = defineComponent({
     name: 'UViewModal',
-    components: {UBasicModal},
+    components: {UFormModal},
     render() {
         return <div class="ivz-view ivz-primary-modal">
-            <UBasicModal {...this.$attrs} primary v-slots={this.$slots} />
+            <UFormModal {...this.$attrs} uid={CoreConsts.PrimaryEditRef} v-slots={this.$slots} />
         </div>
     }
 })
 
 export const UViewDrawer = defineComponent({
     name: 'UViewDrawer',
-    components: {UBasicDrawer},
+    components: {UFormDrawer},
     render() {
         return <div class="ivz-view ivz-primary-drawer">
-            <UBasicDrawer {...this.$attrs} primary v-slots={this.$slots} />
+            <UFormDrawer {...this.$attrs}  uid={CoreConsts.PrimaryEditRef} v-slots={this.$slots} />
         </div>
     }
 })
@@ -76,10 +77,9 @@ export const UViewTable = defineComponent({
         return {viewContext, rowKey}
     },
     render() {
-
         return (
             <div class="ivz-view ivz-primary-table">
-                <UTable {...this.$attrs} primary rowKey={this.rowKey} v-slots={this.$slots}/>
+                <UTable {...this.$attrs} uid={CoreConsts.PrimaryTableRef} rowKey={this.rowKey} v-slots={this.$slots}/>
             </div>)
     }
 })

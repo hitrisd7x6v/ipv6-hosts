@@ -20,7 +20,7 @@
         <UFuncTag func="del" :data="record" url="/core/menu/del">删除</UFuncTag>
       </template>
     </UViewTable>
-    <UViewDrawer :rules="rules" v-model:value="model" width="780" layout="vertical" placement="left" @edit="edit">
+    <UViewDrawer :rules="rules" v-model="model" width="780" layout="vertical" placement="left" @edit="edit">
       <URow :gutter="24" span="8">
         <UInput field="name" label="菜单名称" />
         <UTreeSelect field="pid" label="父菜单" :defaultValue="0"
@@ -35,7 +35,7 @@
         <URadio field="log" label="日志采集" :options="BooleanStatus" :defaultValue="true"/>
       </URow>
       <template #title="{model}">
-        {{model.id != null ? '修改菜单' : '新增菜单'}}
+        {{model['id'] != null ? '修改菜单' : '新增菜单'}}
       </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
@@ -48,8 +48,7 @@
 
 <script>
 import {BooleanStatus} from "@/utils/StatusConsts";
-import {FunMetaMaps} from "@/utils/MetaUtils";
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 
 export default {
   name: "Menu",
@@ -91,7 +90,6 @@ export default {
   mounted() { },
   methods: {
     edit(model, row) {
-      this.columns.push({title: 'sdf', field: 'test'})
       if(row && row.type == 'V') { // 视图类型下面必须是功能
         model.type = 'A';
       }

@@ -59,7 +59,6 @@ export default {
   name: "IvzBreadSearch",
   components: {UForm, DownOutlined, HomeFilled},
   props: {
-    primary: {type: Boolean},
     funMetas: {type: Array, default: () => []},
   },
   setup(props, {attrs}) {
@@ -78,14 +77,9 @@ export default {
         })
       }
 
-      if(props.primary) {
-        let primaryContext = viewContext["primarySearchContext"];
-        if(primaryContext.isPrimary) {
-          console.warn("当前视图页已经包含主搜索[primary]组件")
-        } else {
-          searchContext = primaryContext;
-          searchContext.isPrimary = true; // 标记是主上下文
-        }
+      if(attrs.uid) {
+        searchContext.uid = attrs.uid;
+        viewContext.addContextByUid(attrs.uid, searchContext);
       }
     }
 

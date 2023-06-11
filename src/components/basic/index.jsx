@@ -25,104 +25,105 @@ function funcClickHandle(context, props) {
         let split = props.func.split(':'); // func:id e.g [edit:modPwd]
         if(split.length == 1) { // 主功能：func e.g [edit]
             let func = props.func.toUpperCase();
-            if(context.isPrimary) { // 主视图操作, 各个组件联动处理
-                switch (func) {
-                    case FuncNameMeta.ADD:
-                        return $view.openForAdd(props.data);
-                    case FuncNameMeta.DEL:
-                        if(context instanceof SearchContext) {
-                            return $view.batchDel(props.url)
-                        }
+            switch (func) {
+                case CoreConsts.FuncNameMeta.ADD:
+                    return $view.openForAdd(props);
+                case CoreConsts.FuncNameMeta.DEL:
+                    if(context instanceof SearchContext) {
+                        return $view.batchDel(props)
+                    } else {
+                        return $view.del(props)
+                    }
+                case CoreConsts.FuncNameMeta.EDIT:
+                    return $view.openForEdit(props);
+                case CoreConsts.FuncNameMeta.QUERY:
+                    return $view.query(props);
+                case CoreConsts.FuncNameMeta.CANCEL:
+                    return $view.cancel(props);
+                case CoreConsts.FuncNameMeta.RESET:
+                    if(context instanceof EditContext) {
+                        return $view.resetEditModel(props);
+                    } else if(context instanceof SearchContext) {
+                        return $view.resetSearchModel(props)
+                    } else {
+                        return console.error(`[reset]功能不支持上下文[${context}]只支持[EditContext、SearchContext]`);
+                    }
+                case CoreConsts.FuncNameMeta.DETAIL:
+                    return $view.detail(props);
+                case CoreConsts.FuncNameMeta.SUBMIT:
+                    return $view.submit(props);
+                case CoreConsts.FuncNameMeta.EXPAND: return $view.expanded(); // 展开所有行
+                default: // 其他功能操作
+                    if(props.url) {
+                        if(context instanceof TableContext) {
+                            let submit = (resolve) => {
+                                if(!resolve) context.setLoading(true)
+                                TypeMethodMaps.POST(props.url, props.data).then(({code, message}) => {
+                                    if(resolve) resolve();
 
-                        return $view.del(props.url, props.data)
-                    case FuncNameMeta.EDIT:
-                        return $view.openForEdit(null, props.data);
-                    case FuncNameMeta.QUERY:
-                        return $view.query(props.url);
-                    case FuncNameMeta.CANCEL:
-                        return $view.cancel();
-                    case FuncNameMeta.RESET:
-                        if(context instanceof EditContext) {
-                            return $view.resetEditModel();
-                        } else if(context instanceof SearchContext) {
-                            return $view.resetSearchModel()
-                        } else {
-                            return console.error(`错误的编辑上线文[${context}]`);
-                        }
-                    case FuncNameMeta.DETAIL:
-                        return $view.detail(props.url);
-                    case FuncNameMeta.SUBMIT:
-                        return $view.submit(props.url);
-                    case FuncNameMeta.EXPAND: return $view.expanded(); // 展开所有行
-                    default: // 其他功能操作
-                        if(props.url) {
-                            if(context instanceof TableContext) {
-                                let submit = (resolve) => {
-                                    if(!resolve) context.setLoading(true)
-                                    TypeMethodMaps.POST(props.url, props.data).then(({code, message}) => {
-                                        if(resolve) resolve();
-
-                                        if(code == CoreConsts.SuccessCode) {
-                                            $view.query();
-                                            msgSuccess(message || CoreConsts.OtherOperaSuccessMsg)
-                                        } else {
-                                            msgError(message);
-                                        }
-                                    }).catch(reason => console.error(reason)).finally(() => {
-                                        if(resolve) {
-                                            resolve();
-                                        } else {
-                                            context.setLoading(false)
-                                        }
-                                    })
-                                }
-                                if(props.confirm) { // 需要确认
-                                    confirm({title: CoreConsts.ConfirmTitle
-                                        , content: CoreConsts.ConfirmContent, onOk: () => {
-                                            return new Promise((resolve, reject) => submit(resolve))
-                                        }
-                                    })
-                                } else {
-                                    submit(null);
-                                }
+                                    if(code == CoreConsts.SuccessCode) {
+                                        $view.query();
+                                        msgSuccess(message || CoreConsts.OtherOperaSuccessMsg)
+                                    } else {
+                                        msgError(message);
+                                    }
+                                }).catch(reason => console.error(reason)).finally(() => {
+                                    if(resolve) {
+                                        resolve();
+                                    } else {
+                                        context.setLoading(false)
+                                    }
+                                })
+                            }
+                            if(props.confirm) { // 需要确认
+                                confirm({title: CoreConsts.ConfirmTitle
+                                    , content: CoreConsts.ConfirmContent, onOk: () => {
+                                        return new Promise((resolve, reject) => submit(resolve))
+                                    }
+                                })
+                            } else {
+                                submit(null);
                             }
                         }
-                }
-            } else { // 各个组件单独操作
-                if(context instanceof EditContext) {
-                    switch (func) {
-                        case FuncNameMeta.RESET: return context.reset();
-                        case FuncNameMeta.CANCEL:
-                            context.reset();
-                            context.setLoading(false)
-                            return context.cancel();
-                        case FuncNameMeta.SUBMIT: return context.submit(props.url);
-
-                        default: console.error(`编辑组件不支持功能类型[${props.func}]`)
                     }
-                } else if(context instanceof SearchContext) {
-                    switch (func) {
-                        case FuncNameMeta.RESET: return context.reset();
-                        default: console.error(`编辑组件不支持功能类型[${props.func}]`)
-                    }
-                } else if(context instanceof TableContext) {
-                    switch (func) {
-                        case FuncNameMeta.ADD:
-                        // return $view.openForAdd();
-                        case FuncNameMeta.DEL:
-                            return context.del(props.url)
-                        case FuncNameMeta.EDIT:
-                        // return $view.openForEdit(props.url, props.data);
-                        case FuncNameMeta.DETAIL:
-                        // return context.detail(props.url);
-                        case FuncNameMeta.EXPAND:
-                            return context.expanded(); // 展开所有行
-                        default: console.error(`表组件不支持功能类型[${props.func}]`)
-                    }
-                } else {
-
-                }
             }
+            // if(context.isPrimary) { // 主视图操作, 各个组件{UViewModal, UViewDrawer, UViewTable, UViewSearch}联动处理
+            //
+            // } else { // 各个组件单独操作
+            //     if(context instanceof EditContext) {
+            //         switch (func) {
+            //             case FuncNameMeta.RESET: return context.reset();
+            //             case FuncNameMeta.CANCEL:
+            //                 context.reset();
+            //                 context.setLoading(false)
+            //                 return context.cancel();
+            //             case FuncNameMeta.SUBMIT: return context.submit(props.url);
+            //
+            //             default: console.error(`编辑组件不支持功能类型[${props.func}]`)
+            //         }
+            //     } else if(context instanceof SearchContext) {
+            //         switch (func) {
+            //             case FuncNameMeta.RESET: return context.reset();
+            //             default: console.error(`编辑组件不支持功能类型[${props.func}]`)
+            //         }
+            //     } else if(context instanceof TableContext) {
+            //         switch (func) {
+            //             case FuncNameMeta.ADD:
+            //             // return $view.openForAdd();
+            //             case FuncNameMeta.DEL:
+            //                 return context.del(props.url)
+            //             case FuncNameMeta.EDIT:
+            //             // return $view.openForEdit(props.url, props.data);
+            //             case FuncNameMeta.DETAIL:
+            //             // return context.detail(props.url);
+            //             case FuncNameMeta.EXPAND:
+            //                 return context.expanded(); // 展开所有行
+            //             default: console.error(`表组件不支持功能类型[${props.func}]`)
+            //         }
+            //     } else {
+            //
+            //     }
+            // }
         } else {
             let id = split[1]; // 组件的特殊属性
             let func = split[0].toUpperCase(); // func大写
@@ -161,11 +162,7 @@ function funcClickHandle(context, props) {
         }
     }
 }
-const colorMaps = {
-    ADD: '#2db7f5', DEL: '#f50', EDIT: '#3b5999', QUERY: '#108ee9', IMPORT: 'default'
-    , EXPORT: 'orange',CANCEL: 'red', DETAIL: '#87d068', RESET: 'warning', DEF: 'default'
-    , SUBMIT: 'blue', VIEW: '#108ee9'
-}
+
 export const UFuncTag = defineComponent({
     name: 'UFuncTag',
     props: {
@@ -175,11 +172,13 @@ export const UFuncTag = defineComponent({
         data: {type: Object}, // 行数据
         disabled: {default: false}, // 是否禁用
         func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset, expand
+        toUid: {type: String, default: CoreConsts.PrimaryUid}, // 要操作的目标(UViewTable、UViewSearch、UViewDrawer、UViewModal)
         confirm: {type: Boolean, default: false}, // 是否需要确认
         pid: {type: String, default: CoreConsts.DefaultPID}, // 父id字段
     },
-    setup(props, {attrs}) {
+    setup(props) {
         let context = inject(FuncContextKey);
+
         let disabled = computed(() => {
             if(typeof props.disabled == 'function') {
                 return props.disabled(props.data);
@@ -195,6 +194,8 @@ export const UFuncTag = defineComponent({
                 } else {
                     if(context != null) {
                         funcClickHandle(context, props)
+                    } else {
+                        console.warn()
                     }
                 }
             }
@@ -205,7 +206,7 @@ export const UFuncTag = defineComponent({
         // 注册功能点
         context.regFunc(typeCompute.value, {
             getUrl: () => props.url,
-            clickHandle: clickProxy
+            trigger: clickProxy
         });
 
         let viewContext = context.get$View().getViewContext();
@@ -216,7 +217,7 @@ export const UFuncTag = defineComponent({
             auth: 'sys/authMenuMap'
         }),
         tagColor() {
-            return this.color || colorMaps[this.typeCompute] || 'blue'
+            return this.color || CoreConsts.FuncTagColorMaps[this.typeCompute] || 'blue'
         }
     },
     render() {
@@ -245,21 +246,6 @@ export const UFuncTag = defineComponent({
 
     }
 })
-const typeMaps = {
-    ADD: {type: 'dashed'},
-    DEL: {danger: true},
-    EDIT: {type: '#3b5999'},
-    QUERY: {type: 'primary'}, // 查询
-    VIEW: {type: 'primary'}, // 查询 和query选其一
-    IMPORT: {type: 'default'},
-    EXPORT: {type: 'orange'},
-    EXPAND: {type: 'primary', ghost: true},
-    CANCEL: {type: 'default'},
-    DETAIL: {type: '#87d068'},
-    RESET: {type: 'primary', ghost: true},
-    DEFAULT: {type: 'default'},
-    SUBMIT: {type: 'primary'}
-}
 
 /**
  * 功能按钮, 可以指定url, 功能类型
@@ -271,6 +257,7 @@ export const UFuncBtn = defineComponent({
     props: {
         url: {type: String}, // 功能地址
         func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
+        toUid: {type: String, default: CoreConsts.PrimaryUid}, // 要操作的目标(UViewTable、UViewSearch、UViewDrawer、UViewModal)
     },
     setup(props, attrs) {
         let context = inject(FuncContextKey);
@@ -297,7 +284,7 @@ export const UFuncBtn = defineComponent({
             this.context.regFunc(this.typeCompute, {
                 getUrl: () => this.$props.url,
                 setLoading: (status) => this.loading = status, // 设置按钮的加载状态
-                clickHandle: () => {
+                trigger: () => {
                     if(this.$attrs.onClick instanceof Function) {
                         this.$attrs.onClick(this.typeCompute);
                     } else {
@@ -328,7 +315,7 @@ export const UFuncBtn = defineComponent({
     },
     methods: {
         handleProps() {
-            let type = typeMaps[this.typeCompute];
+            let type = CoreConsts.FuncBtnTypeMaps[this.typeCompute];
             // 如果自定义单击事件, 不做处理
             if(this.$attrs.onClick instanceof Function) {
                 return mergeProps(type, this.$attrs);

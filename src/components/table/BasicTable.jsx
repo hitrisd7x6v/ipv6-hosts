@@ -134,7 +134,7 @@ function initTableColumns(columns, slots) {
 export default defineComponent({
     name: 'UTable',
     props: {
-        primary: {type: Boolean, default: false},
+        ref: {type: String},
         dataSource: {type: Array},
         columns: {type: Array, default: () => []},
         pagination: {
@@ -153,7 +153,6 @@ export default defineComponent({
     setup(props, {slots, emit, attrs}) {
         let selectedRows = ref([]);
         let selectedRowKeys = ref([]);
-
         let loading = reactive({spinning: false, tip: '数据加载中...'});
         let dataSourceRef = ref(props.dataSource);
         let {columns, expandedRowKeys} = props;
@@ -213,16 +212,9 @@ export default defineComponent({
         }
 
         if(viewContext) {
-            if(props.primary) {
-                let primaryContext = viewContext["primaryTableContext"];
-                if(primaryContext.isPrimary) {
-                    console.warn(`当前视图[${viewContext.name}]已经包含声明为[primary]的表格组件`)
-                } else {
-                    tableContext = primaryContext;
-                    tableContext.isPrimary = true; // 标记是主上下文
-                }
-            } else if(attrs['id']) {
-                viewContext.addContextById(attrs['id'], tableContext);
+            if(attrs.uid) {
+                tableContext.uid = attrs.uid;
+                viewContext.addContextByUid(attrs['uid'], tableContext);
             }
 
             if(tableContext) {

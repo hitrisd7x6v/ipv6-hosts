@@ -8,7 +8,7 @@
       <UFuncBtn func="query" url="/core/dictData/view">查询</UFuncBtn>&nbsp;
       <UFuncBtn func="add" url="/core/dictData/add">新增</UFuncBtn>&nbsp;
     </USearch>
-    <UBasicDrawer title="新增" :span="[6, 16]" primary :rules="rules" @edit="edit">
+    <UFormDrawer title="新增" :span="[6, 16]" primary :rules="rules" @edit="edit">
         <UInput field="type" label="字典标识" disabled/>
         <UInput field="label" label="数据名称" />
         <UInput field="value" label="数据值" />
@@ -21,7 +21,7 @@
           <UFuncBtn func="reset">重置</UFuncBtn>&nbsp;
         </div>
       </template>
-    </UBasicDrawer>
+    </UFormDrawer>
     <UTable :columns="columns" size="small" rowKey="id"
              :bordered="true" primary :pagination="false">
       <template #c_action="{record}">

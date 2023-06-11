@@ -26,8 +26,8 @@ export default defineComponent({
         let $view = this.$parent.$view;
         // 获取查询按钮
         let queryFunc = $view.getSearchFunc(FuncNameMeta.QUERY);
-        if(queryFunc && $view.getTableContext().isPrimary) {
-            $view.query(queryFunc.getUrl());
+        if(queryFunc && $view.getPrimaryTableContext() != null) {
+            $view.funcMetaQuery();
         }
     },
     render() {

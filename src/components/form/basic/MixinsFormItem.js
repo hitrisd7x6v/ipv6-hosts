@@ -20,14 +20,14 @@ export default defineComponent({
 
         if(this.name) {
             if(!(this.name instanceof Array)) {
-                console.warn(`name属性必须是数组[${this.name}]或者用field替代name`)
+                console.warn(`[name]必须是数组或者用[field]替代[name]; 正确用法 :name="['${this.name}']`)
             } else {
                 this.namePath = this.name;
             }
         } else if(this.field){
             this.namePath = this.field.split('.');
         } else {
-            return console.warn(`存在表单组件未设置属性[field or name]`)
+            return console.warn(`表单组件未设置属性[field or name]`)
         }
 
         if(this.formContext && this.namePath && this.namePath.length > 0) {
