@@ -19,6 +19,7 @@ export default {
     PrimaryUid: 'primary', // 主要视图标识(UViewDrawer、UViewModal、UTable、USearch)
     PrimaryEditRef: 'Primary:EditRef',
     PrimaryTableRef: 'Primary:TableRef',
+    PrimaryDetailRef: 'Primary:DetailRef',
     PrimarySearchRef: 'Primary:SearchRef',
 
     FormSpinResetTip: '数据重置中...',

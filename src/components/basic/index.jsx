@@ -1,7 +1,7 @@
 import {computed, defineComponent, inject, mergeProps, provide, ref} from "vue";
 import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
 import {msgError} from "@/utils/message";
-import {EditContext, SearchContext} from "@/components/view/Context";
+import {EditContext, SearchContext, TableContext, DetailContext, Config} from "@/components/view/Context";
 import {FuncNameMeta} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
 import CoreConsts from "@/components/CoreConsts";
@@ -22,14 +22,26 @@ export const URow = defineComponent({
 
 /**
  * 比如提交的按钮一般放在对应的编辑组件下面
- * @param config
- * @param context
+ * @param config {Config}
+ * @param context {EditContext | TableContext | SearchContext | DetailContext}
  * @return {*}
  */
 function syncToUidToConfig(config, context) {
-    if(config.toUid == CoreConsts.PrimaryUid) {
-        config.toUid = context.uid;
+    let {eid, tid, sid, did} = config;
+    // 如果未指定操作的组件, 则默认都是Primary组件
+    if(eid == null) {
+        config.eid = CoreConsts.PrimaryEditRef;
     }
+    if(tid == null) {
+        config.tid = CoreConsts.PrimaryTableRef;
+    }
+    if(sid == null) {
+        config.sid = CoreConsts.PrimarySearchRef;
+    }
+    if(did == null) {
+        config.did = CoreConsts.PrimaryDetailRef
+    }
+
     return config;
 }
 function funcClickHandle(context, props) {
@@ -100,15 +112,15 @@ export const UFuncTag = defineComponent({
     props: {
         url: String,
         color: String,
+        eid: String,
+        tid: String,
+        sid: String,
+        did: String,
         onClick: Function, // 自定义单击处理
         data: {type: Object}, // 行数据
         disabled: {default: false}, // 是否禁用
-        params: {default: null}, // 参数：支持对象和方法
-        method: {type: String, default: null}, // 请求方法
+        config: {type: Object, default: () => { return {}}}, // 配置
         func: {type: String, required: true}, // add, del, edit, query, import, export, cancel, detail, reset, expand
-        toUid: {type: String, default: CoreConsts.PrimaryUid}, // 要操作的目标(UViewTable、UViewSearch、UViewDrawer、UViewModal、UFormDrawer、UFormModal...)
-        confirm: {type: Boolean, default: false}, // 是否需要确认
-        pid: {type: String, default: CoreConsts.DefaultPID}, // 父id字段
     },
     setup(props) {
         let context = inject(FuncContextKey);
@@ -141,7 +153,7 @@ export const UFuncTag = defineComponent({
         context.regFunc(typeCompute.value, {
             trigger: clickProxy,
             getUrl: () => props.url,
-            getMethod: () => props.method
+            getMethod: () => props.config.method
         });
 
         let viewContext = context.get$View().getViewContext();
@@ -190,11 +202,14 @@ export const UFuncTag = defineComponent({
 export const UFuncBtn = defineComponent({
     name: 'UFuncBtn',
     props: {
+        eid: String,
+        tid: String,
+        sid: String,
+        did: String,
         url: {type: String}, // 功能地址
         method: {type: String, default: null}, // 请求方法
-        params: {default: null}, // 参数：支持对象和方法
+        config: {type: Object, default: () => { return {}}}, // 配置
         func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
-        toUid: {type: String, default: CoreConsts.PrimaryUid}, // 要操作的目标(UViewTable、UViewSearch、UViewDrawer、UViewModal)
     },
     setup(props, attrs) {
         let context = inject(FuncContextKey);
@@ -220,7 +235,7 @@ export const UFuncBtn = defineComponent({
         if(this.typeCompute && this.context) {
             this.context.regFunc(this.typeCompute, {
                 getUrl: () => this.$props.url,
-                getMethod: () => this.$props.method,
+                getMethod: () => this.$props.config.method,
                 setLoading: (status) => this.loading = status, // 设置按钮的加载状态
                 trigger: () => {
                     if(this.$attrs.onClick instanceof Function) {
