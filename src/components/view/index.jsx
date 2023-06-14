@@ -49,16 +49,20 @@ export const UViewDrawer = defineComponent({
 export const UViewTable = defineComponent({
     name: 'UViewTable',
     components: {UTable},
+    props: {
+        rowKey: {default: null}
+    },
     setup(props, {attrs}) {
         let viewContext = inject(ViewContextKey);
 
-        let rowKey = viewContext.getRowKey();
-        return {viewContext, rowKey}
+        let viewRowKey = viewContext.getRowKey();
+        return {viewContext, viewRowKey}
     },
     render() {
+        let rowKey = this.rowKey || this.viewRowKey;
         return (
             <div class="ivz-view ivz-primary-table">
-                <UTable {...this.$attrs} uid={CoreConsts.PrimaryTableRef} rowKey={this.rowKey} v-slots={this.$slots}/>
+                <UTable {...this.$attrs} uid={CoreConsts.PrimaryTableRef} rowKey={rowKey} v-slots={this.$slots}/>
             </div>)
     }
 })

@@ -1,6 +1,6 @@
 /*系统模块相关配置*/
 import {getDict, getMenus, getUser} from "@/api";
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import {GET} from "@/utils/request";
 import router, {resolverMenuToRoutes} from "@/router";
 import CoreConsts from "@/components/CoreConsts";
@@ -128,7 +128,7 @@ const registerSysModule = function (store) {
                 return (url, labelField, valueField) => {
                     let options = state.optionsMaps[url];
                     if(!options) {
-                        let dictData = reactive([]), valueLabelMap = {};
+                        let dictData = reactive([]), valueLabelMap = reactive({});
                         state.optionsMaps[url] = {options: dictData, valueLabelMap};
 
                         GET(url).then(({data}) => {
@@ -152,7 +152,7 @@ const registerSysModule = function (store) {
 
             getOptionsByDictType: (state) => {
                 return (dictType, labelField, valueField) => {
-                    let dictData = reactive([]), valueLabelMap = {};
+                    let dictData = reactive([]), valueLabelMap = reactive({});
                     let options = state.optionsMaps[dictType];
                     if(!options) { // 说明字典数据还不存在, 先缓存
                         state.optionsMaps[dictType] = {options: dictData, valueLabelMap};

@@ -1,6 +1,6 @@
 import {useStore} from "vuex";
 import dayjs from "dayjs";
-import {defineComponent, inject, provide, reactive, ref, watch} from "vue";
+import {computed, defineComponent, inject, provide, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {TableContext} from "@/components/view/Context";
@@ -23,7 +23,6 @@ function initSlot(column, slots) {
 }
 
 function initOptionsLabel(column) {
-    if(column['__valueLabelMap']) return;
 
     let labelField = column.labelField || MetaConst.DefaultLabelField;
     let valueField = column.valueField || MetaConst.DefaultValueField;
@@ -59,7 +58,7 @@ function initColumnFormatterSlot(column) {
         }
     } else {
         column.formatter = ({text, record, column}) => {
-            return column['__valueLabelMap'][text];
+            return column['__valueLabelMap'][text] || '';
         }
     }
 
@@ -130,11 +129,24 @@ function initTableColumns(columns, slots) {
     })
     return slots;
 }
-
+const UCell = defineComponent({
+    name: 'UCell',
+    props: ['value', 'column', 'valueLabel'],
+    watch: {
+        valueLabel: (a) => {
+            console.log(a)
+        }
+    },
+    render() {
+        return this.valueLabel[this.value]
+    }
+})
 export default defineComponent({
     name: 'UTable',
+    components: {UCell},
     props: {
         dataSource: {type: Array},
+        sticky: {type: Boolean, default: false},
         columns: {type: Array, default: () => []},
         pagination: {
             default: () => {
@@ -241,7 +253,7 @@ export default defineComponent({
     render() {
         return (
             <ATable {...this.$attrs} columns={this.columns} ref="ATableRef"
-                loading={this.loading} dataSource={this.dataSourceRef}
+                loading={this.loading} dataSource={this.dataSourceRef} sticky={this.sticky}
                 pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
                 onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {

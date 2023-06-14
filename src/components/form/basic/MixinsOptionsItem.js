@@ -1,4 +1,4 @@
-import {defineComponent} from "vue";
+import {computed, defineComponent, reactive, ref} from "vue";
 import {mapActions, useStore} from "vuex";
 import {MetaConst} from "@/utils/MetaUtils";
 
@@ -18,23 +18,13 @@ export default defineComponent({
     created() {
         if(!this.options) {
             if(this.dict) {
-                this.dataSource = useStore().getters['sys/getOptionsByDictType']
-                    (this.dict, this.labelField, this.valueField);
+                this.dataSource = ref(useStore().getters['sys/getOptionsByDictType'](this.dict, this.labelField, this.valueField));
             } else if(this.url) {
-                this.dataSource = useStore().getters['sys/getOptionsByUrl']
-                    (this.url, this.labelField, this.valueField);
+                this.dataSource = ref(useStore().getters['sys/getOptionsByUrl'](this.url, this.labelField, this.valueField));
             }
         } else {
             this.dataSource = this.options;
         }
     },
-    methods: {
-        ...mapActions({
-            getOptionsByDictType: 'sys/getOptionsByDictType'
-        }),
-
-        getOptionsLabel(dict) {
-            return defaultValue || null;
-        },
-    }
+    methods: { }
 })

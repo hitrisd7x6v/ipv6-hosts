@@ -22,7 +22,6 @@ function unUFuncTag() {
 export function $View(context) {
 
     this.context = context;
-    this.defaultId = 'primary';
 
     if(!context) {
         return console.error("未传入视图上下文对象[ViewContext]")
@@ -90,19 +89,22 @@ export function $View(context) {
     }
 
     this.getEditFunc = function (func) {
-        return this.getPrimaryEditContext().getFunc(func)
+        let editContext = this.getPrimaryEditContext();
+        return editContext ? editContext.getFunc(func) : null;
     }
 
     this.getSearchFunc = function (func) {
-        return this.getPrimarySearchContext().getFunc(func);
+        let searchContext = this.getPrimarySearchContext();
+        return searchContext ? searchContext.getFunc(func) : null;
     }
 
     this.getTableFunc = function (func) {
-        return this.getPrimaryTableContext().getFunc(func)
+        let tableContext = this.getPrimaryTableContext();
+        return tableContext ? tableContext.getFunc(func) : null;
     }
 
     this.getDetailFunc = function (func) {
-        return this.getDetailContext().getFunc(func)
+        return this.getPrimaryDetailContext().getFunc(func)
     }
     /**
      * 获取当前视图页的名称 eg: 用户管理、部门管理等
@@ -155,7 +157,7 @@ export function $View(context) {
 
     /**
      * 打开编辑框
-     * @param config
+     * @param config {Config}
      */
     this.openForAdd = function (config) {
         let editContext = this.getViewContext().getContextByUid(config.toUid);
@@ -178,10 +180,7 @@ export function $View(context) {
 
     /**
      * 删除主表格记录
-     * @param url 删除地址 必填
-     * @param data 删除的数据 必填
-     * @param confirmTitle 确认标题 非必填
-     * @param confirmContext 确认内容 非必填
+     * @param config {Config}
      * @return void
      */
     this.del = function (config) {
@@ -205,14 +204,14 @@ export function $View(context) {
         let content = confirmContext || CoreConsts.DelConfirmContent;
 
         confirm({title, content, onOk: () => {
-                this.getRequestMethod(config)(url, data).then(({code, message, data}) => {
-                    if (code == CoreConsts.SuccessCode) {
-                        msgSuccess(message || CoreConsts.DelSuccessMsg);
-                        this.funcMetaQuery(); // 删除成功, 重新刷新列表
-                    } else {
-                        msgError(message);
-                    }
-                }).catch(reason => console.error(reason))
+            this.getRequestMethod(config)(url, data).then(({code, message, data}) => {
+                if (code == CoreConsts.SuccessCode) {
+                    msgSuccess(message || CoreConsts.DelSuccessMsg);
+                    this.queryByFunc(CoreConsts.PrimarySearchRef); // 删除成功, 重新刷新列表
+                } else {
+                    msgError(message);
+                }
+            }).catch(reason => console.error(reason))
             }, onCancel: () => null
         })
 
@@ -220,25 +219,20 @@ export function $View(context) {
 
     /**
      * 批量删除主表格选中的数据
-     * @param url 删除地址
-     * @param confirmTitle 删除的确认标题
-     * @param confirmContext 删除的确认内容
+     * @param config {Config}
      */
-    this.batchDel = function (url, confirmTitle, confirmContext) {
+    this.batchDel = function (config) {
         let tableContext = this.getPrimaryTableContext();
         if(!tableContext.isPrimary) {
             return;
         }
-
         let selectedRowKeys = tableContext.getSelectedRowKeys();
-        this.del(url, selectedRowKeys, confirmTitle, confirmContext);
+        this.del(config);
     }
 
     /**
-     * 打开主编辑框
-     * url > data
-     * @param url 获取编辑数据地址
-     * @param data 编辑数据
+     * 打开编辑框
+     * @param config {Config}
      */
     this.openForEdit = function (config) {
         let editContext = this.getViewContext().getContextByUid(config.toUid);
@@ -272,7 +266,7 @@ export function $View(context) {
      * 新增子记录
      * 支持格式：func='add:child'
      * 设置参数：:params="{pid: 'pid'}"
-     * @param config
+     * @param config {Config}
      */
     this.openForChild = function (config) {
         if(!(config.params instanceof Object)) {
@@ -301,7 +295,7 @@ export function $View(context) {
 
     /**
      * 设置其他功能 比如：设置密码
-     * @param config
+     * @param config {Config}
      */
     this.openForSet = function (config) {
         if(!(config.params instanceof Object)) {
@@ -335,13 +329,22 @@ export function $View(context) {
 
     /**
      * 更具查询功能点查询
+     * @param uid 指定uid下的func
      */
-    this.funcMetaQuery = function () {
-        let queryFunc = this.getSearchFunc(CoreConsts.FuncNameMeta.QUERY);
-        if(queryFunc != null) {
-            queryFunc.trigger()
+    this.queryByFunc = function (uid) {
+        if(!uid) {
+            return console.error(`请指定查询参数uid`);
+        }
+
+        let contextByUid = this.getViewContext().getContextByUid(uid);
+        if(contextByUid != null) {
+            let queryFunc = contextByUid.getFunc(CoreConsts.FuncNameMeta.QUERY)
+            if(queryFunc != null) {
+                queryFunc.trigger()
+            }
         }
     }
+
     /**
      * 查询主表格数据
      * @param config 配置信息
@@ -382,14 +385,15 @@ export function $View(context) {
 
     /**
      * 获取详情(暂时未实现此功能)
-     * @param url
+     * @param config {Config}
      */
-    this.detail = function (url) {
+    this.detail = function (config) {
 
     }
 
     /**
      * 隐藏主编辑框
+     * @param config {Config}
      */
     this.cancel = function (config) {
         let editContext = this.getViewContext().getContextByUid(config.toUid);
@@ -406,6 +410,7 @@ export function $View(context) {
     }
     /**
      * 展开树形的表格
+     * @param config {Config}
      * @param expandedRowKeys 要展开的行的key列表 不指定则展开所有
      */
     this.expanded = function (config, expandedRowKeys) {
@@ -424,7 +429,7 @@ export function $View(context) {
     }
     /**
      * 提交主编辑表单
-     * @param url 编辑地址
+     * @param config {Config}
      * @return void
      */
     this.submit = function (config) {
@@ -453,7 +458,7 @@ export function $View(context) {
                     msgSuccess(CoreConsts.SubmitSuccessMsg);
                     editContext.setVisible(false);
                     if(isPrimary) { // 提交数据之后重新刷新列表
-                        this.funcMetaQuery();
+                        this.queryByFunc(CoreConsts.PrimarySearchRef);
                     }
                 } else {
                     msgError(message);
@@ -465,6 +470,7 @@ export function $View(context) {
 
     /**
      * 重置主编辑表单
+     * @param config {Config}
      */
     this.resetEditModel = function (config) {
         let editContext = this.getViewContext().getContextByUid(config.toUid);
@@ -497,7 +503,8 @@ export function $View(context) {
     }
 
     /**
-     * 重置主搜索表单
+     * 重置搜索表单
+     * @param config {Config}
      */
     this.resetSearchModel = function (config) {
         let searchContext = this.getViewContext().getContextByUid(config.toUid);
@@ -507,10 +514,14 @@ export function $View(context) {
 
         searchContext.getFormContext().resetFields();
         if(config.toUid == CoreConsts.PrimarySearchRef) {
-            this.funcMetaQuery(); // 重置之后, 重新刷新列表
+            this.queryByFunc(); // 重置之后, 重新刷新列表
         }
     }
 
+    /**
+     * excel导出
+     * @param config {Config}
+     */
     this.excelExport = function (config) {
         let searchContext = this.getViewContext().getContextByUid(config.toUid);
         if(searchContext == null) {
@@ -543,13 +554,17 @@ export function $View(context) {
         })
     }
 
+    /**
+     * excel excel导入
+     * @param config {Config}
+     */
     this.excelImport = function (config) {
 
     }
 
     /**
      * 其他功能的操作
-     * @param config
+     * @param config {Config}
      */
     this.otherFuncExec = function (config) { }
 
@@ -570,7 +585,7 @@ export function $View(context) {
     }
 
     /**
-     * @param config
+     * @param config {Config}
      * @return {Promise<AxiosResponse<any>>|*}
      */
     this.getRequestMethod = function (config) {
@@ -592,12 +607,7 @@ export function $View(context) {
      * @return {SearchContext|*}
      */
     this.getPrimarySearchContext = function () {
-        let context = this.getViewContext().getContextByUid(CoreConsts.PrimarySearchRef)
-        if(context instanceof SearchContext) {
-            return context;
-        } else {
-            return console.warn(`查找不到uid=${CoreConsts.PrimarySearchRef}的搜索上下文`)
-        }
+        return this.getViewContext().getContextByUid(CoreConsts.PrimarySearchRef)
     }
 
     /**
@@ -627,12 +637,7 @@ export function $View(context) {
      * @return {EditContext}
      */
     this.getEditContextByUid = function (uid) {
-        let context = this.getViewContext().getContextByUid(uid);
-        if(context instanceof EditContext) {
-            return context;
-        } else {
-            return console.warn(`未声明前缀为[${uid}]的编辑组件`)
-        }
+        return this.getViewContext().getContextByUid(uid);
     }
 
     /**
@@ -643,31 +648,15 @@ export function $View(context) {
     }
 
     /**
-     * 通过前缀获取表上下文
-     * @param uid
-     * @return {TableContext}
-     */
-    this.getTableContextByUid = function (uid) {
-        let context = this.context.getContextByUid(uid);
-        if(context instanceof TableContext) {
-            return context;
-        } else {
-            return console.warn(`未声明前缀为[${uid}]的表组件`)
-        }
-    }
-
-    /**
-     * @param id 元素的唯一id 如果空将返回主详情上下文对象
+     * @param uid 元素的唯一id 如果空将返回主详情上下文对象
      * @return {DetailContext|*}
      */
-    this.getDetailContext = function (id) {
-        if(id) {
-            let contextById = this.context.getContextById(id);
-            if(contextById) {
-                return contextById;
-            } else {
-                return console.warn(`查找不到id=${id}的编辑上下文`)
-            }
+    this.getPrimaryDetailContext = function (uid) {
+        let contextById = this.context.getContextByUid(uid);
+        if(contextById) {
+            return contextById;
+        } else {
+            return console.warn(`查找不到id=${uid}的编辑上下文`)
         }
 
         if(!this.context.primaryDetailContext.isPrimary && import.meta.env.DEV) {
@@ -677,19 +666,6 @@ export function $View(context) {
         return this.context.primaryDetailContext;
     }
 
-    /**
-     * 通过前缀获取详情上下文
-     * @param uid
-     * @return {DetailContext}
-     */
-    this.getDetailContextByUid = function (uid) {
-        let context = this.context.getContextByUid(uid);
-        if(context instanceof DetailContext) {
-            return context;
-        } else {
-            return console.warn(`未声明前缀为[${uid}]的详情组件`)
-        }
-    }
 }
 
 /**
@@ -741,11 +717,7 @@ export function SearchContext(viewContext) {
             funcMeta = this.funcMetas['QUERY'] || this.funcMetas['VIEW'];
         }
 
-        if(funcMeta) {
-            return funcMeta;
-        } else {
-            return console.warn(`搜索组件不包含功能[${func}]`);
-        }
+        return funcMeta;
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
@@ -787,12 +759,7 @@ export function EditContext(viewContext) {
 
     // 获取功能组件配置
     this.getFunc = function (func) {
-        let funcMeta = this.funcMetas[func.toUpperCase()];
-        if(funcMeta) {
-            return funcMeta;
-        } else {
-            return console.warn(`搜索组件不包含功能[${func}]`);
-        }
+        return this.funcMetas[func.toUpperCase()];
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
@@ -888,13 +855,9 @@ export function TableContext(viewContext) {
 
     // 获取功能组件配置
     this.getFunc = function (func) {
-        let funcMeta = this.funcMetas[func.toUpperCase()];
-        if(funcMeta) {
-            return funcMeta;
-        } else {
-            return console.warn(`搜索组件不包含功能[${func}]`);
-        }
+        return this.funcMetas[func.toUpperCase()];
     }
+
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
     }
@@ -1001,12 +964,7 @@ export function DetailContext(viewContext) {
 
     // 获取功能组件配置
     this.getFunc = function (func) {
-        let funcMeta = this.funcMetas[func.toUpperCase()];
-        if(funcMeta) {
-            return funcMeta;
-        } else {
-            return console.warn(`搜索组件不包含功能[${func}]`);
-        }
+        return this.funcMetas[func.toUpperCase()];
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
@@ -1078,4 +1036,38 @@ export function ViewContext (props) {
 
         }
     }
+}
+
+
+export function Config() {
+    /**
+     * 功能地址
+     * @type {String}
+     */
+    this.url = null;
+    /**
+     * 功能参数
+     * @type {Object | Function}
+     */
+    this.params = null;
+    /**
+     * 请求方法{get or post}
+     * @type {String}
+     */
+    this.method = null;
+    /**
+     * 要操作的功能
+     * @type {String}
+     */
+    this.func = null;
+    /**
+     * 要操作的uid组件
+     * @type {String}
+     */
+    this.toUid = null;
+    /**
+     * 要操作的数据
+     * @type {Object}
+     */
+    this.data = null;
 }

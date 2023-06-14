@@ -1,14 +1,16 @@
 <template>
-  <UView auth>
-    <USearch primary>
+  <UView>
+    <UViewSearch v-model="searchModel">
       <USelect label="字典标识" field="type" @change="loadDictData" span="5"
                   url="/core/dictType/list" labelField="name" valueField="type"
                   :defaultValue="type"/>
       <UInput label="数据名称" field="name" />
-      <UFuncBtn func="query" url="/core/dictData/view">查询</UFuncBtn>&nbsp;
-      <UFuncBtn func="add" url="/core/dictData/add">新增</UFuncBtn>&nbsp;
-    </USearch>
-    <UFormDrawer title="新增" :span="[6, 16]" primary :rules="rules" @edit="edit">
+      <template #func>
+        <UFuncBtn func="query" url="/core/dictData/view">查询</UFuncBtn>&nbsp;
+        <UFuncBtn func="add" url="/core/dictData/add">新增</UFuncBtn>&nbsp;
+      </template>
+    </UViewSearch>
+    <UViewDrawer title="新增" :span="[6, 16]" :rules="rules" @edit="edit">
         <UInput field="type" label="字典标识" disabled/>
         <UInput field="label" label="数据名称" />
         <UInput field="value" label="数据值" />
@@ -21,20 +23,20 @@
           <UFuncBtn func="reset">重置</UFuncBtn>&nbsp;
         </div>
       </template>
-    </UFormDrawer>
-    <UTable :columns="columns" size="small" rowKey="id"
-             :bordered="true" primary :pagination="false">
+    </UViewDrawer>
+    <UViewTable :columns="columns" size="small" rowKey="id" :bordered="true">
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/dictData/edit">编辑</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/dictData/del">删除</UFuncTag>
       </template>
-    </UTable>
+    </UViewTable>
   </UView>
 </template>
 
 <script>
 /*字典数据页面*/
 import {useRouter} from "vue-router";
+import CoreConsts from "@/components/CoreConsts";
 
 export default {
   name: "DictData",
@@ -53,16 +55,17 @@ export default {
       label: {required: true, message: '字典标签必填'},
       value: {required: true, message: '标签值必填'},
     }
+
+    let searchModel = {};
     let type = useRouter().currentRoute.value.query.type;
-    return {columns, rules, type};
+    return {columns, rules, type, searchModel};
   },
   watch: {
     $route(to, form) {
       let type = to.query.type;
       if(type) {
-        let model = this.$view.getSearchModel();
-        if(model.type != type) {
-          model.type = type;
+        if(this.searchModel.type != type) {
+          this.searchModel.type = type;
           this.query();
         }
       }
@@ -70,7 +73,7 @@ export default {
   },
   methods: {
     query() {
-      this.$view.query();
+      this.$view.queryByFunc(CoreConsts.PrimarySearchRef)
     },
 
     edit(model) {

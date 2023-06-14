@@ -19,7 +19,7 @@
           <UInput field="name" label="用户昵称" />
           <UInput field="account" label="用户帐号" :disabled="model.id != null"/>
           <UTreeSelect field="orgId" label="所属部门" treeNodeFilterProp="label"
-                           url="/core/org/parent" labelField="name" valueField="id"/>
+                           url="/core/org/parent" labelField="name" valueField="id" :virtual="false"/>
           <UInput field="email" label="用户邮箱" />
           <URadio field="status" label="用户状态" defaultValue="enabled" :options="status"/>
           <URadio field="sex" label="用户性别" :options="sex" defaultValue="non"/>

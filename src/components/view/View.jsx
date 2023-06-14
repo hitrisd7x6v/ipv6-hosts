@@ -2,6 +2,7 @@ import {defineComponent, provide} from "vue";
 import {$View, ViewContext} from "@/components/view/Context";
 import {ViewContextKey} from "@/utils/ProvideKeys";
 import {FuncNameMeta} from "@/utils/MetaUtils";
+import CoreConsts from "@/components/CoreConsts";
 
 export default defineComponent({
     name: "UView",
@@ -24,10 +25,7 @@ export default defineComponent({
     },
     mounted() {
         let $view = this.$parent.$view;
-
-        if($view.getPrimaryTableContext() != null) {
-            $view.funcMetaQuery();
-        }
+        $view.queryByFunc(CoreConsts.PrimarySearchRef);
     },
     render() {
         return <div class="ivz-page-view ivz-basic-view">

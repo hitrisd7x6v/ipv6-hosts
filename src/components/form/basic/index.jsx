@@ -1,4 +1,4 @@
-import {defineComponent, h, resolveComponent} from "vue";
+import {computed, defineComponent, h, resolveComponent} from "vue";
 import UForm from "@/components/form/basic/Form.jsx";
 import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
 import MixinsOptionsItem from "@/components/form/basic/MixinsOptionsItem";
@@ -231,10 +231,9 @@ export const UTreeSelect = defineComponent({
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
-
         return <a-col {...props}>
             <a-form-item {...props}>
-                {<a-tree-select {...this.getFormAttrs({treeData: this.dataSource})} v-slots={this.$slots}></a-tree-select>}
+                {<a-tree-select {...this.getFormAttrs()} treeData={this.dataSource} v-slots={this.$slots}></a-tree-select>}
             </a-form-item>
         </a-col>
     }
