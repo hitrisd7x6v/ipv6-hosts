@@ -32,13 +32,7 @@
           </a-breadcrumb>
         </a-col>
         <a-col style="text-align: center" span="16">
-          <slot name="func" :metas="funMetas" :model="model">
-            <a-space style="text-align: center; padding: 0px 16px">
-              <template v-for="meta in funMetas" :key="meta.field">
-                <UFuncBtn :func="meta.field" :type="meta.props.type" @click="meta.props.onClick">{{meta.name}}</UFuncBtn>
-              </template>
-            </a-space>
-          </slot>
+          <slot name="func"></slot>
         </a-col>
       </a-row>
     </template>
@@ -53,14 +47,10 @@ import {mapMutations, useStore} from "vuex";
 import {inject, provide} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {SearchContext} from "@/components/view/Context";
-import {initMetaCallback} from "@/utils/MetaUtils";
 
 export default {
   name: "IvzBreadSearch",
   components: {UForm, DownOutlined, HomeFilled},
-  props: {
-    funMetas: {type: Array, default: () => []},
-  },
   setup(props, {attrs}) {
     let activityMenu = useStore().getters['sys/activityMenu'];
     let breadcrumb = useStore().getters['sys/resolverBreadcrumb'];
@@ -70,13 +60,6 @@ export default {
     let searchContext = new SearchContext(viewContext);
 
     if(viewContext) {
-      if(props.funMetas) {
-        props.funMetas.forEach(meta => {
-          // 功能点默认点击事件
-          initMetaCallback(meta, viewContext.__$View, 'search');
-        })
-      }
-
       if(attrs.uid) {
         searchContext.uid = attrs.uid;
         viewContext.addContextByUid(attrs.uid, searchContext);

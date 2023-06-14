@@ -1,64 +1,4 @@
 /*视图组件相关的数据存储*/
-import {FunMetaMaps, clone} from "@/utils/MetaUtils";
-
-function unMounded() {
-    console.warn('获取数据失败, 组件还未挂载完成');
-}
-function  unMountedTable() {
-    console.warn('表格组件未挂载或不存在');
-}
-function unMoundedEdit() {
-    console.warn('组件未挂载完成或者缺少编辑视图组件 UViewModal, UViewDrawer等');
-}
-// 解析视图菜单下面的功能点
-function resolverFunMetas(menu) {
-    let searchFunMetas= [], tableFunMetas = [], editFunMetas = [];
-    if(!menu) {
-        console.warn(`不能解析功能点, 菜单信息为[null], 将不包含任何功能`)
-        return {searchFunMetas, tableFunMetas, editFunMetas}
-    }
-
-    let children = menu.children;
-    if(children) {
-        let saveMeta = {field: FunMetaMaps.Submit, addUrl: null, editUrl: null};
-        children.forEach(item => {
-            if(item.type != 'A') {
-                return console.log(`错误的功能点[${item.name}][${item.type} != 'A']`)
-            }
-
-            let {position, permType, url, name, sort} = item;
-            let meta = {field: permType, name, url, sort};
-
-            // 需要保存按钮
-            if(meta.field == FunMetaMaps.Add) {
-                saveMeta.addUrl = meta.url
-            } else if(meta.field == FunMetaMaps.Edit) {
-                saveMeta.editUrl = meta.url;
-            }
-
-            if(position == 'AM') {
-                tableFunMetas.push(meta);
-                searchFunMetas.push(clone(meta));
-            } else if(position == 'M') {
-                searchFunMetas.push(meta);
-            } else if(position == 'T') {
-                tableFunMetas.push(meta);
-            } else {
-                console.log(`错误的功能点position[${position}], 取值[M, T, AM]`)
-            }
-        })
-
-        if(saveMeta.editUrl || saveMeta.addUrl) {
-            let cancelMeta = {field: FunMetaMaps.Cancel, name: '取消'}
-
-            editFunMetas.push(cancelMeta)
-            editFunMetas.push(saveMeta);
-        }
-    }
-
-    return {searchFunMetas, tableFunMetas, editFunMetas}
-}
-
 export default function registerViewModule(store) {
     store.registerModule('view', {
         namespaced: true,
@@ -77,24 +17,6 @@ export default function registerViewModule(store) {
             searchFunMetas: state => url => state.pageViewInfoMaps[url].searchFunMetas
         },
         mutations: {
-            registerPageView: (state, viewMenu) => {
-                let {searchFunMetas, tableFunMetas, editFunMetas} = resolverFunMetas(viewMenu);
-
-                let viewInfo = {
-                    viewMenu, // 当前视图的菜单信息
-                    config: {}, // 当前视图的配置信息
-                    editFunMetas, // 编辑功能按钮
-                    tableFunMetas, // 表格功能按钮
-                    searchFunMetas, // 搜索栏功能按钮
-
-                    getEditFunMeta: (field) => editFunMetas.find(item => item.field == field),
-                    getTableFunMeta: (field) => tableFunMetas.find(item => item.field == field),
-                    getSearchFunMeta: (field) => searchFunMetas.find(item => item.field == field)
-                }
-
-                state.pageViewInfoMaps[viewMenu['url']] = viewInfo;
-            },
-
             setEditViewContext: (state, {url, formContext, openEditView
                 , model, loadingActive, switchActive, switchSpinning}) => {
                 let pageViewInfo = state.pageViewInfoMaps[url];

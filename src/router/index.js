@@ -17,7 +17,7 @@ const router = createRouter({
                 {path: 'refresh', name: 'refresh', component: Refresh}, // 页面刷新功能中做路由中转
                 {path: 'dict/data', component: ()=>import("@msn/core/dict/data/index.vue")
                     , name: '字典数据', meta: {keepAlive: 'DictData', closable: true}},
-
+                {path: 'profile', component: () => import("@msn/core/admin/UserProfile.vue"), name: '个人资料', meta: {closable: true}},
                 {path:'/:chapters+', name: '404', component: NotFound, beforeEnter(to, from, next) {
                         let path = to.path;
                         let init = store.getters["sys/init"];

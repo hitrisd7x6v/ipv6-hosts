@@ -14,12 +14,16 @@ export default {
     DelConfirmTitle: '删除提示', // 默认删除提示框标题
     DelConfirmContent: '确定删除此记录吗？', // 默认删除提示框内容
     SubmitSuccessMsg: '数据提交成功', // 默认数据提交成功提示
-    OtherOperaSuccessMsg: '操作成功', // 其他动作操作成功的提示
+    OtherOperaSuccessMsg: '操作成功', // 默认其他动作操作成功的提示
 
     PrimaryUid: 'primary', // 主要视图标识(UViewDrawer、UViewModal、UTable、USearch)
-    PrimaryEditRef: 'PrimaryEditRef',
-    PrimaryTableRef: 'PrimaryTableRef',
-    PrimarySearchRef: 'PrimarySearchRef',
+    PrimaryEditRef: 'Primary:EditRef',
+    PrimaryTableRef: 'Primary:TableRef',
+    PrimarySearchRef: 'Primary:SearchRef',
+
+    FormSpinResetTip: '数据重置中...',
+    FormSpinSubmitTip: '数据提交中...',
+    FormSpinLoadingTip: '数据加载中...',
 
     // 功能标识
     FuncNameMeta: {ADD: 'ADD', DEL: 'DEL', EDIT: 'EDIT', QUERY: 'QUERY', IMPORT: 'IMPORT', EXPORT: 'EXPORT'

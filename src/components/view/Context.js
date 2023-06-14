@@ -1,8 +1,9 @@
 import {FormContext} from "@/components/form/basic/FormContext";
 import {confirm, msgError, msgSuccess, msgWarn} from "@/utils/message";
-import {FuncNameMeta, MetaConst, TypeMethodMaps} from "@/utils/MetaUtils";
+import {FuncNameMeta, TypeMethodMaps} from "@/utils/MetaUtils";
 import SysUtils from "@/utils/SysUtils";
 import CoreConsts from "@/components/CoreConsts";
+import {GET, POST} from "@/utils/request";
 
 function Unmount() {
     console.warn("此方法只能在组件挂载时才能使用");
@@ -157,11 +158,18 @@ export function $View(context) {
      * @param config
      */
     this.openForAdd = function (config) {
-        let editContext = this.getPrimaryEditContext();
-        if(config.toUid != CoreConsts.PrimaryUid) {
-            editContext = this.getPrimaryEditContext()
+        let editContext = this.getViewContext().getContextByUid(config.toUid);
+        if(editContext == null) {
+            return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+        } else {
+            if(editContext.uid.startsWith("Primary")) {
+                editContext = this.getPrimaryEditContext();
+            } else if(!(editContext instanceof EditContext)) {
+                return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+            }
         }
 
+        editContext.openType = 'add';
         editContext.asyncVisible(config.data, true).then((model) => {
             let formContext = editContext.getFormContext();
             formContext.setEditModel(model);
@@ -176,8 +184,8 @@ export function $View(context) {
      * @param confirmContext 确认内容 非必填
      * @return void
      */
-    this.del = function (props) {
-        let {url, data, confirmTitle, confirmContext} = props
+    this.del = function (config) {
+        let {url, data, confirmTitle, confirmContext} = config
 
         if(!url) {
             return console.warn("未指定删除的地址[url]")
@@ -197,7 +205,7 @@ export function $View(context) {
         let content = confirmContext || CoreConsts.DelConfirmContent;
 
         confirm({title, content, onOk: () => {
-                TypeMethodMaps.Del(url, data).then(({code, message, data}) => {
+                this.getRequestMethod(config)(url, data).then(({code, message, data}) => {
                     if (code == CoreConsts.SuccessCode) {
                         msgSuccess(message || CoreConsts.DelSuccessMsg);
                         this.funcMetaQuery(); // 删除成功, 重新刷新列表
@@ -233,28 +241,98 @@ export function $View(context) {
      * @param data 编辑数据
      */
     this.openForEdit = function (config) {
-        let editContext = this.getPrimaryEditContext();
-        if(config.toUid != CoreConsts.PrimaryUid) {
-            editContext = this.getViewContext().getContextByUid(config.toUid)
-        }
-
-        if(editContext != null) {
-            let {url, data} = config;
-            let params = this.getEditUrl(data, editContext);
-            if(url) {
-                editContext.asyncVisible(null).then(() => {
-                    editContext.setLoading(true);
-                    TypeMethodMaps.Edit(url, params).then(({code, message, data}) => {
-                        if(code == CoreConsts.SuccessCode) {
-                            editContext.getFormContext().setEditModel(data);
-                        } else {
-                            msgError(message);
-                        }
-                    }).finally(() => editContext.setLoading(false))
-                })
+        let editContext = this.getViewContext().getContextByUid(config.toUid);
+        if(editContext == null) {
+            return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+        } else {
+            if(editContext.uid.startsWith("Primary")) {
+                editContext = this.getPrimaryEditContext();
+            } else if(!(editContext instanceof EditContext)) {
+                return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
             }
         }
+
+        let {url, data} = config;
+        editContext.openType = 'edit';
+        editContext.asyncVisible(data, false).then(() => {
+            editContext.setLoading(true, CoreConsts.FormSpinLoadingTip);
+            let params = this.getEditUrl(data, editContext);
+            this.getRequestMethod(config)(url, params)
+                .then(({code, message, data}) => {
+                    if(code == CoreConsts.SuccessCode) {
+                        editContext.getFormContext().setEditModel(data);
+                    } else {
+                        msgError(message);
+                    }
+                }).finally(() => editContext.setLoading(false))
+        })
     }
+
+    /**
+     * 新增子记录
+     * 支持格式：func='add:child'
+     * 设置参数：:params="{pid: 'pid'}"
+     * @param config
+     */
+    this.openForChild = function (config) {
+        if(!(config.params instanceof Object)) {
+            return console.error(`child子功能必须指定参数[params] 支持对象和函数 如：{pid: '父字段名(pid)', [id: '可选(id || rowKey)']}`)
+        }
+
+        let {id, pid} = this.getConfigParams(config, config.data);
+        let editContext = this.getViewContext().getContextByUid(config.toUid);
+        if(editContext == null) {
+            return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+        } else {
+            if(editContext.uid.startsWith("Primary")) {
+                editContext = this.getPrimaryEditContext();
+            } else if(!(editContext instanceof EditContext)) {
+                return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+            }
+        }
+
+        // 打开编辑框并且是指pid
+        editContext.asyncVisible(config.data, true).then(model => {
+            let rowKey = id || this.getRowKey();
+            // 设置pid
+            model[pid] = config.data[rowKey];
+        })
+    }
+
+    /**
+     * 设置其他功能 比如：设置密码
+     * @param config
+     */
+    this.openForSet = function (config) {
+        if(!(config.params instanceof Object)) {
+            return console.error(`set子功能必须指定参数[params] 支持对象和函数 返回：{copy: ['id', 'name', ...]}; copy指定要复制哪些字段到编辑对象`)
+        }
+
+        let {copy} = this.getConfigParams(config);
+        if(copy instanceof String) {
+            copy = [copy];
+        }
+
+        let editContext = this.getViewContext().getContextByUid(config.toUid);
+        if(editContext == null) {
+            return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+        } else {
+            if(editContext.uid.startsWith("Primary")) {
+                editContext = this.getPrimaryEditContext();
+            } else if(!(editContext instanceof EditContext)) {
+                return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+            }
+        }
+
+        // 打开编辑框后复制对应的字段到新的model
+        editContext.asyncVisible(config.data, true).then(model => {
+            // 复制属性
+            copy.forEach(field => {
+                model[field] = config.data[field];
+            })
+        })
+    }
+
     /**
      * 更具查询功能点查询
      */
@@ -284,7 +362,7 @@ export function $View(context) {
         }
 
         tableContext.setLoading(true);
-        TypeMethodMaps.View(queryUrl, model).then(({code, message, data}) => {
+        this.getRequestMethod(config)(queryUrl, model).then(({code, message, data}) => {
             if(code == CoreConsts.SuccessCode) {
                 if(data instanceof Array){
                     tableContext.setDataSource(data)
@@ -314,9 +392,9 @@ export function $View(context) {
      * 隐藏主编辑框
      */
     this.cancel = function (config) {
-        let editContext = this.getPrimaryEditContext();
-        if(config.toUid != CoreConsts.PrimaryUid) {
-            editContext = this.getViewContext().getContextByUid(config.toUid);
+        let editContext = this.getViewContext().getContextByUid(config.toUid);
+        if(!(editContext instanceof EditContext)) {
+            return console.warn(`未找到对应的uid可编辑组件[${config.toUid}]`)
         }
 
         // 关闭编辑框的加载状态
@@ -330,11 +408,19 @@ export function $View(context) {
      * 展开树形的表格
      * @param expandedRowKeys 要展开的行的key列表 不指定则展开所有
      */
-    this.expanded = function (expandedRowKeys) {
-        let tableContext = this.getPrimaryTableContext();
-        if(tableContext.isPrimary) {
-            tableContext.expanded(expandedRowKeys);
+    this.expanded = function (config, expandedRowKeys) {
+        let tableContext = this.getViewContext().getContextByUid(config.toUid);
+        if(tableContext == null) {
+            return console.warn(`未找到对应uid的表组件[${config.toUid}]`)
+        } else {
+            if(tableContext.uid.startsWith("Primary")) {
+                tableContext = this.getPrimaryTableContext();
+            } else if(!(tableContext instanceof TableContext)) {
+                return console.warn(`未找到对应uid的表组件s[${config.toUid}]`)
+            }
         }
+
+        tableContext.expanded(expandedRowKeys);
     }
     /**
      * 提交主编辑表单
@@ -342,31 +428,33 @@ export function $View(context) {
      * @return void
      */
     this.submit = function (config) {
-        let editContext = this.getPrimaryEditContext();
-        let isPrimary = config.toUid == CoreConsts.PrimaryUid;
+        let editContext = this.getViewContext().getContextByUid(config.toUid);
+        let isPrimary = config.toUid == CoreConsts.PrimaryEditRef;
 
-        if(!isPrimary) {
-            editContext = this.getViewContext().getContextByUid(config.toUid);
+        if(!(editContext instanceof EditContext)) {
+            return console.warn(`未找到对应的uid可编辑组件[${config.toUid}]`)
         }
 
         editContext.getFormContext().validate().then(() => {
             let model = editContext.getModel();
 
-            function setLoading(status) {
+            function setLoading(status, tip) {
                 let submit = editContext.getFunc(FuncNameMeta.SUBMIT);
                 if(submit) {
                     submit.setLoading(status);
                 }
 
-                editContext.setLoading(status)
+                editContext.setLoading(status, tip)
             }
 
-            setLoading(true);
-            TypeMethodMaps.Submit(config.url, model).then(({code, message, data}) => {
+            setLoading(true, CoreConsts.FormSpinSubmitTip);
+            this.getRequestMethod(config)(config.url, model).then(({code, message, data}) => {
                 if (code == CoreConsts.SuccessCode) {
                     msgSuccess(CoreConsts.SubmitSuccessMsg);
                     editContext.setVisible(false);
-                    this.funcMetaQuery(); // 提交数据之后重新刷新列表
+                    if(isPrimary) { // 提交数据之后重新刷新列表
+                        this.funcMetaQuery();
+                    }
                 } else {
                     msgError(message);
                 }
@@ -379,32 +467,31 @@ export function $View(context) {
      * 重置主编辑表单
      */
     this.resetEditModel = function (config) {
-        let editContext = this.getPrimaryEditContext();
+        let editContext = this.getViewContext().getContextByUid(config.toUid);
+        if(!(editContext instanceof EditContext)) {
+            return console.warn(`未找到对应的uid可编辑组件[${config.toUid}]`)
+        }
 
-        if(config.toUid == CoreConsts.PrimaryUid) {
+        if(config.toUid == CoreConsts.PrimaryEditRef) {
             let editModel = editContext.getFormContext().getEditModel();
             // 编辑时需要重新获取详情
             if(editModel && this.isEdit(editModel)) {
-
-                this.getTableFunc()
-                let url = this.getEditUrl(editModel, editContext);
-                if(!url) {
-                    return;
-                }
-
-                editContext.setLoading(true);
-                TypeMethodMaps.Edit(url).then(({code, message, data}) => {
-                    if(code == CoreConsts.SuccessCode) {
-                        editContext.getFormContext().setEditModel(data);
-                    } else {
-                        msgError(message);
-                    }
+                let editFunc = this.getTableFunc(FuncNameMeta.EDIT);
+                let method = editFunc.getMethod();
+                let params = this.getEditUrl(editModel, editContext);
+                editContext.setLoading(true, CoreConsts.FormSpinResetTip);
+                this.getRequestMethod({method, func: 'edit'})(editFunc.getUrl(), params)
+                    .then(({code, message, data}) => {
+                        if(code == CoreConsts.SuccessCode) {
+                            editContext.getFormContext().setEditModel(data);
+                        } else {
+                            msgError(message);
+                        }
                 }).finally(() => editContext.setLoading(false))
             } else { // 新增的重置只需要重置字段
                 editContext.getFormContext().resetFields();
             }
         } else {
-            editContext = this.getViewContext().getContextByUid(config.toUid);
             editContext.getFormContext().resetFields();
         }
     }
@@ -413,11 +500,92 @@ export function $View(context) {
      * 重置主搜索表单
      */
     this.resetSearchModel = function (config) {
-        let searchContext = this.getPrimarySearchContext();
-        if(config.toUid != CoreConsts.PrimaryUid) return;
+        let searchContext = this.getViewContext().getContextByUid(config.toUid);
+        if(!(searchContext instanceof SearchContext)) {
+            return console.warn(`未找到对应的uid搜索组件[${config.toUid}]`)
+        }
 
         searchContext.getFormContext().resetFields();
-        this.funcMetaQuery(); // 重置之后, 重新刷新列表
+        if(config.toUid == CoreConsts.PrimarySearchRef) {
+            this.funcMetaQuery(); // 重置之后, 重新刷新列表
+        }
+    }
+
+    this.excelExport = function (config) {
+        let searchContext = this.getViewContext().getContextByUid(config.toUid);
+        if(searchContext == null) {
+            return console.warn(`未找到对应uid的可搜索组件[${config.toUid}]`)
+        } else {
+            if(searchContext.uid.startsWith("Primary")) {
+                searchContext = this.getPrimarySearchContext();
+            } else if(!(searchContext instanceof SearchContext)) {
+                return console.warn(`未找到对应uid的可编辑组件[${config.toUid}]`)
+            }
+        }
+
+        let model = searchContext.getModel();
+        let {fileName} = this.getConfigParams(config, model);
+        this.getRequestMethod(config)(config.url, model, {responseType: 'blob'}).then(resp => {
+            let blob = new Blob([resp.data], {
+                type: "application/vnd.ms-excel;charset=utf-8"
+            });
+
+            let downloadElement = document.createElement("a");
+            let href = window.URL.createObjectURL(blob); //创建下载的链接
+            downloadElement.href = href;
+            downloadElement.download = fileName || decodeURI(resp
+                .headers["content-disposition"].split("filename=")[1]); //下载后文件名
+
+            document.body.appendChild(downloadElement);
+            downloadElement.click(); //点击下载
+            document.body.removeChild(downloadElement); //下载完成移除元素
+            window.URL.revokeObjectURL(href); //释放掉blob对象
+        })
+    }
+
+    this.excelImport = function (config) {
+
+    }
+
+    /**
+     * 其他功能的操作
+     * @param config
+     */
+    this.otherFuncExec = function (config) { }
+
+    /**
+     * @param config
+     * @return {Object}
+     */
+    this.getConfigParams = function (config, model) {
+        if(config.params) {
+            if(config.params instanceof Function) {
+                return config.params(model);
+            } else {
+                return config.params;
+            }
+        } else {
+            return {};
+        }
+    }
+
+    /**
+     * @param config
+     * @return {Promise<AxiosResponse<any>>|*}
+     */
+    this.getRequestMethod = function (config) {
+        if(config.method) {
+            let method = config.method.toUpperCase();
+            if(method == 'GET') return GET;
+            else if(method == 'POST') return POST;
+            else {
+                console.warn(`请求方法目前只支持[GET、POST]`)
+            }
+        } else {
+            return TypeMethodMaps.getInstance(config.func);
+        }
+
+        return POST;
     }
 
     /**
@@ -471,12 +639,7 @@ export function $View(context) {
      * @return {TableContext|*}
      */
     this.getPrimaryTableContext = function () {
-        let context = this.getViewContext().getContextByUid(CoreConsts.PrimaryTableRef);
-        if(context instanceof TableContext) {
-            return context;
-        } else {
-            return console.warn(`查找不到主表上下文`)
-        }
+        return this.getViewContext().getContextByUid(CoreConsts.PrimaryTableRef);
     }
 
     /**
@@ -611,14 +774,14 @@ export function SearchContext(viewContext) {
 
 /**
  * 编辑
- * @param viewContext 视图上下文
+ * @param viewContext {ViewContext} 视图上下文
  * @constructor
  */
 export function EditContext(viewContext) {
     // 用于关联各个组件(搜索、表格、详情)
-    this.uid = '';
-    // 是否是主上下文
-    this.isPrimary = false;
+    this.uid = null;
+    // 当前打开类型(add or edit)
+    this.openType = null;
     // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
@@ -665,8 +828,9 @@ export function EditContext(viewContext) {
         return new Promise((resolve, reject) => {
             this.getFormContext().validate().then(() => {
                 let model = this.getModel();
-                this.setLoading(true);
-                TypeMethodMaps.Submit(url, model).then(resp => {
+                this.setLoading(true, CoreConsts.FormSpinSubmitTip);
+                let $View = this.get$View();
+                $View.getRequestMethod({func: 'submit'})(url, model).then(resp => {
                     let {code, message, data} = resp;
                     if(code == CoreConsts.SuccessCode) {
                         resolve(resp);
@@ -683,16 +847,15 @@ export function EditContext(viewContext) {
     }
 
     // 修改加载状态
-    this.setLoading = (status) => {Unmount()};
-    // 设置加载文本
-    this.setLoadingTip = (tip) => {Unmount()};
+    this.setLoading = (status, tip) => {Unmount()};
     // 修改弹框状态(模态框或者抽屉框)
     this.setVisible = (status) => {Unmount()};
     // 异步打开弹框(模态框或者抽屉框) 等表单初始化完成
     this.asyncVisible = (row, isResetToInit) => Promise.reject("未挂载");
 
-    // 必须在相应的地方重新初始化
-    // 表单上下文对象
+    /**
+     * @return {FormContext | null}
+     */
     this.getFormContext = () => new FormContext();
 
     /**

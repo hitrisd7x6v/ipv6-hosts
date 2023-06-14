@@ -6,18 +6,18 @@
         <a-form layout="horizontal" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-item has-feedback v-bind="validateInfos.username">
             <a-input placeholder="用户名" size="large" v-model:value="user.username">
-              <ivz-icon slot="prefix" type="iz-icon-account"></ivz-icon>
+              <UIcon slot="prefix" type="iz-icon-account"></UIcon>
             </a-input>
           </a-form-item>
           <a-form-item has-feedback v-bind="validateInfos.password">
             <a-input placeholder="密码" type="password" size="large" v-model:value="user.password">
-              <ivz-icon #prefix type="iz-icon-password"></ivz-icon>
+              <UIcon #prefix type="iz-icon-password"></UIcon>
             </a-input>
           </a-form-item>
           <a-form-item name="captcha" v-bind="validateInfos.captcha">
             <a-input placeholder="验证码" size="large" v-model:value="user.captcha"
                      class="ivz-form-valid">
-              <ivz-icon slot="prefix" type="iz-icon-validate"></ivz-icon>
+              <UIcon slot="prefix" type="iz-icon-validate"></UIcon>
             </a-input>
             <img @click="clickImg" :src="loginModel.captchaImg" class="ivz-valid-img"/>
           </a-form-item>
@@ -37,8 +37,8 @@
 <!--            <a-icon type="wechat" :style="iconStyle" />-->
           </a-col>
           <a-col span="6" style="text-align: center; cursor: pointer">
-            <ivz-icon type="iz-icon-gitee" style="font-size: 28px"
-                      @click="oauth2Login('Gitee')"></ivz-icon>
+            <UIcon type="iz-icon-gitee" style="font-size: 28px"
+                      @click="oauth2Login('Gitee')"></UIcon>
           </a-col>
           <a-col span="6" style="text-align: left; cursor: pointer">
 <!--            <a-icon type="alipay-circle" :style="iconStyle" />-->

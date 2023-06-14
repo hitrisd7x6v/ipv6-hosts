@@ -1,6 +1,6 @@
 <template>
-  <UView name="用户" auth>
-    <UViewSearch>
+  <UView name="用户">
+    <UViewSearch type="bread">
       <URow span="6">
         <UInput field="name" label="用户昵称" />
         <UInput field="account" label="用户帐号" />
@@ -10,7 +10,7 @@
       <template #func>
         <UFuncBtn func="reset">重置</UFuncBtn>
         <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>
-        <UFuncBtn func="add" url="/core/admin/add">新增</UFuncBtn>
+        <UFuncBtn func="add" v-auth="'core:admin:add'">新增</UFuncBtn>
       </template>
     </UViewSearch>
     <UViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
@@ -38,14 +38,15 @@
       </template>
     </UViewDrawer>
     <UViewTable :columns="columns" :bordered="true" size="small">
-      <template #c_action="{record}">
+      <template #action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/admin/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/admin/del">删除</UFuncTag>
-        <UFuncTag func="edit:modPwd" :data="record" url="/core/admin/pwd">设置密码</UFuncTag>
+        <UFuncTag func="edit:set" toUid="modPwd" :data="record"
+                  :params="{copy: ['id']}" url="/core/admin/pwd">设置密码</UFuncTag>
       </template>
     </UViewTable>
     <!--  修改密码  -->
-    <UFormModal id="modPwd" title="修改密码" ref="pwdModalRef" :span="[6, 15]" :rules="pwdRules">
+    <UFormModal uid="modPwd" v-model="pwdModel" title="修改密码" :span="[6, 15]" :rules="pwdRules">
       <UInputPassword label="密码" field="password" />
       <UInputPassword label="确认密码" field="surePwd" />
       <template #footer>
@@ -91,13 +92,13 @@ export default {
       account: {required: true, message: '用户帐号必填'},
     }
 
-    let pwdModalRef = ref(null);
+    let pwdModel = ref({});
     let validator = (a,b,c) => {
-      let editModel = pwdModalRef.value.getEditModel();
+      debugger
       return new Promise((resolve, reject) => {
         if(b == null || b == '') {
           reject("请输入确认密码");
-        } else if(editModel.password != editModel.surePwd) {
+        } else if(pwdModel.password != pwdModel.surePwd) {
           reject("两次密码不一致");
         }else {
           resolve();
@@ -110,7 +111,7 @@ export default {
     }
 
     let loading = ref(false);
-    return {columns, rules, status, sex, pwdRules, loading, pwdModalRef}
+    return {columns, rules, status, sex, pwdRules, loading, pwdModel}
   },
 }
 </script>

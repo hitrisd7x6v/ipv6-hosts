@@ -24,9 +24,8 @@ export default defineComponent({
     },
     mounted() {
         let $view = this.$parent.$view;
-        // 获取查询按钮
-        let queryFunc = $view.getSearchFunc(FuncNameMeta.QUERY);
-        if(queryFunc && $view.getPrimaryTableContext() != null) {
+
+        if($view.getPrimaryTableContext() != null) {
             $view.funcMetaQuery();
         }
     },

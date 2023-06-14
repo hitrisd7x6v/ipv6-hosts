@@ -9,7 +9,7 @@
                     <a-tab-pane key="user">
                         <template #tab>
                             <span>
-                                <ivz-icon type="iz-icon-profile" />个人资料
+                                <UIcon type="iz-icon-profile" />个人资料
                             </span>
                         </template>
                         <UserDetail />
@@ -17,7 +17,7 @@
                     <a-tab-pane key="pwd">
                         <template #tab>
                             <span>
-                                <ivz-icon type="iz-icon-password" />修改密码
+                                <UIcon type="iz-icon-password" />修改密码
                             </span>
                         </template>
                         <UserEditPwd />
@@ -25,7 +25,7 @@
                     <a-tab-pane key="wait">
                         <template #tab>
                             <span>
-                                <ivz-icon type="iz-icon-daiban" />代办事项
+                                <UIcon type="iz-icon-daiban" />代办事项
                             </span>
                         </template>
                         <UserOperaHistory />
@@ -44,7 +44,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import UserDetail from "@msn/main/UserDetail.vue";
-import UserProfile from "@msn/main/UserProfile.vue";
+import UserProfile from "@msn/core/admin/UserProfile.vue";
 import UserEditPwd from "@msn/main/UserEditPwd.vue";
 import UserNotifyList from "@msn/main/UserNotifyList.vue";
 import UserOperaHistory from "@msn/main/UserOperaHistory.vue";

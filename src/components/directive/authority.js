@@ -1,8 +1,7 @@
 import store from "@/store";
-function validate(el, content, auth) {
-    if(!content.value) {
-        return;
-    }
+function auth(el, content) {
+    let auth = store.getters['sys/authMenuMap'];
+    if(auth == null) return;
 
     // 获取所有的权限菜单
     let isArray = content.value instanceof Array;
@@ -32,7 +31,7 @@ function validate(el, content, auth) {
             el.remove();
         }
     } else {
-        console.warn(`权限参数值只能是[and or or]`)
+        console.warn(`v-auth指令只支持 e.g[v-auth:and="[...]" or v-auth:or=[...]] 默认and`)
     }
 }
 /**
@@ -40,12 +39,11 @@ function validate(el, content, auth) {
  */
 export default {
     created() { },
-    mounted(el, bind) { },
-    updated(el, content, c) {
-        let auth = store.getters['sys/authMenuMap'];
-        if(auth) {
-           validate(el, content, auth);
-        }
+    mounted(el, content) {
+        auth(el, content);
+    },
+    updated(el, content) {
+        auth(el, content);
     },
     unmounted() { }
 }

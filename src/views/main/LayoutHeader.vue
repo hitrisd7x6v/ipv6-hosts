@@ -7,7 +7,7 @@
           <li v-for="view in views" :key="view.id"
               :class="view == activityView ? 'ivz-view-active':null"
               style="float: left" @click="viewHandler(view)" class="ivz-view-col">
-            <ivz-icon :type="view.icon" :size="16"></ivz-icon>&nbsp;{{view.name}}
+            <UIcon :type="view.icon" :size="16"></UIcon>&nbsp;{{view.name}}
           </li>
           <li style="clear: both"></li>
         </ul>
@@ -22,8 +22,8 @@
               </div>
               <template #overlay>
                 <a-menu @click="quickOpera">
-                  <a-menu-item key="user">
-                    <ivz-icon type="iz-icon-profile" style="font-size: 16px"/>
+                  <a-menu-item key="profile">
+                    <UIcon type="iz-icon-profile" style="font-size: 16px"/>
                     <span>个人资料</span>
                   </a-menu-item>
                   <a-menu-item key="pwd">
@@ -40,14 +40,14 @@
           <li class="ivz-opera-col">
             <a-tooltip title="消息通知">
               <a-badge :count="msgCount">
-                <ivz-icon type="iz-icon-notify" :style="{fontSize: '18px'}"/>
+                <UIcon type="iz-icon-notify" :style="{fontSize: '18px'}"/>
               </a-badge>
             </a-tooltip>
           </li>
           <li class="ivz-opera-col" @click="() => quickOpera({key: 'wait'})">
             <a-tooltip title="代办事项">
               <a-badge :count="waitCount">
-                <ivz-icon type="iz-icon-daiban" :style="{fontSize: '18px'}"/>
+                <UIcon type="iz-icon-daiban" :style="{fontSize: '18px'}"/>
               </a-badge>
             </a-tooltip>
           </li>
@@ -168,10 +168,7 @@ export default {
       this.switchActiveViewTo(view)
     },
     quickOpera({key}) {
-      if(key != 'logout') {
-        // 其他快速操作
-        this.toggleUserVisible({visible: true, key});
-      } else {
+      if(key == 'logout') {
         // 注销动作
         logout().then(({code, message}) => {
           if(code == 200) {
@@ -183,6 +180,10 @@ export default {
             msgError(message);
           }
         }).catch(reason => console.error(reason))
+        // 其他快速操作
+        // this.toggleUserVisible({visible: true, key});
+      } else if(key == 'profile'){
+        this.$router.push('/profile');
       }
     },
     loadError() {

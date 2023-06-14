@@ -1,8 +1,8 @@
-import {computed, defineComponent, inject, mergeProps, provide, ref, watch} from "vue";
+import {computed, defineComponent, inject, mergeProps, provide, ref} from "vue";
 import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
-import {msgError, msgSuccess, confirm} from "@/utils/message";
-import {EditContext, SearchContext, TableContext} from "@/components/view/Context";
-import {FuncNameMeta, TypeMethodMaps} from "@/utils/MetaUtils";
+import {msgError} from "@/utils/message";
+import {EditContext, SearchContext} from "@/components/view/Context";
+import {FuncNameMeta} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
 import CoreConsts from "@/components/CoreConsts";
 import SysUtils from "@/utils/SysUtils";
@@ -19,145 +19,77 @@ export const URow = defineComponent({
         return <ARow style="width: 100%;" {...this.$attrs} v-slots={this.$slots} />
     }
 })
+
+/**
+ * 比如提交的按钮一般放在对应的编辑组件下面
+ * @param config
+ * @param context
+ * @return {*}
+ */
+function syncToUidToConfig(config, context) {
+    if(config.toUid == CoreConsts.PrimaryUid) {
+        config.toUid = context.uid;
+    }
+    return config;
+}
 function funcClickHandle(context, props) {
     if(context != null) {
         let $view = context.get$View();
         let split = props.func.split(':'); // func:id e.g [edit:modPwd]
+        let config = {...props}
+        syncToUidToConfig(config, context);
         if(split.length == 1) { // 主功能：func e.g [edit]
             let func = props.func.toUpperCase();
             switch (func) {
                 case CoreConsts.FuncNameMeta.ADD:
-                    return $view.openForAdd(props);
+                    return $view.openForAdd(config);
                 case CoreConsts.FuncNameMeta.DEL:
                     if(context instanceof SearchContext) {
-                        return $view.batchDel(props)
+                        return $view.batchDel(config)
                     } else {
-                        return $view.del(props)
+                        return $view.del(config)
                     }
                 case CoreConsts.FuncNameMeta.EDIT:
-                    return $view.openForEdit(props);
+                    return $view.openForEdit(config);
+                case CoreConsts.FuncNameMeta.DETAIL:
+                    return $view.detail(config);
                 case CoreConsts.FuncNameMeta.QUERY:
-                    return $view.query(props);
+                    return $view.query(config);
                 case CoreConsts.FuncNameMeta.CANCEL:
-                    return $view.cancel(props);
+                    return $view.cancel(config);
                 case CoreConsts.FuncNameMeta.RESET:
                     if(context instanceof EditContext) {
-                        return $view.resetEditModel(props);
+                        return $view.resetEditModel(config);
                     } else if(context instanceof SearchContext) {
-                        return $view.resetSearchModel(props)
+                        return $view.resetSearchModel(config)
                     } else {
                         return console.error(`[reset]功能不支持上下文[${context}]只支持[EditContext、SearchContext]`);
                     }
-                case CoreConsts.FuncNameMeta.DETAIL:
-                    return $view.detail(props);
                 case CoreConsts.FuncNameMeta.SUBMIT:
-                    return $view.submit(props);
-                case CoreConsts.FuncNameMeta.EXPAND: return $view.expanded(); // 展开所有行
+                    return $view.submit(config);
+                case CoreConsts.FuncNameMeta.EXPAND:
+                    return $view.expanded(config); // 展开所有行
+                case CoreConsts.FuncNameMeta.IMPORT:
+                    return $view.excelImport(config);
+                case CoreConsts.FuncNameMeta.EXPAND:
+                    return $view.excelExport(config);
                 default: // 其他功能操作
-                    if(props.url) {
-                        if(context instanceof TableContext) {
-                            let submit = (resolve) => {
-                                if(!resolve) context.setLoading(true)
-                                TypeMethodMaps.POST(props.url, props.data).then(({code, message}) => {
-                                    if(resolve) resolve();
-
-                                    if(code == CoreConsts.SuccessCode) {
-                                        $view.query();
-                                        msgSuccess(message || CoreConsts.OtherOperaSuccessMsg)
-                                    } else {
-                                        msgError(message);
-                                    }
-                                }).catch(reason => console.error(reason)).finally(() => {
-                                    if(resolve) {
-                                        resolve();
-                                    } else {
-                                        context.setLoading(false)
-                                    }
-                                })
-                            }
-                            if(props.confirm) { // 需要确认
-                                confirm({title: CoreConsts.ConfirmTitle
-                                    , content: CoreConsts.ConfirmContent, onOk: () => {
-                                        return new Promise((resolve, reject) => submit(resolve))
-                                    }
-                                })
-                            } else {
-                                submit(null);
-                            }
-                        }
-                    }
+                    return $view.otherFuncExec(config);
             }
-            // if(context.isPrimary) { // 主视图操作, 各个组件{UViewModal, UViewDrawer, UViewTable, UViewSearch}联动处理
-            //
-            // } else { // 各个组件单独操作
-            //     if(context instanceof EditContext) {
-            //         switch (func) {
-            //             case FuncNameMeta.RESET: return context.reset();
-            //             case FuncNameMeta.CANCEL:
-            //                 context.reset();
-            //                 context.setLoading(false)
-            //                 return context.cancel();
-            //             case FuncNameMeta.SUBMIT: return context.submit(props.url);
-            //
-            //             default: console.error(`编辑组件不支持功能类型[${props.func}]`)
-            //         }
-            //     } else if(context instanceof SearchContext) {
-            //         switch (func) {
-            //             case FuncNameMeta.RESET: return context.reset();
-            //             default: console.error(`编辑组件不支持功能类型[${props.func}]`)
-            //         }
-            //     } else if(context instanceof TableContext) {
-            //         switch (func) {
-            //             case FuncNameMeta.ADD:
-            //             // return $view.openForAdd();
-            //             case FuncNameMeta.DEL:
-            //                 return context.del(props.url)
-            //             case FuncNameMeta.EDIT:
-            //             // return $view.openForEdit(props.url, props.data);
-            //             case FuncNameMeta.DETAIL:
-            //             // return context.detail(props.url);
-            //             case FuncNameMeta.EXPAND:
-            //                 return context.expanded(); // 展开所有行
-            //             default: console.error(`表组件不支持功能类型[${props.func}]`)
-            //         }
-            //     } else {
-            //
-            //     }
-            // }
         } else {
-            let id = split[1]; // 组件的特殊属性
+            let child = split[1]; // 子功能
             let func = split[0].toUpperCase(); // func大写
             if(func == FuncNameMeta.ADD || func == FuncNameMeta.EDIT) {
-                let rowKey = $view.getRowKey();
-
                 // 增加子记录(只有主视图组件才支持)
-                if(id == 'child' && func == FuncNameMeta.ADD) {
-                    let editContext = $view.getEditContext();
-                    if(editContext.isPrimary) {
-                        // 打开编辑框并且是指pid
-                        editContext.asyncVisible(props.data, true).then(model => {
-                            if(props.data && model) {
-                                // 设置pid
-                                model[props.pid] = props.data[rowKey];
-                            }
-                        })
-                    }
+                if(child == 'child') {
+                    $view.openForChild(config);
+                } else if(child == 'set') {
+                   $view.openForSet(config);
                 } else {
-                    let editContext = $view.getEditContext(id);
-                    if(editContext instanceof EditContext) {
-                        if(func == FuncNameMeta.ADD) {
-                            editContext.asyncVisible(props.data).finally(() => null);
-                        } else {
-                            editContext.asyncVisible(props.data).then(model => {
-                                if(props.data) {
-                                    // 默认用rowKey作为功能的唯一字段
-                                    model[rowKey] = props.data[rowKey];
-                                }
-                            }).finally(() => null);
-                        }
-                    }
+                    console.warn(`未定义的子功能[${props.func}]`)
                 }
-
+            } else {
+                console.warn(`未定义的功能[${props.func}]`)
             }
         }
     }
@@ -171,8 +103,10 @@ export const UFuncTag = defineComponent({
         onClick: Function, // 自定义单击处理
         data: {type: Object}, // 行数据
         disabled: {default: false}, // 是否禁用
-        func: {type: String, default: ''}, // add, del, edit, query, import, export, cancel, detail, reset, expand
-        toUid: {type: String, default: CoreConsts.PrimaryUid}, // 要操作的目标(UViewTable、UViewSearch、UViewDrawer、UViewModal)
+        params: {default: null}, // 参数：支持对象和方法
+        method: {type: String, default: null}, // 请求方法
+        func: {type: String, required: true}, // add, del, edit, query, import, export, cancel, detail, reset, expand
+        toUid: {type: String, default: CoreConsts.PrimaryUid}, // 要操作的目标(UViewTable、UViewSearch、UViewDrawer、UViewModal、UFormDrawer、UFormModal...)
         confirm: {type: Boolean, default: false}, // 是否需要确认
         pid: {type: String, default: CoreConsts.DefaultPID}, // 父id字段
     },
@@ -205,8 +139,9 @@ export const UFuncTag = defineComponent({
 
         // 注册功能点
         context.regFunc(typeCompute.value, {
+            trigger: clickProxy,
             getUrl: () => props.url,
-            trigger: clickProxy
+            getMethod: () => props.method
         });
 
         let viewContext = context.get$View().getViewContext();
@@ -256,6 +191,8 @@ export const UFuncBtn = defineComponent({
     name: 'UFuncBtn',
     props: {
         url: {type: String}, // 功能地址
+        method: {type: String, default: null}, // 请求方法
+        params: {default: null}, // 参数：支持对象和方法
         func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
         toUid: {type: String, default: CoreConsts.PrimaryUid}, // 要操作的目标(UViewTable、UViewSearch、UViewDrawer、UViewModal)
     },
@@ -283,6 +220,7 @@ export const UFuncBtn = defineComponent({
         if(this.typeCompute && this.context) {
             this.context.regFunc(this.typeCompute, {
                 getUrl: () => this.$props.url,
+                getMethod: () => this.$props.method,
                 setLoading: (status) => this.loading = status, // 设置按钮的加载状态
                 trigger: () => {
                     if(this.$attrs.onClick instanceof Function) {

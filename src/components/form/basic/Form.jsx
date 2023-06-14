@@ -1,6 +1,6 @@
-import {defineComponent, isProxy, mergeProps, provide, reactive} from "vue";
+import {defineComponent, isProxy, provide, reactive} from "vue";
 import {Form} from "ant-design-vue";
-import {createMetasMap, getMetaValue, setMetaValue, initMetaValue} from "@/utils/MetaUtils";
+import {getMetaValue, initMetaValue, setMetaValue} from "@/utils/MetaUtils";
 import {FormContext} from "@/components/form/basic/FormContext";
 import SysUtils from "@/utils/SysUtils";
 
@@ -9,17 +9,14 @@ export default defineComponent({
     name: 'UForm',
     props: {
         span: Array, // labelCol wrapperCol eg: [3, 21]
-        metas: {type: Array, required: false, default: () => []},
         // 和AForm不同的是model必须双向绑定的方式即：v-model="model"
         'onUpdate:modelValue': {type: Function},
         modelValue: {type: Object, default: () => { return {}}}
     },
-    setup({metas, rules, modelValue}, {attrs}) {
+    setup({rules, modelValue}, {attrs}) {
         if(attrs.model) {
             console.warn("UForm不支持[:model] 请使用[v-model]替代")
         }
-
-        const metasMap = createMetasMap(metas);
 
         let formRef;
         let initModel = modelValue;
@@ -43,7 +40,7 @@ export default defineComponent({
         formContext['getFieldValue'] = (namePath) => getMetaValue(namePath, proxy.editModel);
         formContext['setFieldValue'] = (namePath, value) => setMetaValue(namePath, proxy.editModel, value);
 
-        return {metasMap, formContext, formRef, proxy, initModel}
+        return {formContext, formRef, proxy, initModel}
     },
     created() {
         this.formRef = this.$refs['formRef']
@@ -112,7 +109,12 @@ export default defineComponent({
         },
 
         setEditModel(editModel) {
-            this.$emit('update:modelValue', editModel);
+            if(!editModel) {
+                throw new Error("UForm组件的model参数不能设置为null")
+            } else {
+                this.$emit('update:modelValue', editModel);
+            }
+
             if(!isProxy(editModel)) {
                 this.proxy.editModel = reactive(editModel);
             }else {

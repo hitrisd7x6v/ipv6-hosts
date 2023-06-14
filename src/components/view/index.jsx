@@ -1,11 +1,9 @@
 import '@/components/view/index.css'
-import IvzMenuView from "@/components/view/IvzMenuView.vue";
-import IvzFuncView from "@/components/view/IvzFuncView.vue";
 import UView from "@/components/view/View.jsx";
 import UTable from "@/components/table/BasicTable.jsx";
 import UBreadSearch from "@/components/search/BreadSearch.vue";
-import {initMetaCallback} from "@/utils/MetaUtils";
-import {defineComponent, inject, mergeProps} from "vue";
+import UBasicSearch from "@/components/search/BasicSearch.vue";
+import {defineComponent, inject} from "vue";
 import UFormModal from "@/components/modal/FormModal";
 import UFormDrawer from "@/components/drawer/FormDrawer";
 import {ViewContextKey} from "@/utils/ProvideKeys";
@@ -13,20 +11,18 @@ import CoreConsts from "@/components/CoreConsts";
 
 export const UViewSearch = defineComponent({
     name: 'UViewSearch',
-    components: {UBreadSearch},
-    setup() {
-        let viewContext = inject(ViewContextKey);
-        let searchFunMetas = [];
-        if(viewContext) {
-            searchFunMetas = viewContext.funMetasContext['searchFunMetas'];
-        }
-
-        return {searchFunMetas};
+    components: {UBreadSearch, UBasicSearch},
+    props: {
+        type: {type: String, default: 'basic'} // basic or bread
+    },
+    setup(props, {attrs, slots}) {
+        let component = props.type == 'bread' ?
+            <UBreadSearch {...attrs} v-slots={slots} uid={CoreConsts.PrimarySearchRef}/> :
+            <UBasicSearch  {...attrs} v-slots={slots} uid={CoreConsts.PrimarySearchRef}/>
+        return {component}
     },
     render() {
-        return (<div class="ivz-view ivz-primary-search">
-            <UBreadSearch funMetas={this.searchFunMetas} {...this.$attrs} v-slots={this.$slots} uid={CoreConsts.PrimarySearchRef}/>
-        </div>)
+        return (<div class="ivz-view ivz-primary-search">{this.component}</div>)
     }
 })
 
@@ -54,25 +50,8 @@ export const UViewTable = defineComponent({
     name: 'UViewTable',
     components: {UTable},
     setup(props, {attrs}) {
-        let tableFunMetas = [];
         let viewContext = inject(ViewContextKey);
-        if(viewContext) {
-            tableFunMetas = viewContext.funMetasContext['tableFunMetas'];
-            if(tableFunMetas instanceof Array) {
-                tableFunMetas.forEach(meta => {
-                    initMetaCallback(meta, viewContext.__$View, 'table');
-                })
-            }
-        }
 
-        let {columns} = attrs;
-        if(columns instanceof Array) {
-            columns.forEach(column => {
-                if(column.type == 'action' && !column.funMetas) {
-                    column['funMetas'] = tableFunMetas;
-                }
-            })
-        }
         let rowKey = viewContext.getRowKey();
         return {viewContext, rowKey}
     },
@@ -86,8 +65,6 @@ export const UViewTable = defineComponent({
 
 export default {
     install(app) {
-        app.component(IvzMenuView.name, IvzMenuView);
-        app.component(IvzFuncView.name, IvzFuncView);
         app.component(UView.name, UView);
         app.component(UViewModal.name, UViewModal);
         app.component(UViewTable.name, UViewTable);

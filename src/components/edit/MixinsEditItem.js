@@ -25,8 +25,9 @@ export default defineComponent({
             this.visible = visible;
         },
 
-        setLoading(status) {
+        setLoading(status, tip) {
             this.spinning = status;
+            this.spinTip = tip || "";
         },
 
         setLoadingTip(tip) {
@@ -35,7 +36,6 @@ export default defineComponent({
 
         switchActive(visible) {
             this.visible = visible;
-            this.initFormRef();
         },
 
         switchSpinning(spinning) {
@@ -51,41 +51,19 @@ export default defineComponent({
         openByAsync(row, isResetToInit) {
             this.visible = true;
             return new Promise((resolve, reject) => {
-                if(this.formRef) {
-                    if(isResetToInit) {
-                        // 重置到初始化时的数据
-                        this.getFormContext().resetModel();
-                    }
-
-                    let editModel = this.getEditModel();
-                    this.$emit("edit", editModel, row)
-                    return resolve(editModel);
+                if(isResetToInit) {
+                    // 重置到初始化时的数据
+                    this.getFormContext().resetModel();
                 }
 
-                this.$nextTick().then(() => {
-                    this.formRef = this.$refs['iemFormRef']
-                    if(!this.formRef) {
-                        this.$nextTick().then(() => {
-                            let editModel = this.getEditModel();
-                            this.$emit("edit", editModel, row)
-                            resolve(editModel);
-                        })
-                    } else {
-                        let editModel = this.getEditModel();
-                        this.$emit("edit", editModel, row)
-                        resolve(editModel);
-                    }
-                })
+                let editModel = this.getEditModel();
+                this.$emit("open", {model: row, ori: editModel})
+                return resolve(editModel);
             })
         },
 
         getEditModel() {
-            // 再次从$refs获取, 防止未初始化或者延迟
-            if(this.$refs['iemFormRef']) {
-                return this.$refs['iemFormRef'].getEditModel();
-            } else {
-                return null;
-            }
+            return this.$refs['iemFormRef'].getEditModel();
         },
 
         /**
@@ -93,28 +71,11 @@ export default defineComponent({
          */
         getFormContext() {
             // 可能出现获取的时候form还未初始化, 自行判断
-            if(this.formRef) {
-                return this.formRef.getFormContext();
-            }
-
-            return null;
+            return this.formRef.getFormContext();
         },
 
         getEditContext() {
             return this.editContext;
-        },
-
-        initFormRef() {
-            if(this.visible && !this.formRef) {
-                this.$nextTick().then(() => {
-                    this.formRef = this.$refs['iemFormRef']
-                    if(!this.formRef) {
-                        this.$nextTick().then(() => {
-                            this.formRef = this.$refs['iemFormRef']
-                        })
-                    }
-                })
-            }
         }
     }
 })

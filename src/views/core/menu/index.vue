@@ -5,17 +5,16 @@
         <UInput field="name" label="菜单名称" :allowClear="true" />
         <USelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
         <USelect field="msn" label="所属模块" :allowClear="true" url="/core/msn" labelField="msn" valueField="msn"/>
-      </URow>
-      <template #func>
         <UFuncBtn func="query" url="/core/menu/view">搜索</UFuncBtn>
         <UFuncBtn func="reset">重置</UFuncBtn>
-        <UFuncBtn func="add" url="/core/menu/add">新增</UFuncBtn>
+        <UFuncBtn func="add" v-auth="'core:menu:add'">新增</UFuncBtn>
         <UFuncBtn func="expand">展开/缩收</UFuncBtn>
-      </template>
+      </URow>
     </UViewSearch>
     <UViewTable :columns="columns" size="small" :pagination="false" :rowSelection="{}">
       <template #action="{record}">
-        <UFuncTag func="add:child" :data="record" url="/core/menu/add" :disabled="disabled(record)">新增子菜单</UFuncTag>
+        <UFuncTag func="add:child" :data="record" v-auth="'core:menu:add'"
+                  :disabled="disabled(record)" :params="{pid: 'pid'}">新增子菜单</UFuncTag>
         <UFuncTag func="edit" :data="record" url="/core/menu/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/menu/del">删除</UFuncTag>
       </template>
@@ -31,15 +30,15 @@
         <UInput field="url" label="菜单URL"/>
         <UInput field="perms" label="权限标识" />
         <UInput field="icon" label="图标" />
-        <UInputNumber field="sort" label="排序" :defaultValue="68" />
+        <UInputNumber field="sort" label="排序" />
         <URadio field="log" label="日志采集" :options="BooleanStatus" :defaultValue="true"/>
       </URow>
-      <template #title="{model}">
-        {{model['id'] != null ? '修改菜单' : '新增菜单'}}
+      <template #title="{func}">
+        {{func == 'edit' ? '修改菜单' : '新增菜单'}}
       </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
-        <UFuncBtn func="submit" :url="model.id ? '/core/menu/edit' : '/core/menu/add'">提交</UFuncBtn>
+        <UFuncBtn func="submit" :url="model && model.id ? '/core/menu/edit' : '/core/menu/add'">提交</UFuncBtn>
         <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
     </UViewDrawer>
@@ -83,7 +82,7 @@ export default {
       type: {required: true, message: '菜单类型必填'},
     }
 
-    let model = {}
+    let model = {sort: 68}
     let disabledPermType = ref(false);
     return {columns, rules, position, type, disabledPermType, BooleanStatus, model}
   },

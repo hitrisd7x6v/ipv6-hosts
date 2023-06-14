@@ -16,7 +16,7 @@ export default defineComponent({
     maskClosable: {default: true},
     centered: {type: Boolean, default: true},
     closable: {type: Boolean, default: false},
-    forceRender: {type: Boolean, default: false},
+    forceRender: {type: Boolean, default: true},
     wrapClassName: {type: String, default: 'ivz-basic-modal'}
   },
   mixins: [MixinsEditItem],
@@ -49,19 +49,22 @@ export default defineComponent({
     return {formRef, refs, spinning, spinTip, visible, labelCol, wrapperCol, editContext}
   },
   render() {
-    let model = {}, context = {};
+    let model = {}, context = this.editContext;
 
     if(this.formRef) {
-      context = this.getEditContext();
       model =  this.formRef.getEditModel();
     }
 
     let slots = {
-      title: () => this.$slots.title ? this.$slots.title({model, context}) : this.title,
+      title: () => {
+        let func = context.openType;
+        return this.$slots.title ? this.$slots.title({model, func}) : this.title
+      },
       footer: () => this.$slots.footer ? this.$slots.footer({model, context}) : null
     }
 
-    return <AModal v-model={[this.visible, 'visible', ["modifier"]]} {...this.$props} v-slots={slots} ref="iemRef">
+    return <AModal v-model={[this.visible, 'visible', ["modifier"]]}
+                   {...this.$props} v-slots={slots} forceRender={true} ref="iemRef">
       <ASpin size="small" tip={this.spinTip} spinning={this.spinning}>
         <UForm {...this.$attrs} labelCol={this.labelCol} wrapperCol={this.wrapperCol} ref="iemFormRef">
           {this.$slots.default ? this.$slots.default({model, context}) : []}

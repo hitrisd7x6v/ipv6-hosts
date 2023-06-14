@@ -134,7 +134,6 @@ function initTableColumns(columns, slots) {
 export default defineComponent({
     name: 'UTable',
     props: {
-        ref: {type: String},
         dataSource: {type: Array},
         columns: {type: Array, default: () => []},
         pagination: {
