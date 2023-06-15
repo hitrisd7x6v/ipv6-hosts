@@ -41,8 +41,8 @@
       <template #action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/admin/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/admin/del">删除</UFuncTag>
-        <UFuncTag func="edit:set" toUid="modPwd" :data="record"
-                  :params="{copy: ['id']}" url="/core/admin/pwd">设置密码</UFuncTag>
+        <UFuncTag func="edit:set" eid="modPwd" :data="record"
+                  :config="{copy: ['id']}" url="/core/admin/pwd">设置密码</UFuncTag>
       </template>
     </UViewTable>
     <!--  修改密码  -->
