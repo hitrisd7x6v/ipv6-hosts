@@ -287,20 +287,17 @@ export default {
 .ivz-task-bar .ant-tabs {
   width: 100%;
 }
-.ivz-task-bar .ant-tabs-bar {
-  /*border-radius: 16px;*/
-  /*height: 32px!important;*/
-  border: 0px!important;
-
+.ivz-task-bar .ant-tabs-top > .ant-tabs-nav {
+  margin: 0px 0px;
+}
+.ivz-task-bar .ant-tabs-nav-wrap {
+  margin-left: 72px;
 }
 .ivz-task-bar .ant-tabs-nav-container,iz-task-more-opera,.ivz-task-bar .ant-tabs-tab {
   height: 34px!important;
   line-height: 36px!important;
 }
-.ivz-task-bar .ant-tabs-nav-container .ant-tabs-nav-wrap {
-  margin-top: 0px;
-  padding-left: 65px;
-}
+
 .ivz-task-bar .ant-tabs-tab-prev,.ivz-task-bar .ant-tabs-tab-next {
   height: 100%;
   width: 22px!important;

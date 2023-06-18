@@ -167,9 +167,12 @@ export function $View(context) {
 
         try {
             editContext.openType = 'add';
-            editContext.asyncVisible(data, true).then((model) => {
+            editContext.asyncVisible(data, true).then((edit) => {
                 let formContext = editContext.getFormContext();
-                formContext.setEditModel(model);
+                let initModel = formContext.getInitModel();
+
+                formContext.setEditModel(initModel);
+                edit.$emit('edit', initModel);
             })
         } catch (e) {
             console.error(e);
@@ -241,13 +244,14 @@ export function $View(context) {
         }
 
         editContext.openType = 'edit';
-        editContext.asyncVisible(data, false).then(() => {
+        editContext.asyncVisible(data, false).then((edit) => {
             editContext.setLoading(true, CoreConsts.FormSpinLoadingTip);
             let params = this.getEditUrl(data, editContext);
             this.getRequestMethod({func, method})(url, params)
                 .then(({code, message, data}) => {
                     if(code == CoreConsts.SuccessCode) {
                         editContext.getFormContext().setEditModel(data);
+                        edit.$emit('edit', data);
                     } else {
                         msgError(message);
                     }
@@ -273,10 +277,12 @@ export function $View(context) {
         }
 
         // 打开编辑框并且是指pid
-        editContext.asyncVisible(data, true).then(model => {
-            let rowKey = id || this.getRowKey();
+        editContext.asyncVisible(data, true).then(edit => {
+            let initModel = editContext.getFormContext().getInitModel();
             // 设置pid
-            model[pid] = data[rowKey];
+            initModel[pid] = data[id || this.getRowKey()];
+            editContext.getFormContext().setEditModel(initModel)
+            edit.$emit(initModel);
         })
     }
 
@@ -300,11 +306,14 @@ export function $View(context) {
         }
 
         // 打开编辑框后复制对应的字段到新的model
-        editContext.asyncVisible(data, true).then(model => {
+        editContext.asyncVisible(data, true).then(edit => {
+            let initModel = editContext.getFormContext().getInitModel();
             // 复制属性
             copy.forEach(field => {
-                model[field] = data[field];
+                initModel[field] = data[field];
             })
+            editContext.getFormContext().setEditModel(initModel)
+            edit.$emit(initModel);
         })
     }
 
@@ -385,22 +394,19 @@ export function $View(context) {
             return console.warn(`未找到对应的uid可编辑组件[${eid}]`)
         }
 
-        // 关闭编辑框的加载状态
-        editContext.setLoading(false);
         // 关闭编辑框
         editContext.setVisible(false);
-        // 移除所有的校验
-        editContext.getFormContext().clearValidate();
+        this.initEditComponent(editContext);
     }
     /**
      * 展开树形的表格
      * @param config {Config}
      * @param expandedRowKeys 要展开的行的key列表 不指定则展开所有
      */
-    this.expanded = function ({eid}, expandedRowKeys) {
-        let tableContext = this.getViewContext().getContextByUid(eid);
+    this.expanded = function ({tid}, expandedRowKeys) {
+        let tableContext = this.getTableContextByUid(tid);
         if(tableContext == null) {
-            return console.warn(`未找到对应uid的表组件[${eid}]`)
+            return console.warn(`未找到对应uid的表组件[${tid}]`)
         }
 
         tableContext.expanded(expandedRowKeys);
@@ -455,6 +461,7 @@ export function $View(context) {
             return console.warn(`未找到对应的uid可编辑组件[${eid}]`)
         }
 
+        this.initEditComponent(editContext);
         let editModel = editContext.getFormContext().getEditModel();
         // 编辑时需要重新获取详情
         if(this.isEdit(editModel)) {
@@ -536,6 +543,21 @@ export function $View(context) {
      * @param config {Config}
      */
     this.otherFuncExec = function (config) { }
+
+    /**
+     *  重置编辑组件[FormModal、FormDrawer]
+     * @param editContext {EditContext}
+     */
+    this.initEditComponent = function (editContext) {
+        let submit = editContext.getFunc(FuncNameMeta.SUBMIT);
+        if(submit) {
+            submit.setLoading(false);
+        }
+
+        editContext.setLoading(false)
+        // 移除所有的校验
+        editContext.getFormContext().clearValidate();
+    }
 
     /**
      * @param config {{method: (Config.method|String), func: (Config.func|String)}}
@@ -624,20 +646,15 @@ export function $View(context) {
      * @return {DetailContext|*}
      */
     this.getPrimaryDetailContext = function (uid) {
-        let contextById = this.context.getContextByUid(uid);
-        if(contextById) {
-            return contextById;
+        let contextByUid = this.context.getContextByUid(uid);
+        if(contextByUid == null) {
+            return contextByUid;
+        } else if(!(contextByUid instanceof DetailContext)) {
+            console.warn(`此uid[${uid}不是DetailContext对象]`);
         } else {
-            return console.warn(`查找不到id=${uid}的编辑上下文`)
+            return contextByUid;
         }
-
-        if(!this.context.primaryDetailContext.isPrimary && import.meta.env.DEV) {
-            console.warn("未声明标记为[primary]的详情组件")
-        }
-
-        return this.context.primaryDetailContext;
     }
-
 }
 
 /**
@@ -754,33 +771,6 @@ export function EditContext(viewContext) {
      */
     this.cancel = function () {
         this.setVisible(false);
-    }
-
-    /**
-     * 提交表单
-     * @param url 提交地址
-     * @return {Promise<unknown>}
-     */
-    this.submit = function (url) {
-        return new Promise((resolve, reject) => {
-            this.getFormContext().validate().then(() => {
-                let model = this.getModel();
-                this.setLoading(true, CoreConsts.FormSpinSubmitTip);
-                let $View = this.get$View();
-                $View.getRequestMethod({func: 'submit'})(url, model).then(resp => {
-                    let {code, message, data} = resp;
-                    if(code == CoreConsts.SuccessCode) {
-                        resolve(resp);
-                        this.setVisible(false);
-                        msgSuccess(message || CoreConsts.SubmitSuccessMsg);
-                    } else {
-                        msgError(message);
-                        reject(message);
-                    }
-                }).catch(reason => reject(reason))
-                    .finally(() => this.setLoading(false))
-            }).catch(reason => {})
-        })
     }
 
     // 修改加载状态
@@ -927,8 +917,7 @@ export function TableContext(viewContext) {
 export function DetailContext(viewContext) {
     // 用于关联各个组件(搜索、编辑、表格)
     this.uid = '';
-    // 是否是主上下文
-    this.isPrimary = false;
+
     // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
@@ -949,13 +938,28 @@ export function DetailContext(viewContext) {
  * @constructor
  */
 export function ViewContext (props) {
+
+    /**
+     * @type {{String: EditContext | DetailContext | SearchContext | TableContext}}
+     */
     this.uidContextMaps = {} // 声明uid的上下文对象
     this.funMetasContext = new FuncMetaContext();
 
-    this.primaryEditContext = new EditContext(this);
-    this.primaryTableContext = new TableContext(this);
-    this.primaryDetailContext = new DetailContext(this);
-    this.primarySearchContext = new SearchContext(this);
+    /**
+     * 获取指定功能
+     * @param func {String}
+     */
+    this.getFunc = function (func) {
+        let values = Object.values(this.uidContextMaps);
+        for (let item of values) {
+            let funcValue = item.getFunc(func);
+            if(funcValue != null) {
+                return funcValue;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * 功能点权限校验
@@ -1000,10 +1004,10 @@ export function ViewContext (props) {
             if(!this.uidContextMaps[uid]) {
                 this.uidContextMaps[uid] = context;
             } else {
-                console.warn(`存在相同的uid[${uid}]`)
+                console.warn(`已经存在同名的uid[${uid}]`)
             }
         } else {
-
+            console.error(`新增Context失败, 错误的参数[uid or context]`)
         }
     }
 }
@@ -1017,6 +1021,10 @@ export function ChildConfig() {
      * @type {String | Array}
      */
     this.copy = null;
+    /**
+     * @type {String | Number | *}
+     */
+    this.pid = null;
 }
 
 export function Config() {
@@ -1056,11 +1064,7 @@ export function Config() {
      * @type {String}
      */
     this.func = null;
-    /**
-     * 要操作的uid组件
-     * @type {String}
-     */
-    this.toUid = null;
+
     /**
      * 要操作的数据
      * @type {Object}

@@ -1,6 +1,6 @@
 <template>
-  <a-layout-sider class="ivz-sider" :width="232" :trigger="null"
-      v-model:collapsed="collapsed" collapsible :collapsedWidth="62">
+  <a-layout-sider class="ivz-sider" :width="256" :trigger="null"
+      v-model:collapsed="collapsed" collapsible :collapsedWidth="62" theme="dark">
     <div class="ivz-logo" @click="collapsedHandle">
       <div class="ivz-logo-c">
         <a-avatar :size="48" src="/img/logo.png"></a-avatar>
@@ -10,7 +10,7 @@
     <!--侧边菜单-->
     <div class="ivz-sider-menu">
       <a-menu @select="selectMenu" mode="inline" :openKeys="openKeys"
-              :selectedKeys="selectedKeys" @openChange="openChange">
+              :selectedKeys="selectedKeys" @openChange="openChange" theme="dark">
         <template v-for="menu in menus">
           <template v-if="menu.type=='V'">
             <a-menu-item :key="menu.url">

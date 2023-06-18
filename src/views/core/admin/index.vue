@@ -1,10 +1,12 @@
 <template>
   <UView name="用户">
     <UViewSearch type="bread">
-      <URow span="6">
+      <URow span="4">
         <UInput field="name" label="用户昵称" />
         <UInput field="account" label="用户帐号" />
         <UInput field="phone" label="用户手机" />
+        <UTreeSelect field="orgId" label="所属部门" span="5"
+                     url="/core/org/parent" labelField="name" valueField="id"/>
         <URadio field="status" label="用户状态" :options="status"/>
       </URow>
       <template #func>
@@ -19,7 +21,7 @@
           <UInput field="name" label="用户昵称" />
           <UInput field="account" label="用户帐号" :disabled="model.id != null"/>
           <UTreeSelect field="orgId" label="所属部门" treeNodeFilterProp="label"
-                           url="/core/org/parent" labelField="name" valueField="id" :virtual="false"/>
+                           url="/core/org/parent" labelField="name" valueField="id"/>
           <UInput field="email" label="用户邮箱" />
           <URadio field="status" label="用户状态" defaultValue="enabled" :options="status"/>
           <URadio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
@@ -94,7 +96,6 @@ export default {
 
     let pwdModel = ref({});
     let validator = (a,b,c) => {
-      debugger
       return new Promise((resolve, reject) => {
         if(b == null || b == '') {
           reject("请输入确认密码");

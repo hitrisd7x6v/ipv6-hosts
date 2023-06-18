@@ -16,11 +16,6 @@ export default defineComponent({
         this.formRef = this.$refs['iemFormRef'];
     },
     methods: {
-        // 表单组件是否初始化
-        isInitForm() {
-            return this.formRef != null
-        },
-
         setVisible(visible) {
             this.visible = visible;
         },
@@ -51,14 +46,7 @@ export default defineComponent({
         openByAsync(row, isResetToInit) {
             this.visible = true;
             return new Promise((resolve, reject) => {
-                if(isResetToInit) {
-                    // 重置到初始化时的数据
-                    this.getFormContext().resetModel();
-                }
-
-                let editModel = this.getEditModel();
-                this.$emit("open", {model: row, ori: editModel})
-                return resolve(editModel);
+                return resolve(this);
             })
         },
 

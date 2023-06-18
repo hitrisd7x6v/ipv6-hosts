@@ -77,11 +77,12 @@ export default {
     },
 
     edit(model) {
-      model.type = this.$route.query.type;
+      model.type = this.searchModel.type;
     },
 
     loadDictData() {
       this.query();
+      this.editModel.type = this.searchModel.type;
     },
   }
 }

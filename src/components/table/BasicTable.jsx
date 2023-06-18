@@ -146,7 +146,6 @@ export default defineComponent({
     components: {UCell},
     props: {
         dataSource: {type: Array},
-        sticky: {type: Boolean, default: false},
         columns: {type: Array, default: () => []},
         pagination: {
             default: () => {
@@ -253,7 +252,7 @@ export default defineComponent({
     render() {
         return (
             <ATable {...this.$attrs} columns={this.columns} ref="ATableRef"
-                loading={this.loading} dataSource={this.dataSourceRef} sticky={this.sticky}
+                loading={this.loading} dataSource={this.dataSourceRef}
                 pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
                 onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
                     return {

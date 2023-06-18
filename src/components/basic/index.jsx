@@ -28,9 +28,16 @@ export const URow = defineComponent({
  */
 function syncToUidToConfig(config, context) {
     let {eid, tid, sid, did} = config;
+    let func = config.func.toUpperCase();
     // 如果未指定操作的组件, 则默认都是Primary组件
     if(eid == null) {
-        config.eid = CoreConsts.PrimaryEditRef;
+        if(func == FuncNameMeta.SUBMIT ||
+            func == FuncNameMeta.CANCEL ||
+            func == FuncNameMeta.RESET) {
+            config.eid = context.uid;
+        } else {
+            config.eid = CoreConsts.PrimaryEditRef;
+        }
     }
     if(tid == null) {
         config.tid = CoreConsts.PrimaryTableRef;
@@ -206,15 +213,18 @@ export const UFuncBtn = defineComponent({
         tid: String,
         sid: String,
         did: String,
+        onClick: Function,
         url: {type: String}, // 功能地址
         method: {type: String, default: null}, // 请求方法
         config: {type: Object, default: () => { return {}}}, // 配置
         func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
     },
-    setup(props, attrs) {
+    setup(props, {attrs}) {
         let context = inject(FuncContextKey);
         let clickProxy = {onClick: (e) => {
-            if(context != null) {
+            if(props.onClick instanceof Function) {
+                props.onClick(e);
+            } else if(context != null) {
                 funcClickHandle(context, props)
             }
           }
@@ -238,11 +248,7 @@ export const UFuncBtn = defineComponent({
                 getMethod: () => this.$props.config.method,
                 setLoading: (status) => this.loading = status, // 设置按钮的加载状态
                 trigger: () => {
-                    if(this.$attrs.onClick instanceof Function) {
-                        this.$attrs.onClick(this.typeCompute);
-                    } else {
-                        this.clickProxy.onClick(this.typeCompute);
-                    }
+                    this.clickProxy.onClick(this.$el);
                 }
             });
         }
@@ -256,25 +262,18 @@ export const UFuncBtn = defineComponent({
         if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
             let uri = SysUtils.cutUrlToUri(this.url);
             if(this.auth[uri]) { // 有权限
-                let props = this.handleProps();
-                return <AButton {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
+                return <AButton {...this.handleProps()} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
             } else {
                 return <span></span>
             }
         } else {
-            let props = this.handleProps();
-            return <AButton {...props} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading} />
+            return <AButton {...this.handleProps()} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading} />
         }
     },
     methods: {
         handleProps() {
             let type = CoreConsts.FuncBtnTypeMaps[this.typeCompute];
-            // 如果自定义单击事件, 不做处理
-            if(this.$attrs.onClick instanceof Function) {
-                return mergeProps(type, this.$attrs);
-            } else { // 使用代理单击事件
-                return mergeProps(type, this.clickProxy, this.$attrs);
-            }
+            return mergeProps(type, this.clickProxy, this.$attrs);
         }
     }
 })

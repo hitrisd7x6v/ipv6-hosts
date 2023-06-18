@@ -229,6 +229,13 @@ export const UMentions = defineComponent({
 export const UTreeSelect = defineComponent({
     name: 'UTreeSelect',
     mixins: [MixinsFormItem, MixinsOptionsItem],
+    watch: {
+        dataSource: function (a, b) {
+            debugger
+            console.log(a)
+            this.$forceUpdate();
+        }
+    },
     render() {
         let props = this.getFormItemProps();
         return <a-col {...props}>
