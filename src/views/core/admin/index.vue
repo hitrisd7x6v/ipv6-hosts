@@ -1,14 +1,12 @@
 <template>
   <UView name="用户">
     <UViewSearch type="bread">
-      <URow span="4">
         <UInput field="name" label="用户昵称" />
         <UInput field="account" label="用户帐号" />
         <UInput field="phone" label="用户手机" />
-        <UTreeSelect field="orgId" label="所属部门" span="5"
+        <UTreeSelect field="orgId" label="所属部门" span="6"
                      url="/core/org/parent" labelField="name" valueField="id"/>
         <URadio field="status" label="用户状态" :options="status"/>
-      </URow>
       <template #func>
         <UFuncBtn func="reset">重置</UFuncBtn>
         <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>
@@ -39,7 +37,7 @@
         <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
     </UViewDrawer>
-    <UViewTable :columns="columns" :bordered="true" size="small">
+    <UViewTable :columns="columns">
       <template #action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/admin/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/admin/del">删除</UFuncTag>
@@ -77,15 +75,15 @@ export default {
     ]
 
     let columns = [
+      {title: '用户账号', field: 'account', fixed: 'left'},
       {title: '用户昵称', field: 'name'},
-      {title: '用户账号', field: 'account'},
       {title: '所属部门', field: 'orgId', url: '/core/org/parent', valueField: 'id', labelField: 'name'},
       {title: '性别', field: 'sex', options: sex},
       {title: '手机', field: 'phone'},
       {title: '邮箱', field: 'email'},
       {title: '状态', field: 'status', options: status},
       {title: '创建时间', field: 'createTime'},
-      {title: '操作', field: 'action', type: 'action'},
+      {title: '操作', field: 'action', type: 'action', width: 220, fixed: 'right'},
     ]
 
     let rules = {
@@ -110,9 +108,11 @@ export default {
       surePwd: {required: true, validator},
       password: {required: true, message: '请输入密码'}
     }
-
+    let title = () => {
+      return 'sdf'
+    }
     let loading = ref(false);
-    return {columns, rules, status, sex, pwdRules, loading, pwdModel}
+    return {columns, rules, status, sex, pwdRules, loading, pwdModel, title}
   },
 }
 </script>

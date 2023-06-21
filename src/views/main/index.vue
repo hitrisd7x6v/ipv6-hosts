@@ -120,37 +120,28 @@ export default {
     height: 100%;
     display: flex;
     display: -ms-flex;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
-    background: #ffffff;
     flex-direction: column;
     display: -webkit-flex; /* Safari */
     justify-content: flex-start;
 }
-.ivz-main-container ::-webkit-scrollbar {
+.ivz-layout ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 
-.ivz-main-container ::-webkit-scrollbar-thumb {
+.ivz-layout ::-webkit-scrollbar-thumb {
     border-radius: 3px;
     background: hsl(0deg 0% 0% / 22%);
     -webkit-box-shadow: inset 0 0 5px hsl(0deg 0% 100% / 5%);
 }
 
-.ivz-main-container ::-webkit-scrollbar-track {
+.ivz-layout ::-webkit-scrollbar-track {
     border-radius: 3px;
     background: hsl(0deg 0% 83%);
     -webkit-box-shadow: inset 0 0 5px rgb(37 37 37 / 5%);
-}
-.ivz-ilv-user {
-    /*height: 200px;*/
-    overflow: hidden;
-    position: relative;
-    border: 1px solid #ebedf0;
-    padding: 48px;
-    background: #fafafa;
-    width: 100%;
 }
 
 .ivz-theme-dark .ivz-avatar {

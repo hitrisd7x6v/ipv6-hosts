@@ -24,17 +24,4 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.ivz-default-search {
-  padding: 8px;
-}
-/*功能点样式*/
-.ivz-fm {
-  margin: 0px 6px;
-}
-
-/*表格功能组件样式*/
-.ivz-ibt-fun.disabled {
-  cursor: not-allowed!important;
-  background-color: #c7c7c7 !important;
-}
 </style>

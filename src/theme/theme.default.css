@@ -1,16 +1,21 @@
+.ivz-theme-default .ivz-layout {
+    background: #f0f2f5;
+}
 .ivz-theme-default .ivz-header-bar{
-    height: 82px;
+    height: 88px;
     padding: 0px;
     background: #ffffff;
 }
 
 .ivz-theme-default .ivz-header-row {
     background: #ffffff;
+    height: 48px;
+    line-height: 48px;
+    border: 1px dashed #f2f2f2;
 }
 
 .ivz-theme-default .ivz-task-bar {
-    background: #eaeaea;
-    box-shadow: 6px 3px 6px -2px #cacaca;
+    box-shadow: 0 1px 4px rgba(0,21,41,.08);
 }
 
 .ivz-theme-default .ivz-logo {
@@ -26,32 +31,5 @@
 }
 
 .ivz-theme-default .ivz-main-container {
-    background: #f0f3f8;
-    padding: 15px 15px;
+    padding: 12px 12px;
 }
-
-/*.ivz-theme-default .ivz-sider .ant-menu-submenu-open .ant-menu-submenu-title {*/
-/*    !*box-shadow: 0px 0px 3px 1px #8a8a8a;*!*/
-/*}*/
-
-/*.ivz-theme-default .ant-layout-sider-children,.ivz-theme-default .ant-menu-root*/
-/*    ,.ivz-theme-default .ant-menu-sub,.ant-menu-submenu-popup .ant-menu {*/
-/*    background: #465161!important;*/
-/*}*/
-/*.ivz-theme-default .ivz-sider .ant-menu-item,.ivz-theme-default .ant-menu-submenu-title,.ivz-theme-default .ant-menu-submenu-arrow*/
-/*,.ivz-theme-popupmenu-default .ant-menu-item,.ivz-theme-popupmenu-default .ant-menu-submenu-title,.ivz-theme-popupmenu-default .ant-menu-submenu-arrow {*/
-/*    color: rgb(224, 224, 224);*/
-/*}*/
-/*.ivz-theme-default .ant-menu-item:hover*/
-/*    ,.ivz-theme-default .ant-menu-submenu-title:hover,.ivz-theme-default .ant-menu-submenu-arrow*/
-/*    ,.ivz-theme-popupmenu-default .ant-menu-item:hover,.ivz-theme-popupmenu-default .ant-menu-submenu-arrow*/
-/*    ,.ivz-theme-popupmenu-default .ant-menu-item-selected{*/
-/*    background-color: rgba(144, 144, 144, 0.22) !important;*/
-/*}*/
-/*.ivz-theme-default .ant-menu-submenu-open .ant-menu-submenu-title,.ivz-theme-default .ant-menu-item-selected,.ivz-theme-default .ant-menu-submenu-arrow {*/
-/*    color: rgb(255, 255, 255) !important;*/
-/*    background-color: rgba(144, 144, 144, 0.22) !important;*/
-/*}*/
-/*.ivz-theme-default .ant-menu-inline .ant-menu-item::after {*/
-/*    border-right: 4px solid #c4c4c4;*/
-/*}*/

@@ -282,7 +282,7 @@ export function $View(context) {
             // 设置pid
             initModel[pid] = data[id || this.getRowKey()];
             editContext.getFormContext().setEditModel(initModel)
-            edit.$emit(initModel);
+            edit.$emit('edit', initModel);
         })
     }
 
@@ -313,7 +313,7 @@ export function $View(context) {
                 initModel[field] = data[field];
             })
             editContext.getFormContext().setEditModel(initModel)
-            edit.$emit(initModel);
+            edit.$emit('edit', initModel);
         })
     }
 

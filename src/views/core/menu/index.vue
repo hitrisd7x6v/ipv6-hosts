@@ -1,17 +1,14 @@
 <template>
   <UView name="菜单" auth>
     <UViewSearch>
-      <URow span="6" style="width: 100%">
-        <UInput field="name" label="菜单名称" :allowClear="true" />
-        <USelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
-        <USelect field="msn" label="所属模块" :allowClear="true" url="/core/msn" labelField="msn" valueField="msn"/>
-        <UFuncBtn func="query" url="/core/menu/view">搜索</UFuncBtn>
-        <UFuncBtn func="reset">重置</UFuncBtn>
-        <UFuncBtn func="add" v-auth="'core:menu:add'">新增</UFuncBtn>
-        <UFuncBtn func="expand">展开/缩收</UFuncBtn>
-      </URow>
+      <UInput field="name" label="菜单名称" :allowClear="true" />
+      <USelect field="type" label="菜单类型" :options="type" :allowClear="true" span="5"/>
+      <UFuncBtn func="query" url="/core/menu/view">搜索</UFuncBtn>
+      <UFuncBtn func="reset">重置</UFuncBtn>
+      <UFuncBtn func="add" v-auth="'core:menu:add'">新增</UFuncBtn>
+      <UFuncBtn func="expand">展开/缩收</UFuncBtn>
     </UViewSearch>
-    <UViewTable :columns="columns" size="small" :pagination="false" :rowSelection="{}">
+    <UViewTable :columns="columns" size="small" :pagination="false">
       <template #action="{record}">
         <UFuncTag func="add:child" :data="record" v-auth="'core:menu:add'"
                   :disabled="disabled(record)" :params="{pid: 'pid'}">新增子菜单</UFuncTag>

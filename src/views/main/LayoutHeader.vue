@@ -194,10 +194,6 @@ export default {
 </script>
 
 <style>
-.ivz-header-bar {
-  height: 82px;
-  z-index: 0;
-}
 .ivz-header-row {
   color: #000000;
   position: relative;
@@ -205,9 +201,6 @@ export default {
 .ivz-view-col {
   cursor: pointer;
   padding: 0px 12px;
-}
-.ivz-view-active {
-  border-bottom: 2px solid dodgerblue;
 }
 .ivz-opera-col {
   height: 45px;
@@ -221,10 +214,7 @@ export default {
 .ivz-header-col {
   position: absolute;
 }
-.ivz-header-row,.ivz-header-col,.ivz-view-col{
-  height: 45px;
-  line-height: 45px;
-}
+
 .ivz-header-col-right {
   right: 8px;
 }
@@ -241,15 +231,13 @@ export default {
   position: relative;
 }
 .ivz-task-more {
-  left: 32px;
+  left: 16px;
   width: 29px;
-  height: 33px;
   z-index: 10;
   cursor: pointer;
   text-align: center;
-  line-height: 36px;
+  line-height: 40px;
   position: absolute;
-  /*box-shadow: 2px 0px 2px 0px #a5a5a5;*/
 }
 .ivz-task-bar .ant-tabs-tab-active {
   box-shadow: 0px 0px 6px 0px #cbcbcb;
@@ -280,10 +268,6 @@ export default {
   transform: rotate(180deg);
   -webkit-transform: rotate(180deg)
 }
-.ivz-tba-reload:active {
-  /*transform: rotate(720deg);*/
-  /*-webkit-transform: rotate(720deg)*/
-}
 .ivz-task-bar .ant-tabs {
   width: 100%;
 }
@@ -291,17 +275,13 @@ export default {
   margin: 0px 0px;
 }
 .ivz-task-bar .ant-tabs-nav-wrap {
-  margin-left: 72px;
-}
-.ivz-task-bar .ant-tabs-nav-container,iz-task-more-opera,.ivz-task-bar .ant-tabs-tab {
-  height: 34px!important;
-  line-height: 36px!important;
+  margin-left: 60px;
 }
 
 .ivz-task-bar .ant-tabs-tab-prev,.ivz-task-bar .ant-tabs-tab-next {
   height: 100%;
   width: 22px!important;
-  padding-bottom: 2px;
+  /*padding-bottom: 2px;*/
   opacity: 1!important;
   color: #17233d!important;
   pointer-events: auto!important;
@@ -313,10 +293,12 @@ export default {
   color: rgba(64, 64, 64, 0.86);
   padding: 0px 10px!important;
   border: 0px solid!important;
-  border-right: 2px solid #ffffff !important;
   border-radius: 0px!important;
+  height: 40px!important;
   transform: skewX(-28deg);
-  background-color: unset!important;
+}
+.ivz-task-bar .ant-tabs-top > .ant-tabs-nav::before {
+  border-bottom: unset;
 }
 .ivz-task-bar .ant-tabs-tab>div{
   transform: skewX(28deg);
@@ -324,12 +306,6 @@ export default {
 .ivz-task-bar .ant-tabs-nav .ant-tabs-tab .anticon {
   margin-right: 0px!important;
 }
-.ivz-task-bar .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active {
-  padding-bottom: 0px;
-  background: #ffffff!important;
-}
-.ivz-task-bar .ant-tabs-bar.ant-tabs-top-bar.ant-tabs-small-bar.ant-tabs-card-bar {
-  margin-left: 0px;
-  margin-bottom: 0px;
-}
+
+
 </style>

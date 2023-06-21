@@ -1,6 +1,6 @@
 <template>
-  <a-layout-sider class="ivz-sider" :width="256" :trigger="null"
-      v-model:collapsed="collapsed" collapsible :collapsedWidth="62" theme="dark">
+  <a-layout-sider class="ivz-sider" :width="256" :trigger="null" breakpoint="sm"
+      v-model:collapsed="collapsed" collapsible :collapsedWidth="62" :theme="theme">
     <div class="ivz-logo" @click="collapsedHandle">
       <div class="ivz-logo-c">
         <a-avatar :size="48" src="/img/logo.png"></a-avatar>
@@ -10,7 +10,7 @@
     <!--侧边菜单-->
     <div class="ivz-sider-menu">
       <a-menu @select="selectMenu" mode="inline" :openKeys="openKeys"
-              :selectedKeys="selectedKeys" @openChange="openChange" theme="dark">
+              :selectedKeys="selectedKeys" @openChange="openChange" :theme="theme">
         <template v-for="menu in menus">
           <template v-if="menu.type=='V'">
             <a-menu-item :key="menu.url">
@@ -37,7 +37,7 @@ export default {
   name: "LayoutSider",
   setup() {
     // 主题 dark or light
-    let theme = ref('light')
+    let theme = ref('dark')
     let collapsed = ref(false);
     return {collapsed, theme}
   },

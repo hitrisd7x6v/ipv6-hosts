@@ -106,6 +106,7 @@ function initDatetimeColumnSlot(column) {
 function initColumn(column, slots) {
     column.align = column.align || 'center';
     column.dataIndex = column.dataIndex || column.field.split(".");
+    column.ellipsis = column.ellipsis == null ? true : column.ellipsis;
 
     initSlot(column, slots); // 初始化插槽
 
@@ -145,6 +146,8 @@ export default defineComponent({
     name: 'UTable',
     components: {UCell},
     props: {
+        sticky: {default: false},
+        scroll: {type: Object},
         dataSource: {type: Array},
         columns: {type: Array, default: () => []},
         pagination: {
@@ -250,11 +253,21 @@ export default defineComponent({
         this.tableContext['getSelectedRowKeys'] = this.getSelectedRowKeys;
     },
     render() {
+        let sticky = this.sticky, scroll = this.scroll;
+        if(this.sticky || this.sticky === '') {
+            if(typeof this.sticky !== 'object') {
+                sticky = {offsetHeader: -12}
+            }
+
+            if(this.scroll == null) {
+                scroll = {x: 1000}
+            }
+        }
         return (
-            <ATable {...this.$attrs} columns={this.columns} ref="ATableRef"
-                loading={this.loading} dataSource={this.dataSourceRef}
+            <ATable {...this.$attrs} columns={this.columns} ref="ATableRef" sticky={sticky}
+                loading={this.loading} dataSource={this.dataSourceRef} size={'middle'} bordered={true}
                 pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
-                onExpandedRowsChange={this.expandedRowsChange} customRow={(row) => {
+                onExpandedRowsChange={this.expandedRowsChange} scroll={scroll} customRow={(row) => {
                     return {
                         onClick: (e) => this.$emit('rowClick', {e, row}),       // 点击行
                         onDblclick: (e) => this.$emit('rowDblclick', {e, row}), // 行双击

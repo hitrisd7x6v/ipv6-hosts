@@ -3,7 +3,7 @@
     <UViewSearch>
       <UInput label="字典名称" field="name" />
       <UInput label="字典类型" field="type"/>
-      <USelect label="字典状态" field="status" :options="status" span="6"/>
+      <USelect label="字典状态" field="status" :options="status" span="5"/>
       <template #func>
         <UFuncBtn func="reset">重置</UFuncBtn>
         <UFuncBtn func="query" url="/core/dictType/view">搜索</UFuncBtn>
@@ -11,7 +11,7 @@
       </template>
     </UViewSearch>
     <UViewTable :columns="columns" size="small" :bordered="true">
-      <template #c_type="{text}">
+      <template #type="{text}">
         <router-link :to="{path: '/dict/data', query: {type: text}}">{{text}}</router-link>
       </template>
       <template #c_action="{record}">
@@ -25,9 +25,6 @@
         <UInput label="字典标识" field="type" :disabled="model.id ? true : false" />
         <URadio label="字典状态" field="status" :options="status"/>
         <UInput label="备注" field="remark" />
-      </template>
-      <template #title="{model}">
-        {{model.id != null ? '修改字典' : '新增字典'}}
       </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
