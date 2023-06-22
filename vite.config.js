@@ -28,10 +28,10 @@ export default defineConfig((env)=>{
         '^/api/*': {
           changeOrigin: true,
           // 线上测试地址, 只支持浏览数据
-          target: 'http://demo.iteaj.com',
+          // target: 'http://demo.iteaj.com',
           // 本地开发地址, 需要运行对应的java后端[https://gitee.com/iteaj/izone-sboot]
-          // target: 'http://127.0.0.1:8085',
-          // rewrite: (path) => path.replace(/^\/api/, '')
+          target: 'http://127.0.0.1:8085',
+          rewrite: (path) => path.replace(/^\/api/, '')
         },
       }
     },

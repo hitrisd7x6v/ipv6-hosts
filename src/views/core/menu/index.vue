@@ -11,7 +11,7 @@
     <UViewTable :columns="columns" size="small" :pagination="false">
       <template #action="{record}">
         <UFuncTag func="add:child" :data="record" v-auth="'core:menu:add'"
-                  :disabled="disabled(record)" :params="{pid: 'pid'}">新增子菜单</UFuncTag>
+                  :disabled="disabled(record)" :config="{pid: 'pid'}">新增子菜单</UFuncTag>
         <UFuncTag func="edit" :data="record" url="/core/menu/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/menu/del">删除</UFuncTag>
       </template>

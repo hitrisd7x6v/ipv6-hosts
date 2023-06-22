@@ -1,11 +1,11 @@
 <template>
   <UView auth>
-    <USearch primary>
+    <UViewSearch>
       <UInput label="登录用户" field="userNick" span="5" />
       <USelect label="在线状态" field="status" span="5" :options="OnlineStatus"/>
       <UFuncBtn func="reset">重置</UFuncBtn>
       <UFuncBtn func="query" url="/core/onlineUser/view">搜索</UFuncBtn>
-    </USearch>
+    </UViewSearch>
     <UViewTable :columns="columns" size="small" :bordered="true" :scroll="{x: '100%'}">
       <template #c_status="{record}">
         <ABadge v-if="record.status=='Online'" status="processing" text="在线" />

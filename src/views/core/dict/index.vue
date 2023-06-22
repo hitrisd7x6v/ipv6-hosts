@@ -10,7 +10,7 @@
         <UFuncBtn func="add" url="/core/dictType/add">新增</UFuncBtn>
       </template>
     </UViewSearch>
-    <UViewTable :columns="columns" size="small" :bordered="true">
+    <UViewTable :columns="columns">
       <template #type="{text}">
         <router-link :to="{path: '/dict/data', query: {type: text}}">{{text}}</router-link>
       </template>
