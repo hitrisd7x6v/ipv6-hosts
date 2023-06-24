@@ -26,6 +26,10 @@ export default {
     FormSpinSubmitTip: '数据提交中...',
     FormSpinLoadingTip: '数据加载中...',
 
+    Options_LabelField: 'label',
+    Options_ValueField: 'value',
+    Options_ChildrenField: 'children',
+    
     // 功能标识
     FuncNameMeta: {ADD: 'ADD', DEL: 'DEL', EDIT: 'EDIT', QUERY: 'QUERY', IMPORT: 'IMPORT', EXPORT: 'EXPORT'
         , CANCEL: 'CANCEL', RESET: 'RESET', EXPAND: 'EXPAND', SUBMIT: 'SUBMIT', DETAIL: 'DETAIL'},

@@ -12,7 +12,7 @@
     </UViewSearch>
     <UViewTable :columns="columns">
       <template #type="{text}">
-        <router-link :to="{path: '/dict/data', query: {type: text}}">{{text}}</router-link>
+        <router-link :to="{path: 'dict/data', query: {type: text}}">{{text}}</router-link>
       </template>
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/dictType/edit">修改</UFuncTag>

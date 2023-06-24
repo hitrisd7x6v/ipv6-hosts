@@ -1,7 +1,8 @@
-import {computed, defineComponent, h, resolveComponent} from "vue";
+import {computed, defineComponent, h, reactive, resolveComponent} from "vue";
 import UForm from "@/components/form/basic/Form.jsx";
 import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
 import MixinsOptionsItem from "@/components/form/basic/MixinsOptionsItem";
+import CoreConsts from "@/components/CoreConsts";
 
 export const UInput = defineComponent({
     name: 'UInput',
@@ -129,11 +130,19 @@ export const URate = defineComponent({
 export const USelect = defineComponent({
     name: 'USelect',
     mixins: [MixinsFormItem, MixinsOptionsItem],
+    setup(props, {attrs}) {
+        let fieldNames = attrs['fieldNames'];
+        if(fieldNames == null) {
+            fieldNames = {label: props.labelField, value: props.valueField, children: CoreConsts.Options_ChildrenField};
+        }
+
+        return {fieldNames};
+    },
     render() {
         let props = this.getFormItemProps();
         return <a-col {...props}>
             <a-form-item {...props}>
-                {<a-select {...this.getFormAttrs({options: this.dataSource})} v-slots={this.$slots}></a-select>}
+                <ASelect {...this.getFormAttrs()} options={this.dataSource} fieldNames={this.fieldNames} v-slots={this.$slots} />
             </a-form-item>
         </a-col>
     }
@@ -229,11 +238,28 @@ export const UMentions = defineComponent({
 export const UTreeSelect = defineComponent({
     name: 'UTreeSelect',
     mixins: [MixinsFormItem, MixinsOptionsItem],
+    setup(props, {attrs}) {
+
+        /**
+         * 使用方法主要解决TreeSelect组件不能触发同步问题
+         * @return {{children: string, title: *, value: *}}
+         */
+        let getFieldNames = () => {
+            let fieldNames = attrs['fieldNames'];
+            if(fieldNames == null) {
+                fieldNames = {label: props.labelField, value: props.valueField, children: CoreConsts.Options_ChildrenField};
+            }
+
+            return fieldNames;
+        }
+
+        return {getFieldNames}
+    },
     render() {
         let props = this.getFormItemProps();
         return <a-col {...props}>
             <a-form-item {...props}>
-                {<a-tree-select {...this.getFormAttrs()} treeData={this.dataSource} v-slots={this.$slots}></a-tree-select>}
+                <a-tree-select {...this.getFormAttrs()} fieldNames={this.getFieldNames()} treeData={this.dataSource} v-slots={this.$slots} />
             </a-form-item>
         </a-col>
     }

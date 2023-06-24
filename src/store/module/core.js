@@ -128,7 +128,7 @@ const registerSysModule = function (store) {
                 return (url, labelField, valueField) => {
                     let options = state.optionsMaps[url];
                     if(!options) {
-                        let dictData = [], valueLabelMap = reactive({});
+                        let dictData = reactive([]), valueLabelMap = reactive({});
                         state.optionsMaps[url] = {options: dictData, valueLabelMap};
 
                         GET(url).then(({data}) => {

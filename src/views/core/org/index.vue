@@ -6,27 +6,24 @@
       <template #func>
         <UFuncBtn func="query" url="/core/org/view">搜索</UFuncBtn>
         <UFuncBtn func="reset">重置</UFuncBtn>
-        <UFuncBtn func="add" url="/core/org/add">新增</UFuncBtn>
+        <UFuncBtn func="add" v-auth="'core:org:add'">新增</UFuncBtn>
         <UFuncBtn func="expand">展开/缩收</UFuncBtn>
       </template>
     </UViewSearch>
     <UViewTable :columns="columns" size="small" :pagination="false">
       <template #c_action="{record}">
-        <UFuncTag func="add:child" :data="record" url="/core/org/add">新增子部门</UFuncTag>
+        <UFuncTag func="add:child" :data="record" v-auth="'core:org:add'" :config="{pid: 'pid'}">新增子部门</UFuncTag>
         <UFuncTag func="edit" :data="record" url="/core/org/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/org/del">删除</UFuncTag>
       </template>
     </UViewTable>
-    <UViewModal :span="[7, 15]" :rules="rules">
+    <UViewModal :span="[7, 15]" :rules="rules" title="部门管理">
       <UTreeSelect field="pid" label="上级部门" valueField="id"
            :defaultValue="0" url="/core/org/parent" labelField="name"
            treeNodeFilterProp="label"/>
       <UInput field="name" label="部门名称"/>
       <UInput field="leader" label="部门负责人"/>
       <UInput field="phone" label="负责人手机号"/>
-      <template #title="{model}">
-        {{model.id != null ? '修改部门' : '新增部门'}}
-      </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
         <UFuncBtn func="submit" :url="model.id ? '/core/org/edit' : '/core/org/add'">提交</UFuncBtn>

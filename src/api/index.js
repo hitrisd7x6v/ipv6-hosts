@@ -3,14 +3,13 @@ import {GET, POST, baseURL} from '@/utils/request'
 // 图像验证码url
 const loginUri = "/core/login"
 const captchaUri = `${baseURL}/valid/captcha`
-const menuUri = "/core/center/menus"
 const avatarUploadUri = "/core/center/avatar"
 
-export {captchaUri, menuUri, loginUri, avatarUploadUri}
+export {captchaUri, loginUri, avatarUploadUri}
 
 // 获取侧边菜单栏数据
 export function getMenus() {
-    return GET(menuUri)
+    return GET("/core/menu/bars")
 }
 
 // 用户中心 - 获取用户详情
