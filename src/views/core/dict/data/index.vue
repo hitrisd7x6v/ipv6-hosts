@@ -6,7 +6,7 @@
                   :defaultValue="type"/>
       <UInput label="数据名称" field="name" />
       <template #func>
-        <UFuncBtn func="query" url="/core/dictData/view">查询</UFuncBtn>&nbsp;
+        <UFuncBtn func="query" url="/core/dictData/view" ref="queryFunc">查询</UFuncBtn>&nbsp;
         <UFuncBtn func="add" url="/core/dictData/add">新增</UFuncBtn>&nbsp;
       </template>
     </UViewSearch>
@@ -24,7 +24,7 @@
         </div>
       </template>
     </UViewDrawer>
-    <UViewTable :columns="columns" size="small" rowKey="id" :bordered="true">
+    <UViewTable :columns="columns" rowKey="id">
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/dictData/edit">编辑</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/dictData/del">删除</UFuncTag>
@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     query() {
-      this.$view.queryByFunc(CoreConsts.PrimarySearchRef)
+      this.$refs['queryFunc'].trigger();
     },
 
     edit(model) {
@@ -82,7 +82,6 @@ export default {
 
     loadDictData() {
       this.query();
-      this.editModel.type = this.searchModel.type;
     },
   }
 }

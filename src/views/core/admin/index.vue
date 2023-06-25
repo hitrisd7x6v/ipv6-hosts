@@ -1,35 +1,32 @@
 <template>
   <UView name="用户">
-    <UViewSearch type="bread">
-        <UInput field="name" label="用户昵称" />
-        <UInput field="account" label="用户帐号" />
-        <UInput field="phone" label="用户手机" />
-        <UTreeSelect field="orgId" label="所属部门" span="6"
-                     url="/core/org/parent" labelField="name" valueField="id"/>
-        <URadio field="status" label="用户状态" :options="status"/>
-      <template #func>
-        <UFuncBtn func="reset">重置</UFuncBtn>
+    <UViewSearch bread :columns="columns">
+      <UInput field="name" label="用户昵称"/>
+      <UInput field="account" label="用户帐号"/>
+      <UInput field="phone" label="用户手机"/>
+      <UTreeSelect field="orgId" label="所属部门" style="width: 200px"
+                   url="/core/org/parent" labelField="name" valueField="id"/>
+      <URadio field="status" label="用户状态" dict="sys_func_status"/>
         <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
+      <template #func>
         <UFuncBtn func="add" v-auth="'core:admin:add'">新增</UFuncBtn>
       </template>
     </UViewSearch>
-    <UViewDrawer width="860" layout="vertical" :rules="rules" placement="left">
+    <UViewDrawer width="780" layout="vertical" :rules="rules" placement="left" title="用户管理">
       <template #default="{model}">
         <URow :gutter="16" span="8">
-          <UInput field="name" label="用户昵称" />
           <UInput field="account" label="用户帐号" :disabled="model.id != null"/>
+          <UInput field="name" label="用户昵称" />
           <UTreeSelect field="orgId" label="所属部门" treeNodeFilterProp="label"
                            url="/core/org/parent" labelField="name" valueField="id"/>
           <UInput field="email" label="用户邮箱" />
-          <URadio field="status" label="用户状态" defaultValue="enabled" :options="status"/>
+          <URadio field="status" label="用户状态" defaultValue="enabled" dict="sys_func_status"/>
           <URadio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
           <UCheckbox field="roleIds" label="用户角色" url="/core/role/list"
                         labelField="name" valueField="id" span="24"/>
           <UTextarea field="remark" label="用户简介" span="24" />
         </URow>
-      </template>
-      <template #title="{model}">
-        {{model.id != null ? '修改用户' : '新增用户'}}
       </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
@@ -37,7 +34,7 @@
         <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
     </UViewDrawer>
-    <UViewTable :columns="columns">
+    <UViewTable :columns="columns" :scroll="{x: 1000}">
       <template #action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/admin/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/admin/del">删除</UFuncTag>
@@ -59,7 +56,7 @@
 
 <script>
 
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 
 export default {
   name: "Admin",
@@ -70,21 +67,18 @@ export default {
       {label: '无', value: 'non'}
     ]
 
-    let status = [
-      {label: '启用', value: 'enabled'}, {label: '禁用', value: 'disabled'}
-    ]
-
-    let columns = [
-      {title: '用户账号', field: 'account', fixed: 'left'},
-      {title: '用户昵称', field: 'name'},
-      {title: '所属部门', field: 'orgId', url: '/core/org/parent', valueField: 'id', labelField: 'name'},
-      {title: '性别', field: 'sex', options: sex},
-      {title: '手机', field: 'phone'},
-      {title: '邮箱', field: 'email'},
-      {title: '状态', field: 'status', options: status},
-      {title: '创建时间', field: 'createTime'},
-      {title: '操作', field: 'action', type: 'action', width: 220, fixed: 'right'},
-    ]
+    let columns = reactive([
+      {title: '用户账号', field: 'account', fixed: 'left', width: 150},
+      {title: '用户昵称', field: 'name', width: 150},
+      {title: '所属部门', field: 'orgId', url: '/core/org/parent'
+        , valueField: 'id', labelField: 'name', width: 120, ellipsis: true},
+      {title: '性别', field: 'sex', options: sex, width: 60},
+      {title: '手机', field: 'phone', width: 110},
+      {title: '邮箱', field: 'email', ellipsis: true, width: 130},
+      {title: '状态', field: 'status', dict: 'sys_func_status', width: 60},
+      {title: '创建时间', field: 'createTime', width: 160},
+      {title: '操作', field: 'action', type: 'action', width: 200},
+    ])
 
     let rules = {
       name: {required: true, message: '用户昵称必填'},

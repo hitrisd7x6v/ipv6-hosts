@@ -693,7 +693,10 @@ export function SearchContext(viewContext) {
     // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
-    // 获取功能组件配置
+    /**
+     * @param func
+     * @return {FuncConfig | null}
+     */
     this.getFunc = function (func) {
         func = func.toUpperCase();
         let funcMeta = this.funcMetas[func];
@@ -818,6 +821,11 @@ export function TableContext(viewContext) {
         return this.funcMetas[func.toUpperCase()];
     }
 
+    /**
+     * @return {Array | null}
+     */
+    this.getColumns = () => null;
+
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
     }
@@ -902,10 +910,22 @@ export function TableContext(viewContext) {
         return viewContext['__$View'] || new $View(null);
     }
 
-    // 设置表格的加载状态
+    /**
+     * 粘表头
+     * @param status {Boolean}
+     */
+    this.setSticky = (status) => {}
+
+    /**
+     * 设置表格的加载状态
+     * @param status {Boolean}
+     */
     this.setLoading = (status) => {};
 
-    // 设置数据源
+    /**
+     * 设置数据源
+     * @param dataSource {Boolean}
+     */
     this.setDataSource = (dataSource) => {};
 }
 
@@ -1011,7 +1031,29 @@ export function ViewContext (props) {
         }
     }
 }
+export function FuncConfig() {
+    /**
+     * @type {Function}
+     * @return {String}
+     */
+    this.getUrl = null;
 
+    /**
+     * @param key
+     * @return {Object}
+     */
+    this.getProp = (key) => null;
+
+    /**
+     * @return {string}
+     */
+    this.getMethod = () => "";
+
+    /**
+     * @return {null}
+     */
+    this.trigger = () => null
+}
 export function ChildConfig() {
     /**
      * @type {String}

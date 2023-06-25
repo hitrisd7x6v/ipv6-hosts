@@ -13,11 +13,12 @@ export const UViewSearch = defineComponent({
     name: 'UViewSearch',
     components: {UBreadSearch, UBasicSearch},
     props: {
-        type: {type: String, default: 'basic'} // basic or bread
+        bread: {type: Boolean, default: false},
+        tid: {type: String, default: CoreConsts.PrimaryTableRef} // 表组件uid 默认主表组件的uid
     },
-    setup(props, {attrs, slots}) {
-        let component = props.type == 'bread' ?
-            <UBreadSearch {...attrs} v-slots={slots} uid={CoreConsts.PrimarySearchRef}/> :
+    setup({tid, bread}, {attrs, slots}) {
+        let component = bread ?
+            <UBreadSearch {...attrs} tid={tid} v-slots={slots} uid={CoreConsts.PrimarySearchRef}/> :
             <UBasicSearch  {...attrs} v-slots={slots} uid={CoreConsts.PrimarySearchRef}/>
         return {component}
     },

@@ -23,7 +23,7 @@
         <UFuncBtn func="reset">重置</UFuncBtn>
       </template>
     </UViewModal>
-    <UViewTable :columns="columns" :bordered="true" size="small">
+    <UViewTable :columns="columns" :scroll="{x: 800}">
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/role/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/role/del">删除</UFuncTag>
@@ -60,9 +60,9 @@ export default {
       {field: 'name', title: '名称', width: 180},
       {field: 'status', title: '状态', options: status, width: 56},
       {field: 'sort', title: '排序', width: 56},
-      {field: 'remark', title: '备注', width: 320},
-      {field: 'createTime', title: '创建时间', type: 'datetime', picker: 'date'},
-      {field: 'action', title: '操作', type: 'action'}
+      {field: 'remark', title: '备注'},
+      {field: 'createTime', title: '创建时间', type: 'datetime', picker: 'date', width: 160},
+      {field: 'action', title: '操作', type: 'action', width: 230}
     ]
     let rules = {
       name: {required: true, message: '角色名称必填'}

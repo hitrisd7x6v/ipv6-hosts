@@ -7,13 +7,13 @@
       <UFuncBtn func="query" url="/core/onlineUser/view">搜索</UFuncBtn>
     </UViewSearch>
     <UViewTable :columns="columns" size="small" :bordered="true" :scroll="{x: '100%'}">
-      <template #c_status="{record}">
-        <ABadge v-if="record.status=='Online'" status="processing" text="在线" />
-        <ABadge v-else status="default" text="掉线" />
+      <template #status="{record, value}">
+        <ABadge v-if="record.status=='Online'" status="processing" :text="value" />
+        <ABadge v-else status="default" :text="value" />
       </template>
       <template #c_action="{record}">
         <UFuncTag func="del" :data="record" url="/core/onlineUser/del">删除</UFuncTag>
-        <UFuncTag func="offline" :data="record" url="/core/onlineUser/offline" confirm>下线</UFuncTag>
+        <UFuncTag func="offline" :data="record" url="/core/onlineUser/offline" confirm>剔除</UFuncTag>
       </template>
     </UViewTable>
   </UView>
@@ -26,7 +26,7 @@ export default {
   setup() {
     let OnlineStatus = [
       {label: '在线', value: 'Online'},
-      {label: '掉线', value: 'Offline'},
+      {label: '离线', value: 'Offline'},
     ]
 
     let columns = [
@@ -34,10 +34,9 @@ export default {
       {field: 'loginTime', title: '登录时间', width: 160, type: 'date'},
       {field: 'os', title: '系统', width: 128},
       {field: 'browse', title: '浏览器', width: 100},
-      {field: 'expireTime', title: '过期时间(s)', width: 118},
       {field: 'accessIp', title: '登录ip', width: 138},
       {field: 'updateTime', title: '最后访问时间', type: 'date', width: 160},
-      {field: 'status', title: '在线状态', width: 78, fixed: 'right'},
+      {field: 'status', title: '在线状态', width: 78, fixed: 'right', options: OnlineStatus},
       {field: 'action', title: '操作', type: 'action', width: 138, fixed: 'right'},
     ]
     return {columns, OnlineStatus}

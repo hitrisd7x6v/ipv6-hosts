@@ -1,61 +1,67 @@
 <template>
-  <UForm class="ivz-search ivz-bread-search" ref="ivzBsForm" layout="inline">
-    <template #default="{model}">
-      <slot :model="model"></slot>
-      <a-row class="ivz-is-fun" align="middle">
-        <a-col class="ivz-isf-bru" span="8">
-          <a-breadcrumb>
-            <a-breadcrumb-item>
-              <HomeFilled style="color: dodgerblue"/>
-            </a-breadcrumb-item>
-            <template v-for="menu in breadcrumb" :key="menu.id">
-              <a-breadcrumb-item v-if="menu.type != 8">
-                <span>{{ menu.name }}</span>
-              </a-breadcrumb-item>
-              <a-breadcrumb-item v-else>
-                <a-dropdown>
-                  <a class="ant-dropdown-link" @click.prevent>
-                    {{menu.name}} <DownOutlined />
-                  </a>
-                  <template #overlay>
-                    <a-menu @click="menuHandle">
-                      <template v-for="item in menu.children" :key="item.id">
-                        <a-menu-item :key="item.url" v-if="item.id != activityId">
-                          <span>{{item.name}}</span>
-                        </a-menu-item>
-                      </template>
-                    </a-menu>
-                  </template>
-                </a-dropdown>
-              </a-breadcrumb-item>
+  <div class="ivz-search ivz-bread-search">
+    <UForm class="ivz-search-form" ref="ivzBsForm" layout="inline">
+      <template #default="{model}">
+        <slot :model="model"></slot>
+      </template>
+    </UForm>
+    <a-row class="ivz-is-fun" align="middle">
+      <a-col class="ivz-isf-bru" span="12">
+        <slot name="func"></slot>
+      </a-col>
+      <a-col style="text-align: right" span="12">
+        <ATooltip placement="top" title="列管理" class="search-ibs-item">
+          <a-dropdown v-model:visible="visible" :trigger="['click']"
+                      placement="bottom" :overlayStyle="{minWidth: '160px'}">
+            <UnorderedListOutlined :style="{fontSize: '16px'}" />
+            <template #overlay>
+              <AMenu>
+                <AMenuItem>
+                  <ACheckbox v-model:checked="checkedModel.checkedAll" @change="checkedModel.onChange"
+                             :indeterminate="checkedModel.indeterminate" />
+                  <a style="float: right; color: rgba(30,144,255,0.89)" @click="checkedModel.reset()">重置</a>
+                </AMenuItem>
+                <AMenuDivider />
+                <template v-for="column in columnsWrapper" :key="column.field">
+                  <AMenuItem>
+                    <ACheckbox v-model:checked="column.checked"
+                       @change="()=>checkedModel.childChange(column)" /> {{column.title}}
+                  </AMenuItem>
+                </template>
+              </AMenu>
             </template>
-          </a-breadcrumb>
-        </a-col>
-        <a-col style="text-align: center" span="16">
-          <slot name="func"></slot>
-        </a-col>
-      </a-row>
-    </template>
-  </UForm>
+          </a-dropdown>
+        </ATooltip>
+        <ATooltip placement="top" title="粘表头">
+          <UIcon type="iz-icon-fixed" :style="{fontSize: '16px'}"
+                 class="search-ibs-item" @click="sticky"/>
+        </ATooltip>
+        <a-tooltip placement="top" title="全屏">
+          <FullscreenOutlined :style="{fontSize: '16px'}"
+                  class="search-ibs-item" @click="fullScreen"/>
+        </a-tooltip>
+      </a-col>
+    </a-row>
+  </div>
+
 </template>
 
-<!-- 面包屑搜索 -->
+<!-- 搜索 -->
 <script>
-import {DownOutlined, HomeFilled} from '@ant-design/icons-vue'
+import {DownOutlined, FullscreenOutlined, HomeFilled, UnorderedListOutlined, SearchOutlined} from '@ant-design/icons-vue'
 import UForm from "@/components/form/basic/Form";
-import {mapMutations, useStore} from "vuex";
-import {inject, provide} from "vue";
+import {inject, provide, reactive, ref} from "vue";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
-import {SearchContext} from "@/components/view/Context";
+import {SearchContext, TableContext} from "@/components/view/Context";
+import CoreConsts from "@/components/CoreConsts";
 
 export default {
   name: "IvzBreadSearch",
-  components: {UForm, DownOutlined, HomeFilled},
+  props: {
+    tid: {type: String, default: null}
+  },
+  components: {UForm, DownOutlined, HomeFilled, FullscreenOutlined, UnorderedListOutlined, SearchOutlined},
   setup(props, {attrs}) {
-    let activityMenu = useStore().getters['sys/activityMenu'];
-    let breadcrumb = useStore().getters['sys/resolverBreadcrumb'];
-
-    let activityId = activityMenu.id;
     let viewContext = inject(ViewContextKey);
     let searchContext = new SearchContext(viewContext);
 
@@ -66,34 +72,128 @@ export default {
       }
     }
 
+    let columns = ref([]);
+    let columnsWrapper = reactive([]);
+    let checkedModel = reactive({
+      checkedAll: true,
+      indeterminate: false,
+      reset() {
+        checkedModel.checkedAll = true;
+        checkedModel.indeterminate = false;
+        columnsWrapper.forEach(columnWrapper => {
+          if(!columnWrapper.checked) {
+            columnWrapper.checked = true;
+            checkedModel.addColumn(columnWrapper);
+          }
+        })
+      },
+      onChange: (e) => {
+        if(checkedModel.checkedAll) {
+          columnsWrapper.forEach(columnWrapper => {
+            if(!columnWrapper.checked) {
+              columnWrapper.checked = true
+              checkedModel.addColumn(columnWrapper);
+            }
+          });
+        } else {
+          columnsWrapper.forEach(item => {
+            item.checked = false
+          });
+
+          columns.value.splice(0, columns.value.length - 1);
+        }
+        checkedModel.indeterminate = false;
+      },
+      addColumn: (columnWrapper) => {
+        if(columnWrapper.index == 0) {
+          columns.value.splice(0, 0, columnWrapper.column); return;
+        }
+
+        for(let i= columnWrapper.index - 1; i>=0; i--) {
+          let prevColumn = columnsWrapper[i];
+          if(prevColumn.checked) {
+            for(let index=0; index < columns.value.length; index++) {
+              let column = columns.value[index];
+              if(column == prevColumn.column) {
+                columns.value.splice(index + 1, 0, columnWrapper.column); return;
+              }
+            }
+
+            break;
+          } else if(i == 0) {
+            columns.value.splice(0, 0, columnWrapper.column); return;
+          }
+        }
+      },
+      childChange: (columnWrapper) => {
+        if(!columnWrapper.checked) {
+          columns.value.forEach((item, index) => {
+            if(columnWrapper.column == item) {
+              columns.value.splice(index, 1);
+            }
+          })
+        } else {
+          checkedModel.addColumn(columnWrapper);
+        }
+        let checkedList = columnsWrapper.filter(item => item.checked);
+        if(checkedList.length == columnsWrapper.length) {
+          checkedModel.checkedAll = true;
+          checkedModel.indeterminate = false;
+        } else if(checkedList.length == 0) {
+          checkedModel.checkedAll = false;
+          checkedModel.indeterminate = false;
+        } else {
+          checkedModel.indeterminate = checkedList.length > 0 && checkedList.length < columnsWrapper.length;
+        }
+      }
+    });
+    let visible = ref(false);
     provide(FuncContextKey, searchContext);
-    return {breadcrumb, activityId, searchContext}
+    return {searchContext, visible, checkedModel, columns, columnsWrapper, viewContext}
   },
   created() {
     this.searchContext['getFormContext'] = this.getFormContext;
   },
+  mounted() {
+    let contextByUid = this.getViewContext().getContextByUid(this.tid);
+    if(contextByUid != null) {
+      this.columns = contextByUid.getColumns();
+      this.columns.filter((item, index) => index < this.columns.length - 1)
+        .forEach((column, index) => {
+          this.columnsWrapper.push({checked: true, index, field: column.field, title: column.title, column});
+        });
+    }
+  },
   methods: {
-    ...mapMutations({
-      openUrlAndParentMenu: 'sys/openUrlAndParentMenu',
-    }),
-    isView(meta) {
-      let view = meta.view;
-      if(typeof view == 'function') {
-        let ivzFormRef = this.$refs['ivzBsForm'];
-        if(ivzFormRef) {
-          let editModel = ivzFormRef.getEditModel();
-          return view(editModel, meta);
+    /**
+     * 表头和滚动条
+     */
+    sticky() {
+      if(this.getSearchContext().uid == CoreConsts.PrimarySearchRef) {
+        let contextByUid = this.getViewContext().getContextByUid(CoreConsts.PrimaryTableRef);
+        if(contextByUid instanceof TableContext) {
+          contextByUid.setSticky(true)
         }
-
-        return true;
       } else {
-        return view == null ? true : view;
+        this.$emit('sticky', this);
       }
     },
-    menuHandle(menu) {
-      this.openUrlAndParentMenu(menu.key);
+    fullScreen() {
+
     },
 
+    /**
+     * @return {ViewContext}
+     */
+    getViewContext() {
+      return this.viewContext;
+    },
+    /**
+     * @return {SearchContext}
+     */
+    getSearchContext() {
+      return this.searchContext;
+    },
     getFormContext() {
       return this.$refs['ivzBsForm'].getFormContext();
     },
@@ -120,19 +220,28 @@ export default {
 
 <style scoped>
 .ivz-bread-search {
-  width: 100%;
-  padding: 8px;
+  padding-top: 12px;
   position: relative;
   background: #ffffff;
 }
-
+.ivz-search-form {
+  margin-bottom: 8px;
+}
 .ivz-bread-search .ivz-is-fun {
   width: 100%;
   height: 38px;
   padding: 0px;
-  margin-top: 16px;
   line-height: 38px;
   background: #fefefe;
 }
 
+.search-ibs-item {
+  margin-right: 16px;
+}
+.search-ibs-item:hover{
+  cursor: pointer;
+}
+.search-ibs-item:active {
+  color: #3399ff;
+}
 </style>

@@ -4,6 +4,7 @@ import {computed, defineComponent, inject, provide, reactive, ref, watch} from "
 import {MetaConst} from "@/utils/MetaUtils";
 import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {TableContext} from "@/components/view/Context";
+import CoreConsts from "@/components/CoreConsts";
 
 function initSlot(column, slots) {
     let slotName = "";
@@ -106,7 +107,6 @@ function initDatetimeColumnSlot(column) {
 function initColumn(column, slots) {
     column.align = column.align || 'center';
     column.dataIndex = column.dataIndex || column.field.split(".");
-    column.ellipsis = column.ellipsis == null ? true : column.ellipsis;
 
     initSlot(column, slots); // 初始化插槽
 
@@ -123,6 +123,7 @@ function initTableColumns(columns, slots) {
             initColumn(column, slots);
             if(column['__slot'] && !slots['bodyCell']) {
                 slots['bodyCell'] = (args) => {
+                    if(args.column == null) return null;
                     return args.column['__slot'] ? args.column['__slot'](args) : args.text;
                 }
             }
@@ -164,6 +165,7 @@ export default defineComponent({
         }, // 是否分页, 不支持使用对象
     },
     setup(props, {slots, emit, attrs}) {
+        let stickyRef = ref(props.sticky);
         let selectedRows = ref([]);
         let selectedRowKeys = ref([]);
         let loading = reactive({spinning: false, tip: '数据加载中...'});
@@ -173,6 +175,8 @@ export default defineComponent({
 
         let viewContext = inject(ViewContextKey);
         let tableContext = new TableContext(viewContext);
+        // 默认重置列宽度事件
+        let defResizeColumn = (width, column) => column.width = width;
 
         // 监控展开行数据变化
         watch(() => props['expandedRowKeys'], (newVal) => {
@@ -182,6 +186,10 @@ export default defineComponent({
         // 监听数据源变化
         watch(() => props.dataSource, (newVal) => {
             dataSourceRef.value = newVal;
+        })
+
+        watch(() => props.sticky, (newVal) => {
+            stickyRef.value = newVal;
         })
 
         // 代理选中改变事件
@@ -213,9 +221,10 @@ export default defineComponent({
         // 更新列改变
         let slotsRef = ref(initTableColumns(columns, slots));
 
+        let setSticky = (status) => stickyRef.value = status
         let setLoading = (status, tip) => {
             loading.spinning = status;
-            loading.tip = tip || '数据加载中...';
+            loading.tip = tip || CoreConsts.TableSpinLoadingTip;
         }
         let setDataSource = (ds) => dataSourceRef.value = ds;
         let setTotalRows = (total) => {
@@ -231,9 +240,11 @@ export default defineComponent({
             }
 
             if(tableContext) {
+                tableContext['setSticky'] = setSticky
                 tableContext['setLoading'] = setLoading;
                 tableContext['setTotalRows'] = setTotalRows;
                 tableContext['setDataSource'] = setDataSource;
+                tableContext['getColumns'] = () => props.columns;
 
                 if(props.pagination instanceof Object) { // 如果需要分页
                     tableContext['currentPage'] = 1;
@@ -244,8 +255,8 @@ export default defineComponent({
 
         provide(FuncContextKey, tableContext);
         return {slotsRef, selectedRows, selectedRowKeys
-            , unfoldRowKeys, loading, dataSourceRef
-            , setDataSource, setLoading, setTotalRows, tableContext}
+            , unfoldRowKeys, loading, dataSourceRef, stickyRef
+            , setDataSource, setLoading, setTotalRows, defResizeColumn, tableContext}
     },
     created() {
         this.tableContext['expanded'] = this.expanded;
@@ -253,21 +264,23 @@ export default defineComponent({
         this.tableContext['getSelectedRowKeys'] = this.getSelectedRowKeys;
     },
     render() {
-        let sticky = this.sticky, scroll = this.scroll;
-        if(this.sticky || this.sticky === '') {
-            if(typeof this.sticky !== 'object') {
-                sticky = {offsetHeader: -12}
+        let scroll = this.scroll;
+        if(this.stickyRef || this.stickyRef === '') {
+            if(typeof this.stickyRef !== 'object') {
+                this.stickyRef = {offsetHeader: -16}
             }
 
             if(this.scroll == null) {
                 scroll = {x: 1000}
             }
         }
+
+        let onResizeColumn = this.$attrs['onResizeColumn'] || this.defResizeColumn;
         return (
-            <ATable {...this.$attrs} columns={this.columns} ref="ATableRef" sticky={sticky}
+            <ATable {...this.$attrs} columns={this.columns} ref="ATableRef" sticky={this.stickyRef}
                 loading={this.loading} dataSource={this.dataSourceRef} size={'middle'} bordered={true}
                 pagination={this.pagination} v-slots={this.slotsRef} expandedRowKeys={this.unfoldRowKeys}
-                onExpandedRowsChange={this.expandedRowsChange} scroll={scroll} customRow={(row) => {
+                onExpandedRowsChange={this.expandedRowsChange} scroll={scroll} onResizeColumn={onResizeColumn} customRow={(row) => {
                     return {
                         onClick: (e) => this.$emit('rowClick', {e, row}),       // 点击行
                         onDblclick: (e) => this.$emit('rowDblclick', {e, row}), // 行双击

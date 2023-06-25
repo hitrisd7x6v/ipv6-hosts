@@ -1,10 +1,11 @@
-import {defineComponent, inject, mergeProps, reactive, computed} from "vue";
+import {computed, defineComponent, inject, mergeProps, reactive} from "vue";
 import {RowContextKey} from "@/utils/ProvideKeys";
-const defOptions = {};
+import ACol from "ant-design-vue/es/grid/Col";
+import AFormItem from 'ant-design-vue/es/form/FormItem'
 export default defineComponent({
     props: ['name', 'label', 'labelCol', 'wrapperCol', 'colon', 'extra', 'hasFeedback'
         , 'help', 'labelAlign', 'validateStatus', 'validateFirst', 'validateTrigger'
-        , 'extra', 'autoLink', 'required', 'class', 'field', 'span', 'order', 'flex'],
+        , 'extra', 'autoLink', 'required', 'field', 'class', 'style'],
     data() {
         return {
             meta: {},
@@ -40,13 +41,18 @@ export default defineComponent({
         getDefaultValue(defaultValue) {
             return defaultValue != undefined ? defaultValue : null;
         },
-        getFormItemProps(options) {
-            options = options ? options : defOptions;
-            return mergeProps(this.$props, {
-                name: this.namePath,
-                span: this.realSpan,
-                ...options
-            })
+        getFormItemProps() {
+            return {...this.$props, name: this.namePath, style: null, class: null}
+        },
+        getColProps() {
+            let colProps = {span: this.realSpan};
+            Object.keys(ACol.props).forEach(key => {
+                if(this.$props[key]) {
+                    colProps[key] = this.$props[key];
+                }
+            });
+
+            return colProps;
         },
         getFormAttrs(options) {
             if(this.attrs) {
@@ -56,11 +62,9 @@ export default defineComponent({
             this.attrs = this.$attrs;
             if(this.formContext && !this.attrs['onUpdate:value']) {
                 let value = computed(() => this.formContext.getFieldValue(this.namePath));
-                this.attrs = mergeProps(this.$attrs, {
-                    value: value, 'onUpdate:value': (val) => {
+                this.attrs = {...this.$attrs, value: value, 'onUpdate:value': (val) => {
                         this.formContext.setFieldValue(this.namePath, val);
-                    }
-                }, options ? options : {});
+                    }, ...options}
             }
 
             return this.attrs;

@@ -10,7 +10,7 @@
         <UFuncBtn func="add" url="/core/config/add">新增</UFuncBtn>
       </template>
     </UViewSearch>
-    <UViewTable :columns="columns" :bordered="true" size="small">
+    <UViewTable :columns="columns" :scroll="{x: 800}">
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/config/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/config/del">删除</UFuncTag>
@@ -49,7 +49,7 @@ export default {
       {field: 'label', title: '配置标识'},
       {field: 'value', title: '配置值'},
       {field: 'type', title: '系统配置', options: type},
-      {field: 'remark', title: '配置说明'},
+      {field: 'remark', title: '配置说明', width: 260},
       {field: 'action', type: 'action', title: '操作'}
     ]
     let rules = {

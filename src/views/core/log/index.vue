@@ -1,13 +1,13 @@
 <template>
   <UView auth>
-    <USearch primary>
+    <UViewSearch primary>
       <UInput label="操作用户" field="userName" span="5" />
       <USelect label="状态" span="5" field="status" :options="SuccessStatus"/>
       <UInputNumber label="执行时间>(ms)" span="5" field="millis" />
       <UFuncBtn func="reset">重置</UFuncBtn>
       <UFuncBtn func="query" url="/core/log/view">搜索</UFuncBtn>
-    </USearch>
-    <UViewTable :columns="columns" size="small" :bordered="true">
+    </UViewSearch>
+    <UViewTable :columns="columns" :scroll="{x: 1200}">
       <template #c_action="{record}">
         <UFuncTag func="del" :data="record" url="/core/log/del">删除</UFuncTag>
       </template>
@@ -17,22 +17,23 @@
 
 <script>
 import {SuccessStatus} from "@/utils/StatusConsts";
+import {reactive} from "vue";
 
 export default {
   name: "Log",
   setup() {
-    let columns = [
+    let columns = reactive([
       {field: 'userName', title: '操作用户', ellipsis: true},
-      {field: 'title', title: '功能', width: 58},
-      {field: 'msn', title: '操作模块'},
-      {field: 'url', title: '执行地址', width: 168, ellipsis: true},
+      {field: 'msn', title: '操作模块', width: 120},
+      {field: 'title', title: '功能', width: 64, ellipsis: true},
+      {field: 'url', title: '请求地址', width: 160, ellipsis: true, resizable: true},
       {field: 'millis', title: '执行时间(ms)', width: 120},
       {field: 'ip', title: '访问ip', ellipsis: true},
-      {field: 'errMsg', title: '日志', ellipsis: true},
-      {field: 'status', title: '状态', options: SuccessStatus, width: 58},
+      {field: 'errMsg', title: '日志', ellipsis: true, resizable: true, width: 160},
+      {field: 'status', title: '状态', options: SuccessStatus, width: 60},
       {field: 'createTime', title: '创建时间', type: 'date', width: 160},
-      {field: 'action', title: '操作', type: 'action'},
-    ]
+      {field: 'action', title: '操作', type: 'action', width: 80},
+    ])
 
     return {columns, SuccessStatus}
   }

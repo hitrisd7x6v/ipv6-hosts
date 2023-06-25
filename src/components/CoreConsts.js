@@ -26,6 +26,8 @@ export default {
     FormSpinSubmitTip: '数据提交中...',
     FormSpinLoadingTip: '数据加载中...',
 
+    TableSpinLoadingTip: '数据加载中...',
+
     Options_LabelField: 'label',
     Options_ValueField: 'value',
     Options_ChildrenField: 'children',
@@ -35,7 +37,7 @@ export default {
         , CANCEL: 'CANCEL', RESET: 'RESET', EXPAND: 'EXPAND', SUBMIT: 'SUBMIT', DETAIL: 'DETAIL'},
 
     FuncBtnTypeMaps: { // 功能按钮的默认配置
-        ADD: {type: 'dashed'},
+        ADD: {type: 'primary'},
         DEL: {danger: true},
         EDIT: {type: '#3b5999'},
         QUERY: {type: 'primary'}, // 查询

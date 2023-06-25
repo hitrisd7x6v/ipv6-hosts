@@ -148,7 +148,7 @@ export const UFuncTag = defineComponent({
                     if(context != null) {
                         funcClickHandle(context, props)
                     } else {
-                        console.warn()
+                        console.warn("无效的操作(需要自定义事件或者在指定的组件下面)")
                     }
                 }
             }
@@ -160,6 +160,7 @@ export const UFuncTag = defineComponent({
         context.regFunc(typeCompute.value, {
             trigger: clickProxy,
             getUrl: () => props.url,
+            getProp: (key) => props[key],
             getMethod: () => props.config.method
         });
 
@@ -197,7 +198,11 @@ export const UFuncTag = defineComponent({
             return <ATag closable={false} visible={true} class={disabledClass} class="ivz-func"
                          color={tagColor} onClick={this.clickProxy} v-slots={this.$slots} />
         }
-
+    },
+    methods: {
+        trigger() {
+            this.clickProxy();
+        },
     }
 })
 
@@ -215,6 +220,7 @@ export const UFuncBtn = defineComponent({
         did: String,
         onClick: Function,
         url: {type: String}, // 功能地址
+        data: {type: Object},
         method: {type: String, default: null}, // 请求方法
         config: {type: Object, default: () => { return {}}}, // 配置
         func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
@@ -226,6 +232,8 @@ export const UFuncBtn = defineComponent({
                 props.onClick(e);
             } else if(context != null) {
                 funcClickHandle(context, props)
+            }else {
+                console.warn(`无效的操作(需要自定义事件或者在指定的组件下面)`)
             }
           }
         }
@@ -245,10 +253,11 @@ export const UFuncBtn = defineComponent({
         if(this.typeCompute && this.context) {
             this.context.regFunc(this.typeCompute, {
                 getUrl: () => this.$props.url,
+                getProp: (key) => props[key],
                 getMethod: () => this.$props.config.method,
                 setLoading: (status) => this.loading = status, // 设置按钮的加载状态
                 trigger: () => {
-                    this.clickProxy.onClick(this.$el);
+                    this.clickProxy.onClick();
                 }
             });
         }
@@ -271,6 +280,9 @@ export const UFuncBtn = defineComponent({
         }
     },
     methods: {
+        trigger() {
+            this.clickProxy.onClick();
+        },
         handleProps() {
             let type = CoreConsts.FuncBtnTypeMaps[this.typeCompute];
             return mergeProps(type, this.clickProxy, this.$attrs);

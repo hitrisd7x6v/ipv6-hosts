@@ -9,7 +9,7 @@ export const UInput = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-input {...this.getFormAttrs()} v-slots={this.$slots}></a-input>}
             </a-form-item>
@@ -23,7 +23,7 @@ export const UInputNumber = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-input-number {...this.getFormAttrs({style: {width: '100%'}})} v-slots={this.$slots}></a-input-number>}
             </a-form-item>
@@ -36,7 +36,7 @@ export const UInputPassword = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-input-password {...this.getFormAttrs()} v-slots={this.$slots}></a-input-password>}
             </a-form-item>
@@ -50,7 +50,7 @@ export const UInputGroup = defineComponent({
     render() {
         let props = this.getFormItemProps();
 
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <a-input-group {...this.$attrs} compact>
                     {this.$slots.default ? this.$slots.default(this.formContext.getEditModel(), this.formContext) : []}
@@ -65,7 +65,7 @@ export const UTextarea = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <a-textarea {...this.getFormAttrs()}></a-textarea>
             </a-form-item>
@@ -90,7 +90,7 @@ export const UCheckbox = defineComponent({
     render() {
         let props = this.getFormItemProps();
 
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {this.defaultSlots(this.getFormAttrs({options: this.dataSource}))}
             </a-form-item>
@@ -104,7 +104,7 @@ export const USwitch = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-switch {...this.getCheckedAttrs()} v-slots={this.$slots}></a-switch>}
             </a-form-item>
@@ -118,7 +118,7 @@ export const URate = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-rate {...this.getFormAttrs()} v-slots={this.$slots}></a-rate>}
             </a-form-item>
@@ -140,7 +140,7 @@ export const USelect = defineComponent({
     },
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <ASelect {...this.getFormAttrs()} options={this.dataSource} fieldNames={this.fieldNames} v-slots={this.$slots} />
             </a-form-item>
@@ -153,8 +153,7 @@ export const USlider = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-slider {...this.getFormAttrs()} v-slots={this.$slots}></a-slider>}
             </a-form-item>
@@ -168,7 +167,7 @@ export const UCascader = defineComponent({
     render() {
         let props = this.getFormItemProps();
 
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-cascader {...this.getFormAttrs({options: this.dataSource})} v-slots={this.$slots}></a-cascader>}
             </a-form-item>
@@ -181,8 +180,7 @@ export const UAutoComplete = defineComponent({
     mixins: [MixinsFormItem, MixinsOptionsItem],
     render() {
         let props = this.getFormItemProps();
-
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {<a-auto-complete {...this.getFormAttrs({options: this.dataSource})} v-slots={this.$slots}></a-auto-complete>}
             </a-form-item>
@@ -202,8 +200,7 @@ export const URadio = defineComponent({
         }
 
         let props = this.getFormItemProps();
-
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>{slots()}</a-form-item>
         </a-col>
     }
@@ -257,9 +254,10 @@ export const UTreeSelect = defineComponent({
     },
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()} span={this.realSpan}>
             <a-form-item {...props}>
-                <a-tree-select {...this.getFormAttrs()} fieldNames={this.getFieldNames()} treeData={this.dataSource} v-slots={this.$slots} />
+                <a-tree-select {...this.getFormAttrs()} fieldNames={this.getFieldNames()}
+                    treeData={this.dataSource} v-slots={this.$slots} class={this.$props.class} style={this.$props.style} />
             </a-form-item>
         </a-col>
     }
@@ -276,7 +274,7 @@ export const UDateTime = defineComponent({
         let props = this.getFormItemProps();
         let tag = typeMaps[this.$props['picker']] || 'a-date-picker';
 
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 {h(resolveComponent(tag), this.getFormAttrs(), this.$slots)}
             </a-form-item>
@@ -288,7 +286,7 @@ export const UDatePicker = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <ADatePicker {...this.getFormAttrs()} v-slots={this.$slots}/>
             </a-form-item>
@@ -300,7 +298,7 @@ export const UMonthPicker = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <AMonthPicker {...this.getFormAttrs()} v-slots={this.$slots}/>
             </a-form-item>
@@ -312,7 +310,7 @@ export const UWeekPicker = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <AWeekPicker {...this.getFormAttrs()} v-slots={this.$slots}/>
             </a-form-item>
@@ -324,7 +322,7 @@ export const URangePicker = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <ARangePicker {...this.getFormAttrs()} v-slots={this.$slots}/>
             </a-form-item>
@@ -336,7 +334,7 @@ export const UTimePicker = defineComponent({
     mixins: [MixinsFormItem],
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...props}>
+        return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
                 <ATimePicker {...this.getFormAttrs()} v-slots={this.$slots}/>
             </a-form-item>

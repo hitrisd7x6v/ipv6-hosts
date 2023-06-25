@@ -14,7 +14,7 @@
       <template #type="{text}">
         <router-link :to="{path: 'dict/data', query: {type: text}}">{{text}}</router-link>
       </template>
-      <template #c_action="{record}">
+      <template #action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/dictType/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/dictType/del">删除</UFuncTag>
       </template>

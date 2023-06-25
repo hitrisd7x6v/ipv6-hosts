@@ -19,7 +19,6 @@ export default defineComponent({
         maskClosable: {default: true},
         headerStyle: {type: Object},
         footerStyle: {type: Object, default: () => { return {textAlign: 'center'}}},
-        primary: {type: Boolean, default: false},
         // afterVisibleChange: {type: Function},
     },
     mixins: [MixinsEditItem],

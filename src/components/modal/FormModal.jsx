@@ -10,7 +10,7 @@ export default defineComponent({
     bodyStyle: Object,
     span: {type: Array}, // labelCol 和wrapperCol简写 如：[6, 18]
     afterClose: Function,
-    width: {default: 558},
+    width: {default: 520},
     destroyOnClose: Boolean,
     getContainer: {type: Function},
     maskClosable: {default: true},
