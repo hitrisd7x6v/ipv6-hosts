@@ -51,25 +51,27 @@
 import {DownOutlined, FullscreenOutlined, HomeFilled, UnorderedListOutlined, SearchOutlined} from '@ant-design/icons-vue'
 import UForm from "@/components/form/basic/Form";
 import {inject, provide, reactive, ref} from "vue";
-import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, LinkViewContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {SearchContext, TableContext} from "@/components/view/Context";
 import CoreConsts from "@/components/CoreConsts";
 
 export default {
-  name: "IvzBreadSearch",
+  name: "UBreadSearch",
   props: {
-    tid: {type: String, default: null}
+    tid: {type: String, default: null},
+    uid: {type: String, required: true, default: CoreConsts.DefaultSearchUid}
   },
   components: {UForm, DownOutlined, HomeFilled, FullscreenOutlined, UnorderedListOutlined, SearchOutlined},
-  setup(props, {attrs}) {
-    let viewContext = inject(ViewContextKey);
-    let searchContext = new SearchContext(viewContext);
+  setup({uid}) {
+    /**
+     * @type {LinkContext}
+     */
+    let linkContext = inject(LinkViewContextKey);
+    let searchContext = new SearchContext(linkContext);
 
-    if(viewContext) {
-      if(attrs.uid) {
-        searchContext.uid = attrs.uid;
-        viewContext.addContextByUid(attrs.uid, searchContext);
-      }
+    if(linkContext) {
+        searchContext.uid = uid;
+        linkContext.addChildrenContext(searchContext);
     }
 
     let columns = ref([]);
@@ -149,15 +151,15 @@ export default {
     });
     let visible = ref(false);
     provide(FuncContextKey, searchContext);
-    return {searchContext, visible, checkedModel, columns, columnsWrapper, viewContext}
+    return {searchContext, visible, checkedModel, columns, columnsWrapper, linkContext}
   },
   created() {
     this.searchContext['getFormContext'] = this.getFormContext;
   },
   mounted() {
-    let contextByUid = this.getViewContext().getContextByUid(this.tid);
-    if(contextByUid != null) {
-      this.columns = contextByUid.getColumns();
+    let tableContext = this.getLinkContext().getChildrenContext(this.tid);
+    if(tableContext instanceof TableContext) {
+      this.columns = tableContext.getColumns();
       this.columns.filter((item, index) => index < this.columns.length - 1)
         .forEach((column, index) => {
           this.columnsWrapper.push({checked: true, index, field: column.field, title: column.title, column});
@@ -169,11 +171,9 @@ export default {
      * 表头和滚动条
      */
     sticky() {
-      if(this.getSearchContext().uid == CoreConsts.PrimarySearchRef) {
-        let contextByUid = this.getViewContext().getContextByUid(CoreConsts.PrimaryTableRef);
-        if(contextByUid instanceof TableContext) {
-          contextByUid.setSticky(true)
-        }
+      let tableContext = this.getLinkContext().getChildrenContext(this.tid);
+      if(tableContext instanceof TableContext) {
+        tableContext.setSticky(true)
       } else {
         this.$emit('sticky', this);
       }
@@ -183,10 +183,10 @@ export default {
     },
 
     /**
-     * @return {ViewContext}
+     * @return {LinkContext}
      */
-    getViewContext() {
-      return this.viewContext;
+    getLinkContext() {
+      return this.linkContext;
     },
     /**
      * @return {SearchContext}

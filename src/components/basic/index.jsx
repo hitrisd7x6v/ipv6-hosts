@@ -31,24 +31,26 @@ function syncToUidToConfig(config, context) {
     let func = config.func.toUpperCase();
     // 如果未指定操作的组件, 则默认都是Primary组件
     if(eid == null) {
-        if(func == FuncNameMeta.SUBMIT ||
-            func == FuncNameMeta.CANCEL ||
-            func == FuncNameMeta.RESET) {
-            config.eid = context.uid;
-        } else {
-            config.eid = CoreConsts.PrimaryEditRef;
+        switch (func) {
+            case FuncNameMeta.RESET:
+            case FuncNameMeta.CANCEL:
+            case FuncNameMeta.SUBMIT:
+                config.eid = context.uid; break;
+            default:
+                config.eid = CoreConsts.DefaultEditUid; break;
         }
     }
     if(tid == null) {
-        config.tid = CoreConsts.PrimaryTableRef;
+        config.tid = CoreConsts.DefaultTableUid;
     }
     if(sid == null) {
-        config.sid = CoreConsts.PrimarySearchRef;
+        config.sid = CoreConsts.DefaultSearchUid;
     }
     if(did == null) {
-        config.did = CoreConsts.PrimaryDetailRef
+        config.did = CoreConsts.DefaultDetailUid;
     }
 
+    config.context = context;
     return config;
 }
 function funcClickHandle(context, props) {
@@ -160,6 +162,8 @@ export const UFuncTag = defineComponent({
         context.regFunc(typeCompute.value, {
             trigger: clickProxy,
             getUrl: () => props.url,
+            getContext: () => context,
+            setLoading: status => null,
             getProp: (key) => props[key],
             getMethod: () => props.config.method
         });
@@ -254,6 +258,7 @@ export const UFuncBtn = defineComponent({
             this.context.regFunc(this.typeCompute, {
                 getUrl: () => this.$props.url,
                 getProp: (key) => props[key],
+                getContext: () => this.context,
                 getMethod: () => this.$props.config.method,
                 setLoading: (status) => this.loading = status, // 设置按钮的加载状态
                 trigger: () => {

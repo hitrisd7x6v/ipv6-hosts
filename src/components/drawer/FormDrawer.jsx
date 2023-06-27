@@ -1,7 +1,8 @@
 import {defineComponent, inject, provide, ref} from "vue";
-import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, LinkViewContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {EditContext} from "@/components/view/Context";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
+import CoreConsts from "@/components/CoreConsts";
 
 export default defineComponent({
     name: 'UFormDrawer',
@@ -19,7 +20,7 @@ export default defineComponent({
         maskClosable: {default: true},
         headerStyle: {type: Object},
         footerStyle: {type: Object, default: () => { return {textAlign: 'center'}}},
-        // afterVisibleChange: {type: Function},
+        uid: {type: String, required: true, default: CoreConsts.DefaultEditUid}
     },
     mixins: [MixinsEditItem],
     setup(props, {attrs, slots}) {
@@ -28,11 +29,14 @@ export default defineComponent({
         let spinning = ref(false);
         let spinTip = ref("");
 
-        let viewContext = inject(ViewContextKey);
-        let editContext = new EditContext(viewContext);
-        if(attrs.uid && viewContext) {
-            editContext.uid = attrs.uid;
-            viewContext.addContextByUid(attrs.uid, editContext);
+        /**
+         * @type {LinkContext}
+         */
+        let linkContext = inject(LinkViewContextKey);
+        let editContext = new EditContext(linkContext);
+        if(linkContext) {
+            editContext.uid = props.uid;
+            linkContext.addChildrenContext(editContext);
         }
 
         let slotProxy = {

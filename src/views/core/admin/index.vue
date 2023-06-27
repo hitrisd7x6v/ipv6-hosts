@@ -27,6 +27,13 @@
                         labelField="name" valueField="id" span="24"/>
           <UTextarea field="remark" label="用户简介" span="24" />
         </URow>
+        <ULinkView uid="test">
+          <USearch>
+            <UInput field="name" label="名称"/>
+            <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>
+          </USearch>
+          <UTable :columns="columns"></UTable>
+        </ULinkView>
       </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
@@ -57,9 +64,11 @@
 <script>
 
 import {reactive, ref} from "vue";
+import ULinkView from "@/components/view/LinkView";
 
 export default {
   name: "Admin",
+  components: {ULinkView},
   setup() {
     let sex = [
       {label: '男', value: 'man'},

@@ -1,8 +1,8 @@
 import {defineComponent, provide} from "vue";
 import {$View, ViewContext} from "@/components/view/Context";
 import {ViewContextKey} from "@/utils/ProvideKeys";
-import {FuncNameMeta} from "@/utils/MetaUtils";
 import CoreConsts from "@/components/CoreConsts";
+import ULinkView from "@/components/view/LinkView";
 
 export default defineComponent({
     name: "UView",
@@ -13,6 +13,7 @@ export default defineComponent({
         auth: {type: Boolean, default: false},
         rowKey: {type: String, default: 'id'},
     },
+    components: {ULinkView},
     setup(props) {
         const viewContext = new ViewContext(props);
         provide(ViewContextKey, viewContext);
@@ -24,12 +25,25 @@ export default defineComponent({
         $parent.$view = new $View(this.viewContext);
     },
     mounted() {
-        let $view = this.$parent.$view;
-        $view.queryByFunc(CoreConsts.PrimarySearchRef);
+        let linkContext = this.viewContext.getLinkContextByUid(CoreConsts.PrimaryUid);
+        linkContext.queryFuncs.forEach(func => {
+            let context = func.getContext().getLinkContext();
+            if(context == linkContext) {
+                func.trigger();
+            }
+        })
     },
     render() {
-        return <div class="ivz-page-view ivz-basic-view">
+        return <ULinkView {...this.$props} uid={CoreConsts.PrimaryUid} class="ivz-page-view u-page-view">
             {this.$slots.default ? this.$slots.default() : []}
-        </div>
+        </ULinkView>
+    },
+    methods: {
+        /**
+         * @return {$View|void|*}
+         */
+        getView() {
+            return this.$parent.$view;
+        }
     }
 })

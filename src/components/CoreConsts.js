@@ -16,16 +16,20 @@ export default {
     SubmitSuccessMsg: '数据提交成功', // 默认数据提交成功提示
     OtherOperaSuccessMsg: '操作成功', // 默认其他动作操作成功的提示
 
-    PrimaryUid: 'primary', // 主要视图标识(UViewDrawer、UViewModal、UTable、USearch)
+    PrimaryUid: 'Primary', // 主要视图标识(UViewDrawer、UViewModal、UTable、USearch)
     PrimaryEditRef: 'Primary:EditRef',
     PrimaryTableRef: 'Primary:TableRef',
     PrimaryDetailRef: 'Primary:DetailRef',
     PrimarySearchRef: 'Primary:SearchRef',
 
+    DefaultEditUid: 'UVEdit',
+    DefaultTableUid: 'UVTable',
+    DefaultDetailUid: 'UVDetail',
+    DefaultSearchUid: 'UVSearch',
+
     FormSpinResetTip: '数据重置中...',
     FormSpinSubmitTip: '数据提交中...',
     FormSpinLoadingTip: '数据加载中...',
-
     TableSpinLoadingTip: '数据加载中...',
 
     Options_LabelField: 'label',

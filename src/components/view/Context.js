@@ -159,8 +159,9 @@ export function $View(context) {
      * 打开编辑框
      * @param config {Config}
      */
-    this.openForAdd = function ({eid, data}) {
-        let editContext = this.getViewContext().getContextByUid(eid);
+    this.openForAdd = function ({eid, data, context}) {
+        let linkContext = context.getLinkContext();
+        let editContext = linkContext.getChildrenContext(eid);
         if(editContext == null) {
             return console.warn(`未找到对应uid的可编辑组件[${eid}]`)
         }
@@ -185,7 +186,7 @@ export function $View(context) {
      * @return void
      */
     this.del = function ({url, data, func, sid, tid
-         , config: {method, confirmTitle, confirmContext}}) {
+         , config: {method, confirmTitle, confirmContext}, context}) {
 
         let query = SysUtils.resolverQueryOfUrl(url);
         if(!data && Object.keys(query).length == 0) {
@@ -200,14 +201,15 @@ export function $View(context) {
         let title = confirmTitle || CoreConsts.DelConfirmTitle;
         let content = confirmContext || CoreConsts.DelConfirmContent;
 
+        let linkContext = context.getLinkContext();
         confirm({title, content, onOk: () => {
             this.getRequestMethod({func, method})(url, data).then(({code, message, data}) => {
                 if (code == CoreConsts.SuccessCode) {
                     msgSuccess(message || CoreConsts.DelSuccessMsg);
-                    let tableContext = this.getTableContextByUid(tid);
-                    let searchContext = this.getSearchContextByUid(sid);
+                    let tableContext = linkContext.getChildrenContext(tid);
+                    let searchContext = linkContext.getChildrenContext(sid);
                     if(searchContext && tableContext) {
-                        this.queryByFunc(sid); // 删除成功, 重新刷新列表
+                        this.queryByFunc(linkContext.uid, sid); // 删除成功, 重新刷新列表
                     }
                 } else {
                     msgError(message);
@@ -237,10 +239,11 @@ export function $View(context) {
      * @param param {Config}
      */
     this.openForEdit = function ({eid, url, data
-         , func, config: {method}}) {
-        let editContext = this.getViewContext().getContextByUid(eid);
+         , func, config: {method}, context}) {
+        let linkContext = context.getLinkContext();
+        let editContext = linkContext.getChildrenContext(eid);
         if(editContext == null) {
-            return console.warn(`未找到对应uid的可编辑组件[${eid}]`)
+            return console.warn(`未找到对应uid的可编辑组件[${linkContext.uid}:${eid}]`)
         }
 
         editContext.openType = 'edit';
@@ -266,14 +269,15 @@ export function $View(context) {
      * @param param {Config}
      */
     this.openForChild = function ({eid, data
-        , config: {pid, id}}) {
+        , config: {pid, id}, context}) {
         if(!pid) {
             return console.error(`child子功能必须在[config]指定属性pid`)
         }
 
-        let editContext = this.getViewContext().getContextByUid(eid);
+        let linkContext = context.getLinkContext();
+        let editContext = linkContext.getChildrenContext(eid);
         if(editContext == null) {
-            return console.warn(`未找到对应uid的可编辑组件[${eid}]`)
+            return console.warn(`未找到对应uid的可编辑组件[${linkContext.uid}:${eid}]`)
         }
 
         // 打开编辑框并且是指pid
@@ -291,7 +295,7 @@ export function $View(context) {
      * @param param {Config}
      */
     this.openForSet = function ({eid, data
-        , config: {copy}}) {
+        , config: {copy}, context}) {
         if(copy == null) {
             return console.error(`set子功能必须在[config]指定属性copy: ['id', 'name', ...]}; copy指定要复制哪些字段到编辑对象`)
         }
@@ -300,9 +304,10 @@ export function $View(context) {
             copy = [copy];
         }
 
-        let editContext = this.getViewContext().getContextByUid(eid);
+        let linkContext = context.getLinkContext();
+        let editContext = linkContext.getChildrenContext(eid);
         if(editContext == null) {
-            return console.warn(`未找到对应uid的可编辑组件[${eid}]`)
+            return console.warn(`未找到对应uid的可编辑组件[${linkContext.uid}:${eid}]`)
         }
 
         // 打开编辑框后复制对应的字段到新的model
@@ -319,16 +324,18 @@ export function $View(context) {
 
     /**
      * 更具查询功能点查询
+     * @param prefix ULinkView uid
      * @param uid 指定uid下的func
      */
-    this.queryByFunc = function (uid) {
-        if(!uid) {
-            return console.error(`请指定查询参数uid`);
+    this.queryByFunc = function (prefix, uid) {
+        if(!prefix || !uid) {
+            return console.error(`请指定查询参数[prefix, uid]`);
         }
 
-        let contextByUid = this.getSearchContextByUid(uid);
-        if(contextByUid != null) {
-            let queryFunc = contextByUid.getFunc(CoreConsts.FuncNameMeta.QUERY)
+        let linkContext = this.getViewContext().getLinkContextByUid(prefix);
+        if(linkContext != null) {
+            let childrenContext = linkContext.getChildrenContext(uid);
+            let queryFunc = childrenContext.getFunc(CoreConsts.FuncNameMeta.QUERY)
             if(queryFunc != null) {
                 queryFunc.trigger()
             }
@@ -339,16 +346,17 @@ export function $View(context) {
      * 查询主表格数据
      * @param config {Config}配置信息
      */
-    this.query = function ({sid, tid, url, func
-           , config: {method}}) {
-        let searchContext = this.getViewContext().getContextByUid(sid);
+    this.query = function ({sid, tid, url, context
+                               , func, config: {method}}) {
+        let linkContext = context.getLinkContext();
+        let searchContext = linkContext.getChildrenContext(sid);
         if(searchContext == null) {
-            return console.warn(`未找到对应uid的搜索组件[${sid}]`)
+            return console.warn(`未找到对应uid的搜索组件[${linkContext.uid}:${sid}]`)
         }
 
-        let tableContext = this.getViewContext().getContextByUid(tid);
+        let tableContext = linkContext.getChildrenContext(tid);
         if(tableContext == null) {
-            return console.warn(`未找到对应uid的表组件[${tid}]`)
+            return console.warn(`未找到对应uid的表组件[${linkContext.uid}:${tid}]`)
         }
 
         let model = searchContext.getModel();
@@ -388,10 +396,11 @@ export function $View(context) {
      * 隐藏主编辑框
      * @param config {Config}
      */
-    this.cancel = function ({eid}) {
-        let editContext = this.getViewContext().getContextByUid(eid);
+    this.cancel = function ({eid, context}) {
+        let linkContext = context.getLinkContext();
+        let editContext = linkContext.getChildrenContext(eid);
         if(!(editContext instanceof EditContext)) {
-            return console.warn(`未找到对应的uid可编辑组件[${eid}]`)
+            return console.warn(`未找到对应的uid可编辑组件[${linkContext.uid}:${eid}]`)
         }
 
         // 关闭编辑框
@@ -406,7 +415,7 @@ export function $View(context) {
     this.expanded = function ({tid}, expandedRowKeys) {
         let tableContext = this.getTableContextByUid(tid);
         if(tableContext == null) {
-            return console.warn(`未找到对应uid的表组件[${tid}]`)
+            return console.warn(`未找到对应uid的表组件[${linkContext.uid}:${tid}]`)
         }
 
         tableContext.expanded(expandedRowKeys);
@@ -417,10 +426,11 @@ export function $View(context) {
      * @return void
      */
     this.submit = function ({eid, sid, url
-        , func, config: {method}}) {
-        let editContext = this.getViewContext().getContextByUid(eid);
+        , func, config: {method}, context}) {
+        let linkContext = context.getLinkContext();
+        let editContext = linkContext.getChildrenContext(eid);
         if(!(editContext instanceof EditContext)) {
-            return console.warn(`未找到对应的uid可编辑组件[${eid}]`)
+            return console.warn(`未找到对应的uid可编辑组件[${linkContext.uid}:${eid}]`)
         }
 
         editContext.getFormContext().validate().then(() => {
@@ -441,7 +451,7 @@ export function $View(context) {
                     msgSuccess(CoreConsts.SubmitSuccessMsg);
                     editContext.setVisible(false);
                     if(sid != null) {// 提交数据之后重新刷新列表
-                        this.queryByFunc(sid);
+                        this.queryByFunc(linkContext.uid, sid);
                     }
                 } else {
                     msgError(message);
@@ -455,10 +465,11 @@ export function $View(context) {
      * 重置主编辑表单
      * @param config {Config}
      */
-    this.resetEditModel = function ({eid}) {
-        let editContext = this.getViewContext().getContextByUid(eid);
+    this.resetEditModel = function ({eid, context}) {
+        let linkContext = context.getLinkContext();
+        let editContext = linkContext.getChildrenContext(eid);
         if(!(editContext instanceof EditContext)) {
-            return console.warn(`未找到对应的uid可编辑组件[${eid}]`)
+            return console.warn(`未找到对应的uid可编辑组件[${linkContext.uid}:${eid}]`)
         }
 
         this.initEditComponent(editContext);
@@ -486,17 +497,18 @@ export function $View(context) {
      * 重置搜索表单
      * @param config {Config}
      */
-    this.resetSearchModel = function ({sid, tid}) {
-        let searchContext = this.getViewContext().getContextByUid(sid);
+    this.resetSearchModel = function ({sid, tid, context}) {
+        let linkContext = context.getLinkContext();
+        let searchContext = linkContext.getChildrenContext(sid);
         if(!(searchContext instanceof SearchContext)) {
-            return console.warn(`未找到对应uid的搜索组件[${sid}]`)
+            return console.warn(`未找到对应uid的搜索组件[${linkContext.uid}:${sid}]`)
         }
 
         searchContext.getFormContext().resetFields();
         // 如果表组件存在则重新刷新列表
-        let tableContextByUid = this.getTableContextByUid(tid);
-        if(tableContextByUid != null) {
-            this.queryByFunc(sid);
+        let tableContext = linkContext.getChildrenContext(tid);
+        if(tableContext != null) {
+            this.queryByFunc(linkContext.uid, sid);
         }
     }
 
@@ -505,10 +517,11 @@ export function $View(context) {
      * @param params {Config}
      */
     this.excelExport = function ({sid, url, func
-         , config: {fileName}}) {
-        let searchContext = this.getViewContext().getContextByUid(sid);
+         , config: {fileName}, context}) {
+        let linkContext = context.getLinkContext();
+        let searchContext = linkContext.getChildrenContext(sid);
         if(searchContext == null) {
-            return console.warn(`未找到对应uid的可搜索组件[${sid}]`)
+            return console.warn(`未找到对应uid的可搜索组件[${linkContext.uid}:${sid}]`)
         }
 
         let model = searchContext.getModel();
@@ -588,10 +601,11 @@ export function $View(context) {
     /**
      * 通过前缀获取搜索上下文
      * @param uid
+     * @param prefix ULinkView uid
      * @return {null | SearchContext}
      */
-    this.getSearchContextByUid = function (uid) {
-        let context = this.getViewContext().getContextByUid(uid);
+    this.getSearchContextByUid = function (prefix, uid) {
+        let context = this.getViewContext().getContextByPrefixAndUid(prefix, uid);
         if(context == null) {
             return context;
         } else if(!(context instanceof SearchContext)) {
@@ -663,6 +677,7 @@ export function $View(context) {
  */
 export function FuncMetaContext(editFunMetas, tableFunMetas, searchFunMetas) {
 
+    this.queryFunc = [];
     this.editFunMetas = editFunMetas || [];
     this.tableFunMetas = tableFunMetas || [];
     this.searchFunMetas = searchFunMetas || [];
@@ -682,14 +697,12 @@ export function FuncMetaContext(editFunMetas, tableFunMetas, searchFunMetas) {
 
 /**
  * 搜索栏
- * @param context 视图上下文
+ * @param linkContext {LinkContext}
  * @constructor
  */
-export function SearchContext(viewContext) {
+export function SearchContext(linkContext) {
     // 用于关联各个组件(表格、编辑、详情)
     this.uid = '';
-    // 查询地址
-    this.queryUrl = null;
     // 存储UFuncBtn和UFuncTag组件的信息
     this.funcMetas = {};
 
@@ -711,6 +724,9 @@ export function SearchContext(viewContext) {
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
+        if(func == FuncNameMeta.QUERY) {
+            linkContext.registerQueryFunc(config);
+        }
     }
 
     this.getModel = function () {
@@ -723,12 +739,18 @@ export function SearchContext(viewContext) {
     this.reset = function () {
         this.getFormContext().resetFields();
     }
-
+    /**
+     * @return {FormContext}
+     */
     this.getFormContext = () => new FormContext();
+    /**
+     * @return {LinkContext}
+     */
+    this.getLinkContext = () => linkContext;
 
     this.get$View = function () {
         // viewContext['__$View'] 不可能为空, 为空说明异常
-        return viewContext['__$View'] || new $View(null);
+        return this.getLinkContext().getViewContext()['__$View'] || new $View(null);
     }
 
 }
@@ -736,10 +758,10 @@ export function SearchContext(viewContext) {
 
 /**
  * 编辑
- * @param viewContext {ViewContext} 视图上下文
+ * @param linkContext {LinkContext} 属于哪个容器
  * @constructor
  */
-export function EditContext(viewContext) {
+export function EditContext(linkContext) {
     // 用于关联各个组件(搜索、表格、详情)
     this.uid = null;
     // 当前打开类型(add or edit)
@@ -753,6 +775,9 @@ export function EditContext(viewContext) {
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
+        if(func == FuncNameMeta.QUERY) {
+            linkContext.registerQueryFunc(config);
+        }
     }
     this.getModel = function () {
         return this.getFormContext().getEditModel();
@@ -787,22 +812,25 @@ export function EditContext(viewContext) {
      * @return {FormContext | null}
      */
     this.getFormContext = () => new FormContext();
-
+    /**
+     * @return {LinkContext}
+     */
+    this.getLinkContext = () => linkContext;
     /**
      * @returns {$View}
      */
     this.get$View = function () {
         // viewContext['__$View'] 不可能为空, 为空说明异常
-        return viewContext['__$View'] || new $View(null);
+        return this.getLinkContext().getViewContext()['__$View'] || new $View(null);
     }
 }
 
 /**
- * 表格
- * @param viewContext 视图上下文
+ * 表格组件{UTable | UEditTable}上下文对象
+ * @param linkContext ULinkView组件上下文对象
  * @constructor
  */
-export function TableContext(viewContext) {
+export function TableContext(linkContext) {
     // 用于关联各个组件(搜索、编辑、详情)
     this.uid = null;
 
@@ -828,6 +856,9 @@ export function TableContext(viewContext) {
 
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
+        if(func == FuncNameMeta.QUERY) {
+            linkContext.registerQueryFunc(config);
+        }
     }
 
     this.del = function (url, data) {}
@@ -902,12 +933,17 @@ export function TableContext(viewContext) {
     this.getSelectedRows = () => [];
 
     /**
+     * @return {LinkContext}
+     */
+    this.getLinkContext = () => linkContext;
+
+    /**
      * 获取当前页面视图
-     * @returns {*}
+     * @returns {$View}
      */
     this.get$View = function () {
         // viewContext['__$View'] 不可能为空, 为空说明异常
-        return viewContext['__$View'] || new $View(null);
+        return this.getLinkContext().getViewContext()['__$View'] || new $View(null);
     }
 
     /**
@@ -918,9 +954,10 @@ export function TableContext(viewContext) {
 
     /**
      * 设置表格的加载状态
+     * @param tip {String}
      * @param status {Boolean}
      */
-    this.setLoading = (status) => {};
+    this.setLoading = (status, tip) => {};
 
     /**
      * 设置数据源
@@ -931,10 +968,10 @@ export function TableContext(viewContext) {
 
 /**
  * 详情
- * @param viewContext
+ * @param linkContext {LinkContext}
  * @constructor
  */
-export function DetailContext(viewContext) {
+export function DetailContext(linkContext) {
     // 用于关联各个组件(搜索、编辑、表格)
     this.uid = '';
 
@@ -947,22 +984,36 @@ export function DetailContext(viewContext) {
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
+        if(func == FuncNameMeta.QUERY) {
+            linkContext.registerQueryFunc(config);
+        }
     }
+    /**
+     * @return {LinkContext}
+     */
+    this.getLinkContext = () => linkContext;
+
     this.get$View = function () {
         // viewContext['__$View'] 不可能为空, 为空说明异常
-        return viewContext['__$View'] || new $View(null);
+        return linkContext.getViewContext()['__$View'] || new $View(null);
     }
 }
 /**
  * 视图上下文
  * @constructor
  */
-export function ViewContext (props) {
+export function ViewContext(props) {
 
     /**
      * @type {{String: EditContext | DetailContext | SearchContext | TableContext}}
      */
-    this.uidContextMaps = {} // 声明uid的上下文对象
+    this.uidContextMaps = {} // 声明fullUid的上下文对象
+    /**
+     * 组合容器组件上下文对象列表
+     * @type {{'prefix:uid': LinkContext}}
+     */
+    this.linkContextMaps = {}
+
     this.funMetasContext = new FuncMetaContext();
 
     /**
@@ -1007,29 +1058,134 @@ export function ViewContext (props) {
 
     /**
      * 获取元数的id获取对应上下文
-     * @param uid
+     * @param fullUid ${prefix}:${uid}
      * @return {EditContext | TableContext | SearchContext | DetailContext}
      */
-    this.getContextByUid = function (uid) {
-        return this.uidContextMaps[uid];
+    this.getContextByUid = function (fullUid) {
+        return this.uidContextMaps[fullUid];
+    }
+
+    /**
+     *
+     * @param prefix ULinkView组件uid
+     * @param uid 其他组件uid
+     * @return {EditContext|TableContext|SearchContext|DetailContext}
+     */
+    this.getContextByPrefixAndUid = function (prefix, uid) {
+        return this.getContextByUid(prefix + ":" + uid);
     }
 
     /**
      * 增加上下文
-     * @param uid
-     * @param context
+     * @param fullUid = prefix:uid
+     * @param context {EditContext|TableContext|SearchContext|DetailContext}
      */
-    this.addContextByUid = function (uid, context) {
-        if(uid && context) {
-            if(!this.uidContextMaps[uid]) {
-                this.uidContextMaps[uid] = context;
+    this.addContextByUid = function (fullUid, context) {
+        if(fullUid && context) {
+            context.getLinkContext();
+            if(!this.uidContextMaps[fullUid]) {
+                this.uidContextMaps[fullUid] = context;
             } else {
-                console.warn(`已经存在同名的uid[${uid}]`)
+                console.warn(`已经存在同名的组件[${fullUid}]`)
             }
         } else {
-            console.error(`新增Context失败, 错误的参数[uid or context]`)
+            console.error(`新增Context失败, 错误的参数[fullUid or context]`)
         }
     }
+
+    /**
+     * @param uid {String}
+     * @param context {LinkContext}
+     */
+    this.addLinkContextByUid = function (uid, context) {
+        if(!(context instanceof LinkContext)) {
+            throw new Error(`参数错误[context]`)
+        }
+
+        if(this.linkContextMaps[uid]) {
+            throw new Error(`uid为[${uid}]的ULinkView组件已经存在`)
+        }
+
+        this.linkContextMaps[uid] = context;
+    }
+
+    /**
+     * @param uid ULinkView#uid
+     * @return LinkContext
+     */
+    this.getLinkContextByUid = function (uid) {
+        return this.linkContextMaps[uid];
+    }
+}
+
+/**
+ * 联动容器上下文
+ * @param uid {String}
+ * @param viewContext {ViewContext}
+ * @constructor
+ */
+export function LinkContext(uid, viewContext) {
+    /**
+     * 容器标识前缀, 此uid将作为子组件的前缀
+     * @type {String}
+     */
+    this.uid = uid;
+
+    /**
+     *  子组件的上下文对象
+     * @type {{String: EditContext | TableContext | DetailContext | SearchContext}}
+     */
+    this.childContextMaps = {};
+
+    /**
+     * @type {Array<FuncConfig>}
+     */
+    this.queryFuncs = [];
+
+    /**
+     * 注册搜索功能
+     * @param config {FuncConfig}
+     */
+    this.registerQueryFunc = function (config) {
+        this.queryFuncs.push(config);
+    }
+
+    /**
+     * @return {Array<FuncConfig>}
+     */
+    this.getQueryFunc = function () {
+        return this.queryFuncs;
+    }
+
+    /**
+     * 获取子组件的上下文对象
+     * @param uid 子组件的uid
+     * @return {EditContext | SearchContext | DetailContext | TableContext}
+     */
+    this.getChildrenContext = function (uid) {
+        return this.childContextMaps[this.uid+":"+uid];
+    }
+
+    /**
+     * 增加子组件上下文对象
+     * @param childContext {EditContext | SearchContext | DetailContext | TableContext}
+     */
+    this.addChildrenContext = function (childContext) {
+        if(!childContext.uid) {
+            throw new Error(`组件不存在uid属性`)
+        }
+
+        let fullUid = this.uid + ":" + childContext.uid;
+        this.childContextMaps[fullUid] = childContext;
+        this.getViewContext().addContextByUid(fullUid, childContext);
+    }
+
+    /**
+     * @return {ViewContext}
+     */
+    this.getViewContext = () => viewContext;
+
+    viewContext.addLinkContextByUid(uid, this);
 }
 export function FuncConfig() {
     /**
@@ -1048,11 +1204,19 @@ export function FuncConfig() {
      * @return {string}
      */
     this.getMethod = () => "";
-
+    /**
+     * @return {EditContext | DetailContext | SearchContext | TableContext}
+     */
+    this.getContext = () => null;
     /**
      * @return {null}
      */
     this.trigger = () => null
+
+    /**
+     * @param status {Boolean}
+     */
+    this.setLoading = status => null;
 }
 export function ChildConfig() {
     /**
@@ -1090,6 +1254,11 @@ export function Config() {
      * @type {String}
      */
     this.did = null;
+    /**
+     * @see LinkContext#uid
+     * @type {SearchContext | DetailContext | TableContext | TableContext}
+     */
+    this.context = null;
     /**
      * 功能地址
      * @type {String}

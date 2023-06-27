@@ -1,7 +1,8 @@
 import {defineComponent, inject, provide, ref} from "vue";
-import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, LinkViewContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 import {EditContext} from "@/components/view/Context";
+import CoreConsts from "@/components/CoreConsts";
 
 export default defineComponent({
   name: 'UFormModal',
@@ -17,7 +18,8 @@ export default defineComponent({
     centered: {type: Boolean, default: true},
     closable: {type: Boolean, default: false},
     forceRender: {type: Boolean, default: true},
-    wrapClassName: {type: String, default: 'ivz-basic-modal'}
+    wrapClassName: {type: String, default: 'ivz-basic-modal'},
+    uid: {type: String, required: true, default: CoreConsts.DefaultEditUid}
   },
   mixins: [MixinsEditItem],
   setup(props, {attrs, slots}) {
@@ -38,11 +40,14 @@ export default defineComponent({
       }
     }
 
-    let viewContext = inject(ViewContextKey);
-    let editContext = new EditContext(viewContext);
-    if(attrs.uid && viewContext) {
-      editContext.uid = attrs.uid;
-      viewContext.addContextByUid(attrs.uid, editContext);
+    /**
+     * @type {LinkContext}
+     */
+    let linkContext = inject(LinkViewContextKey);
+    let editContext = new EditContext(linkContext);
+    if(linkContext) {
+      editContext.uid = props.uid;
+      linkContext.addChildrenContext(editContext)
     }
 
     provide(FuncContextKey, editContext);

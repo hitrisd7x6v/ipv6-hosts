@@ -10,21 +10,27 @@
 <script>
 import {inject, provide} from "vue";
 import UForm from "@/components/form/basic/Form";
-import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, LinkViewContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {SearchContext} from "@/components/view/Context";
+import CoreConsts from "@/components/CoreConsts";
 
 export default {
   name: "USearch",
   components: {UForm},
-  setup(props, {attrs}) {
-    let viewContext = inject(ViewContextKey);
-    let searchContext = new SearchContext(viewContext);
+  props: {
+    tid: {type: String, default: null},
+    uid: {type: String, required: true, default: CoreConsts.DefaultSearchUid}
+  },
+  setup({uid}) {
+    /**
+     * @type {LinkContext}
+     */
+    let linkContext = inject(LinkViewContextKey);
+    let searchContext = new SearchContext(linkContext);
 
-    if(viewContext) {
-      if(attrs.uid) {
-        searchContext.uid = attrs.uid;
-        viewContext.addContextByUid(attrs.uid, searchContext);
-      }
+    if(linkContext) {
+      searchContext.uid = uid;
+      linkContext.addChildrenContext(searchContext)
     }
 
     provide(FuncContextKey, searchContext);

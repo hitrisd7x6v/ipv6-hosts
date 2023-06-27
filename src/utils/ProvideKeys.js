@@ -1,3 +1,4 @@
 export const RowContextKey = "URowContext"
-export const ViewContextKey = "IvzViewContext"
+export const ViewContextKey = "UViewContext"
 export const FuncContextKey = "FuncContextKey"
+export const LinkViewContextKey = "ULinkViewContext"

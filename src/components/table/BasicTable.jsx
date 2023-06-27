@@ -2,7 +2,7 @@ import {useStore} from "vuex";
 import dayjs from "dayjs";
 import {computed, defineComponent, inject, provide, reactive, ref, watch} from "vue";
 import {MetaConst} from "@/utils/MetaUtils";
-import {FuncContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, LinkViewContextKey, ViewContextKey} from "@/utils/ProvideKeys";
 import {TableContext} from "@/components/view/Context";
 import CoreConsts from "@/components/CoreConsts";
 
@@ -131,26 +131,14 @@ function initTableColumns(columns, slots) {
     })
     return slots;
 }
-const UCell = defineComponent({
-    name: 'UCell',
-    props: ['value', 'column', 'valueLabel'],
-    watch: {
-        valueLabel: (a) => {
-            console.log(a)
-        }
-    },
-    render() {
-        return this.valueLabel[this.value]
-    }
-})
 export default defineComponent({
     name: 'UTable',
-    components: {UCell},
     props: {
         sticky: {default: false},
         scroll: {type: Object},
         dataSource: {type: Array},
         columns: {type: Array, default: () => []},
+        uid: {type: String, required: true, default: CoreConsts.DefaultTableUid},
         pagination: {
             default: () => {
                 return reactive({
@@ -168,13 +156,16 @@ export default defineComponent({
         let stickyRef = ref(props.sticky);
         let selectedRows = ref([]);
         let selectedRowKeys = ref([]);
-        let loading = reactive({spinning: false, tip: '数据加载中...'});
         let dataSourceRef = ref(props.dataSource);
         let {columns, expandedRowKeys} = props;
         let unfoldRowKeys = ref(expandedRowKeys);
+        let loading = reactive({spinning: false, tip: '数据加载中...'});
 
-        let viewContext = inject(ViewContextKey);
-        let tableContext = new TableContext(viewContext);
+        /**
+         * @type {LinkContext}
+         */
+        let linkContext = inject(LinkViewContextKey);
+        let tableContext = new TableContext(linkContext);
         // 默认重置列宽度事件
         let defResizeColumn = (width, column) => column.width = width;
 
@@ -221,11 +212,11 @@ export default defineComponent({
         // 更新列改变
         let slotsRef = ref(initTableColumns(columns, slots));
 
-        let setSticky = (status) => stickyRef.value = status
         let setLoading = (status, tip) => {
             loading.spinning = status;
             loading.tip = tip || CoreConsts.TableSpinLoadingTip;
         }
+        let setSticky = (status) => stickyRef.value = status
         let setDataSource = (ds) => dataSourceRef.value = ds;
         let setTotalRows = (total) => {
             if(props.pagination instanceof Object) {
@@ -233,29 +224,25 @@ export default defineComponent({
             }
         }
 
-        if(viewContext) {
-            if(attrs.uid) {
-                tableContext.uid = attrs.uid;
-                viewContext.addContextByUid(attrs['uid'], tableContext);
-            }
+        if(linkContext) {
+            tableContext.uid = props.uid;
+            linkContext.addChildrenContext(tableContext);
 
-            if(tableContext) {
-                tableContext['setSticky'] = setSticky
-                tableContext['setLoading'] = setLoading;
-                tableContext['setTotalRows'] = setTotalRows;
-                tableContext['setDataSource'] = setDataSource;
-                tableContext['getColumns'] = () => props.columns;
+            tableContext['setSticky'] = setSticky
+            tableContext['setLoading'] = setLoading;
+            tableContext['setTotalRows'] = setTotalRows;
+            tableContext['setDataSource'] = setDataSource;
+            tableContext['getColumns'] = () => props.columns;
 
-                if(props.pagination instanceof Object) { // 如果需要分页
-                    tableContext['currentPage'] = 1;
-                    tableContext['pageSize'] = props.pagination.defaultPageSize
-                }
+            if(props.pagination instanceof Object) { // 如果需要分页
+                tableContext['currentPage'] = 1;
+                tableContext['pageSize'] = props.pagination.defaultPageSize
             }
         }
 
         provide(FuncContextKey, tableContext);
         return {slotsRef, selectedRows, selectedRowKeys
-            , unfoldRowKeys, loading, dataSourceRef, stickyRef
+            , unfoldRowKeys, loading, dataSourceRef, stickyRef, setSticky
             , setDataSource, setLoading, setTotalRows, defResizeColumn, tableContext}
     },
     created() {
