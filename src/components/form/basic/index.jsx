@@ -3,6 +3,8 @@ import UForm from "@/components/form/basic/Form.jsx";
 import MixinsFormItem from "@/components/form/basic/MixinsFormItem";
 import MixinsOptionsItem from "@/components/form/basic/MixinsOptionsItem";
 import CoreConsts from "@/components/CoreConsts";
+import ACol from "ant-design-vue/es/grid/Col";
+import AFormItem from "ant-design-vue/es/form/FormItem";
 
 export const UInput = defineComponent({
     name: 'UInput',
@@ -200,9 +202,9 @@ export const URadio = defineComponent({
         }
 
         let props = this.getFormItemProps();
-        return <a-col {...this.getColProps()}>
-            <a-form-item {...props}>{slots()}</a-form-item>
-        </a-col>
+        return <ACol {...this.getColProps()}>
+            <AFormItem {...props}>{slots()}</AFormItem>
+        </ACol>
     }
 
 })
@@ -254,12 +256,12 @@ export const UTreeSelect = defineComponent({
     },
     render() {
         let props = this.getFormItemProps();
-        return <a-col {...this.getColProps()} span={this.realSpan}>
-            <a-form-item {...props}>
-                <a-tree-select {...this.getFormAttrs()} fieldNames={this.getFieldNames()}
-                    treeData={this.dataSource} v-slots={this.$slots} class={this.$props.class} style={this.$props.style} />
-            </a-form-item>
-        </a-col>
+        return <ACol {...this.getColProps()}>
+            <AFormItem {...props}>
+                <ATreeSelect {...this.getFormAttrs()} fieldNames={this.getFieldNames()}
+                    treeData={this.dataSource} v-slots={this.$slots} />
+            </AFormItem>
+        </ACol>
     }
 
 })

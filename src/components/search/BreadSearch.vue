@@ -145,7 +145,8 @@ export default {
           checkedModel.checkedAll = false;
           checkedModel.indeterminate = false;
         } else {
-          checkedModel.indeterminate = checkedList.length > 0 && checkedList.length < columnsWrapper.length;
+          checkedModel.indeterminate = checkedList.length > 0
+              && checkedList.length < columnsWrapper.length;
         }
       }
     });

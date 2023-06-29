@@ -1,21 +1,23 @@
 <template>
   <UView name="用户">
     <UViewSearch bread :columns="columns">
-      <UInput field="name" label="用户昵称"/>
-      <UInput field="account" label="用户帐号"/>
-      <UInput field="phone" label="用户手机"/>
-      <UTreeSelect field="orgId" label="所属部门" style="width: 200px"
-                   url="/core/org/parent" labelField="name" valueField="id"/>
-      <URadio field="status" label="用户状态" dict="sys_func_status"/>
+      <URow col="search">
+        <UInput field="name" label="用户昵称"/>
+        <UInput field="account" label="用户帐号"/>
+        <UInput field="phone" label="用户手机"/>
+        <UTreeSelect field="orgId" label="所属部门" url="/core/org/parent"
+                     labelField="name" valueField="id"/>
+        <URadio field="status" label="用户状态" dict="sys_func_status"/>
         <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>
         <UFuncBtn func="reset">重置</UFuncBtn>
+      </URow>
       <template #func>
         <UFuncBtn func="add" v-auth="'core:admin:add'">新增</UFuncBtn>
       </template>
     </UViewSearch>
     <UViewDrawer width="780" layout="vertical" :rules="rules" placement="left" title="用户管理">
       <template #default="{model}">
-        <URow :gutter="16" span="8">
+        <URow :gutter="16" col="drawer" :wrap="true">
           <UInput field="account" label="用户帐号" :disabled="model.id != null"/>
           <UInput field="name" label="用户昵称" />
           <UTreeSelect field="orgId" label="所属部门" treeNodeFilterProp="label"
@@ -24,16 +26,16 @@
           <URadio field="status" label="用户状态" defaultValue="enabled" dict="sys_func_status"/>
           <URadio field="sex" label="用户性别" :options="sex" defaultValue="non"/>
           <UCheckbox field="roleIds" label="用户角色" url="/core/role/list"
-                        labelField="name" valueField="id" span="24"/>
-          <UTextarea field="remark" label="用户简介" span="24" />
+                        labelField="name" valueField="id" :span="24"/>
+          <UTextarea field="remark" label="用户简介" :span="24" />
         </URow>
-        <ULinkView uid="test">
-          <USearch>
-            <UInput field="name" label="名称"/>
-            <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>
-          </USearch>
-          <UTable :columns="columns"></UTable>
-        </ULinkView>
+<!--        <ULinkView uid="test">-->
+<!--          <USearch>-->
+<!--            <UInput field="name" label="名称"/>-->
+<!--            <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>-->
+<!--          </USearch>-->
+<!--          <UTable :columns="columns"></UTable>-->
+<!--        </ULinkView>-->
       </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>

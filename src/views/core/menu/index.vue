@@ -3,7 +3,7 @@
     <UViewSearch bread>
       <UInput field="name" label="菜单名称" :allowClear="true" />
       <USelect field="status" label="状态" dict="sys_func_status"/>
-      <USelect field="type" label="菜单类型" :options="type" :allowClear="true" span="5"/>
+      <USelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
       <UFuncBtn func="query" url="/core/menu/view">搜索</UFuncBtn>
       <UFuncBtn func="reset">重置</UFuncBtn>
       <template #func>

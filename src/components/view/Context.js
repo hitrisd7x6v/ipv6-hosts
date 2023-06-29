@@ -334,8 +334,7 @@ export function $View(context) {
 
         let linkContext = this.getViewContext().getLinkContextByUid(prefix);
         if(linkContext != null) {
-            let childrenContext = linkContext.getChildrenContext(uid);
-            let queryFunc = childrenContext.getFunc(CoreConsts.FuncNameMeta.QUERY)
+            let queryFunc = linkContext.getFuncByUid(uid, CoreConsts.FuncNameMeta.QUERY)
             if(queryFunc != null) {
                 queryFunc.trigger()
             }
@@ -412,8 +411,9 @@ export function $View(context) {
      * @param config {Config}
      * @param expandedRowKeys 要展开的行的key列表 不指定则展开所有
      */
-    this.expanded = function ({tid}, expandedRowKeys) {
-        let tableContext = this.getTableContextByUid(tid);
+    this.expanded = function ({tid, context}, expandedRowKeys) {
+        let linkContext = context.getLinkContext();
+        let tableContext = linkContext.getChildrenContext(tid);
         if(tableContext == null) {
             return console.warn(`未找到对应uid的表组件[${linkContext.uid}:${tid}]`)
         }
@@ -476,7 +476,7 @@ export function $View(context) {
         let editModel = editContext.getFormContext().getEditModel();
         // 编辑时需要重新获取详情
         if(this.isEdit(editModel)) {
-            let editFunc = this.getTableFunc(FuncNameMeta.EDIT);
+            let editFunc = linkContext.getFunc(FuncNameMeta.EDIT);
             let method = editFunc.getMethod();
             let params = this.getEditUrl(editModel, editContext);
             editContext.setLoading(true, CoreConsts.FormSpinResetTip);
@@ -724,9 +724,7 @@ export function SearchContext(linkContext) {
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
-        if(func == FuncNameMeta.QUERY) {
-            linkContext.registerQueryFunc(config);
-        }
+        linkContext.registerFunc(config);
     }
 
     this.getModel = function () {
@@ -775,9 +773,7 @@ export function EditContext(linkContext) {
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
-        if(func == FuncNameMeta.QUERY) {
-            linkContext.registerQueryFunc(config);
-        }
+        linkContext.registerFunc(config);
     }
     this.getModel = function () {
         return this.getFormContext().getEditModel();
@@ -856,9 +852,7 @@ export function TableContext(linkContext) {
 
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
-        if(func == FuncNameMeta.QUERY) {
-            linkContext.registerQueryFunc(config);
-        }
+        linkContext.registerFunc(config);
     }
 
     this.del = function (url, data) {}
@@ -984,9 +978,7 @@ export function DetailContext(linkContext) {
     }
     this.regFunc = function (func, config) {
         this.funcMetas[func] = config;
-        if(func == FuncNameMeta.QUERY) {
-            linkContext.registerQueryFunc(config);
-        }
+        linkContext.registerFunc(config);
     }
     /**
      * @return {LinkContext}
@@ -1143,11 +1135,47 @@ export function LinkContext(uid, viewContext) {
     this.queryFuncs = [];
 
     /**
+     * @type {{string: FuncConfig}}
+     */
+    this.funcs = {};
+
+    /**
      * 注册搜索功能
      * @param config {FuncConfig}
      */
-    this.registerQueryFunc = function (config) {
-        this.queryFuncs.push(config);
+    this.registerFunc = function (config) {
+        let func = config.getFunc();
+        let context = config.getContext();
+        if(func == FuncNameMeta.QUERY) {
+            this.queryFuncs.push(config);
+        }
+
+        this.funcs[context.uid+":"+func] = config;
+    }
+
+    /**
+     * @param func
+     * @return {FuncConfig}
+     */
+    this.getFunc = function (func) {
+        return this.getFuncs(func)[0];
+    }
+
+    /**
+     * @param uid
+     * @param func
+     * @return {FuncConfig}
+     */
+    this.getFuncByUid = function(uid, func) {
+        return this.getFuncs(func).filter(item => item.getContext().uid = uid)[0];
+    }
+
+    /**
+     * @param func
+     * @return {FuncConfig[]}
+     */
+    this.getFuncs = function (func) {
+        return Object.values(this.funcs).filter(item => item.getFunc() == func);
     }
 
     /**
@@ -1193,6 +1221,11 @@ export function FuncConfig() {
      * @return {String}
      */
     this.getUrl = null;
+
+    /**
+     * @return {String}
+     */
+    this.getFunc = () => null
 
     /**
      * @param key

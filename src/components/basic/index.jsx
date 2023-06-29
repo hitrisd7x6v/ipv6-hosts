@@ -9,14 +9,17 @@ import SysUtils from "@/utils/SysUtils";
 
 export const URow = defineComponent({
     name: 'URow',
-    props: ['span'],
-    setup(props) {
-        provide(RowContextKey, {
-            span: props.span
-        })
+    props: ['col'],
+    setup({col}) {
+        let colConfig = col
+        if(typeof col == 'string') {
+            colConfig = {...CoreConsts.TypeColConfig[col]};
+        }
+
+        provide(RowContextKey, colConfig || {});
     },
     render() {
-        return <ARow style="width: 100%;" {...this.$attrs} v-slots={this.$slots} />
+        return <ARow {...this.$attrs} v-slots={this.$slots} />
     }
 })
 
@@ -132,6 +135,9 @@ export const UFuncTag = defineComponent({
         func: {type: String, required: true}, // add, del, edit, query, import, export, cancel, detail, reset, expand
     },
     setup(props) {
+        /**
+         * @type {DetailContext | EditContext | TableContext | SearchContext}
+         */
         let context = inject(FuncContextKey);
 
         let disabled = computed(() => {
@@ -159,14 +165,15 @@ export const UFuncTag = defineComponent({
         let typeCompute = computed(() => props.func.toUpperCase())
 
         // 注册功能点
-        context.regFunc(typeCompute.value, {
+        context.getLinkContext().registerFunc({
             trigger: clickProxy,
             getUrl: () => props.url,
             getContext: () => context,
             setLoading: status => null,
             getProp: (key) => props[key],
+            getFunc: () => typeCompute.value,
             getMethod: () => props.config.method
-        });
+        })
 
         let viewContext = context.get$View().getViewContext();
         return {clickProxy, context, typeCompute, viewContext, disabled};
@@ -230,6 +237,9 @@ export const UFuncBtn = defineComponent({
         func: {type: String, required: true, default: ''},  // add, del, edit, query, import, export, cancel, detail, reset
     },
     setup(props, {attrs}) {
+        /**
+         * @type {EditContext | SearchContext | DetailContext | SearchContext}
+         */
         let context = inject(FuncContextKey);
         let clickProxy = {onClick: (e) => {
             if(props.onClick instanceof Function) {
@@ -244,6 +254,15 @@ export const UFuncBtn = defineComponent({
 
         let loading = ref(false);
         let typeCompute = computed(() => props.func.toUpperCase())
+        context.getLinkContext().registerFunc({
+            getUrl: () => props.url,
+            getContext: () => context,
+            trigger: clickProxy.onClick,
+            getProp: (key) => props[key],
+            getFunc: () => typeCompute.value,
+            getMethod: () => props.config.method,
+            setLoading: (status) => loading.value = status // 设置按钮的加载状态
+        })
 
         let viewContext = context.get$View().getViewContext();
         return {clickProxy, context, loading, typeCompute, viewContext};
@@ -252,20 +271,6 @@ export const UFuncBtn = defineComponent({
         ...mapGetters({
             auth: 'sys/authMenuMap'
         })
-    },
-    created() {
-        if(this.typeCompute && this.context) {
-            this.context.regFunc(this.typeCompute, {
-                getUrl: () => this.$props.url,
-                getProp: (key) => props[key],
-                getContext: () => this.context,
-                getMethod: () => this.$props.config.method,
-                setLoading: (status) => this.loading = status, // 设置按钮的加载状态
-                trigger: () => {
-                    this.clickProxy.onClick();
-                }
-            });
-        }
     },
     render() {
         /**

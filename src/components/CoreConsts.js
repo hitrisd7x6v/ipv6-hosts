@@ -35,7 +35,14 @@ export default {
     Options_LabelField: 'label',
     Options_ValueField: 'value',
     Options_ChildrenField: 'children',
-    
+
+    //<URow col='modal | drawer | search | {xs: 24, sm: 24, ...}'>
+    TypeColConfig: {
+        modal: {xs: 24, sm: 24, md: 12, lg: 12, xl: 12, xxl: 8, xxxl: 8},
+        drawer: {xs: 24, sm: 24, md: 12, lg: 12, xl: 8, xxl: 8, xxxl: 8},
+        search: {xs: 24, sm: 24, md: 12, lg: 8, xl: 6, xxl: 4, xxxl: 4}
+    },
+
     // 功能标识
     FuncNameMeta: {ADD: 'ADD', DEL: 'DEL', EDIT: 'EDIT', QUERY: 'QUERY', IMPORT: 'IMPORT', EXPORT: 'EXPORT'
         , CANCEL: 'CANCEL', RESET: 'RESET', EXPAND: 'EXPAND', SUBMIT: 'SUBMIT', DETAIL: 'DETAIL'},

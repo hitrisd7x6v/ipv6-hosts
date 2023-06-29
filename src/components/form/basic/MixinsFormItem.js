@@ -1,27 +1,27 @@
 import {computed, defineComponent, inject, mergeProps, reactive} from "vue";
 import {RowContextKey} from "@/utils/ProvideKeys";
 import ACol from "ant-design-vue/es/grid/Col";
-import AFormItem from 'ant-design-vue/es/form/FormItem'
+
 export default defineComponent({
     props: ['name', 'label', 'labelCol', 'wrapperCol', 'colon', 'extra', 'hasFeedback'
         , 'help', 'labelAlign', 'validateStatus', 'validateFirst', 'validateTrigger'
         , 'extra', 'autoLink', 'required', 'field', 'class', 'style'],
     data() {
         return {
-            meta: {},
             attrs: null,
             namePath: [],
-            realSpan: null,
+            colConfig: inject(RowContextKey),
             formContext: inject('formContext'),
         }
     },
     created() {
-        let rowContext = inject(RowContextKey);
-        this.realSpan = this.span || rowContext.span;
+        if(this.$attrs.span) { // 以span为主
+            this.colConfig = {span: this.$attrs.span};
+        }
 
         if(this.name) {
             if(!(this.name instanceof Array)) {
-                console.warn(`[name]必须是数组或者用[field]替代[name]; 正确用法 :name="['${this.name}']`)
+                console.warn(`[name]必须是数组或者用[field]替代[name]; :name="['${this.name}']`)
             } else {
                 this.namePath = this.name;
             }
@@ -45,14 +45,13 @@ export default defineComponent({
             return {...this.$props, name: this.namePath, style: null, class: null}
         },
         getColProps() {
-            let colProps = {span: this.realSpan};
             Object.keys(ACol.props).forEach(key => {
-                if(this.$props[key]) {
-                    colProps[key] = this.$props[key];
+                if(this.$attrs[key]) {
+                    this.colConfig[key] = this.$attrs[key];
                 }
             });
 
-            return colProps;
+            return this.colConfig;
         },
         getFormAttrs(options) {
             if(this.attrs) {
@@ -64,7 +63,7 @@ export default defineComponent({
                 let value = computed(() => this.formContext.getFieldValue(this.namePath));
                 this.attrs = {...this.$attrs, value: value, 'onUpdate:value': (val) => {
                         this.formContext.setFieldValue(this.namePath, val);
-                    }, ...options}
+                    }, ...options, class: this.$props.class, style: this.$props.style}
             }
 
             return this.attrs;
