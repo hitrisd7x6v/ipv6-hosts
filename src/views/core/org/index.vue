@@ -1,16 +1,18 @@
 <template>
   <UView name="部门" auth>
-    <UViewSearch>
-      <UInput field="name" label="部门名称"/>
-      <UInput field="phone" label="手机号"/>
-      <template #func>
+    <UViewSearch bread>
+      <URow col="search">
+        <UInput field="name" label="部门名称"/>
+        <UInput field="phone" label="手机号"/>
         <UFuncBtn func="query" url="/core/org/view">搜索</UFuncBtn>
         <UFuncBtn func="reset">重置</UFuncBtn>
+      </URow>
+      <template #func>
         <UFuncBtn func="add" v-auth="'core:org:add'">新增</UFuncBtn>
         <UFuncBtn func="expand">展开/缩收</UFuncBtn>
       </template>
     </UViewSearch>
-    <UViewTable :columns="columns" size="small" :pagination="false">
+    <UViewTable :columns="columns" :scroll="{x: 800}">
       <template #c_action="{record}">
         <UFuncTag func="add:child" :data="record" v-auth="'core:org:add'" :config="{pid: 'pid'}">新增子部门</UFuncTag>
         <UFuncTag func="edit" :data="record" url="/core/org/edit">修改</UFuncTag>

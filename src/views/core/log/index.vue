@@ -1,11 +1,13 @@
 <template>
   <UView auth>
-    <UViewSearch primary>
-      <UInput label="操作用户" field="userName" span="5" />
-      <USelect label="状态" span="5" field="status" :options="SuccessStatus"/>
-      <UInputNumber label="执行时间>(ms)" span="5" field="millis" />
-      <UFuncBtn func="reset">重置</UFuncBtn>
-      <UFuncBtn func="query" url="/core/log/view">搜索</UFuncBtn>
+    <UViewSearch>
+      <URow col="search">
+        <UInput label="操作用户" field="userName" />
+        <USelect label="状态" field="status" :options="SuccessStatus"/>
+        <UInputNumber label="执行时间>(ms)" field="millis" />
+        <UFuncBtn func="reset">重置</UFuncBtn>
+        <UFuncBtn func="query" url="/core/log/view">搜索</UFuncBtn>
+      </URow>
     </UViewSearch>
     <UViewTable :columns="columns" :scroll="{x: 1200}">
       <template #c_action="{record}">

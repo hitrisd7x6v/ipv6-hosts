@@ -1,16 +1,16 @@
 <template>
   <UView name="配置" auth>
     <UViewSearch>
-      <UInput field="name" label="配置名称"/>
-      <UInput field="label" label="配置标识"/>
-      <URadio field="type" label="系统配置" :options="type"/>
-      <template #func>
+      <URow col="search">
+        <UInput field="name" label="配置名称"/>
+        <UInput field="label" label="配置标识"/>
+        <URadio field="type" label="系统配置" :options="type"/>
         <UFuncBtn func="reset">重置</UFuncBtn>
         <UFuncBtn func="query" url="/core/config/view">搜索</UFuncBtn>
         <UFuncBtn func="add" url="/core/config/add">新增</UFuncBtn>
-      </template>
+      </URow>
     </UViewSearch>
-    <UViewTable :columns="columns" :scroll="{x: 800}">
+    <UViewTable :columns="columns" :scroll="{x: 1000}">
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/config/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/config/del">删除</UFuncTag>
@@ -49,7 +49,7 @@ export default {
       {field: 'label', title: '配置标识'},
       {field: 'value', title: '配置值'},
       {field: 'type', title: '系统配置', options: type},
-      {field: 'remark', title: '配置说明', width: 260},
+      {field: 'remark', title: '配置说明', width: 360},
       {field: 'action', type: 'action', title: '操作'}
     ]
     let rules = {

@@ -1,9 +1,11 @@
 import {defineComponent, inject, provide, ref} from "vue";
-import {FuncContextKey, LinkViewContextKey, ViewContextKey} from "@/utils/ProvideKeys";
+import {FuncContextKey, LinkViewContextKey} from "@/utils/ProvideKeys";
 import {EditContext} from "@/components/view/Context";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 import CoreConsts from "@/components/CoreConsts";
 
+const FooterColFuncConfig = {xs: 12, ms: 12, md: 8}
+const FooterColEmptyConfig = {xs: 0, ms: 0, md: 8}
 export default defineComponent({
     name: 'UFormDrawer',
     props: {
@@ -11,7 +13,7 @@ export default defineComponent({
         bodyStyle: Object,
         centered: Boolean,
         afterClose: Function,
-        width: {default: 452},
+        width: {default: 680},
         height: {default: 452},
         destroyOnClose: Boolean,
         zIndex: {default: 1000},
@@ -47,7 +49,11 @@ export default defineComponent({
             },
             footer: () => {
                 let model = formRef.value ? formRef.value.getEditModel() : {};
-                return slots.footer ? slots.footer({model}) : []
+                return <ARow>
+                    <ACol {...FooterColEmptyConfig}></ACol>
+                    <ACol {...FooterColFuncConfig}>{slots.footer ? slots.footer({model}) : []}</ACol>
+                    <ACol {...FooterColEmptyConfig}></ACol>
+                </ARow>
             },
             extra: () => slots.extra ? slots.extra() : null,
             closeIcon: () => slots.closeIcon ? slots.closeIcon() : null,
@@ -65,15 +71,15 @@ export default defineComponent({
             this.formRef = this.$refs['iemFormRef'];
         }
 
-        return(<a-drawer v-model={[this.visible, 'visible', ["modifier"]]} style={{position: 'absolute'}}
+        return(<ADrawer v-model={[this.visible, 'visible', ["modifier"]]} style={{position: 'absolute'}}
                          {...this.$props} closable={false} v-slots={this.slotProxy} forceRender={true}
                          getContainer=".ivz-main-container" ref="ADrawerRef">
-            <a-spin size="small" tip={this.spinTip} spinning={this.spinning}>
+            <ASpin size="small" tip={this.spinTip} spinning={this.spinning}>
                 <UForm {...this.$attrs} ref="iemFormRef">
                     {this.$slots.default ? this.$slots.default({model, context}) : []}
                 </UForm>
-            </a-spin>
-        </a-drawer>)
+            </ASpin>
+        </ADrawer>)
     }
 })
 

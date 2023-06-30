@@ -1,16 +1,16 @@
 <template>
   <UView auth>
     <UViewSearch>
-      <UInput label="字典名称" field="name" />
-      <UInput label="字典类型" field="type"/>
-      <USelect label="字典状态" field="status" :options="status" span="5"/>
-      <template #func>
-        <UFuncBtn func="reset">重置</UFuncBtn>
+      <URow col="search">
+        <UInput label="字典名称" field="name" />
+        <UInput label="字典类型" field="type"/>
+        <USelect label="字典状态" field="status" :options="status"/>
         <UFuncBtn func="query" url="/core/dictType/view">搜索</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
         <UFuncBtn func="add" url="/core/dictType/add">新增</UFuncBtn>
-      </template>
+      </URow>
     </UViewSearch>
-    <UViewTable :columns="columns">
+    <UViewTable :columns="columns" :scroll="{x: 1000}">
       <template #type="{text}">
         <router-link :to="{path: 'dict/data', query: {type: text}}">{{text}}</router-link>
       </template>

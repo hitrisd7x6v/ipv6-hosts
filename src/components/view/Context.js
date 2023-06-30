@@ -188,25 +188,28 @@ export function $View(context) {
     this.del = function ({url, data, func, sid, tid
          , config: {method, confirmTitle, confirmContext}, context}) {
 
-        let query = SysUtils.resolverQueryOfUrl(url);
-        if(!data && Object.keys(query).length == 0) {
-            msgWarn("请选择要删除的记录"); return;
-        }
-
-        // 删除的默认参数是数组
-        if(typeof data == 'object') {
+        let linkContext = context.getLinkContext();
+        let tableContext = linkContext.getChildrenContext(tid);
+        // 删除按钮在搜索组件上面
+        if(context instanceof SearchContext && tableContext) {
+            let selectedRows = tableContext.getSelectedRows();
+            if(selectedRows != null) {
+                data = selectedRows.map(row => row[this.getRowKey()]);
+            }
+        } else if(typeof data == 'object') {
             data = [data[this.getRowKey()]];
         }
 
+        if(!data || data.length == 0) {
+            return msgWarn("请选择要删除的记录");
+        }
         let title = confirmTitle || CoreConsts.DelConfirmTitle;
         let content = confirmContext || CoreConsts.DelConfirmContent;
 
-        let linkContext = context.getLinkContext();
         confirm({title, content, onOk: () => {
             this.getRequestMethod({func, method})(url, data).then(({code, message, data}) => {
                 if (code == CoreConsts.SuccessCode) {
                     msgSuccess(message || CoreConsts.DelSuccessMsg);
-                    let tableContext = linkContext.getChildrenContext(tid);
                     let searchContext = linkContext.getChildrenContext(sid);
                     if(searchContext && tableContext) {
                         this.queryByFunc(linkContext.uid, sid); // 删除成功, 重新刷新列表
@@ -218,20 +221,6 @@ export function $View(context) {
             }, onCancel: () => null
         })
 
-    }
-
-    /**
-     * 批量删除主表格选中的数据
-     * @param config {Config}
-     */
-    this.batchDel = function (config) {
-        let tableContext = this.getTableContextByUid(config.tid);
-        if(tableContext == null) {
-            return console.error(`未找到对应uid的表组件[${config.tid}]`)
-        }
-
-        config.data = tableContext.getSelectedRowKeys();
-        this.del(config);
     }
 
     /**

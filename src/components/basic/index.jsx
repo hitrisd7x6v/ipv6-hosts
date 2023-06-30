@@ -19,7 +19,7 @@ export const URow = defineComponent({
         provide(RowContextKey, colConfig || {});
     },
     render() {
-        return <ARow {...this.$attrs} v-slots={this.$slots} />
+        return <ARow {...this.$attrs} v-slots={this.$slots} class="u-row" />
     }
 })
 
@@ -68,11 +68,7 @@ function funcClickHandle(context, props) {
                 case CoreConsts.FuncNameMeta.ADD:
                     return $view.openForAdd(config);
                 case CoreConsts.FuncNameMeta.DEL:
-                    if(context instanceof SearchContext) {
-                        return $view.batchDel(config)
-                    } else {
-                        return $view.del(config)
-                    }
+                    return $view.del(config);
                 case CoreConsts.FuncNameMeta.EDIT:
                     return $view.openForEdit(config);
                 case CoreConsts.FuncNameMeta.DETAIL:

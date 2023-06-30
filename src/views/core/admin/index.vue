@@ -1,6 +1,6 @@
 <template>
   <UView name="用户">
-    <UViewSearch bread :columns="columns">
+    <UViewSearch bread>
       <URow col="search">
         <UInput field="name" label="用户昵称"/>
         <UInput field="account" label="用户帐号"/>

@@ -1,14 +1,14 @@
 <template>
   <UView>
     <UViewSearch v-model="searchModel">
-      <USelect label="字典标识" field="type" @change="loadDictData" span="5"
-                  url="/core/dictType/list" labelField="name" valueField="type"
-                  :defaultValue="type"/>
-      <UInput label="数据名称" field="name" />
-      <template #func>
+      <URow col="search">
+        <USelect label="字典标识" field="type" @change="loadDictData"
+                 url="/core/dictType/list" labelField="name" valueField="type"
+                 :defaultValue="type"/>
+        <UInput label="数据名称" field="name" />
         <UFuncBtn func="query" url="/core/dictData/view" ref="queryFunc">查询</UFuncBtn>&nbsp;
         <UFuncBtn func="add" url="/core/dictData/add">新增</UFuncBtn>&nbsp;
-      </template>
+      </URow>
     </UViewSearch>
     <UViewDrawer title="新增" :span="[6, 16]" :rules="rules" @edit="edit">
         <UInput field="type" label="字典标识" disabled/>
@@ -24,7 +24,7 @@
         </div>
       </template>
     </UViewDrawer>
-    <UViewTable :columns="columns" rowKey="id">
+    <UViewTable :columns="columns" rowKey="id" :scroll="{x: 1000}">
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/dictData/edit">编辑</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/dictData/del">删除</UFuncTag>

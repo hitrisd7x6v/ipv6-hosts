@@ -1,5 +1,5 @@
 <template>
-  <UForm class="ivz-bs-search" ref="ivzBasicForm" layout="inline">
+  <UForm class="ivz-search ivz-bs-search" ref="ivzBasicForm" layout="inline">
     <template #default="{model}">
       <slot :model="model"></slot>
       <slot name="func"></slot>

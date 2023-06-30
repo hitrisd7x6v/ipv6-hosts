@@ -1,7 +1,7 @@
 <template>
   <div class="iz-login iz-login-bg">
     <div class="iz-login-card">
-      <a-card :bordered="false">
+      <a-card :bordered="false" @keyup.enter.native="submit()">
         <img slot="title" src="/img/login_logo.png" style="margin-bottom: 12px"/>
         <a-form layout="horizontal" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-item has-feedback v-bind="validateInfos.username">
@@ -92,14 +92,9 @@ export default {
       loginModel.captchaImg = captchaUri + '?t=' + new Date().getTime()
     }
 
-
-    window.onkeydown = (ev) => {
-      let code = ev.keyCode
-      if (code === 13) {
-        this.submit()
-      }
-    }
     return {user, labelCol, wrapperCol, validateInfos, loginModel, clickImg, validate}
+  },
+  created() {
   },
   methods: {
     oauth2Login(type) {
