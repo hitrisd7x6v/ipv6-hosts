@@ -10,36 +10,49 @@
         <slot name="func"></slot>
       </a-col>
       <a-col style="text-align: right" span="12">
-        <ATooltip placement="top" title="列管理" class="search-ibs-item">
-          <a-dropdown v-model:visible="visible" :trigger="['click']"
-                      placement="bottom" :overlayStyle="{minWidth: '160px'}">
-            <UnorderedListOutlined :style="{fontSize: '16px'}" />
-            <template #overlay>
-              <AMenu>
-                <AMenuItem>
-                  <ACheckbox v-model:checked="checkedModel.checkedAll" @change="checkedModel.onChange"
-                             :indeterminate="checkedModel.indeterminate" />
-                  <a style="float: right; color: rgba(30,144,255,0.89)" @click="checkedModel.reset()">重置</a>
-                </AMenuItem>
-                <AMenuDivider />
-                <template v-for="column in columnsWrapper" :key="column.field">
-                  <AMenuItem>
-                    <ACheckbox v-model:checked="column.checked"
-                       @change="()=>checkedModel.childChange(column)" /> {{column.title}}
-                  </AMenuItem>
+        <ASpace>
+          <ATooltip placement="top" title="列管理">
+            <a-dropdown v-model:visible="visible" :trigger="['click']"
+                        placement="bottom" :overlayStyle="{minWidth: '160px'}">
+              <AButton type="dashed">
+                <template #icon>
+                  <UnorderedListOutlined :style="{fontSize: '16px'}" />
                 </template>
-              </AMenu>
-            </template>
-          </a-dropdown>
-        </ATooltip>
-        <ATooltip placement="top" title="粘表头">
-          <UIcon type="iz-icon-fixed" :style="{fontSize: '16px'}"
-                 class="search-ibs-item" @click="sticky"/>
-        </ATooltip>
-        <a-tooltip placement="top" title="全屏">
-          <FullscreenOutlined :style="{fontSize: '16px'}"
-                  class="search-ibs-item" @click="fullScreen"/>
-        </a-tooltip>
+                <DownOutlined />
+              </AButton>
+              <template #overlay>
+                <AMenu>
+                  <AMenuItem>
+                    <ACheckbox v-model:checked="checkedModel.checkedAll" @change="checkedModel.onChange"
+                               :indeterminate="checkedModel.indeterminate" />
+                    <a style="float: right; color: rgba(30,144,255,0.89)" @click="checkedModel.reset()">重置</a>
+                  </AMenuItem>
+                  <AMenuDivider />
+                  <template v-for="column in columnsWrapper" :key="column.field">
+                    <AMenuItem>
+                      <ACheckbox v-model:checked="column.checked"
+                                 @change="()=>checkedModel.childChange(column)" /> {{column.title}}
+                    </AMenuItem>
+                  </template>
+                </AMenu>
+              </template>
+            </a-dropdown>
+          </ATooltip>
+          <ATooltip placement="top" title="粘表头">
+            <AButton type="dashed">
+              <template #icon>
+                <UIcon type="iz-icon-fixed" :style="{fontSize: '16px'}" @click="sticky"/>
+              </template>
+            </AButton>
+          </ATooltip>
+          <a-tooltip placement="top" title="全屏">
+            <AButton type="dashed">
+              <template #icon>
+                <FullscreenOutlined :style="{fontSize: '16px'}" @click="fullScreen"/>
+              </template>
+            </AButton>
+          </a-tooltip>
+        </ASpace>
       </a-col>
     </a-row>
   </div>

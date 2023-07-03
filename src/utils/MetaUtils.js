@@ -11,7 +11,7 @@ const TypeMethodMaps = {
             case 'detail': return GET;
             case 'submit': return POST;
             case 'query' || 'view': return GET;
-            default: return console.error(`找不到功能对应的方法[${func}]; 仅支持(add、edit、del、import、export、detail、submit、query)`)
+            default: return POST;
         }
     }
 }

@@ -14,7 +14,7 @@
         <UInput field="type" label="字典标识" disabled/>
         <UInput field="label" label="数据名称" />
         <UInput field="value" label="数据值" />
-        <URadio field="status" label="状态" dict="sys.status" :defaultValue="'enabled'"/>
+        <URadio field="status" label="状态" dict="sys_func_status" :defaultValue="'enabled'"/>
         <UInputNumber field="sort" label="排序" :defaultValue="10"/>
       <template #footer="{model}">
         <div style="text-align: center">
@@ -45,7 +45,7 @@ export default {
       {title: '字典标识', field: 'type'},
       {title: '数据名称', field: 'label'},
       {title: '数据值', field: 'value'},
-      {title: '状态', field: 'status', dict: 'sys.status'},
+      {title: '状态', field: 'status', dict: 'sys_func_status'},
       {title: '排序', field: 'sort'},
       {title: '备注', field: 'remark'},
       {title: '操作', field: 'action', type: 'action'},

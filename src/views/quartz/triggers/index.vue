@@ -1,13 +1,13 @@
 <template>
     <UView rowKey="jobName">
         <UViewSearch>
+          <URow col="search">
             <UInput label="作业名" field="jobName" />
-            <template #func>
-                <UFuncBtn func="query" url="/quartz/triggers/view">查询</UFuncBtn>
-                <UFuncBtn func="add" url="/quartz/triggers/add">新增</UFuncBtn>
-            </template>
+            <UFuncBtn func="query" url="/quartz/triggers/view">查询</UFuncBtn>
+            <UFuncBtn func="add" url="/quartz/triggers/add">新增</UFuncBtn>
+          </URow>
         </UViewSearch>
-        <UViewTable :bordered="true" size="small" :columns="columns" :scroll="{ x: '100%'}">
+        <UViewTable :columns="columns" :scroll="{ x: '100%'}">
             <template #c_triggerState="{record}">
                 <ABadge v-if="record.triggerState=='PAUSED'" color="purple" text="暂停" />
                 <ABadge v-else-if="record.triggerState=='COMPLETE'" status="success" text="完成" />
@@ -20,13 +20,13 @@
                     <ABadge status="default" text="阻塞" />
                 </ATooltip>
             </template>
-            <template #c_action="{record}">
+            <template #action="{record}">
                 <UFuncTag func="edit" url="/quartz/triggers/edit" :data="record">修改</UFuncTag>
                 <UFuncTag func="del" url="/quartz/triggers/del" :data="record">删除</UFuncTag>
-                <UFuncTag func="paused" :url="`/quartz/triggers/${record.triggerState=='PAUSED' ? 'resume' : 'paused'}`" :data="record">
+                <UFuncTag func="exec" :url="`/quartz/triggers/${record.triggerState=='PAUSED' ? 'resume' : 'paused'}`" :data="record">
                     {{ record.triggerState=='PAUSED' ? '恢复' : '暂停' }}
                 </UFuncTag>
-                <UFuncTag func="run" url="/quartz/triggers/run" :data="record">执行一次</UFuncTag>
+                <UFuncTag func="exec" url="/quartz/triggers/run" :data="record">执行一次</UFuncTag>
             </template>
         </UViewTable>
         <UViewModal :span="[6, 16]" :rules="rules" width="500px">

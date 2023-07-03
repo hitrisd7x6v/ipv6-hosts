@@ -502,6 +502,32 @@ export function $View(context) {
     }
 
     /**
+     * 需要确认的请求操作
+     * @param params {Config}
+     */
+    this.confirm = function ({url, sid, data, context
+         , func, config: {confirmTitle, confirmContent, method}}) {
+        let linkContext = context.getLinkContext();
+        let title = confirmTitle || CoreConsts.DefaultConfirmTitle;
+        let content = confirmContent || CoreConsts.DefaultConfirmContent;
+
+        confirm({title, content, onOk: () => {
+                this.getRequestMethod({func, method})(url, data).then(({code, message, data}) => {
+                    if (code == CoreConsts.SuccessCode) {
+                        msgSuccess(message || CoreConsts.DefaultExecSuccess);
+                        let searchContext = linkContext.getChildrenContext(sid);
+                        if(searchContext) {
+                            this.queryByFunc(linkContext.uid, sid); // 删除成功, 重新刷新列表
+                        }
+                    } else {
+                        msgError(message);
+                    }
+                }).catch(reason => console.error(reason))
+            }, onCancel: () => null
+        })
+    }
+
+    /**
      * excel导出
      * @param params {Config}
      */
@@ -541,10 +567,25 @@ export function $View(context) {
     }
 
     /**
-     * 其他功能的操作
+     * 其他功能的执行操作
+     * 如果需要确认请用：func='confirm'
      * @param config {Config}
      */
-    this.otherFuncExec = function (config) { }
+    this.otherFuncExec = function ({func, data, url
+               , sid, config: {method}, context}) {
+        let linkContext = context.getLinkContext();
+        this.getRequestMethod({func, method})(url, data).then(({code, message, data}) => {
+            if (code == CoreConsts.SuccessCode) {
+                msgSuccess(message || CoreConsts.DefaultExecSuccess);
+                let searchContext = linkContext.getChildrenContext(sid);
+                if(searchContext) {
+                    this.queryByFunc(linkContext.uid, sid); // 执行成功, 重新刷新列表
+                }
+            } else {
+                msgError(message);
+            }
+        }).catch(reason => console.error(reason))
+    }
 
     /**
      *  重置编辑组件[FormModal、FormDrawer]
@@ -571,7 +612,7 @@ export function $View(context) {
             if(method == 'GET') return GET;
             else if(method == 'POST') return POST;
             else {
-                console.warn(`请求方法目前只支持[GET、POST]`)
+                console.warn(`请求方法目前只支持[GET、POST], 默认POST`)
             }
         } else {
             return TypeMethodMaps.getInstance(config.func);
@@ -1253,6 +1294,18 @@ export function ChildConfig() {
      * @type {String | Number | *}
      */
     this.pid = null;
+
+    /**
+     * 确认标题
+     * @type {String}
+     */
+    this.confirmTitle = null;
+
+    /**
+     * 确认内容
+     * @type {String}
+     */
+    this.confirmContent = null;
 }
 
 export function Config() {

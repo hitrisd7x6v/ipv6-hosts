@@ -7,15 +7,13 @@
         <USelect field="type" label="菜单类型" :options="type" :allowClear="true"/>
         <UFuncBtn func="query" url="/core/menu/view">搜索</UFuncBtn>
         <UFuncBtn func="reset">重置</UFuncBtn>
-
       </URow>
       <template #func>
         <UFuncBtn func="add" v-auth="'core:menu:add'">新增</UFuncBtn>
-        <UFuncBtn func="del" url="/core/menu/del">删除</UFuncBtn>
         <UFuncBtn func="expand">展开/缩收</UFuncBtn>
       </template>
     </UViewSearch>
-    <UViewTable :columns="columns" :pagination="false" :scroll="{x: 900}" :rowSelection="{}">
+    <UViewTable :columns="columns" :pagination="false" :scroll="{x: 900}">
       <template #action="{record}">
         <UFuncTag func="add:child" :data="record" v-auth="'core:menu:add'"
                   :disabled="disabled(record)" :config="{pid: 'pid'}">新增子菜单</UFuncTag>

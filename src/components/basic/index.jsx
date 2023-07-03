@@ -1,7 +1,7 @@
 import {computed, defineComponent, inject, mergeProps, provide, ref} from "vue";
 import {FuncContextKey, RowContextKey} from "@/utils/ProvideKeys";
 import {msgError} from "@/utils/message";
-import {EditContext, SearchContext, TableContext, DetailContext, Config} from "@/components/view/Context";
+import {EditContext, SearchContext, TableContext, DetailContext, Config, ChildConfig} from "@/components/view/Context";
 import {FuncNameMeta} from "@/utils/MetaUtils";
 import {mapGetters} from "vuex";
 import CoreConsts from "@/components/CoreConsts";
@@ -93,8 +93,12 @@ function funcClickHandle(context, props) {
                     return $view.excelImport(config);
                 case CoreConsts.FuncNameMeta.EXPAND:
                     return $view.excelExport(config);
-                default: // 其他功能操作
+                case CoreConsts.FuncNameMeta.CONFIRM:
+                    return $view.confirm(config);
+                case CoreConsts.FuncNameMeta.EXEC:
                     return $view.otherFuncExec(config);
+                default: // 其他功能操作
+                    return console.warn(`不支持的功能[${props.func}]`)
             }
         } else {
             let child = split[1]; // 子功能
@@ -104,7 +108,7 @@ function funcClickHandle(context, props) {
                 if(child == 'child') {
                     $view.openForChild(config);
                 } else if(child == 'set') {
-                   $view.openForSet(config);
+                    $view.openForSet(config);
                 } else {
                     console.warn(`未定义的子功能[${props.func}]`)
                 }
@@ -128,7 +132,7 @@ export const UFuncTag = defineComponent({
         data: {type: Object}, // 行数据
         disabled: {default: false}, // 是否禁用
         config: {type: Object, default: () => { return {}}}, // 配置
-        func: {type: String, required: true}, // add, del, edit, query, import, export, cancel, detail, reset, expand
+        func: {type: String, required: true}, // add, del, edit, query, import, export, cancel, detail, reset, expand, ...
     },
     setup(props) {
         /**
@@ -238,14 +242,14 @@ export const UFuncBtn = defineComponent({
          */
         let context = inject(FuncContextKey);
         let clickProxy = {onClick: (e) => {
-            if(props.onClick instanceof Function) {
-                props.onClick(e);
-            } else if(context != null) {
-                funcClickHandle(context, props)
-            }else {
-                console.warn(`无效的操作(需要自定义事件或者在指定的组件下面)`)
+                if(props.onClick instanceof Function) {
+                    props.onClick(e);
+                } else if(context != null) {
+                    funcClickHandle(context, props)
+                }else {
+                    console.warn(`无效的操作(需要自定义事件或者在指定的组件下面)`)
+                }
             }
-          }
         }
 
         let loading = ref(false);
@@ -277,7 +281,7 @@ export const UFuncBtn = defineComponent({
         if(this.url && this.viewContext.isAuth()) {// 需要权限验证, 并且存在权限
             let uri = SysUtils.cutUrlToUri(this.url);
             if(this.auth[uri]) { // 有权限
-                return <AButton {...this.handleProps()} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading}/>
+                return <AButton {...this.handleProps()} v-slots={this.$slots} style="margin: 0px 3px" loading={this.loading} />
             } else {
                 return <span></span>
             }
@@ -340,11 +344,11 @@ export const UTree = defineComponent({
     },
     render() {
         return <ATree {...this.$attrs} v-models={[
-                    [this.checkedKeys, 'checkedKeys', ["modifier"]],
-                    [this.selectedKeys, 'selectedKeys', ["modifier"]],
-                    [this.expandedKeys, 'expandedKeys', ["modifier"]]
-                ]} treeData={this.treeData} replaceFields={this.replaceFields}>
-            </ATree>
+            [this.checkedKeys, 'checkedKeys', ["modifier"]],
+            [this.selectedKeys, 'selectedKeys', ["modifier"]],
+            [this.expandedKeys, 'expandedKeys', ["modifier"]]
+        ]} treeData={this.treeData} replaceFields={this.replaceFields}>
+        </ATree>
     },
     methods: {
         loadingInitData(dataUrl) {

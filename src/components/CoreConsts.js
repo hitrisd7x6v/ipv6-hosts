@@ -13,7 +13,12 @@ export default {
 
     DelSuccessMsg: '删除记录成功', // 默认删除成功提示, 以后台返回的消息为准
     DelConfirmTitle: '删除提示', // 默认删除提示框标题
-    DelConfirmContent: '确定删除选中的记录吗？', // 默认删除提示框内容
+    DelConfirmContent: '确认删除选中的记录吗？', // 默认删除提示框内容
+
+    DefaultConfirmTitle: '操作确认',
+    DefaultConfirmContent: '确认提交此操作吗',
+
+    DefaultExecSuccess: '执行成功',
 
     SubmitSuccessMsg: '数据提交成功', // 默认数据提交成功提示
     OtherOperaSuccessMsg: '操作成功', // 默认其他动作操作成功的提示
@@ -47,11 +52,12 @@ export default {
 
     // 功能标识
     FuncNameMeta: {ADD: 'ADD', DEL: 'DEL', EDIT: 'EDIT', QUERY: 'QUERY', IMPORT: 'IMPORT', EXPORT: 'EXPORT'
-        , CANCEL: 'CANCEL', RESET: 'RESET', EXPAND: 'EXPAND', SUBMIT: 'SUBMIT', DETAIL: 'DETAIL'},
+        , CANCEL: 'CANCEL', RESET: 'RESET', EXPAND: 'EXPAND', SUBMIT: 'SUBMIT', DETAIL: 'DETAIL'
+        , CONFIRM: 'CONFIRM', EXEC: 'EXEC'},
 
     FuncBtnTypeMaps: { // 功能按钮的默认配置
         ADD: {type: 'primary'},
-        DEL: {danger: true},
+        DEL: {type: 'primary', danger: true},
         EDIT: {type: '#3b5999'},
         QUERY: {type: 'primary'}, // 查询
         VIEW: {type: 'primary'}, // 查询 和query选其一
@@ -76,7 +82,9 @@ export default {
         RESET: 'warning',
         DEF: 'default',
         SUBMIT: 'blue',
-        VIEW: '#108ee9'
+        VIEW: '#108ee9',
+        CONFIRM: 'warning', // 弹框确认操作
+        EXEC: 'processing', // 执行自定义http请求
     }
 
 }

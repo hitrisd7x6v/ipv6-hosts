@@ -4,8 +4,8 @@ import {EditContext} from "@/components/view/Context";
 import MixinsEditItem from "@/components/edit/MixinsEditItem";
 import CoreConsts from "@/components/CoreConsts";
 
-const FooterColFuncConfig = {xs: 12, ms: 12, md: 8}
-const FooterColEmptyConfig = {xs: 0, ms: 0, md: 8}
+const FooterColFuncConfig = {xs: 12, ms: 12, md: 12}
+const FooterColEmptyConfig = {xs: 0, ms: 0, md: 6}
 export default defineComponent({
     name: 'UFormDrawer',
     props: {

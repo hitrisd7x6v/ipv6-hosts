@@ -1,21 +1,24 @@
 <template>
   <UView auth>
-    <UViewSearch>
+    <UViewSearch bread>
       <URow col="search">
         <UInput label="登录用户" field="userNick"/>
         <USelect label="在线状态" field="status" :options="OnlineStatus"/>
+        <UFuncBtn func="query" url="/core/online/view">搜索</UFuncBtn>
         <UFuncBtn func="reset">重置</UFuncBtn>
-        <UFuncBtn func="query" url="/core/onlineUser/view">搜索</UFuncBtn>
       </URow>
+      <template #func>
+        <UFuncBtn func="del" url="/core/online/del">删除</UFuncBtn>
+      </template>
     </UViewSearch>
-    <UViewTable :columns="columns" size="small" :bordered="true" :scroll="{x: 1000}">
+    <UViewTable :columns="columns" :scroll="{x: 1000}" :rowSelection="{}">
       <template #status="{record, value}">
         <ABadge v-if="record.status=='Online'" status="processing" :text="value" />
         <ABadge v-else status="default" :text="value" />
       </template>
       <template #c_action="{record}">
-        <UFuncTag func="del" :data="record" url="/core/onlineUser/del">删除</UFuncTag>
-        <UFuncTag func="offline" :data="record" url="/core/onlineUser/offline" confirm>剔除</UFuncTag>
+        <UFuncTag func="confirm" :data="record" url="/core/online/offline"
+            :config="{confirmTitle: '剔除确认', confirmContent: '确认强制下线此用户吗?'}">剔除</UFuncTag>
       </template>
     </UViewTable>
   </UView>
