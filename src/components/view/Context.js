@@ -1234,8 +1234,12 @@ export function LinkContext(uid, viewContext) {
         }
 
         let fullUid = this.uid + ":" + childContext.uid;
-        this.childContextMaps[fullUid] = childContext;
-        this.getViewContext().addContextByUid(fullUid, childContext);
+        if(!this.childContextMaps[fullUid]) {
+            this.childContextMaps[fullUid] = childContext;
+            this.getViewContext().addContextByUid(fullUid, childContext);
+        } else {
+            console.warn(`已经存在同名的组件[${fullUid}]`)
+        }
     }
 
     /**

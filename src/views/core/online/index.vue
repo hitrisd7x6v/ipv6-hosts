@@ -11,7 +11,7 @@
         <UFuncBtn func="del" url="/core/online/del">删除</UFuncBtn>
       </template>
     </UViewSearch>
-    <UViewTable :columns="columns" :scroll="{x: 1000}" :rowSelection="{}">
+    <UViewTable :columns="columns" :scroll="{x: 1100}" :rowSelection="{}">
       <template #status="{record, value}">
         <ABadge v-if="record.status=='Online'" status="processing" :text="value" />
         <ABadge v-else status="default" :text="value" />
@@ -41,8 +41,8 @@ export default {
       {field: 'browse', title: '浏览器', width: 100},
       {field: 'accessIp', title: '登录ip', width: 138},
       {field: 'updateTime', title: '最后访问时间', type: 'date', width: 160},
-      {field: 'status', title: '在线状态', width: 78, options: OnlineStatus},
-      {field: 'action', title: '操作', type: 'action', width: 138},
+      {field: 'status', title: '状态', width: 78, options: OnlineStatus},
+      {field: 'action', title: '操作', type: 'action', width: 88, fixed: 'right'},
     ]
     return {columns, OnlineStatus}
   }

@@ -9,14 +9,11 @@
         <UFuncBtn func="add" url="/core/role/add">新增</UFuncBtn>
       </template>
     </UViewSearch>
-    <UViewModal :span="[5, 16]" :rules="rules">
+    <UViewModal :span="[5, 16]" :rules="rules" title="角色管理">
       <UInput label="角色名称" field="name" />
       <URadio label="状态" field="status" :options="status" defaultValue="enabled"/>
       <UInputNumber label="排序" field="sort" :defaultValue="10"/>
       <UTextarea label="备注" field="remark" />
-      <template #title="{model}">
-        {{model.id != null ? '修改角色' : '新增角色'}}
-      </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
         <UFuncBtn func="submit" :url="model.id ? '/core/role/edit' : '/core/role/add'">提交</UFuncBtn>
@@ -27,10 +24,11 @@
       <template #c_action="{record}">
         <UFuncTag func="edit" :data="record" url="/core/role/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/role/del">删除</UFuncTag>
-        <UFuncTag func="edit:funcPerm" :data="record" url="/core/role/perm">分配权限</UFuncTag>
+        <UFuncTag func="edit:set" eid="funcPerm" :data="record"
+                  url="/core/role/perm" :config="{copy: ['id']}">分配权限</UFuncTag>
       </template>
     </UViewTable>
-    <UFormModal id="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
+    <UFormModal uid="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
       <template #default="{model}">
         &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
         &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
