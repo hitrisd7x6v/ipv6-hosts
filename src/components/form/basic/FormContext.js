@@ -3,7 +3,7 @@ function unmount() {
 }
 export function FormContext() {
     this.validate = unmount;
-    this.resetModel = unmount;
+    this.getRules = unmount;
     this.resetFields = unmount;
     this.getEditModel = unmount;
     this.setEditModel = unmount;

@@ -17,9 +17,9 @@
     </UViewSearch>
     <UViewDrawer width="780" layout="vertical" :rules="rules" placement="left" title="用户管理">
       <template #default="{model}">
-        <URow :gutter="16" col="drawer" :wrap="true">
+        <URow :gutter="16" col="drawer">
           <UInput field="account" label="用户帐号" :disabled="model.id != null"/>
-          <UInput field="name" label="用户昵称" />
+          <UInput field="name" label="用户昵称" required/>
           <UTreeSelect field="orgId" label="所属部门" treeNodeFilterProp="label"
                            url="/core/org/parent" labelField="name" valueField="id"/>
           <UInput field="email" label="用户邮箱" />
@@ -29,13 +29,6 @@
                         labelField="name" valueField="id" :span="24"/>
           <UTextarea field="remark" label="用户简介" :span="24" />
         </URow>
-<!--        <ULinkView uid="test">-->
-<!--          <USearch>-->
-<!--            <UInput field="name" label="名称"/>-->
-<!--            <UFuncBtn func="query" url="/core/admin/view">搜索</UFuncBtn>-->
-<!--          </USearch>-->
-<!--          <UTable :columns="columns"></UTable>-->
-<!--        </ULinkView>-->
       </template>
       <template #footer="{model}">
         <UFuncBtn func="cancel">取消</UFuncBtn>
@@ -75,7 +68,7 @@ export default {
     let sex = [
       {label: '男', value: 'man'},
       {label: '女', value: 'woman'},
-      {label: '无', value: 'non'}
+      {label: '保密', value: 'non'}
     ]
 
     let columns = reactive([
@@ -97,12 +90,12 @@ export default {
       account: {required: true, message: '用户帐号必填'},
     }
 
-    let pwdModel = ref({});
+    let pwdModel = ref({password: null, surePwd: null});
     let validator = (a,b,c) => {
       return new Promise((resolve, reject) => {
         if(b == null || b == '') {
           reject("请输入确认密码");
-        } else if(pwdModel.password != pwdModel.surePwd) {
+        } else if(pwdModel.value.password != pwdModel.value.surePwd) {
           reject("两次密码不一致");
         }else {
           resolve();
@@ -113,12 +106,9 @@ export default {
       surePwd: {required: true, validator},
       password: {required: true, message: '请输入密码'}
     }
-    let title = () => {
-      return 'sdf'
-    }
-    let loading = ref(false);
-    return {columns, rules, status, sex, pwdRules, loading, pwdModel, title}
-  },
+
+    return {columns, rules, status, sex, pwdRules, pwdModel}
+  }
 }
 </script>
 

@@ -1,4 +1,4 @@
-import {defineComponent, isProxy, provide, reactive} from "vue";
+import {defineComponent, isProxy, provide, reactive, ref} from "vue";
 import {Form} from "ant-design-vue";
 import {getMetaValue, initMetaValue, setMetaValue} from "@/utils/MetaUtils";
 import {FormContext} from "@/components/form/basic/FormContext";
@@ -13,38 +13,28 @@ export default defineComponent({
         'onUpdate:modelValue': {type: Function},
         modelValue: {type: Object, default: () => { return {}}}
     },
-    setup({rules, modelValue}, {attrs}) {
+    setup({modelValue}, {attrs}) {
         if(attrs.model) {
             console.warn("UForm不支持[:model] 请使用[v-model]替代")
         }
 
         let formRef;
         let initModel = modelValue;
-        let editModel = modelValue;
+        let editModel = ref({});
         let formContext = new FormContext();
         provide('initModel', (namePath, value) =>
             initMetaValue(namePath, initModel, value))
         provide('formContext', formContext);
 
-        let proxy = reactive({editModel});
-        if(rules instanceof Object) {
-            Object.keys(rules).forEach(key => {
-                let rule = rules[key];
-                rules[key] = rule instanceof Array ? rule : [rule];
-            })
-            formContext['useForm'] = Form.useForm(proxy.editModel, reactive(rules));
-        } else {
-            formContext['useForm'] = {};
-        }
+        formContext['getFieldValue'] = (namePath) => getMetaValue(namePath, editModel.value);
+        formContext['setFieldValue'] = (namePath, value) => setMetaValue(namePath, editModel.value, value);
 
-        formContext['getFieldValue'] = (namePath) => getMetaValue(namePath, proxy.editModel);
-        formContext['setFieldValue'] = (namePath, value) => setMetaValue(namePath, proxy.editModel, value);
-
-        return {formContext, formRef, proxy, initModel}
+        return {formContext, formRef, initModel, editModel}
     },
     created() {
         this.formRef = this.$refs['formRef']
 
+        this.formContext.getRules = this.getRules;
         this.formContext.validate = this.validate;
         this.formContext.resetFields = this.resetFields;
         this.formContext.getEditModel = this.getEditModel;
@@ -53,13 +43,12 @@ export default defineComponent({
         this.formContext.scrollToField = this.scrollToField;
         this.formContext.clearValidate = this.clearValidate;
         this.formContext.validateFields = this.validateFields;
-        this.formContext.resetModel = () => this.setEditModel(this.getInitModel());
     },
     mounted() {
-        this.proxy.editModel = this.getInitModel();
+        this.editModel = this.getInitModel();
     },
     render() {
-        let editModel = this.proxy.editModel;
+        let editModel = this.editModel;
         let labelCol = this.$attrs.labelCol, wrapperCol = this.$attrs.wrapperCol;
         if(this.span instanceof Array) {
             labelCol = labelCol || {span: this.span[0]};
@@ -80,7 +69,9 @@ export default defineComponent({
         validate() {
             return this.getFormRef().validate();
         },
-
+        getRules() {
+            return this.$attrs.rules;
+        },
         getFormContext() {
             return this.formContext;
         },
@@ -101,25 +92,26 @@ export default defineComponent({
         },
 
         getInitModel() {
-            return SysUtils.clone(this.initModel);
+            // 此处必须用reactive声明为代理对象
+            return reactive(SysUtils.clone(this.initModel));
         },
 
         getEditModel() {
-            return this.proxy.editModel;
+            return this.editModel;
         },
 
         setEditModel(editModel) {
             if(!editModel) {
                 throw new Error("UForm组件的model参数不能设置为null")
-            } else {
-                this.$emit('update:modelValue', editModel);
             }
 
             if(!isProxy(editModel)) {
-                this.proxy.editModel = reactive(editModel);
+                this.editModel = reactive(editModel);
             }else {
-                this.proxy.editModel = editModel;
+                this.editModel = editModel;
             }
+
+            this.$emit('update:modelValue', editModel);
         }
     }
 })

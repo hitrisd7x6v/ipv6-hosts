@@ -11,7 +11,7 @@ function Unmount() {
 function unUFuncTag() {
     console.warn("需使用[UFuncTag]作为表格按钮")
 }
-
+let env = import.meta.env;
 /**
  * 视图组件提供的操作接口
  * @see UView
@@ -220,7 +220,6 @@ export function $View(context) {
             }).catch(reason => console.error(reason))
             }, onCancel: () => null
         })
-
     }
 
     /**
@@ -269,7 +268,7 @@ export function $View(context) {
             return console.warn(`未找到对应uid的可编辑组件[${linkContext.uid}:${eid}]`)
         }
 
-        // 打开编辑框并且是指pid
+        // 打开编辑框并且复制pid字段
         editContext.asyncVisible(data, true).then(edit => {
             let initModel = editContext.getFormContext().getInitModel();
             // 设置pid
@@ -285,6 +284,11 @@ export function $View(context) {
      */
     this.openForSet = function ({eid, data
         , config: {copy}, context}) {
+
+        if(eid == CoreConsts.DefaultEditUid && env.DEV) {
+            console.warn(`set子功能的eid[${eid}]和默认eid[${CoreConsts.DefaultEditUid}]一致, 请确认是否使用默认编辑组件`)
+        }
+
         if(copy == null) {
             return console.error(`set子功能必须在[config]指定属性copy: ['id', 'name', ...]}; copy指定要复制哪些字段到编辑对象`)
         }
@@ -305,6 +309,9 @@ export function $View(context) {
             // 复制属性
             copy.forEach(field => {
                 initModel[field] = data[field];
+                if(env.DEV && data[field] === undefined) {
+                    console.warn(`要copy的字段[${field}]在data里面不存在`)
+                }
             })
             editContext.getFormContext().setEditModel(initModel)
             edit.$emit('edit', initModel);

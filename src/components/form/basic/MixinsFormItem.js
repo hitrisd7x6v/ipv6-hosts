@@ -11,6 +11,9 @@ export default defineComponent({
             attrs: null,
             namePath: [],
             colConfig: inject(RowContextKey),
+            /**
+             * @type {FormContext}
+             */
             formContext: inject('formContext'),
         }
     },

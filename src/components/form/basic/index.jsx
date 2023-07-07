@@ -40,7 +40,7 @@ export const UInputPassword = defineComponent({
         let props = this.getFormItemProps();
         return <a-col {...this.getColProps()}>
             <a-form-item {...props}>
-                {<a-input-password {...this.getFormAttrs()} v-slots={this.$slots}></a-input-password>}
+                {<a-input-password {...this.getFormAttrs()} v-slots={this.$slots} />}
             </a-form-item>
         </a-col>
     }
