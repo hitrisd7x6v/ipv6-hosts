@@ -25,7 +25,7 @@
         <UFuncTag func="edit" :data="record" url="/core/role/edit">修改</UFuncTag>
         <UFuncTag func="del" :data="record" url="/core/role/del">删除</UFuncTag>
         <UFuncTag func="edit:set" eid="funcPerm" :data="record"
-                  url="/core/role/perm" :config="{copy: ['id']}">分配权限</UFuncTag>
+                  v-auth="'core:role:perm'" :config="{copy: ['id']}">分配权限</UFuncTag>
       </template>
     </UViewTable>
     <UFormModal uid="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
@@ -84,14 +84,13 @@ export default {
           .finally(() => editContext.setLoading(false));
     },
     getCheckedUrl(model) {
+      // debugger
       let param = model.id ? `?id=${model.id}` : ''
       return '/core/role/func' + param;
     },
     submit() {
       let model = this.$view.getPrimaryEditContext("funcPerm").getModel();
       model['menuIds'] = this.$refs['funcMenus'].getCheckedKeys();
-
-      this.$view.getPrimaryEditContext("funcPerm").submit('/core/role/perm');
     },
     checked(e) {
       if(e.target.checked) {
