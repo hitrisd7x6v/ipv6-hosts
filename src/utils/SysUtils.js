@@ -17,15 +17,7 @@ export default {
         let stringify = JSON.stringify(obj);
         return JSON.parse(stringify);
     },
-    /**
-     * 校验此path是否存在任务栏数据里
-     * @param path {String}
-     * @param taskBarData {Array<_RouteRecordBase>}
-     * @return {Boolean}
-     */
-    existsRouteAtTaskBar(path, taskBarData) {
-        return taskBarData.find(item => item.path == path) != undefined
-    },
+
     /**
      * 解析url的参数
      * @param url /test?a=1&b=2

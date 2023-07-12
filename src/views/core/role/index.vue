@@ -28,7 +28,7 @@
                   v-auth="'core:role:perm'" :config="{copy: ['id']}">分配权限</UFuncTag>
       </template>
     </UViewTable>
-    <UFormModal uid="funcPerm" title="分配功能权限" :bodyStyle="{height: '320px', overflow: 'auto'}">
+    <UFormDrawer uid="funcPerm" title="分配功能权限">
       <template #default="{model}">
         &nbsp;<a-button @click="() => expanded('close')">折叠</a-button>
         &nbsp;<a-button type="primary" @click="() => expanded('open')">展开</a-button>
@@ -41,7 +41,7 @@
         <UFuncBtn func="submit" url="/core/role/perm" @click="submit">提交</UFuncBtn>
         <UFuncBtn func="cancel">取消</UFuncBtn>
       </template>
-    </UFormModal>
+    </UFormDrawer>
   </UView>
 </template>
 

@@ -5,8 +5,8 @@
         <UInput field="name" label="配置名称"/>
         <UInput field="label" label="配置标识"/>
         <URadio field="type" label="系统配置" :options="type"/>
-        <UFuncBtn func="reset">重置</UFuncBtn>
         <UFuncBtn func="query" url="/core/config/view">搜索</UFuncBtn>
+        <UFuncBtn func="reset">重置</UFuncBtn>
         <UFuncBtn func="add" url="/core/config/add">新增</UFuncBtn>
       </URow>
     </UViewSearch>

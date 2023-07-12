@@ -6,10 +6,14 @@
       </template>
     </UForm>
     <a-row class="ivz-is-fun" align="middle">
-      <a-col class="ivz-isf-bru" span="12">
+      <ACol :xs="0" :sm="6" :md="4" :lg="4" :xl="3" :xxl="2">
+        <h3 style="margin-bottom: 0px">{{title}}</h3>
+      </ACol>
+      <ACol class="ivz-isf-bru" :class="left ? 'left' : 'right'"
+            :xs="24" :sm="18" :md="15" :lg="16" :xl="17" :xxl="19">
         <slot name="func"></slot>
-      </a-col>
-      <a-col style="text-align: right" span="12">
+      </ACol>
+      <a-col style="text-align: right" :xs="0" :sm="0" :md="5" :lg="4" :xl="4" :xxl="3">
         <ASpace>
           <ATooltip placement="top" title="列管理">
             <a-dropdown v-model:visible="visible" :trigger="['click']"
@@ -72,6 +76,8 @@ export default {
   name: "UBreadSearch",
   props: {
     tid: {type: String, default: null},
+    title: {type: String, default: ''},
+    left: {type: Boolean, default: false},
     uid: {type: String, required: true, default: CoreConsts.DefaultSearchUid}
   },
   components: {UForm, DownOutlined, HomeFilled, FullscreenOutlined, UnorderedListOutlined, SearchOutlined},
@@ -248,7 +254,12 @@ export default {
   line-height: 38px;
   background: #fefefe;
 }
-
+.ivz-isf-bru.left {
+  text-align: left;
+}
+.ivz-isf-bru.right {
+  text-align: right;
+}
 .search-ibs-item {
   margin-right: 16px;
 }

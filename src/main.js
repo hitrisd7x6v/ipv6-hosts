@@ -16,7 +16,7 @@ import {createFromIconfontCN} from '@ant-design/icons-vue';
 const UIcon = createFromIconfontCN({
     extraCommonProps: {style: {fontSize: '16px'}},
     // https://www.iconfont.cn/
-    scriptUrl: '//at.alicdn.com/t/font_1174643_5udxhr7nj5w.js',
+    scriptUrl: '//at.alicdn.com/t/font_1174643_qs4siyob4uh.js',
 });
 
 let app = createApp(App).use(Router).use(Antd).use(store).use(EventBus)
